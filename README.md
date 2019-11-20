@@ -8,6 +8,6 @@
 * vue
 * mysql
 * redis
-* cqrs
+* efcore
 * signalr
 
