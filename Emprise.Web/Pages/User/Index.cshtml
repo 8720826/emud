@@ -1,0 +1,232 @@
+﻿@page
+@model Emprise.Web.Pages.User.IndexModel
+@{
+    ViewData["Title"] = "个人中心";
+}
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="big_bg" id="app">
+    <div class="nav">
+        <h2 class="nav-title">个人中心</h2>
+        <div style="position: absolute; top: 10px; right: 10px;"><a style="font-size:12px;padding:0 5px;" href="javascript:;" class="btn btn-small-tawny" v-on:click="logout">退出</a></div>
+    </div>
+
+    <div class="main">
+
+        <div class="section">
+            <div class="blist">
+                <ul>
+                    <li>
+                        <span class="bname"><b class="gy">邮箱</b>：@(Model.UserModel.Email)</span>
+                        @if (!Model.UserModel.HasVerifiedEmail)
+                        {
+                            <span class="binfo">[<a href="@(Url.Page("/User/VerifyEmail"))" class="a2">验证</a>]</span>
+                        }
+                        <span class="binfo">[<a href="@(Url.Page("/User/ModifyPassword"))" class="a2">修改密码</a>]</span>
+                    </li>
+                    <li>
+                        <span class="bname"><b class="gy">角色名</b>：<a href="javascript:;" class="ye">@(Model.Player.Name)</a>(@(Model.Player.Gender) , LV.@(Model.Player.Level))</span>
+                        @*<span class="binfo">[<a href="javascript:void(0)/3g/usercenter/modgradeinfo-110721508-1-sign.html?cnl=kanshu" class="yelw">签到</a>]</span>*@
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="join  mt15" style="text-align:center">
+                <a class="btn" href="@(Url.Page("/Game/Join",new { playerId=Model.Player.Id }))" target="_blank" id="join">进入游戏</a>
+            </div>
+
+            <div class="fn-mt fn-mlr"><span class="tip01 tips">{{tips}}</span></div>
+
+        </div>
+        @if (Model.Player != null)
+        {
+
+            <div class="section" style="display:none">
+                <h3><span class="b_l">江湖告示</span></h3>
+                <div class="clist">
+                    <ul>
+                        <li><span class="sp_1"><a href="javascript:void(0)">活动</a></span><span class="bline">|</span><a href="javascript:void(0)">喜迎国庆，普天同庆</a></li>
+
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <template>
+        <transition name="confirm-fade">
+            <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
+                <div class="confirm-content-wrap" @@click.stop>
+                    <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
+                    <p class="my-confirm-content">{{ modal.content }}</p>
+                    <div class="my-operation">
+                        <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
+                            <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>
+                        </div>
+                        <div class="confirm-btn" @@click="confirmEvent('ok')">
+                            <p class="my-btn-text">{{ modal.confirmText }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </template>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                email: "",
+                password: "",
+                tips: "",
+                modal: {
+                    isShowConfirm: 0,
+                    type: "confirm",
+                    titleText: "",
+                    content: "",
+                    cancelText: "取消",
+                    confirmText: "确认",
+                    callback:null
+                }
+            },
+            methods: {
+                logout: function () {
+                    var that = this;
+                    that.confirm("要退出吗？", function () {
+                        axios.post("/api/user/logout", {})
+                        .then(function (response) {
+                            var result = response.data;
+                            if (result.status) {
+                                location.href = "@(Url.Page("/User/Login"))";
+                            } else {
+                                var error = result.errorMessage || "退出失败";
+                                if (result.data) {
+                                    error += "<br>" + result.data;
+                                }
+                                that.tips = error;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    });
+                },
+                confirm: function (content, callback) {
+                    var that = this;
+                    that.modal.isShowConfirm = 1;
+                    that.modal.content = content;
+                    that.modal.callback = callback;
+                },
+                confirmEvent: function (type) {
+                    var that = this;
+                    if (type == "ok") {
+                        that.modal.callback && that.modal.callback();
+                    }
+                    that.modal.isShowConfirm = false
+                }
+            }
+        });
+@*
+    ({
+        logout: function () {
+            layer.confirm('要退出吗？', { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/user/logout",
+                    data: {},
+                    success: function (result) {
+                        if (result.status) {
+                            location.href = "@(Url.Page("/User/Login"))";
+                        } else {
+                            var error = result.errorMessage||"进入游戏失败";
+                            if (result.data) {
+                                error += "<br>" + result.data;
+                            }
+                            $("#msgTip").html(error);
+                        }
+                    }, error: function () {
+                    }
+                });
+            });
+        },
+        joinGame: function (playerId) {
+            var h = $(window).height();
+            var w = $(window).width();
+            window.open('@(Url.Page("/Game/Index"))', 'newwindow', 'height=' + h + ', width=' + w + ', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no');
+
+
+            var that = this;
+            $.ajax({
+                type: "post",
+                url: "/api/player/joingame",
+                dataType: "json",
+                data: {playerId:playerId}
+            }).done(function (result) {
+                if (result.status) {
+                    that.join();
+                } else {
+                        var error = result.errorMessage||"进入游戏失败";
+                        if (result.data) {
+                            error += "<br>" + result.data;
+                        }
+                    }
+            }).fail(function (err) {
+
+            }).always(function () {
+
+            });
+        },
+        createPlayer: function () {
+            var index = layer.load(2);
+            $.ajax({
+                type: "POST",
+                url: "/api/player/create",
+                data: {},
+                success: function (result) {
+                    if (result.status) {
+                        location.reload();
+                    } else {
+                        var error = result.errorMessage||"创建失败";
+                        if (result.data) {
+                            error += "<br>" + result.data;
+                        }
+                        $("#msgTip").html(error);
+                    }
+                    layer.close(index);
+                }, error: function () {
+                    layer.close(index);
+                }
+            });
+        },
+        join: function () {
+            var h = $(window).height();
+            var w = $(window).width();
+            window.open('@(Url.Page("/Game/Index"))', 'newwindow', 'height=' + h + ', width=' + w + ', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no');
+        },
+        init: function () {
+
+
+            var that = this;
+
+            $(function () {
+                layer.config({
+                    skin: 'layui-layer-hei'
+                });
+
+                $(document).on("click", "#logout", function () {
+                    that.logout();
+                });
+
+
+            });
+        }
+    }).init();*@
+    </script>
+}
+

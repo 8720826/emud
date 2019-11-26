@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.7" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.7" />
+    <PackageReference Include="Hangfire.MemoryStorage.Core" Version="1.4.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Emprise.Application\Emprise.Application.csproj" />
+    <ProjectReference Include="..\Emprise.MudServer\Emprise.MudServer.csproj" />
+    <ProjectReference Include="..\Emprise.Domain.Core\Emprise.Domain.Core.csproj" />
+    <ProjectReference Include="..\Emprise.Infra.Mapper\Emprise.Infra.Mapper.csproj" />
+    <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
+  </ItemGroup>
+
+</Project>

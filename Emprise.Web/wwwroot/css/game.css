@@ -1,0 +1,546 @@
+﻿@charset "utf-8";
+
+* {
+    box-sizing: border-box
+}
+
+blockquote, body, dd, div, dl, dt, fieldset, form, h1, h2, h3, h4, h5, h6, html, input, li, ol, p, pre, td, textarea, th, ul {
+    margin: 0;
+    padding: 0
+}
+
+address, article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+fieldset, img {
+    border: 0
+}
+
+em, i {
+    font-style: normal
+}
+
+address, caption, code, em {
+    font-weight: 400;
+    font-style: normal
+}
+
+code, kbd, pre, samp {
+    font-family: inherit
+}
+
+ol, ul {
+    list-style: none
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+    font-weight: 400;
+    font-size: 100%
+}
+
+a {
+    color: #999;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent
+}
+
+a:visited {
+    color: #fff
+}
+
+a {
+    color: #999
+}
+
+a, input:focus, textarea:focus {
+    outline: 0
+}
+
+input, select, textarea {
+    font-weight: inherit;
+    font-family: inherit
+}
+
+* {
+    margin: 0;
+    padding: 0
+}
+
+html {
+    font-size: 62.5%
+}
+
+body, html {
+    height: 100%
+}
+
+body {
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    max-width: 40pc;
+    min-width: 20pc;
+    background: #fff;
+    background-color: #151515;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC","Helvetica Neue",STHeiti,"Microsoft Yahei",Tahoma,Simsun,sans-serif;
+}
+
+input[type=button], input[type=reset], input[type=submit], textarea {
+    -webkit-appearance: none
+}
+
+.bg {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.3)
+}
+
+header {
+    height: 20px
+}
+
+header .username {
+    padding-right: 5px;
+    padding-left: 5px;
+    width: 5pc;
+    color: #00f0ff
+}
+
+header .setting {
+    position: absolute;
+    right: 0;
+    z-index: 999;
+    display: inline-block;
+    width: 30px;
+    height: 20px;
+    color: #ff5;
+    text-align: center;
+    font-size: 1pc;
+    line-height: 20px
+}
+
+header .hps {
+    position: absolute;
+    top: 2px;
+    left: 170px;
+    width: 75pt
+}
+
+header .email {
+    display: inline-block;
+    width: 45px;
+    font-size: 14px
+}
+
+header .email em {
+    color: red;
+    font-size: 10px
+}
+
+header .hp {
+    margin-top: 4px;
+    width: 75pt;
+    height: 3px;
+    background: #fff
+}
+
+header .hpLine {
+    width: 50%;
+    height: 100%;
+    background: red
+}
+
+header .mp {
+    margin-top: 4px;
+    width: 75pt;
+    height: 3px;
+    background: #fff
+}
+
+header .mpLine {
+    width: 30%;
+    height: 100%;
+    background: #1c86ee
+}
+
+.exp {
+    position: absolute;
+    top: 20px;
+    z-index: 99999;
+    width: 100%;
+    height: 1px;
+    background-color: #666
+}
+
+.exp .expLine {
+    height: 100%;
+    background: #ae9455
+}
+
+#map {
+    overflow: hidden;
+    width: 100%;
+    border-top: 1px solid #ae9455;
+    color: #918d84
+}
+
+#chat {
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: 75pt;
+    font-size: 1.1em
+}
+
+#chat li {
+    margin-left: 5px;
+    list-style: none
+}
+
+#chat li a {
+    text-decoration: underline
+}
+
+#chat em {
+    color: #666
+}
+
+#chat .showchat {
+    position: absolute;
+    top: 5pc;
+    right: 5px;
+    z-index: 999;
+    float: right;
+    display: inline-block;
+    padding: 1px 6px;
+    height: 30px;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #231d18;
+    background-clip: padding-box;
+    color: #ae9455;
+    text-align: center;
+    font-size: 9pt;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all;
+    transition-timing-function: linear;
+    transition-duration: .2s
+}
+
+#room {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 220px
+}
+
+#route {
+    overflow: auto;
+    height: 90px
+}
+
+#message {
+    position: absolute;
+    top: 370px;
+    bottom: 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    border-top: 1px solid #ae9455;
+    font-size: 1.1em
+}
+
+#message li {
+    margin-left: 10px;
+    list-style: none;
+}
+
+#message li p{
+    display: inline-block;
+}
+
+#message .cur {
+    color:aqua;
+}
+
+#message em {
+    color: #666
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    border-top: 1px solid #ae9455;
+    font-size: 1.2em
+}
+
+footer a {
+    float: left;
+    display: block;
+    margin: 1px 0;
+    width: 16.6%;
+    text-align: center;
+    line-height: 28px
+}
+
+footer a span {
+    height: 28px;
+    color: #FFF;
+    line-height: 28px
+}
+
+#onlinelist {
+    overflow: auto;
+    height: 90pt
+}
+
+#onlinelist .online {
+    overflow: auto;
+    margin-top: 8px;
+    margin-left: 3px;
+    padding: 0 .714em;
+    width: auto;
+    height: 26px;
+    border: 1px solid hsla(0,100%,94%,.3);
+    border-radius: 3px;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    font-size: 10px
+}
+
+#route .ditection {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 100%
+}
+
+#route .ditection .line {
+    width: 100%;
+    height: 33%
+}
+
+#route .item {
+    float: left;
+    margin: 2px;
+    width: 30%;
+    height: 20px;
+    text-align: center;
+    line-height: 20px
+}
+
+#route .exit {
+    border: 1px dotted gray;
+    background: rgba(0,0,0,.5);
+    color: #007aff
+}
+
+#route .cur {
+    color: #00f0ff
+}
+
+#map .action {
+    position: absolute;
+    top: 0;
+    overflow: auto;
+    height: 220px
+}
+
+#room .action button {
+    display: list-item;
+    margin: 10px;
+    padding: 1px 10px;
+    width: 5pc;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    background-color: #231d18;
+    color: #918d84;
+    line-height: 20px
+}
+
+#room .action button.stop {
+    display: list-item;
+    margin: 10px;
+    padding: 1px 10px;
+    width: 5pc;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    background-color: #231d18;
+    color: #FFF;
+    line-height: 20px
+}
+
+#room .mybag {
+    position: absolute;
+    right: 5px;
+    z-index: 999;
+    float: right;
+    display: inline-block;
+    padding: 1px 6px;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #231d18;
+    background-clip: padding-box;
+    color: #ae9455;
+    text-align: center;
+    font-size: 9pt;
+    cursor: pointer;
+    transition: all;
+    transition-timing-function: linear;
+    transition-duration: .2s;
+    bottom: 0px;
+}
+
+#chatBox {
+    position: absolute;
+    top: 90pt;
+    z-index: 9999;
+    overflow: hidden;
+    width: 100%;
+    background: rgba(0,0,0,.8)
+}
+
+    #chatBox div {
+        margin: 10px;
+        text-align: right
+    }
+
+    #chatBox input {
+        width: 100%;
+        height: 30px;
+        border: 0;
+        border-radius: 3px;
+        text-indent: 5px;
+        line-height: 30px;
+        opacity: .7
+    }
+
+.username {
+    line-height: 20px
+}
+
+    .username span {
+        margin-left: 5px;
+        color: #1e9fff
+    }
+
+#send {
+    z-index: 999;
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 1px 26px;
+    height: 30px;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #231d18;
+    background-clip: padding-box;
+    color: #ae9455;
+    text-align: center;
+    font-size: 9pt;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all;
+    transition-timing-function: linear;
+    transition-duration: .2s
+}
+
+.myBox {
+    position: absolute;
+    top: 20px;
+    z-index: 9999;
+    overflow: auto;
+    width: 100%;
+    background-color: #151515
+}
+
+    .myBox .content {
+        overflow: auto;
+        margin: 5px
+    }
+
+.menu {
+    position: relative;
+    width: 100%;
+    height: 30px
+}
+
+    .menu li {
+        float: left;
+        width: 16.6%;
+        height: 100%;
+        border-right: 1px solid transparent;
+        background: rgba(0,0,0,.5);
+        list-style: none;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer
+    }
+
+    .menu .cur {
+        background: #666
+    }
+
+.content hr {
+    margin: 5px 0;
+    height: 1px;
+    border: 0;
+    background-color: #fff
+}
+
+.content button {
+    float: left;
+    display: list-item;
+    margin: 10px;
+    padding: 1px 10px;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    background-color: #231d18;
+    color: #918d84;
+    line-height: 20px
+}
+
+.myinfo li {
+    display: inline-block;
+    width: 48%
+}
+
+.myinfo li span {
+    margin-left: 5px
+}
+
+.myinfo li.long {
+    display: inline-block;
+    width: 98%
+}
+
+.mt15 {
+    margin-top: 15px
+}

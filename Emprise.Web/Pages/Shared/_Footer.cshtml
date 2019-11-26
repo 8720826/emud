@@ -1,0 +1,14 @@
+﻿
+@model Emprise.Domain.Core.Models.SiteConfig
+
+<div class="footer">
+    <p>
+        &copy; @(DateTime.Now.Year)  <a href="@(Model.Url)">@(Model.Name)</a>
+        Powered by <a href="https://github.com/8720826/emud" target="_blank">EmpriseMud</a>
+    </p>
+
+    <p style="margin-top:10px;">
+        <a href="http://www.miitbeian.gov.cn" target="_blank" rel="nofollow">@(Model.BeiAn)</a>
+    </p>
+
+</div>

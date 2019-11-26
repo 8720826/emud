@@ -1,0 +1,306 @@
+﻿@page
+@model Emprise.Web.Pages.User.CreatePlayerModel
+@{
+    ViewData["Title"] = "创建角色";
+}
+@{
+    Layout = "_Layout";
+}
+    <div class="big_bg" id="app">
+        <div class="nav">
+            <h2 class="nav-title">创建角色</h2>
+            <div style="position: absolute; top: 10px; right: 10px;"><a style="font-size:12px;padding:0 5px;" href="javascript:;" v-on:click="logout" class="btn btn-small-tawny">退出</a></div>
+        </div>
+
+        <div class="main">
+
+            <div class="section account">
+                <div class="blist">
+                    <span class="bname">
+                        <b class="gy">
+                            账号
+                        </b>：@(Model.UserModel.Email)
+                    </span>
+                </div>
+
+                <div class="join mt15" style="text-align:center">
+
+                    <div class="playerinfo">
+                        <input type="text" class="form-text playername" v-model="name" placeholder="角色名,2到4个中文" />
+                    </div>
+
+                    <div class="playerinfo">
+                        选择性别：
+                        <label>
+                            <input type="radio" v-model="gender" value=1>
+                            男
+                        </label>
+
+                        <label>
+                            <input type="radio" v-model="gender" value=2>
+                            女
+                        </label>
+                    </div>
+
+                    <div class="attr playerinfo">
+                        你的先天属性：<a href="javascript:;" @@click="createAttr">随机</a>
+                        <ul>
+                            <li><label>臂力</label><input v-model="mystr" type="text" /></li>
+                            <li><label>根骨</label><input v-model="mycon" type="text" /></li>
+                            <li><label>身法</label><input v-model="mydex" type="text" /></li>
+                            <li><label>悟性</label><input v-model="myint" type="text" /></li>
+                        </ul>
+                    </div>
+
+
+
+                    <div class="join  mt15" style="text-align:center">
+                        <a class="btn" href="javascript:;" @@click="createPlayer">创建角色</a>
+                    </div>
+                    <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <template>
+            <transition name="confirm-fade">
+                <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
+                    <div class="confirm-content-wrap" @@click.stop>
+                        <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
+                        <p class="my-confirm-content">{{ modal.content }}</p>
+                        <div class="my-operation">
+                            <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
+                                <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>
+                            </div>
+                            <div class="confirm-btn" @@click="confirmEvent('ok')">
+                                <p class="my-btn-text">{{ modal.confirmText }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </template>
+    </div>
+@section Scripts {
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                name: "",
+                gender:0,
+                attrCount: 4,
+                addValue: 20,
+                minValue : 15,
+                maxValue : 30,
+                tips: "",
+                mystr: 0,
+                mycon: 0,
+                mydex: 0,
+                myint: 0,
+                modal: {
+                    isShowConfirm: 0,
+                    type: "confirm",
+                    titleText: "",
+                    content: "",
+                    cancelText: "取消",
+                    confirmText: "确认",
+                    callback:null
+                }
+            },
+            methods: {
+                logout: function () {
+                    var that = this;
+                    that.confirm("要退出吗？", function () {
+                        axios.post("/api/user/logout", {})
+                        .then(function (response) {
+                            var result = response.data;
+                            if (result.status) {
+                                location.href = "@(Url.Page("/User/Login"))";
+                            } else {
+                                var error = result.errorMessage || "退出失败";
+                                if (result.data) {
+                                    error += "<br>" + result.data;
+                                }
+                                that.tips = error;
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                    });
+                },
+                confirm: function (content, callback) {
+                    var that = this;
+                    that.modal.isShowConfirm = 1;
+                    that.modal.content = content;
+                    that.modal.callback = callback;
+                },
+                confirmEvent: function (type) {
+                    var that = this;
+                    if (type == "ok") {
+                        that.modal.callback && that.modal.callback();
+                    }
+                    that.modal.isShowConfirm = false
+                },
+                randGenerator: function (n, sum,minValue,maxValue) {
+                    var aryRet = [];
+                    while (n > 1) {
+                        var rnd = Math.floor(Math.random() * Math.min(maxValue - minValue, sum));
+                        aryRet.push(minValue+rnd);
+                        sum -= rnd;
+                        n--;
+                    }
+                    aryRet.push(minValue+sum);
+                    return aryRet;
+                },
+                createAttr: function () {
+                    var that = this;
+                    var arr = that.randGenerator(that.attrCount, that.addValue, that.minValue, that.maxValue);
+                    that.mystr = arr[0];
+                    that.mycon = arr[1];
+                    that.mydex = arr[2];
+                    that.myint = arr[3];
+                },
+                createPlayer: function () {
+                    var that = this;
+                    that.tips = "";
+
+                    if (!that.name) {
+                        that.tips = "请输入角色名";
+                        return false;
+                    }
+  
+                    if (!that.gender) {
+                        that.tips = "请选择性别";
+                        return false;
+                    }
+
+                    that.loading = 1;
+
+                    axios.post("/api/player/create", {
+                        name: that.name,
+                        gender: that.gender*1,
+                        str: that.mystr,
+                        con: that.mycon,
+                        dex: that.mydex,
+                        int: that.myint
+                    })
+                    .then(function (response) {
+                        var result = response.data;
+                        if (result.status) {
+                             location.href = "@(Url.Page("/Game/Index"))";
+                        } else {
+                            var error = result.errorMessage || "创建失败";
+                            if (result.data) {
+                                error += "<br>" + result.data;
+                            }
+                            that.tips = error;
+                        }
+                        that.loading = 0;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        that.loading = 0;
+                    });
+                }
+            },
+            mounted: function(){
+                this.createAttr();
+            }
+        });
+        @*
+    ({
+        logout: function () {
+            layer.confirm('要退出吗？', { icon: 3, title: '提示' }, function (index) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/user/logout",
+                    data: {},
+                    success: function (result) {
+                        if (result.status) {
+                            location.href = "@(Url.Page("/User/Login"))";
+                        }
+                    }, error: function () {
+                    }
+                });
+            });
+        },
+        createAttr: function () {
+            var count = 4;
+            var addValue = 20;
+            var minValue = 15;
+            var maxValue = 30;
+            while (count > 1) {
+                var rnd = Math.floor(Math.random() * Math.min(maxValue - minValue, addValue));
+                $(".attr").find("input").eq(count-1).val(minValue+rnd);
+                addValue -= rnd;
+                count--;
+            }
+            $(".attr").find("input").eq(count-1).val(minValue+addValue);
+        },
+        createPlayer: function () {
+            $("#msgTip").html("");
+
+            if (!$("input[name=name]").val()) {
+                $("#msgTip").html("请输入角色名");
+                return false;
+            }
+            if (!$("input[name=gender]:checked").val()) {
+                $("#msgTip").html("请选择性别");
+                return false;
+            }
+            var index = layer.load(2);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/player/create",
+                data: $("form").serialize(),
+                success: function (result) {
+                    if (result.status) {
+                        location.href = "@(Url.Page("/Game/Index"))";
+                    } else {
+                        var error = result.errorMessage||"创建失败";
+                        if (result.data) {
+                            error += "<br>" + result.data;
+                        }
+                        $("#msgTip").html(error);
+                    }
+                    layer.close(index);
+                }, error: function () {
+                    layer.close(index);
+                }
+            });
+        },
+        init : function () {
+            var that = this;
+
+            $(function () {
+                layer.config({
+                    skin: 'layui-layer-hei'
+                });
+
+                that.createAttr();
+
+                $(document).on("click", "#create", function () {
+                    that.createPlayer();
+                });
+
+                $(document).on("click", "#logout", function () {
+                    that.logout();
+                });
+
+                $(document).on("click", "#createAttr", function () {
+                    that.createAttr();
+                });
+
+            });
+
+        }
+    }).init();*@
+    </script>
+}

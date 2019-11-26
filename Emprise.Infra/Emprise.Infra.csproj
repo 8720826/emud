@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Middleware\**" />
+    <EmbeddedResource Remove="Middleware\**" />
+    <None Remove="Middleware\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Authorization\AuthenticationFailedContext.cs" />
+    <Compile Remove="Authorization\JwtAuthenticationAttribute.cs" />
+    <Compile Remove="Authorization\JwtAuthenticationBuilderExtension.cs" />
+    <Compile Remove="Authorization\JwtAuthenticationEvents.cs" />
+    <Compile Remove="Authorization\JwtAuthenticationHandler.cs" />
+    <Compile Remove="Authorization\JwtAuthenticationOptions.cs" />
+    <Compile Remove="Authorization\JwtAuthenticationScheme.cs" />
+    <Compile Remove="Authorization\JwtChallengeContext.cs" />
+    <Compile Remove="Authorization\TokenValidatedContext.cs" />
+    <Compile Remove="Providers\JobProvider.cs" />
+    <Compile Remove="Queue\DelayDispatcherQueue.cs" />
+    <Compile Remove="Queue\IMessageQueue.cs" />
+    <Compile Remove="Queue\MessageQueueDelay.cs" />
+    <Compile Remove="Queue\MillisecondTimer.cs" />
+    <Compile Remove="Queue\SimpleSynQueue.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aliyun.Acs.Core" Version="1.0.1" />
+    <PackageReference Include="Aliyun.Acs.Dm" Version="1.0.1" />
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.7" />
+    <PackageReference Include="MailKit" Version="2.3.1.6" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Emprise.Domain.Core\Emprise.Domain.Core.csproj" />
+  </ItemGroup>
+
+</Project>
