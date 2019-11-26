@@ -1,0 +1,174 @@
+﻿@page
+@model Emprise.Web.Pages.User.VerifyEmailModel
+@{
+    ViewData["Title"] = "使用邮箱注册";
+}
+@{
+    Layout = "_Layout";
+}
+    <div class="big_bg" id="app">
+        <div class="nav">
+            <h2 class="nav-title">使用邮箱注册</h2>
+            <a href="@(Url.Page("/User/Login"))" class="nav-back"><span><<返回</span></a>
+        </div>
+
+        <div class="main">
+            <div>
+                <template v-if="!hasSend">
+                    <div class="login-nonreg">
+                        <form>
+                            <div class="form-text-login">
+                                <label>邮箱：</label>
+                                <input type="text" class="form-text" v-model="email" />
+                                <a href="javascript:;" class="form-text-clear fn-hide"><i class="icon icon-clear"></i></a>
+                            </div>
+
+                        </form>
+                    </div>
+                    <div class="fn-mt-login fn-mlr">
+                        <a class="btn btn-bar-tawny" href="javascript:;" v-on:click="send"> 发送邮件 </a>
+                    </div>
+                </template>
+                <div class="fn-mt-login fn-mlr" v-else>
+                    <div>
+                        <p>已发送邮件到 <span>{{emailToLower}}</span>，请登录邮箱查看。</p>
+                        <p>验证成功后，点击下面按钮</p>
+                    </div>
+
+                    <a class="btn btn-bar-tawny mt15" v-bind:href="loginUrl"> 登录游戏 </a>
+                </div>
+                <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
+            </div>
+
+        </div>
+
+        @await Html.PartialAsync("_Footer", Model.SiteConfig)
+
+        <div class="loading" v-show="loading">
+            <img src="/images/loading.gif">
+        </div>
+    </div>
+@section Scripts {
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                email: "",
+                tips: "",
+                hasSend:false,
+                loading: 0,
+            },
+            computed: {
+                loginUrl:function(){
+                    return "/user/login?email=" + this.emailToLower;
+                },
+                emailToLower: function () {
+                    return this.email.toLowerCase();
+                }
+            },
+            methods: {
+                send: function () { 
+                    var that = this;
+                    that.tips = "";
+
+                    if (!that.email) {
+                        that.tips = "请输入邮箱";
+                        return false;
+                    }
+
+                    that.loading = 1;
+
+                    axios.post("/api/user/SendRegEmail", {
+                        email: that.email
+                    })
+                    .then(function (response) {
+                        var result = response.data;
+                        if (result.status) {
+                            that.hasSend = true;
+                        } else {
+                            var error = result.errorMessage || "登录失败";
+                            if (result.data) {
+                                error += "<br>" + result.data;
+                            }
+                            that.tips = error;
+                        }
+                        that.loading = 0;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        that.loading = 0;
+                    });
+                }
+            }
+        });
+
+        @*
+    ({
+        send: function () {
+            $("#msgTip").html("");
+
+            if (!$("input[name=email]").val()) {
+                return false;
+            }
+
+            var index = layer.load(2);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/user/SendRegEmail",
+                data: $("form").serialize(),
+                success: function (result) {
+                    if (result.status) {
+                        layer.msg('发送邮件成功！');
+                        $("#formSend").hide();
+                        $(".login-nonreg").hide();
+
+                        var email = $("input[name=email]").val();
+                        $("#email").html(email);
+                        $("#sendResult").show();
+                        $("#formModify").attr("href", "/user/login?email=" + email);
+
+                    } else {
+                        var error = result.errorMessage||"发送邮件失败";
+                        if (result.data) {
+                            error += "<br>" + result.data;
+                        }
+                        $("#msgTip").html(error);
+                    }
+                    layer.close(index);
+                }, error: function () {
+                    layer.close(index);
+                }
+            });
+        },
+        init : function () {
+            var that = this;
+
+            $(function () {
+                layer.config({
+                    skin: 'layui-layer-hei'
+                });
+
+                $(document).on("click", "#formSend", function () {
+                    that.send();
+                });
+
+                $(document).on("keyup", "input", function () {
+                    var obj = $(this);
+                    if (obj.val()) {
+                        obj.next("a").show();
+                    } else {
+                        obj.next("a").hide();
+                    }
+                });
+
+                $(document).on("click", ".form-text-clear", function () {
+                    var obj = $(this);
+                    obj.prev("input").val("");
+                    obj.hide();
+                });
+            });
+        }
+    }).init();*@
+    </script>
+}

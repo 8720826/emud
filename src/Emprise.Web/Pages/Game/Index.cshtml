@@ -1,0 +1,226 @@
+﻿@page
+@model Emprise.Web.Pages.Game.IndexModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>@(Model.Title)</title>
+    <link href="/css/game.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="bg" id="app" @@click="showchat=false">
+        <header>
+            <span class="username">{{myinfo.name}} <{{myinfo.status}}中></span>
+            <div class="hps">
+                <div class="hp">
+                    <div class="hpLine" v-bind:style="{width:hpLength+'px'}"></div>
+                </div>
+                <div class="mp">
+                    <div class="mpLine" v-bind:style="{width:mpLength+'px'}"></div>
+                </div>
+            </div>
+            <span class="email">✉<em v-if="newEmailCount>0">({{newEmailCount>99?"99+":newEmailCount}})</em></span>
+            <span class="setting" v-show="myBox!=''" @@click="myBox=''">╳</span>
+        </header>
+        <div class="exp" id="exp">
+            <div class="expLine" id="expLine"></div>
+        </div>
+
+
+        <div id="chat">
+            <span class="showchat" @@click.stop="showchat=true;">&nbsp;聊&nbsp;</span>
+
+            <ul>
+                <li  v-for="chat,index in chats"><a href="javascript:;" class="player" @@click="showPlayer(chat.playerId)">{{chat.sender}}</a>：{{chat.content}}<em>({{chat.postDate}})</em></li>
+            </ul>
+        </div>
+
+        <div id="map">
+            <div id="title">
+                <marquee class="marquee" scrollamount="5">
+                    <span class="roomDescription">{{map.currentRoom.description}}</span>
+                </marquee>
+            </div>
+
+            <div id="room">
+                <div style="margin-left:100px;">
+                    <div id="onlinelist">
+                        <span>这里有</span>
+                        <template v-for="player,index in players">
+                            <button class="online player" @@click="showPlayer(player.playerId)" v-if="player.playerName!=myinfo.name">{{player.playerName}}</button>
+                        </template>
+                        <template v-for="npc,index in npcs">
+                            <button class="online npc" @@click="showNpc(npc.id)">*{{npc.name}}</button>
+                        </template>
+
+                    </div>
+                    <div id="route" style="position:relative">
+                        <div class="ditection">
+                            <div class="line">
+                                <div class="item"></div>
+                                <div class="item exit" @@click="move(map.northRoom&&map.northRoom.id)" @@dblclick="setRoom('north')">{{map.northRoom&&map.northRoom.name}}</div>
+                                <div class="item"></div>
+                            </div>
+                            <div class="line">
+                                <div class="item exit" @@click="move(map.westRoom&&map.westRoom.id)" @@dblclick="setRoom('west')">{{map.westRoom&&map.westRoom.name}}</div>
+                                <div class="item cur">{{map.currentRoom.name}}</div>
+                                <div class="item exit" @@click="move(map.eastRoom&&map.eastRoom.id)" @@dblclick="setRoom('east')">{{map.eastRoom&&map.eastRoom.name}}</div>
+                            </div>
+                            <div class="line">
+                                <div class="item"></div>
+                                <div class="item exit" @@click="move(map.southRoom&&map.southRoom.id)" @@dblclick="setRoom('south')">{{map.southRoom&&map.southRoom.name}}</div>
+                                <div class="item"></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div class="action">
+                    <button @@click="search" @@dblclick="meditate">探索</button>
+                    <button @@click="meditate">打坐</button>
+                    <button @@click="exert" v-show="myinfo.hp<myinfo.maxHp">疗伤</button>
+                    <button @@click="" v-show="map.currentRoom.canFish">钓鱼</button>
+                    <button @@click="" v-show="map.currentRoom.canDig">挖矿</button>
+                    <button @@click="" v-show="map.currentRoom.canCollect">采药</button>
+                    <button @@click="" v-show="map.currentRoom.canCut">伐木</button>
+                    <button @@click="" v-show="map.currentRoom.canHunt">打猎</button>
+                    <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止</button>
+
+                </div>
+                <span class="mybag"  v-long="1111">背包</span>
+            </div>
+
+        </div>
+
+        <div id="message" ref="message">
+            <ul>
+                <li  v-for="message,index in messages" :class="index===messages.length-1?'cur':''"><p v-html="message.content">{{message.content}}</p><em>({{message.postDate}})</em></li>
+            </ul>
+        </div>
+
+        <footer>
+            <a href="javascript:;" @@click="showMe"><span>人物</span></a>
+            <a href="javascript:;" @@click=""><span>社交</span></a>
+            <a href="javascript:;"><span>任务</span></a>
+            <a href="javascript:;"><span>商店</span></a>
+            <a href="javascript:;"><span>排行</span></a>
+            <a href="javascript:;"><span>帮助</span></a>
+
+        </footer>
+
+        <div v-show="showchat" id="chatBox" @@click.stop="">
+            <div>
+                <input ref="msg" v-model="msg" v-on:keyup.enter="send" />
+                <button id="send" @@click="send">发送</button>
+            </div>
+        </div>
+
+        <div class="myBox" ref="myBox" v-show="myBox!=''">
+            <ul class="menu" ref="menu" v-show="myBoxMenus.length>0">
+                <template v-for="menu,index in myBoxMenus">
+                    <li v-if="menu.id==myBox" class="cur">
+                        {{menu.name}}
+                    </li>
+                    <li @@click="clickMenu(menu.id)" v-else>
+                        {{menu.name}}
+                    </li>
+                </template>
+
+            </ul>
+            <div class="content" ref="content">
+                <div class="playerinfo" v-if="myBox=='player'">
+                    <p>{{player.name}}</p>
+                    <hr />
+                    <p v-for="description,index in player.descriptions">
+                        {{description}}
+                    </p>
+                    <div class="mt15">
+                        <button type="button" v-for="command,index in player.commands">{{command}}</button>
+                    </div>
+                </div>
+
+                <div class="npcinfo" v-if="myBox=='npc'">
+                    <p>{{npc.name}}</p>
+                    <hr />
+                    <p v-for="description,index in npc.descriptions">
+                        {{description}}
+                    </p>
+                    <div class="mt15">
+                        <button type="button" v-for="command,index in npc.commands">{{command}}</button>
+                    </div>
+                </div>
+
+                <div class="myinfo" v-if="myBox=='me'">
+                    <p>基本属性</p>
+                    <hr />
+                    <ul>
+                        <li><label>【称号】</label><span>{{myinfo.title||"无"}}</span></li>
+                        <li><label>【性别】</label><span>{{myinfo.gender}}</span></li>
+                        <li><label>【年龄】</label><span>{{myinfo.age}}</span></li>
+                        <li><label>【等级】</label><span>{{myinfo.level}}</span></li>
+                        <li><label>【经验】</label><span>{{myinfo.exp}}</span></li>
+                        <li><label>【潜能】</label><span>{{myinfo.pot}}</span></li>
+                        <li class="long"><label>【气血】</label><span>{{myinfo.hp}}</span></li>
+                        <li class="long"><label>【内力】</label><span>{{myinfo.mp}}</span></li>
+                    </ul>
+
+                    <p class="mt15">先天属性</p>
+                    <hr />
+                    <ul>
+                        <li><label>【臂力】</label><span>{{myinfo.str}}</span></li>
+                        <li><label>【根骨】</label><span>{{myinfo.con}}</span></li>
+                        <li><label>【身法】</label><span>{{myinfo.dex}}</span></li>
+                        <li><label>【悟性】</label><span>{{myinfo._int}}</span></li>
+                        <li><label>【容貌】</label><span>{{myinfo.per}}</span></li>
+                        <li><label>【福缘】</label><span>{{myinfo.kar}}</span></li>
+                    </ul>
+
+                    <p class="mt15">战斗属性</p>
+                    <hr />
+                    <ul>
+                        <li><label>【攻击】</label><span>{{myinfo.atk}}</span></li>
+                        <li><label>【防御】</label><span>{{myinfo.def}}</span></li>
+                        <li><label>【命中】</label><span>{{myinfo.hit}}</span></li>
+                        <li><label>【闪躲】</label><span>{{myinfo.flee}}</span></li>
+                        <li><label>【招架】</label><span>{{myinfo.parry}}</span></li>
+                    </ul>
+                </div>
+
+                <div class="status" v-if="myBox=='status'">
+                    <p>状态</p>
+
+                </div>
+            </div>
+        </div>
+
+        <template>
+            <transition name="confirm-fade">
+                <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
+                    <div class="confirm-content-wrap" @@click.stop>
+                        <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
+                        <p class="my-confirm-content">{{ modal.content }}</p>
+                        <div class="my-operation">
+                            <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
+                                <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>
+                            </div>
+                            <div class="confirm-btn" @@click="confirmEvent('ok')">
+                                <p class="my-btn-text">{{ modal.confirmText }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </template>
+    </div>
+    <script src="/lib/vue/vue.js" type="text/javascript"></script>
+    <script src="/lib/signalr/signalr.min.js" type="text/javascript"></script>
+    <script src="/js/game.js" type="text/javascript"></script>
+</body>
+</html>
