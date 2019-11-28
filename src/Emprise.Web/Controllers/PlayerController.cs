@@ -7,7 +7,6 @@ using Emprise.Application.Player.Services;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Notifications;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Emprise.Web.Controllers

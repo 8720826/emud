@@ -6,18 +6,22 @@
 
   <ItemGroup>
     <Compile Remove="Filter\**" />
+    <Compile Remove="logs\**" />
     <Compile Remove="wwwroot\js\%40aspnet\**" />
     <Compile Remove="wwwroot\lib\jquery\**" />
     <Compile Remove="wwwroot\lib\layer\**" />
     <Content Remove="Filter\**" />
+    <Content Remove="logs\**" />
     <Content Remove="wwwroot\js\%40aspnet\**" />
     <Content Remove="wwwroot\lib\jquery\**" />
     <Content Remove="wwwroot\lib\layer\**" />
     <EmbeddedResource Remove="Filter\**" />
+    <EmbeddedResource Remove="logs\**" />
     <EmbeddedResource Remove="wwwroot\js\%40aspnet\**" />
     <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\**" />
     <None Remove="Filter\**" />
+    <None Remove="logs\**" />
     <None Remove="wwwroot\js\%40aspnet\**" />
     <None Remove="wwwroot\lib\jquery\**" />
     <None Remove="wwwroot\lib\layer\**" />
