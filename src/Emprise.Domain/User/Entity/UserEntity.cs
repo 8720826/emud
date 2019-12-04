@@ -11,13 +11,13 @@ namespace Emprise.Domain.User.Entity
     [Table("User")]
     public class UserEntity: BaseEntity
     {
-        /*
+        
         /// <summary>
-        /// 姓名
+        /// 用户名
         /// </summary>
         [StringLength(20)]
         public string UserName { set; get; }
-        */
+        
 
         /// <summary>
         /// 密码

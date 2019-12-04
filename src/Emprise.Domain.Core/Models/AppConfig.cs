@@ -58,5 +58,17 @@ namespace Emprise.Domain.Core.Models
         public string BeiAn { get; set; }
 
         public string WelcomeWords { get; set; }
+
+        /// <summary>
+        /// 是否需要填写邮箱
+        /// </summary>
+        public bool IsNeedEmail { get; set; }
+
+        /// <summary>
+        /// 是否需要验证邮箱，开启后需要配置邮件服务
+        /// </summary>
+        public bool IsNeedVerifyEmail { get; set; }
+        
+
     }
 }

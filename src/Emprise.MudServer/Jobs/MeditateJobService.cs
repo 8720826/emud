@@ -43,7 +43,7 @@ namespace Emprise.MudServer.Jobs
             {
                 if (!stoppingToken.IsCancellationRequested)
                 {
-                    //_logger.LogInformation(DateTime.Now.ToString() + "BackgroundService：异常" + ex.Message + ex.StackTrace);
+                    _logger.LogInformation(DateTime.Now.ToString() + "BackgroundService：异常" + ex.Message + ex.StackTrace);
                 }
                 else
                 {

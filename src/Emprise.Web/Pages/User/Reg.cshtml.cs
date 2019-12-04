@@ -17,8 +17,14 @@ namespace Emprise.Web.Pages.User
     {
         public RegModel(IOptions<AppConfig> appConfig) : base(appConfig)
         {
+            IsNeedEmail = appConfig.Value.Site.IsNeedEmail;
 
+            IsNeedVerifyEmail = appConfig.Value.Site.IsNeedVerifyEmail;
         }
+
+        public bool IsNeedEmail { get; set; }
+
+        public bool IsNeedVerifyEmail { get; set; }
 
         public string Email { get; set; }
 
@@ -32,7 +38,8 @@ namespace Emprise.Web.Pages.User
             {
                 return RedirectToPage("/User/Index");
             }
-            if (string.IsNullOrEmpty(email)|| string.IsNullOrEmpty(code))
+
+            if (IsNeedVerifyEmail && string.IsNullOrEmpty(email) || string.IsNullOrEmpty(code))
             {
                 return RedirectToPage("/User/VerifyEmail");
             }
@@ -40,7 +47,7 @@ namespace Emprise.Web.Pages.User
             {
                 return RedirectToPage("/User/VerifyEmail");
             }
-
+            
             return Page();
         }
     }

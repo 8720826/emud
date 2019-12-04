@@ -19,10 +19,19 @@
                     <form>
 
                         <div class="form-text-login">
-                            <label>邮箱：</label>
+                            <label>用户名：</label>
                             <input type="text" class="form-text" v-model="email" readonly="readonly" />
                             <a href="javascript:;" class="form-text-clear fn-hide"><i class="icon icon-clear"></i></a>
                         </div>
+                        @if (Model.IsNeedEmail)
+                        {
+                            <div class="form-text-login">
+                                <label>邮箱：</label>
+                                <input type="text" class="form-text" v-model="email" readonly="readonly" />
+                                <a href="javascript:;" class="form-text-clear fn-hide"><i class="icon icon-clear"></i></a>
+                            </div>
+                        }
+
 
                         <div class="form-text-login">
                             <label>密码：</label>
