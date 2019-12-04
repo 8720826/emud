@@ -23,24 +23,30 @@ namespace Emprise.Domain.Room.Entity
         /// <summary>
         /// 东
         /// </summary>
-        public int East { set; get; }
+        public int East { get; set; }
 
-
+        public string EastName { get; set; }
 
         /// <summary>
         /// 西
         /// </summary>
-        public int West { set; get; }
+        public int West { get; set; }
+
+        public string WestName { get; set; }
 
         /// <summary>
         /// 南
         /// </summary>
-        public int South { set; get; }
+        public int South { get; set; }
+
+        public string SouthName { get; set; }
 
         /// <summary>
         /// 北
         /// </summary>
-        public int North { set; get; }
+        public int North { get; set; }
+
+        public string NorthName { get; set; }
 
         /// <summary>
         /// 房间说明

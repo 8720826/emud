@@ -25,27 +25,9 @@ new Vue({
     data: {
         connection: null,
         myinfo: {},
-        map: {
-            currentRoom: {
-                name: "",
-                description: ""
-            },
-            northRoom: {
-                id: 0,
-                name: ""
-            },
-            westRoom: {
-                id: 0,
-                name: ""
-            },
-            eastRoom: {
-                id: 0,
-                name: ""
-            },
-            southRoom: {
-                id: 0,
-                name: ""
-            }
+        room: {
+            name: "",
+            description: ""
         },
         player: {},
         players: [],
@@ -166,7 +148,7 @@ new Vue({
 
             connection.on("move", result => {
                 console.log("move:" + JSON.stringify(result));
-                that.map = result;
+                that.room = result;
             });
 
             connection.on("updatePlayerList", playerList => {

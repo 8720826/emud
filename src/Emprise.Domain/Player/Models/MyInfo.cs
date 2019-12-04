@@ -174,5 +174,10 @@ namespace Emprise.Domain.Player.Models
         /// 权限
         /// </summary>
         public List<string> Auths { set; get; }
+
+        /// <summary>
+        /// 可分配点数
+        /// </summary>
+        public int Point { set; get; }
     }
 }

@@ -7,18 +7,20 @@ using Emprise.Application.User.Models;
 using Emprise.Application.User.Services;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Entity;
+using Emprise.Domain.Core.Models;
 using Emprise.Domain.Player.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 
 namespace Emprise.Web.Pages.User
 {
-    public class CreatePlayerModel : PageModel
+    public class CreatePlayerModel : BasePageModel
     {
         private readonly IAccountContext _accountContext;
         private readonly IUserAppService _userAppService;
         private readonly IPlayerAppService _playerAppService;
-        public CreatePlayerModel(IAccountContext accountContext, IUserAppService userAppService, IPlayerAppService playerAppService)
+        public CreatePlayerModel(IAccountContext accountContext, IUserAppService userAppService, IPlayerAppService playerAppService, IOptions<AppConfig> appConfig) : base(appConfig)
         {
             _accountContext = accountContext;
             _userAppService = userAppService;

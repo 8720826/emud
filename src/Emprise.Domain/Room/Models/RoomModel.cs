@@ -14,6 +14,34 @@ namespace Emprise.Domain.Room.Models
         public string Name { set; get; }
 
         /// <summary>
+        /// 东
+        /// </summary>
+        public int East { get; set; }
+
+        public string EastName { get; set; }
+
+        /// <summary>
+        /// 西
+        /// </summary>
+        public int West { get; set; }
+
+        public string WestName { get; set; }
+
+        /// <summary>
+        /// 南
+        /// </summary>
+        public int South { get; set; }
+
+        public string SouthName { get; set; }
+
+        /// <summary>
+        /// 北
+        /// </summary>
+        public int North { get; set; }
+
+        public string NorthName { get; set; }
+
+        /// <summary>
         /// 房间说明
         /// </summary>
         public string Description { set; get; }

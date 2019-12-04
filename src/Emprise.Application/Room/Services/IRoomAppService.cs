@@ -2,6 +2,7 @@
 using Emprise.Application.User.Dtos;
 using Emprise.Application.User.Models;
 using Emprise.Domain.Core.Interfaces;
+using Emprise.Domain.Room.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,6 @@ namespace Emprise.Application.User.Services
 {
     public interface IRoomAppService : IBaseService
     {
-        Task<CurrentRoomInfo> GetCurrent(int playerId);
+        Task<RoomModel> GetCurrent(int playerId);
     }
 }

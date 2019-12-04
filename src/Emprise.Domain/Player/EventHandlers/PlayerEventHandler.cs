@@ -108,20 +108,10 @@ namespace Emprise.Domain.User.EventHandlers
             var playersOut = await _chatOnlineProvider.GetPlayerList(roomOut.Id);
             await _mudProvider.UpdateRoomPlayerList(roomOut.Id, playersOut);
 
-            //更新当前房间及出口
-            var ids = new List<int>() { roomIn.West, roomIn.East, roomIn.South, roomIn.North }.Where(x => x > 0);
-            var rooms = await _roomDomainService.GetAll(x => ids.Contains(x.Id));
-            rooms.Add(roomIn);
-            var roomInfos = _mapper.Map<List<RoomModel>>(rooms);
-            var obj = new
-            {
-                CurrentRoom = roomInfos.FirstOrDefault(x => x.Id == roomIn.Id),
-                WestRoom = roomInfos.FirstOrDefault(x => x.Id == roomIn.West) ?? new RoomModel(),
-                EastRoom = roomInfos.FirstOrDefault(x => x.Id == roomIn.East) ?? new RoomModel(),
-                SouthRoom = roomInfos.FirstOrDefault(x => x.Id == roomIn.South) ?? new RoomModel(),
-                NorthRoom = roomInfos.FirstOrDefault(x => x.Id == roomIn.North) ?? new RoomModel()
-            };
-            await _mudProvider.Move(player.Id, obj);
+
+            var roomModel = _mapper.Map<RoomModel>(roomIn);
+
+            await _mudProvider.Move(player.Id, roomModel);
 
             //更新当前玩家显示的npc列表
             var nps = await _npcDomainService.Query(x => x.RoomId == roomIn.Id);
@@ -159,24 +149,9 @@ namespace Emprise.Domain.User.EventHandlers
                 Title = player.Title
             });
 
-            var ids = new List<int>() { room.West, room.East, room.South, room.North }.Where(x => x > 0);
+            var roomModel = _mapper.Map<RoomModel>(room);
 
-            var rooms = await _roomDomainService.GetAll(x => ids.Contains(x.Id));
-
-            rooms.Add(room);
-
-            var roomInfos = _mapper.Map<List<RoomModel>>(rooms);
-
-            var obj = new
-            {
-                CurrentRoom = roomInfos.FirstOrDefault(x => x.Id == room.Id),
-                WestRoom = roomInfos.FirstOrDefault(x => x.Id == room.West),
-                EastRoom = roomInfos.FirstOrDefault(x => x.Id == room.East),
-                SouthRoom = roomInfos.FirstOrDefault(x => x.Id == room.South),
-                NorthRoom = roomInfos.FirstOrDefault(x => x.Id == room.North)
-            };
-
-            await _mudProvider.Move(player.Id, obj);
+            await _mudProvider.Move(player.Id, roomModel);
 
 
             var nps = await _npcDomainService.Query(x => x.RoomId == room.Id);

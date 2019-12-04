@@ -47,7 +47,7 @@ namespace Emprise.MudServer.Jobs
                 }
                 else
                 {
-                    //_logger.LogInformation(DateTime.Now.ToString() + "BackgroundService：停止");
+                    _logger.LogInformation(DateTime.Now.ToString() + "BackgroundService：停止");
                 }
             }
         }

@@ -42,7 +42,7 @@
         <div id="map">
             <div id="title">
                 <marquee class="marquee" scrollamount="5">
-                    <span class="roomDescription">{{map.currentRoom.description}}</span>
+                    <span class="roomDescription"  v-html="room.description">{{room.description}}</span>
                 </marquee>
             </div>
 
@@ -62,17 +62,17 @@
                         <div class="ditection">
                             <div class="line">
                                 <div class="item"></div>
-                                <div class="item exit" @@click="move(map.northRoom&&map.northRoom.id)" @@dblclick="setRoom('north')">{{map.northRoom&&map.northRoom.name}}</div>
+                                <div class="item exit" @@click="move(room.north)" @@dblclick="setRoom('north')">{{room.northName}}</div>
                                 <div class="item"></div>
                             </div>
                             <div class="line">
-                                <div class="item exit" @@click="move(map.westRoom&&map.westRoom.id)" @@dblclick="setRoom('west')">{{map.westRoom&&map.westRoom.name}}</div>
-                                <div class="item cur">{{map.currentRoom.name}}</div>
-                                <div class="item exit" @@click="move(map.eastRoom&&map.eastRoom.id)" @@dblclick="setRoom('east')">{{map.eastRoom&&map.eastRoom.name}}</div>
+                                <div class="item exit" @@click="move(room.west)" @@dblclick="setRoom('west')">{{room.westName}}</div>
+                                <div class="item cur">{{room.name}}</div>
+                                <div class="item exit" @@click="move(room.east)" @@dblclick="setRoom('east')">{{room.eastName}}</div>
                             </div>
                             <div class="line">
                                 <div class="item"></div>
-                                <div class="item exit" @@click="move(map.southRoom&&map.southRoom.id)" @@dblclick="setRoom('south')">{{map.southRoom&&map.southRoom.name}}</div>
+                                <div class="item exit" @@click="move(room.south)" @@dblclick="setRoom('south')">{{room.southName}}</div>
                                 <div class="item"></div>
                             </div>
                         </div>
@@ -86,11 +86,11 @@
                     <button @@click="search" @@dblclick="meditate">探索</button>
                     <button @@click="meditate">打坐</button>
                     <button @@click="exert" v-show="myinfo.hp<myinfo.maxHp">疗伤</button>
-                    <button @@click="" v-show="map.currentRoom.canFish">钓鱼</button>
-                    <button @@click="" v-show="map.currentRoom.canDig">挖矿</button>
-                    <button @@click="" v-show="map.currentRoom.canCollect">采药</button>
-                    <button @@click="" v-show="map.currentRoom.canCut">伐木</button>
-                    <button @@click="" v-show="map.currentRoom.canHunt">打猎</button>
+                    <button @@click="" v-show="room.canFish">钓鱼</button>
+                    <button @@click="" v-show="room.canDig">挖矿</button>
+                    <button @@click="" v-show="room.canCollect">采药</button>
+                    <button @@click="" v-show="room.canCut">伐木</button>
+                    <button @@click="" v-show="room.canHunt">打猎</button>
                     <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止</button>
 
                 </div>

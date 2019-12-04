@@ -260,6 +260,11 @@ namespace Emprise.Domain.User.CommandHandlers
                 await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
                 return Unit.Value;
             }
+            if (player.Status!= PlayerStatusEnum.空闲)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"请先停止{player.Status}！"));
+                return Unit.Value;
+            }
             var oldRoomId = player.RoomId;
             if (oldRoomId == roomId)
             {

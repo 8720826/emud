@@ -43,7 +43,8 @@ namespace Emprise.Domain.Room.Services
         public async Task<RoomEntity> Get(int id)
         {
             var key = string.Format(CacheKey.Room, id);
-            return await _cache.GetOrCreateAsync(key, async q => {
+            return await _cache.GetOrCreateAsync(key, async p => {
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
                 return await Task.Run(async () =>
                 {
                     return await _roomRepository.Get(id);

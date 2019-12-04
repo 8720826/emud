@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Room\Cache\**" />
+    <EmbeddedResource Remove="Room\Cache\**" />
+    <None Remove="Room\Cache\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="User\Events\UserInRoomEvent.cs" />
     <Compile Remove="User\Events\UserOutRoomEvent.cs" />
   </ItemGroup>
@@ -19,10 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Emprise.Domain.Core\Emprise.Domain.Core.csproj" />
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Room\Cache\" />
   </ItemGroup>
 
 </Project>

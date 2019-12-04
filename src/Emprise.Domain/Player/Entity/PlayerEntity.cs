@@ -209,6 +209,11 @@ namespace Emprise.Domain.Player.Entity
         /// 此处为管理权限，如建造房间
         /// </summary>
         public string Auths { set; get; }
+
+        /// <summary>
+        /// 可分配点数
+        /// </summary>
+        public int Point { set; get; }
     }
 }
 
