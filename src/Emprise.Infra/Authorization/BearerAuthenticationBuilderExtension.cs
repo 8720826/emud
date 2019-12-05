@@ -40,5 +40,21 @@ namespace Emprise.Infra.Authorization
                 }
             );
         }
+
+        public static AuthenticationBuilder AddJwtBearerAuth(this AuthenticationBuilder builder)
+        {
+            //app验证
+            return builder.AddJwtBearer(JwtAuthenticationScheme.Api,
+                option => {
+                    option.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        LifetimeValidator = (DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters parameters) =>
+                        {
+                            return false;
+                        }
+                    };
+                }
+            );
+        }
     }
 }

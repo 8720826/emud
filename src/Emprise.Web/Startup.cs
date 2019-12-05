@@ -46,9 +46,16 @@ namespace Emprise.Web
              AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
              {
                  o.LoginPath = new PathString("/user/login");
-             }).AddJwtBearerAuth(Configuration.GetValue<string>("Site:ApiKey"));
+             });
 
-
+            if (Configuration.GetValue<bool>("Site:IsApiEnable"))
+            {
+                services.AddAuthentication().AddJwtBearerAuth(Configuration.GetValue<string>("Site:ApiKey"));
+            }
+            else
+            {
+                services.AddAuthentication().AddJwtBearerAuth();
+            }
 
 
             services.AddControllers();
