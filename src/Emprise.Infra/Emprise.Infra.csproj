@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Compile Remove="Authorization\AuthenticationFailedContext.cs" />
-    <Compile Remove="Authorization\JwtAuthenticationAttribute.cs" />
     <Compile Remove="Authorization\JwtAuthenticationBuilderExtension.cs" />
     <Compile Remove="Authorization\JwtAuthenticationEvents.cs" />
     <Compile Remove="Authorization\JwtAuthenticationHandler.cs" />
@@ -38,11 +37,13 @@
     <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.0.601" />
   </ItemGroup>

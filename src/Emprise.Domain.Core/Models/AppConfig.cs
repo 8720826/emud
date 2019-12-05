@@ -68,7 +68,9 @@ namespace Emprise.Domain.Core.Models
         /// 是否需要验证邮箱，开启后需要配置邮件服务
         /// </summary>
         public bool IsNeedVerifyEmail { get; set; }
-        
 
+        public bool IsApiEnable { get; set; }
+
+        public string ApiKey { get; set; }
     }
 }

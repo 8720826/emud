@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Emprise.Domain.Core.Models;
+using Emprise.Infra.Authorization;
 using Emprise.Infra.Data;
 using Emprise.Infra.Ioc;
 using Emprise.Infra.IoC;
@@ -38,13 +39,17 @@ namespace Emprise.Web
         public void ConfigureServices(IServiceCollection services)
         {
             #region »ù±¾×¢Èë
+            services.Configure<AppConfig>(Configuration);
 
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
              AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
              {
                  o.LoginPath = new PathString("/user/login");
-             });
+             }).AddJwtBearerAuth(Configuration.GetValue<string>("Site:ApiKey"));
+
+
+
 
             services.AddControllers();
 
@@ -70,7 +75,7 @@ namespace Emprise.Web
             });
 
 
-            services.Configure<AppConfig>(Configuration);
+           
 
             //services.AddDbContext<EmpriseDbContext>(options => options.UseSqlServer(Configuration.GetValue<string>("ConnectionStrings:MsSql"), b => b.UseRowNumberForPaging()));
 
