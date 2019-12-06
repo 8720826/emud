@@ -1,4 +1,4 @@
-﻿emud是一个基于netcore3.0 + vue 开发的mud游戏框架
+﻿emud是一个基于netcore3.1 + vue 开发的mud游戏框架
 https://github.com/8720826/emud
 作者qq： 8720826
 
