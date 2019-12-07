@@ -12,7 +12,7 @@ namespace Emprise.Infra.Data
 {
     public class EmpriseDbContext : DbContext
     {
-        private readonly IHostingEnvironment _env;
+
 
         public EmpriseDbContext(DbContextOptions<EmpriseDbContext> options) : base(options)
         {
@@ -34,6 +34,7 @@ namespace Emprise.Infra.Data
                 }
                 modelBuilder.Model.AddEntityType(entityType);
             }
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

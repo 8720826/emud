@@ -59,6 +59,9 @@ namespace Emprise.Domain.Core.Models
 
         public string WelcomeWords { get; set; }
 
+        public int BornRoomId { get; set; }
+        
+
         /// <summary>
         /// 是否需要填写邮箱
         /// </summary>
@@ -72,5 +75,8 @@ namespace Emprise.Domain.Core.Models
         public bool IsApiEnable { get; set; }
 
         public string ApiKey { get; set; }
+
+
+        public string Salt { get; set; }
     }
 }
