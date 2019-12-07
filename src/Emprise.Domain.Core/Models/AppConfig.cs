@@ -77,6 +77,6 @@ namespace Emprise.Domain.Core.Models
         public string ApiKey { get; set; }
 
 
-        public string Salt { get; set; }
+
     }
 }

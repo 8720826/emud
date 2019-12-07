@@ -17,7 +17,7 @@ namespace Emprise.Web.Pages
     {
         public SiteConfig SiteConfig { get; set; }
 
-        private readonly AppConfig _appConfig;
+        public readonly AppConfig _appConfig;
         public BasePageModel(IOptions<AppConfig> appConfig)
         {
             _appConfig = appConfig.Value;

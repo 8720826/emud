@@ -12,13 +12,11 @@ namespace Emprise.Web.Pages.Game
 {
     public class IndexModel : BasePageModel
     {
-        private readonly AppConfig _appConfig;
         private readonly IAccountContext _account;
 
         public IndexModel(IAccountContext account, IOptions<AppConfig> appConfig) : base(appConfig)
         {
             _account = account;
-            _appConfig = appConfig.Value;
         }
 
         public string Title { get; set; }

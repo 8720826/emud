@@ -15,13 +15,10 @@ namespace Emprise.Web.Pages.User
     public class VerifyEmailModel : BasePageModel
     {
         private readonly IAccountContext _accountContext;
-        private readonly AppConfig _appConfig;
+
         public VerifyEmailModel(IAccountContext accountContext, IOptions<AppConfig> appConfig) : base(appConfig)
         {
-            _appConfig = appConfig.Value;
             _accountContext = accountContext;
-
-
         }
 
         public bool HasLogin { get; set; } = false; 

@@ -5,6 +5,7 @@ using Emprise.Domain.Core.Bus.Models;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Interfaces;
+using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
@@ -16,6 +17,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -51,6 +53,9 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IDelayedQueue  _delayedQueue;
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMudProvider _mudProvider;
+        private readonly AppConfig _appConfig;
+
+
         public PlayerCommandHandler(
             IMediatorHandler bus,
             ILogger<PlayerCommandHandler> logger,
@@ -62,6 +67,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IDelayedQueue delayedQueue,
             IRecurringQueue recurringQueue,
             IMudProvider mudProvider,
+            IOptions<AppConfig> appConfig,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
            
@@ -76,6 +82,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _delayedQueue = delayedQueue;
             _recurringQueue = recurringQueue;
             _mudProvider = mudProvider;
+            _appConfig = appConfig.Value;
         }
 
         public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)
@@ -109,6 +116,19 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
+            var roomId = _appConfig.Site.BornRoomId;
+            if (roomId <= 0)
+            {
+                await _bus.RaiseEvent(new DomainNotification("未设置出生地点！"));
+                return Unit.Value;
+            }
+
+            var room = await _roomDomainService.Get(roomId);
+            if (room == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification("设置的出生地点不存在！"));
+                return Unit.Value;
+            }
 
             player = new PlayerEntity
             {
@@ -125,7 +145,7 @@ namespace Emprise.Domain.User.CommandHandlers
                 FactionId = 0,
                 IntAdd = 0,
                 Money = 0,
-                RoomId = 1,
+                RoomId = roomId,
                 Title = "",
                 StrAdd = 0,
                 Atk = str,

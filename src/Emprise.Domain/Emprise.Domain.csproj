@@ -27,4 +27,9 @@
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Config\Entity\" />
+    <Folder Include="Config\Services\" />
+  </ItemGroup>
+
 </Project>

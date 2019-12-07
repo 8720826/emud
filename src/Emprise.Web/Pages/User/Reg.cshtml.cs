@@ -17,9 +17,7 @@ namespace Emprise.Web.Pages.User
     {
         public RegModel(IOptions<AppConfig> appConfig) : base(appConfig)
         {
-            IsNeedEmail = appConfig.Value.Site.IsNeedEmail;
 
-            IsNeedVerifyEmail = appConfig.Value.Site.IsNeedVerifyEmail;
         }
 
         public bool IsNeedEmail { get; set; }
@@ -32,6 +30,11 @@ namespace Emprise.Web.Pages.User
 
         public async Task<IActionResult> OnGetAsync(string email, string code)
         {
+
+            IsNeedEmail = _appConfig.Site.IsNeedEmail;
+
+            IsNeedVerifyEmail = _appConfig.Site.IsNeedVerifyEmail;
+
             Email = email;
             Code = code;
             if (await HttpContext.HasLogin())

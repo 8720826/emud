@@ -113,7 +113,7 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 Email = email,
                 LastDate = DateTime.Now,
-                Password = password.ToMd5(_appConfig.Site.Salt),
+                Password = password.ToMd5(),
                 Status = UserStatusEnum.正常,
                 RegDate = DateTime.Now,
                 //UserName = "",
@@ -151,7 +151,7 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            if (user.Password != password.ToMd5(_appConfig.Site.Salt))
+            if (user.Password != password.ToMd5())
             {
                 await _bus.RaiseEvent(new DomainNotification("密码错误"));
                 return Unit.Value;
@@ -214,13 +214,13 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            if (user.Password != password.ToMd5(_appConfig.Site.Salt))
+            if (user.Password != password.ToMd5())
             {
                 await _bus.RaiseEvent(new DomainNotification("密码错误"));
                 return Unit.Value;
             }
 
-            user.Password = newPassword.ToMd5(_appConfig.Site.Salt);
+            user.Password = newPassword.ToMd5();
 
             await _userDomainService.Update(user);
 
@@ -254,7 +254,7 @@ namespace Emprise.Domain.User.CommandHandlers
             await _redisDb.StringSet(key, 1, DateTime.Now.AddMinutes(expiryMin));
 
             string newPassword = GenerateRandom(10);
-            user.Password = newPassword.ToMd5(_appConfig.Site.Salt);
+            user.Password = newPassword.ToMd5();
 
             await _userDomainService.Update(user);
 
