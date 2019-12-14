@@ -1,0 +1,112 @@
+﻿@page
+@model Emprise.Admin.Pages.Tasks.IndexModel
+@{
+    ViewData["Title"] = "任务管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Task</small></div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+            <div class="am-btn-toolbar am-fl">
+                <div class="am-btn-group am-btn-group-xs">
+                    <a asp-page="Add" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-cf">
+        <form class="am-form">
+            <div class="am-fr">
+                <div class="am-input-group am-input-group-sm">
+                    <input type="text" class="am-form-field" asp-for="Keyword">
+                    <span class="am-input-group-btn">
+                        <button class="am-btn am-btn-default" type="submit">搜索</button>
+                    </span>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-sm-12">
+        <form class="am-form">
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th class="table-id">ID</th>
+                        <th class="table-title">房间名</th>
+                        <th class="table-exits">出口</th>
+                        <th class="table-desc">描述</th>
+                        <th class="table-work">属性</th>
+                        <th class="table-set">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in Model.Paging.Data)
+                    {
+                        <tr>
+                            <td>@(task.Id)</td>
+                            <td><a asp-page="./Edit" asp-route-id="@task.Id">@(task.Name)</a></td>
+                            <td>
+
+                            </td>
+                            <td>@(task.Description)</td>
+                            <td>
+
+                            </td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a asp-page="./Edit" asp-route-id="@task.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                        <a asp-page="./Copy" asp-route-id="@task.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
+                                        <a asp-page="./Delete" asp-route-id="@task.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="am-cf">
+                共 @(Model.Paging.Count) 条记录
+                <div class="am-fr">
+                    <ul class="am-pagination">
+                        <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
+
+                        @for (var i = 0; i < Model.Paging.PageCount; i++)
+                        {
+                            if (Model.Paging.PageIndex == i + 1)
+                            {
+                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
+                            }
+                        }
+
+                        <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr />
+            <p>注：.....</p>
+        </form>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}

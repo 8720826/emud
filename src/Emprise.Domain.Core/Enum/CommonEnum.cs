@@ -21,4 +21,17 @@ namespace Emprise.Domain.Core.Enum
         /// </summary>
         女 = 2,
     }
+
+
+    public enum MenuGroupEnum
+    {
+        /// <summary>
+        /// 未知
+        /// </summary>
+        Index = 0,
+
+        System = 1,
+
+        Game = 2
+    }
 }

@@ -32,6 +32,8 @@ namespace Emprise.Application.Player.Services
 
         Task Exert(int playerId);
 
+        Task NpcAction(int playerId, int npcId, string action);
+
         Task<PlayerEntity> GetUserPlayer(int userId);
 
         Task<PlayerEntity> GetPlayer(int playerId);
@@ -39,5 +41,7 @@ namespace Emprise.Application.Player.Services
         Task<PlayerInfo> GetPlayerInfo(int playerId);
 
         Task<MyInfo> GetMyInfo(int playerId);
+
+
     }
 }

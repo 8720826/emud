@@ -41,16 +41,24 @@ namespace Emprise.Domain.Npc.Entity
         public int RoomId { set; get; }
 
         /// <summary>
+        /// 是否可以聊天
+        /// </summary>
+        public bool CanTalk { set; get; }
+
+        /// <summary>
         /// 是否可以攻击
         /// </summary>
-        [Column(TypeName = "bit")]
         public bool CanFight { set; get; }
+
+        /// <summary>
+        /// 是否可以杀死
+        /// </summary>
+        public bool CanKill { set; get; }
 
 
         /// <summary>
         /// 是否可以移动
         /// </summary>
-        [Column(TypeName = "bit")]
         public bool CanMove { set; get; }
 
 
@@ -69,9 +77,10 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public int Exp { set; get; }
 
+
         /// <summary>
-        /// 命令json格式
+        /// 脚本
         /// </summary>
-        public string Commands { set; get; }
+        public int ScriptId { set; get; }
     }
 }

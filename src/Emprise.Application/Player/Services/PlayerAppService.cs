@@ -93,7 +93,13 @@ namespace Emprise.Application.Player.Services
             var commond = new ExertCommand(playerId);
             await _bus.SendCommand(commond);
         }
-        
+
+        public async Task NpcAction(int playerId, int npcId, string action)
+        {
+            var commond = new NpcActionCommand(playerId, npcId, action);
+            await _bus.SendCommand(commond);
+        }
+
 
         #endregion
 

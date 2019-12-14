@@ -1,0 +1,25 @@
+﻿@page
+@model Emprise.Admin.Pages.Room.DeleteModel
+@{
+    ViewData["Title"] = "地图管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">地图管理</strong> / <small>Map</small></div>
+</div>
+
+<div class="am-tabs am-margin" data-am-tabs>
+    是否要删除房间  "@(Model.Room?.Name)(id=@(Model.Room?.Id))" ?
+</div>
+
+<div class="am-margin">
+    <button type="button" class="am-btn am-btn-primary am-btn-xs">确认删除</button>
+    <a asp-page="/Room/Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}

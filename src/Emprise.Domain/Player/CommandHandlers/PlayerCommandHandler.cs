@@ -7,6 +7,7 @@ using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
@@ -16,12 +17,14 @@ using Emprise.Infra.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -38,7 +41,8 @@ namespace Emprise.Domain.User.CommandHandlers
         IRequestHandler<SearchCommand, Unit>,
         IRequestHandler<MeditateCommand, Unit>,
         IRequestHandler<StopActionCommand, Unit>,
-        IRequestHandler<ExertCommand, Unit>
+        IRequestHandler<ExertCommand, Unit>,
+        IRequestHandler<NpcActionCommand, Unit>
 
 
         
@@ -49,11 +53,13 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IMapper _mapper;
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IRoomDomainService _roomDomainService;
+        private readonly INpcDomainService _npcDomainService;
         private readonly IAccountContext _account;
         private readonly IDelayedQueue  _delayedQueue;
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMudProvider _mudProvider;
         private readonly AppConfig _appConfig;
+        private readonly IServiceProvider _services;
 
 
         public PlayerCommandHandler(
@@ -63,11 +69,13 @@ namespace Emprise.Domain.User.CommandHandlers
             IMapper mapper,
             IPlayerDomainService playerDomainService,
             IRoomDomainService roomDomainService,
+            INpcDomainService npcDomainService,
             IAccountContext account,
             IDelayedQueue delayedQueue,
             IRecurringQueue recurringQueue,
             IMudProvider mudProvider,
             IOptions<AppConfig> appConfig,
+            IServiceProvider services,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
            
@@ -83,6 +91,8 @@ namespace Emprise.Domain.User.CommandHandlers
             _recurringQueue = recurringQueue;
             _mudProvider = mudProvider;
             _appConfig = appConfig.Value;
+            _services = services;
+            _npcDomainService = npcDomainService;
         }
 
         public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)
@@ -453,5 +463,134 @@ namespace Emprise.Domain.User.CommandHandlers
             return Unit.Value;
         }
 
+        public async Task<Unit> Handle(NpcActionCommand command, CancellationToken cancellationToken)
+        {
+
+            var npcId = command.NpcId;
+            var playerId = command.PlayerId;
+            var action = command.Action;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            var npc = await _npcDomainService.Get(npcId);
+            if (npc == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"npc不存在！"));
+                return Unit.Value;
+            }
+
+            bool hasCheckAction = false;
+            NpcActionEnum actionEnum;
+            if (Enum.TryParse(action, out actionEnum))
+            {
+                switch (actionEnum)
+                {
+                    case NpcActionEnum.切磋:
+                        if (!npc.CanFight)
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                            return Unit.Value;
+                        }
+                        else
+                        {
+                            hasCheckAction = true;
+                        }
+                        break;
+
+                    case NpcActionEnum.杀死:
+                        if (!npc.CanKill)
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                            return Unit.Value;
+                        }
+                        else
+                        {
+                            hasCheckAction = true;
+                        }
+                        break;
+
+                    case NpcActionEnum.给予:
+                        if (npc.Type != NpcTypeEnum.人物)
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                            return Unit.Value;
+                        }
+                        else
+                        {
+                            hasCheckAction = true;
+                        }
+                        break;
+                }
+            }
+
+            if (!hasCheckAction)
+            {
+                if (npc.ScriptId > 0)
+                {
+                    var script = await _scriptDomainService.Get(npc.ScriptId);
+                    if (script != null)
+                    {
+                        var npcScript = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
+
+                        var actions = npcScript.Where(x => x.IsEntry).Select(x => x.Name).ToList();
+
+
+                    }
+                }
+            }
+
+
+
+            /*
+            var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);
+            if (type != null)
+            {
+                using (var serviceScope = _services.CreateScope())
+                {
+                    var argtypes = type.GetConstructors()
+                    .First()
+                    .GetParameters()
+                    .Select(x =>
+                    {
+                        if (x.Name == "player")
+                            return player;
+                        else if (x.Name == "npc")
+                            return npc;
+                        else if (x.ParameterType == typeof(IServiceProvider))
+                            return serviceScope.ServiceProvider;
+                        else
+                            return serviceScope.ServiceProvider.GetService(x.ParameterType);
+                    })
+                    .ToArray();
+
+                    var job = Activator.CreateInstance(type, argtypes);
+                    if (!hasCheckAction)
+                    {
+                        MethodInfo method = type.GetMethod("GetActions");
+                        var actions = (List<string>)method.Invoke(job, new object[] { });
+
+                        if (!actions.Contains(action))
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                            return Unit.Value;
+                        }
+                    }
+
+ 
+                }
+
+            }
+            */
+
+
+            await _bus.RaiseEvent(new DomainNotification($"你与npc{npcId} {action}"));
+
+            return Unit.Value;
+        }
+        
     }
 }

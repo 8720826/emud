@@ -214,6 +214,8 @@ namespace Emprise.Domain.Player.Entity
         /// 可分配点数
         /// </summary>
         public int Point { set; get; }
+
+
     }
 }
 

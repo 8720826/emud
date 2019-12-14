@@ -1,0 +1,244 @@
+﻿@page "{id}"
+@model Emprise.Admin.Pages.Room.EditModel
+@{
+    ViewData["Title"] = "地图管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <script src="/layer/layer.js"></script>
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">地图管理</strong> / <small>Map</small></div>
+    </div>
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            房间名
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Room.Name">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            属性
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group" data-am-button>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Room.CanFight"> 战斗
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Room.CanDig"> 挖矿
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Room.CanCut"> 伐木
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Room.CanFish"> 钓鱼
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Room.CanCollect"> 采药
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Room.CanHunt"> 打猎
+                            </label>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            出口
+                        </div>
+                        <div class="am-u-sm-8" id="exits">
+                            <table class="am-table">
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <div class="am-input-group">
+                                                <span class="am-input-group-label"><a asp-route-id="@Model.Room.North">@(Model.Room.NorthName)</a>（北）</span>
+                                                <input type="text" class="am-form-field" asp-for="Room.North">
+                                                <span class="am-input-group-label">
+                                                    @if (Model.Room.North == 0)
+                                                    {
+                                                        <a asp-page="Add" asp-route-id="@Model.Id" asp-route-position="north">+</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:;" class="clearExit">X</a>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="am-input-group">
+                                                <span class="am-input-group-label"><a asp-route-id="@Model.Room.West">@(Model.Room.WestName)</a>（西）</span>
+                                                <input type="text" class="am-form-field" asp-for="Room.West">
+                                                <span class="am-input-group-label">
+                                                    @if (Model.Room.West == 0)
+                                                    {
+                                                        <a asp-page="Add" asp-route-id="@Model.Id" asp-route-position="west">+</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:;" class="clearExit">X</a>
+                                                    }
+
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center;vertical-align:middle;">@(Model.Room.Name)</td>
+                                        <td>
+                                            <div class="am-input-group">
+                                                <span class="am-input-group-label"><a asp-route-id="@Model.Room.East">@(Model.Room.EastName)</a>（东）</span>
+                                                <input type="text" class="am-form-field" asp-for="Room.East">
+                                                <span class="am-input-group-label">
+                                                    @if (Model.Room.East == 0)
+                                                    {
+                                                        <a asp-page="Add" asp-route-id="@Model.Id" asp-route-position="east">+</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:;" class="clearExit">X</a>
+                                                    }
+
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <div class="am-input-group">
+                                                <span class="am-input-group-label"><a asp-route-id="@Model.Room.South">@(Model.Room.SouthName)</a>（南）</span>
+                                                <input type="text" class="am-form-field" asp-for="Room.South">
+                                                <span class="am-input-group-label">
+                                                    @if (Model.Room.South == 0)
+                                                    {
+                                                        <a asp-page="Add" asp-route-id="@Model.Id" asp-route-position="south">+</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:;" class="clearExit">X</a>
+                                                    }
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            房间描述
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Room.Description"></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="/Room/Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="am-margin">
+
+            </div>
+        </form>
+    </div>
+</div>
+    @section Scripts {
+        <script type="text/javascript">
+        var currExit = null;
+        $(function () {
+            Simditor.locale = 'zh-CN';//设置中文
+            var editor = new Simditor({
+                textarea: $("#description"),  //textarea的id
+                placeholder: '请输入房间描述',
+                toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                pasteImage: true,//允许粘贴图片
+                defaultImage: ''//编辑器插入的默认图片，此处可以删除
+            });
+
+
+            $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+
+
+            $("#exits input[type=text]").on("click", function () {
+                currExit = $(this);
+                var exitname = $(currExit).prev(".am-input-group-label").html();
+                var index = layer.open({
+                    type: 2,
+                    title: "请选择要设置的出口",
+                    area: ["800px", "1000px"],
+                    content: "@(Url.Page("List"))",
+                    success: function (layero, index) {
+
+                    },
+                    end: function () {
+                        currExit = null;
+                    }
+
+                });
+                layer.full(index);
+            });
+
+            
+            $(".clearExit").on("click", function () {
+                $(this).parent().prev("input").val("0");
+                $(this).parent().prev("input").prev(".am-input-group-label").html("");
+            });
+        });
+
+        function setExit(id, name) {
+            $(currExit).val(id).prev(".am-input-group-label").html(name);
+        }
+        </script>
+    }

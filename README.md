@@ -19,21 +19,22 @@
 2. 编译
     使用vs2019或者vscode（需要安装C#插件）
     下载地址 https://visualstudio.microsoft.com
-    
-3. 发布
-    选择Emprise.web，可以发布到IIS或其他web服务器
-    
-4. 配置文件
+	
+3. 配置文件
     配置文件为appsettings.json，本地调试使用appsettings.Development.json
-    
-5. 后台管理
-
-    源码地址：https://github.com/8720826/emud.admin
-
-    以同样方式获取代码后，修改配置文件
-
-    设置数据库连接字符串等，编译运行，将自动创建数据库
-
+    设置好游戏主程序和后台管理的数据库连接字符串等
+	
+4. 发布
+    Emprise.web  游戏主程序
+	Emprise.Admin  游戏后台管理
+	
+	可以发布到IIS或其他web服务器
+     
+5. 安装
+	游戏免安装，无需数据库脚本
+	首次打开后台管理站点时候将自动创建数据库
     打开后台管理登录页面，首次输入的账号密码即保存为管理账号
+	
+
 
     

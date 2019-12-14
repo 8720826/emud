@@ -1,0 +1,416 @@
+﻿@page
+@model Emprise.Admin.Pages.Tasks.AddModel
+@{
+    ViewData["Title"] = "任务管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+<style>
+    .simditor{
+        max-width:1000px !important;
+    }
+.simditor .simditor-body{
+    
+    /*开启滚动条*/
+    overflow-y: auto;
+    /*设置高度*/
+
+    max-height: 120px !important;
+}
+</style>
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Task</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p>@(Model.Tips)</p>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            任务名
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Task.Name">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            限时（分钟）
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Task.TimeLimit">
+                        </div>
+                        <div class="am-u-sm-6">0为不限制</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            任务类型
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(TaskTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input type="radio" name="Task.Type" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            任务周期
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(TaskPeriodEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input type="radio" name="Task.Period" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            领取方式
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(TaskTakeTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input type="radio" name="Task.TakeType" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            交付方式
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(TaskDeliverTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input type="radio" name="Task.DeliverType" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            触发方式
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(TaskTriggerTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input type="radio" name="Task.TriggerType" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            触发条件
+                        </div>
+                        <div class="am-u-sm-8">
+                            <input type="hidden" asp-for="Task.Trigger">
+                            <table class="am-table am-table-bd am-table-striped am-table-hover" id="tableTrigger">
+                                <thead>
+                                    <tr>
+                                        <td>触发条件</td>
+                                        <td>相关id</td>
+                                        <td>相关name</td>
+                                        <td>相关值</td>
+                                        <td>操作</td>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            <select id="state">
+                                                <option>请选择</option>
+                                                @foreach (var item in Enum.GetValues(typeof(TaskTriggerConditionEnum)))
+                                                {
+                                                    <option value="@(item.ToString())">@(item.ToString())</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="button" class="addTr" value="保存" />
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            完成条件
+                        </div>
+                        <div class="am-u-sm-8">
+                            <input type="hidden" asp-for="Task.Target">
+                            <table class="am-table am-table-bd am-table-striped am-table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>完成条件</td>
+                                        <td>相关id</td>
+                                        <td>相关name</td>
+                                        <td>相关值</td>
+                                        <td>操作</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+
+                                    <tr>
+                                        <td>
+                                            <select id="state">
+                                                <option>请选择</option>
+                                                @foreach (var item in Enum.GetValues(typeof(TaskTargetEnum)))
+                                                {
+                                                    <option value="@(item.ToString())">@(item.ToString())</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="button" class="addTr" value="保存" />
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            任务奖励
+                        </div>
+                        <div class="am-u-sm-8">
+                            <input type="hidden" asp-for="Task.Reward">
+                            <table class="am-table am-table-bd am-table-striped am-table-hover">
+                                <thead>
+                                    <tr>
+                                        <td>奖励</td>
+                                        <td>相关id</td>
+                                        <td>相关name</td>
+                                        <td>相关值</td>
+                                        <td>操作</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            <select id="state">
+                                                <option>请选择</option>
+                                                @foreach (var item in Enum.GetValues(typeof(TaskRewardEnum)))
+                                                {
+                                                    <option value="@(item.ToString())">@(item.ToString())</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="am-input-sm">
+                                        </td>
+                                        <td>
+                                            <input type="button" class="addTr" value="保存" />
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            描述
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Task.Description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            领取前文本
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Task.BeforeCreate"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            领取后文本
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Task.CreatedWords"></textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            进行中文本
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Task.InProgressWords"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            完成后文本
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Task.CompletedWords"></textarea>
+                        </div>
+                    </div>
+
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="/Tasks/Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="am-margin">
+
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+            $(function () {
+                Simditor.locale = 'zh-CN';//设置中文
+
+                $("textarea").each(function () {
+                    var obj = $(this);
+                    var editor = new Simditor({
+                        textarea: obj,  //textarea的id
+                        placeholder: '',
+                        toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                        pasteImage: true,//允许粘贴图片
+                        defaultImage: ''//编辑器插入的默认图片，此处可以删除
+                    });
+                });
+
+
+
+                $("input[type=checkbox]:checked").each(function () {
+                    $(this).parent(".am-btn").addClass("am-active");
+                });
+
+               $(document).on("click",".addTr", function () {
+                    var tr = $(this).parent().parent("tr");
+                    var selectVal = $(tr).find("select").eq(0).val();
+                    if (selectVal == "" || selectVal == "请选择") {
+                        return false;
+                    }
+                    var id = $(tr).find("input").eq(0).val()*1;
+                    var name = $(tr).find("input").eq(1).val();
+                    var value = $(tr).find("input").eq(2).val() * 1;
+                    if (id == 0 && name == "" && value==0) {
+                        return false;
+                    }
+
+                   var html = "<tr><td>" + selectVal + "</td><td>" + id + "</td><td>" + name + "</td><td>" + value + "</td><td><input type=\"button\"  class=\"deleteTr\"  value=\"删除\" /></td></tr>";
+                   $(tr).parent().parent().find("tbody").append(html);
+                });
+
+                $(document).on("click",".deleteTr", function () {
+                    $(this).parent().parent("tr").remove();
+                });
+            });
+    </script>
+}

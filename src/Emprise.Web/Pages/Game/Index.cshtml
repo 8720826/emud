@@ -83,7 +83,7 @@
 
                 </div>
                 <div class="action">
-                    <button @@click="search" @@dblclick="meditate">探索</button>
+                    <button @@click="search">探索</button>
                     <button @@click="meditate">打坐</button>
                     <button @@click="exert" v-show="myinfo.hp<myinfo.maxHp">疗伤</button>
                     <button @@click="" v-show="room.canFish">钓鱼</button>
@@ -153,7 +153,7 @@
                         {{description}}
                     </p>
                     <div class="mt15">
-                        <button type="button" v-for="command,index in npc.commands">{{command}}</button>
+                        <button type="button" v-for="action,index in npc.actions" @@click="npcAction(npc.id,action)">{{action}}</button>
                     </div>
                 </div>
 

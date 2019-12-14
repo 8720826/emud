@@ -24,59 +24,28 @@ namespace Emprise.Domain.Core.Enum
     public enum NpcTypeEnum
     {
         /// <summary>
-        /// 无
-        /// </summary>
-        无 = 0,
-
-        /// <summary>
         /// 人物
         /// </summary>
-        人物 = 11,
+        人物 = 1,
 
         /// <summary>
         /// 怪物
         /// </summary>
-        怪物 = 12,
+        怪物 = 2,
 
         /// <summary>
-        /// 倭寇
+        /// 物品类型Npc
         /// </summary>
-        倭寇 = 13,
-
-        /// <summary>
-        /// 世外高人
-        /// </summary>
-        世外高人 = 14,
-
-        /// <summary>
-        /// 门派守卫
-        /// </summary>
-        守卫 = 21,
-
-        /// <summary>
-        /// 镖车
-        /// </summary>
-        镖车 = 22,
+        物品 = 3
+    }
 
 
-        /// <summary>
-        /// 劫匪
-        /// </summary>
-        劫匪 = 23,
+    public enum NpcActionEnum
+    {
+        闲聊 = 1,
+        给予 = 2,
+        切磋 = 3,
+        杀死 = 4
 
-        /// <summary>
-        /// 宝藏守护者
-        /// </summary>
-        守护者 = 24,
-
-        /// <summary>
-        /// 木头人
-        /// </summary>
-        木头人 = 31,
-
-        /// <summary>
-        /// 毒物
-        /// </summary>
-        毒物 = 41,
     }
 }

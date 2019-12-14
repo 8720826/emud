@@ -242,8 +242,13 @@ new Vue({
                     this.showStatus();
                     break;
             }
-        }, setRoom: function (direction) {
+        },
+        setRoom: function (direction) {
             console.log(direction);
+        },
+        npcAction: function (npcId,action) {
+            console.log("npcId=" + npcId + ",action=" + action);
+            connection.invoke("NpcAction",  {  npcId,  action});
         }
     },
     watch: {

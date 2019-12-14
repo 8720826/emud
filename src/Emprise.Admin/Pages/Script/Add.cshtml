@@ -1,0 +1,111 @@
+﻿@page
+@model Emprise.Admin.Pages.Script.AddModel
+@{
+    ViewData["Title"] = "脚本管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">脚本管理</strong> / <small>Script</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p>@(Model.Tips)</p>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            脚本名
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Script.Name">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            状态
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group" data-am-button>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Script.IsEnable" checked="checked"> 启用
+                            </label>
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            脚本类型
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(ScriptTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input type="radio" name="Script.Type" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="/Room/Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="am-margin">
+
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+            $(function () {
+                Simditor.locale = 'zh-CN';//设置中文
+                var editor = new Simditor({
+                    textarea: $("#description"),  //textarea的id
+                    placeholder: '请输入房间描述',
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    pasteImage: true,//允许粘贴图片
+                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
+                });
+
+                $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+            });
+    </script>
+}
