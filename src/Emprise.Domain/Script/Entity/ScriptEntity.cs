@@ -19,7 +19,7 @@ namespace Emprise.Domain.Script.Entity
         /// <summary>
         /// 脚本类型
         /// </summary>
-        public ScriptTypeEnum Type { set; get; }
+        public string InitWords { set; get; }
 
         /// <summary>
         /// 是否启用

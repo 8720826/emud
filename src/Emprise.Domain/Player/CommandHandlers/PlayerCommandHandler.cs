@@ -13,6 +13,7 @@ using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
+using Emprise.Domain.Script.Services;
 using Emprise.Infra.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -59,8 +60,9 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMudProvider _mudProvider;
         private readonly AppConfig _appConfig;
-        private readonly IServiceProvider _services;
-
+        private readonly IScriptDomainService _scriptDomainService;
+        private readonly INpcScriptDomainService _npcScriptDomainService;
+        private readonly IRedisDb _redisDb;
 
         public PlayerCommandHandler(
             IMediatorHandler bus,
@@ -75,7 +77,9 @@ namespace Emprise.Domain.User.CommandHandlers
             IRecurringQueue recurringQueue,
             IMudProvider mudProvider,
             IOptions<AppConfig> appConfig,
-            IServiceProvider services,
+            IScriptDomainService scriptDomainService,
+            INpcScriptDomainService npcScriptDomainService,
+            IRedisDb redisDb,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
            
@@ -91,8 +95,10 @@ namespace Emprise.Domain.User.CommandHandlers
             _recurringQueue = recurringQueue;
             _mudProvider = mudProvider;
             _appConfig = appConfig.Value;
-            _services = services;
+            _scriptDomainService = scriptDomainService;
+            _npcScriptDomainService = npcScriptDomainService;
             _npcDomainService = npcDomainService;
+            _redisDb = redisDb;
         }
 
         public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)
@@ -483,7 +489,7 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            bool hasCheckAction = false;
+
             NpcActionEnum actionEnum;
             if (Enum.TryParse(action, out actionEnum))
             {
@@ -497,7 +503,8 @@ namespace Emprise.Domain.User.CommandHandlers
                         }
                         else
                         {
-                            hasCheckAction = true;
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 未实现！"));
+                            return Unit.Value;
                         }
                         break;
 
@@ -509,7 +516,8 @@ namespace Emprise.Domain.User.CommandHandlers
                         }
                         else
                         {
-                            hasCheckAction = true;
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 未实现！"));
+                            return Unit.Value;
                         }
                         break;
 
@@ -521,29 +529,45 @@ namespace Emprise.Domain.User.CommandHandlers
                         }
                         else
                         {
-                            hasCheckAction = true;
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 未实现！"));
+                            return Unit.Value;
                         }
                         break;
                 }
             }
 
-            if (!hasCheckAction)
+            if (npc.ScriptId <= 0)
             {
-                if (npc.ScriptId > 0)
+                return Unit.Value;
+            }
+
+            var script = await _scriptDomainService.Get(npc.ScriptId);
+            if (script == null)
+            {
+                return Unit.Value;
+            }
+
+            var npcScripts = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
+
+            var npcScript = npcScripts.FirstOrDefault(x => string.Equals(x.Name, action, StringComparison.InvariantCultureIgnoreCase));
+            if (npcScript == null)
+            {
+                return Unit.Value;
+            }
+
+            if (!npcScript.IsEntry)
+            {
+                var scriptIds = await _redisDb.StringGet<List<int>>($"scriptIds_{npc.Id}");
+                if (!scriptIds.Contains(npcScript.Id))
                 {
-                    var script = await _scriptDomainService.Get(npc.ScriptId);
-                    if (script != null)
-                    {
-                        var npcScript = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
-
-                        var actions = npcScript.Where(x => x.IsEntry).Select(x => x.Name).ToList();
-
-
-                    }
+                    return Unit.Value;
                 }
             }
 
+            var caseIf = npcScript.CaseIf;
 
+            await _bus.RaiseEvent(new DomainNotification($"执行指令 {action}！"));
+            return Unit.Value;
 
             /*
             var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);
@@ -567,7 +591,7 @@ namespace Emprise.Domain.User.CommandHandlers
                     })
                     .ToArray();
 
-                    var job = Activator.CreateInstance(type, argtypes);
+                    +var job = Activator.CreateInstance(type, argtypes);
                     if (!hasCheckAction)
                     {
                         MethodInfo method = type.GetMethod("GetActions");
@@ -586,10 +610,6 @@ namespace Emprise.Domain.User.CommandHandlers
             }
             */
 
-
-            await _bus.RaiseEvent(new DomainNotification($"你与npc{npcId} {action}"));
-
-            return Unit.Value;
         }
         
     }

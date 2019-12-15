@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Scripts\**" />
+    <EmbeddedResource Remove="Scripts\**" />
+    <None Remove="Scripts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Hubs\CheckCommonAttribute.cs" />
     <Compile Remove="Hubs\Models\PostedMessage.cs" />
     <Compile Remove="Jobs\Queues.cs" />

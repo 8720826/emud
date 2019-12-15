@@ -13,6 +13,6 @@ namespace Emprise.Application.User.Services
     {
 
         Task<NpcEntity> Get(int id);
-        Task<NpcInfo> GetNpc(int id);
+        Task<NpcInfo> GetNpc(int playerId, int id);
     }
 }

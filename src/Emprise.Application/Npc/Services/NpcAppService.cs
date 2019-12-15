@@ -3,12 +3,14 @@ using Emprise.Application.Npc.Models;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Script.Services;
 using Emprise.Infra.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +30,8 @@ namespace Emprise.Application.User.Services
         private readonly IAccountContext _account;
         private readonly IScriptDomainService _scriptDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
-        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptDomainService scriptDomainService, INpcScriptDomainService npcScriptDomainService)
+        private readonly IMudProvider _mudProvider;
+        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptDomainService scriptDomainService, INpcScriptDomainService npcScriptDomainService, IMudProvider mudProvider)
         {
             _bus = bus;
             _mapper = mapper;
@@ -37,6 +40,7 @@ namespace Emprise.Application.User.Services
             _account = account;
             _scriptDomainService = scriptDomainService;
             _npcScriptDomainService = npcScriptDomainService;
+            _mudProvider = mudProvider;
         }
 
         public async Task<NpcEntity> Get(int id)
@@ -44,7 +48,7 @@ namespace Emprise.Application.User.Services
             return await _npcDomainService.Get(id);
         }
 
-        public async Task<NpcInfo> GetNpc(int id)
+        public async Task<NpcInfo> GetNpc(int playerId,int id)
         {
             var npcInfo = new NpcInfo()
             {
@@ -89,15 +93,27 @@ namespace Emprise.Application.User.Services
                 var script = await _scriptDomainService.Get(npc.ScriptId);
                 if (script != null)
                 {
-                    var npcScript = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
+                    var npcScripts = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
 
-                    var actions = npcScript.Where(x => x.IsEntry).Select(x => x.Name).ToList();
+                    var actions = npcScripts.Where(x => x.IsEntry).Select(x => x.Name).ToList();
 
                     npcInfo.Actions.AddRange(actions);
+
+                    if (!string.IsNullOrEmpty(script.InitWords))
+                    {
+                        var initWords = JsonConvert.DeserializeObject<List<string>>(script.InitWords);
+                        Random r = new Random();
+                        int n = r.Next(0, initWords.Count - 1);
+                        var initWord = initWords[n];
+                        if (!string.IsNullOrEmpty(initWord))
+                        {
+                           await  _mudProvider.ShowMessage(playerId, initWord);
+                        }
+                    }
                 }
             }
       
-           
+          
 
             /*
             var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);

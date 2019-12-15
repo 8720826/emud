@@ -120,7 +120,8 @@ namespace Emprise.MudServer.Hubs
         public async Task ShowNpc(ShowNpcAction  showNpcAction)
         {
             var result = await DoCommand(async () => {
-                var npc = await _npcAppService.GetNpc(showNpcAction.NpcId);
+                var playerId = _account.PlayerId;
+                var npc = await _npcAppService.GetNpc(playerId,  showNpcAction.NpcId);
                 await Clients.Client(Context.ConnectionId).ShowNpc(npc);
             });
         }
