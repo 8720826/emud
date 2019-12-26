@@ -95,7 +95,9 @@ namespace Emprise.MudServer.Hubs
 
             if (connectionId != Context.ConnectionId)
             {
-                await KickOut(connectionId);
+                //await KickOut(connectionId);
+                await ShowSystemMessage(Context.ConnectionId, "你已经断线，请刷新或重新登录");
+                return await Task.FromResult(false);
             }
 
             await func?.Invoke();
@@ -126,7 +128,7 @@ namespace Emprise.MudServer.Hubs
         {
             await ShowSystemMessage(connectionId, "您的帐号在其他地方登录，您已被迫下线！");
             await Clients.Client(connectionId).Offline();
-
+ 
         }
 
     }

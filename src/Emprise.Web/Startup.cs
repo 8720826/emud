@@ -58,7 +58,7 @@ namespace Emprise.Web
             }
 
 
-            services.AddControllers();
+            services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

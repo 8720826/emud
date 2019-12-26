@@ -17,7 +17,7 @@ namespace Emprise.Domain.Script.Entity
         public string Name { set; get; }
 
         /// <summary>
-        /// 脚本类型
+        /// 默认对话
         /// </summary>
         public string InitWords { set; get; }
 

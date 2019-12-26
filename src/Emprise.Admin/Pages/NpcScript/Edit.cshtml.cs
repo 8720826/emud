@@ -4,27 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Tasks;
+using Emprise.Admin.Models.NpcScript;
+using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Tasks
+namespace Emprise.Admin.Pages.NpcScript
 {
     public class EditModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
-
         public EditModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
-
         }
 
         [BindProperty]
-        public TaskInput Task { get; set; }
+        public NpcScriptInput NpcScript { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -32,12 +31,7 @@ namespace Emprise.Admin.Pages.Tasks
 
         public async Task OnGetAsync(int id)
         {
-            if (id > 0)
-            {
-                var task = await _db.Tasks.FindAsync(id);
 
-                Task = _mapper.Map<TaskInput>(task);
-            }
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
@@ -50,18 +44,16 @@ namespace Emprise.Admin.Pages.Tasks
                 return Page();
             }
 
-            var task = await _db.Tasks.FindAsync(id);
-
-            _mapper.Map(Task, task);
-
+            var script = _mapper.Map<NpcScriptEntity>(NpcScript);
+            await _db.NpcScripts.AddAsync(script);
 
             await _db.SaveChangesAsync();
 
 
 
-            SueccessMessage = $"修改成功！";
+            SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit", new { id = task.Id });
+            return RedirectToPage("Edit", new { id = script.Id });
 
 
         }

@@ -91,7 +91,7 @@ namespace Emprise.Application.User.Services
             if (npc.ScriptId > 0)
             {
                 var script = await _scriptDomainService.Get(npc.ScriptId);
-                if (script != null)
+                if (script != null && script.IsEnable)
                 {
                     var npcScripts = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
 
@@ -103,7 +103,7 @@ namespace Emprise.Application.User.Services
                     {
                         var initWords = JsonConvert.DeserializeObject<List<string>>(script.InitWords);
                         Random r = new Random();
-                        int n = r.Next(0, initWords.Count - 1);
+                        int n = r.Next(0, initWords.Count);
                         var initWord = initWords[n];
                         if (!string.IsNullOrEmpty(initWord))
                         {

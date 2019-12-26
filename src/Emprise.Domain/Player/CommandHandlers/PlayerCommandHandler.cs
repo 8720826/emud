@@ -542,7 +542,7 @@ namespace Emprise.Domain.User.CommandHandlers
             }
 
             var script = await _scriptDomainService.Get(npc.ScriptId);
-            if (script == null)
+            if (script == null || !script.IsEnable)
             {
                 return Unit.Value;
             }

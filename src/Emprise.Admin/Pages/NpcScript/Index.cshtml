@@ -1,5 +1,5 @@
 ﻿@page
-@model Emprise.Admin.Pages.Script.IndexModel
+@model Emprise.Admin.Pages.NpcScript.IndexModel
 @{
     ViewData["Title"] = "脚本管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -20,19 +20,7 @@
             </div>
         </div>
     </div>
-    <div class="am-u-md-3 am-cf">
-        <form class="am-form">
-            <div class="am-fr">
-                <div class="am-input-group am-input-group-sm">
-                    <input type="text" class="am-form-field" asp-for="Keyword">
-                    <span class="am-input-group-btn">
-                        <button class="am-btn am-btn-default" type="submit">搜索</button>
-                    </span>
 
-                </div>
-            </div>
-        </form>
-    </div>
 </div>
 
 <div class="am-g">
@@ -43,26 +31,30 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">脚本名</th>
-                        <th class="table-exits">状态</th>
-                        <th class="table-exits">默认对话</th>
+                        <th class="table-exits">是否入口</th>
+                        <th class="table-exits">排序</th>
+                        <th class="table-exits">分支-如果</th>
+                        <th class="table-exits">分支-那么</th>
+                        <th class="table-exits">分支-否则</th>
                         <th class="table-set">操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var script in Model.Paging.Data)
+                    @foreach (var script in Model.NpcScripts)
                     {
                     <tr>
                         <td>@(script.Id)</td>
                         <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
-                        <td>@(script.IsEnable)</td>
-                        <td>@(script.InitWords)</td>
+                        <td>@(script.IsEntry)</td>
+                        <td>@(script.SortId)</td>
+                        <td>@(script.SortId)</td>
+                        <td>@(script.SortId)</td>
+                        <td>@(script.SortId)</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
                                     <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                    <a asp-page="./Copy" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
                                     <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
-                                    <a asp-page="/NpcScript/Index" asp-route-sid="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-code"></span> 脚本分支</a>
                                 </div>
                             </div>
                         </td>
@@ -70,28 +62,7 @@
                     }
                 </tbody>
             </table>
-            <div class="am-cf">
-                共 @(Model.Paging.Count) 条记录
-                <div class="am-fr">
-                    <ul class="am-pagination">
-                        <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
 
-                        @for (var i = 0; i < Model.Paging.PageCount; i++)
-                        {
-                            if (Model.Paging.PageIndex == i + 1)
-                            {
-                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
-                            }
-                            else
-                            {
-                                <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
-                            }
-                        }
-
-                        <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
-                    </ul>
-                </div>
-            </div>
             <hr />
             <p>注：.....</p>
         </form>

@@ -1,5 +1,5 @@
-﻿@page
-@model Emprise.Admin.Pages.Script.AddModel
+﻿@page "{id}"
+@model Emprise.Admin.EditModel
 @{
     ViewData["Title"] = "脚本管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -44,7 +44,7 @@
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="Script.IsEnable" checked="checked"> 启用
+                                <input type="checkbox" asp-for="Script.IsEnable"> 启用
                             </label>
 
                         </div>
@@ -57,10 +57,20 @@
                             默认对话
                         </div>
                         <div class="am-u-sm-8">
-                            <input type="text" class="am-input-sm" asp-for="Script.InitWords"><br />
-                            <input type="text" class="am-input-sm" asp-for="Script.InitWords"><br />
-                            <input type="text" class="am-input-sm" asp-for="Script.InitWords"><br />
-                            <input type="text" class="am-input-sm" asp-for="Script.InitWords"><br />
+                            @foreach (var initWord in Model.Script.InitWords)
+                            {
+                                <input type="text" class="am-input-sm" name="Script.InitWords" value="@initWord"><br />
+                            }
+
+                            @if (Model.Script.InitWords.Count < 4)
+                            {
+                                for (var i = 0; i < 4 - Model.Script.InitWords.Count; i++)
+                                {
+                                    <input type="text" class="am-input-sm" name="Script.InitWords"><br />
+                                }
+                            }
+
+
                         </div>
                         <div class="am-u-sm-4"></div>
                     </div>

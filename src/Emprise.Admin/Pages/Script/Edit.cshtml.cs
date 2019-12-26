@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Tasks;
+using Emprise.Admin.Models.Script;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Tasks
+namespace Emprise.Admin
 {
     public class EditModel : PageModel
     {
@@ -24,7 +24,7 @@ namespace Emprise.Admin.Pages.Tasks
         }
 
         [BindProperty]
-        public TaskInput Task { get; set; }
+        public ScriptInput Script { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -34,9 +34,9 @@ namespace Emprise.Admin.Pages.Tasks
         {
             if (id > 0)
             {
-                var task = await _db.Tasks.FindAsync(id);
+                var task = await _db.Scripts.FindAsync(id);
 
-                Task = _mapper.Map<TaskInput>(task);
+                Script = _mapper.Map<ScriptInput>(task);
             }
         }
 
@@ -50,9 +50,9 @@ namespace Emprise.Admin.Pages.Tasks
                 return Page();
             }
 
-            var task = await _db.Tasks.FindAsync(id);
+            var script = await _db.Scripts.FindAsync(id);
 
-            _mapper.Map(Task, task);
+            _mapper.Map(Script, script);
 
 
             await _db.SaveChangesAsync();
@@ -61,7 +61,7 @@ namespace Emprise.Admin.Pages.Tasks
 
             SueccessMessage = $"修改成功！";
 
-            return RedirectToPage("Edit", new { id = task.Id });
+            return RedirectToPage("Edit", new { id = script.Id });
 
 
         }
