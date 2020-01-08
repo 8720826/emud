@@ -147,66 +147,52 @@
 
 <script id="type-角色属性" type="text/html">
 
-    <select class="am-input-sm am-form-field fields">
+    <select class="am-input-sm am-form-field fields attr" attr="Field">
         <option>  请选择  </option>
         {{each fields}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
 
-    <select class="am-input-sm am-form-field relations">
+    <select class="am-input-sm am-form-field relations attr" attr="Relation">
         <option>  请选择  </option>
         {{each relations}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
 
-    <input type="text" placeholder="数值" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="数值" class="am-input-sm am-form-field attr"  attr="Value" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" attr="Type" value="保存">
 </script>
 
 <script id="type-拥有物品" type="text/html">
-    <input type="text" placeholder="物品名" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
-    <select class="am-input-sm am-form-field relations">
+    <input type="text" placeholder="物品名" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <select class="am-input-sm am-form-field relations attr">
         <option>  请选择  </option>
         {{each relations}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
 
-    <input type="text" placeholder="数量" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="数量" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
 </script>
 
 <script id="type-完成任务" type="text/html">
 
 
-    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
 </script>
 
 <script id="type-活动记录" type="text/html">
 
-    <select class="am-input-sm am-form-field fields">
-        <option>  请选择  </option>
-        {{each fields}}
-        <option value="{{$value}}">{{$value}}</option>
-        {{/each}}
-    </select>
+    <input type="text" class="am-input-sm am-form-field " style="display:inline-block; width:180px;">
 
-    <select class="am-input-sm am-form-field relations">
-        <option>  请选择  </option>
-        {{each relations}}
-        <option value="{{$value}}">{{$value}}</option>
-        {{/each}}
-    </select>
-
-    <input type="text" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
-
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
 </script>
 
 
@@ -215,7 +201,7 @@
 
     <input type="text" placeholder="对话内容" class="am-input-sm am-form-field" style="display:inline-block; width:380px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
 </script>
 
 <script id="commond-对话选项" type="text/html">
@@ -224,7 +210,7 @@
 
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
 </script>
 
 <script id="commond-输入选项" type="text/html">
@@ -233,7 +219,7 @@
 
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
 </script>
 
 <script id="commond-选择选项" type="text/html">
@@ -242,7 +228,14 @@
 
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs" value="保存">
+    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+</script>
+
+
+<script id="data" type="text/html">
+    <div class="am-form-inline am-u-sm-10 am-form-group" data="{{$data}}">
+        {{$desc}}
+    </div>
 </script>
 
 @section Scripts {
@@ -283,6 +276,26 @@
                 }
             });
 
+
+            $(document).on("click", ".save", function () {
+                var type = $(this).attr("attr");
+                var obj = {
+                    type: type,
+                    attrs :[]
+                };
+                var desc = "";
+                var attrs = $(this).parent().find(".attr");
+                $.each(attrs, function () {
+                    var val = $(this).val(); 
+                    var attr = $(this).attr("attr");
+                    desc += "   "+val;
+                    obj.attrs.push({ attr: attr, val:val });
+                });  
+                var data = JSON.stringify(obj);
+                $(this).parent().prev(template("data", { data: data, desc: desc }));
+
+                $(this).parent().children().not(":first").remove();
+            });
         });
     </script>
 }
