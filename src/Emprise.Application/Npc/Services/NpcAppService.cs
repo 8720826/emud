@@ -68,17 +68,17 @@ namespace Emprise.Application.User.Services
 
             if(npc.Type == NpcTypeEnum.人物)
             {
-                npcInfo.Actions.Add("给予");
+                npcInfo.Actions.Add(NpcActionEnum.给予.ToString());
             }        
 
             if (npc.CanFight)
             {
-                npcInfo.Actions.Add("切磋");
+                npcInfo.Actions.Add(NpcActionEnum.切磋.ToString());
             }
 
             if (npc.CanKill)
             {
-                npcInfo.Actions.Add("杀死");
+                npcInfo.Actions.Add(NpcActionEnum.杀死.ToString());
             }
 
             var player = await _playerDomainService.Get(_account.PlayerId);
@@ -95,7 +95,7 @@ namespace Emprise.Application.User.Services
                 {
                     var npcScripts = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
 
-                    var actions = npcScripts.Where(x => x.IsEntry).Select(x => x.Name).ToList();
+                    var actions = npcScripts.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
 
                     npcInfo.Actions.AddRange(actions);
 

@@ -46,6 +46,11 @@ namespace Emprise.Admin.Models.Npc
         /// </summary>
         public bool CanMove { set; get; }
 
+        /// <summary>
+        /// 是否可以杀死
+        /// </summary>
+        public bool CanKill { set; get; }
+
 
         /// <summary>
         /// 年龄
@@ -63,8 +68,14 @@ namespace Emprise.Admin.Models.Npc
         public int Exp { set; get; }
 
         /// <summary>
-        /// 命令json格式
+        /// 脚本
         /// </summary>
-        public string Commands { set; get; }
+        public int ScriptId { set; get; }
+
+
+        /// <summary>
+        /// 脚本名
+        /// </summary>
+        public string ScriptName { set; get; }
     }
 }

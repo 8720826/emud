@@ -549,7 +549,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
             var npcScripts = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
 
-            var npcScript = npcScripts.FirstOrDefault(x => string.Equals(x.Name, action, StringComparison.InvariantCultureIgnoreCase));
+            var npcScript = npcScripts.FirstOrDefault(x => string.Equals(x.ActionName, action, StringComparison.InvariantCultureIgnoreCase));
             if (npcScript == null)
             {
                 return Unit.Value;

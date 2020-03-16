@@ -27,6 +27,11 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public string Name { set; get; }
 
+        /// <summary>
+        /// 命令名称
+        /// </summary>
+        public string ActionName { set; get; }
+
 
         public string CaseIf { set; get; }
 

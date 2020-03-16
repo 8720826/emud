@@ -29,9 +29,9 @@ namespace Emprise.Domain.Core.Enum
         人物 = 1,
 
         /// <summary>
-        /// 怪物
+        /// 动物
         /// </summary>
-        怪物 = 2,
+        动物 = 2,
 
         /// <summary>
         /// 物品类型Npc

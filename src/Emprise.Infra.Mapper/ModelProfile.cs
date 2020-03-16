@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Emprise.Application.User.Models;
+using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Room.Entity;
@@ -21,6 +22,8 @@ namespace Emprise.Infra.Mapper
 
             CreateMap<UserEntity, UserModel>();
             CreateMap<RoomEntity, RoomModel>();
+          
+
             CreateMap<PlayerEntity, MyInfo>()
                 .ForMember(x => x.Age, y => y.MapFrom(s => s.Age % 12 > 0 ? $"{s.Age / 12}岁{s.Age % 12}个月" : $"{s.Age / 12}岁"))
                 .ForMember(x => x.Money, y => y.MapFrom(s => s.Money % 1000 > 0 ? $"{s.Money / 1000}两银子{s.Money % 1000}个铜板" : $"{s.Money}个铜板"))

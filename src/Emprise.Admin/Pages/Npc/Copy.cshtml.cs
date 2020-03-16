@@ -11,12 +11,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Emprise.Admin.Pages.Npc
 {
-    public class AddModel : PageModel
+    public class CopyModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public CopyModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
@@ -29,9 +29,14 @@ namespace Emprise.Admin.Pages.Npc
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int id)
         {
+            if (id > 0)
+            {
+                var npc = await _db.Npcs.FindAsync(id);
 
+                Npc = _mapper.Map<NpcInput>(npc);
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(int id, string position)
@@ -55,8 +60,6 @@ namespace Emprise.Admin.Pages.Npc
                     npc.ScriptName = script.Name;
                 }
             }
-
-
 
             await _db.Npcs.AddAsync(npc);
 

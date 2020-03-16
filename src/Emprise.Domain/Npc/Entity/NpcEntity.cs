@@ -40,10 +40,6 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public int RoomId { set; get; }
 
-        /// <summary>
-        /// 是否可以聊天
-        /// </summary>
-        public bool CanTalk { set; get; }
 
         /// <summary>
         /// 是否可以攻击
@@ -82,5 +78,10 @@ namespace Emprise.Domain.Npc.Entity
         /// 脚本
         /// </summary>
         public int ScriptId { set; get; }
+
+        /// <summary>
+        /// 脚本名
+        /// </summary>
+        public string ScriptName { set; get; }
     }
 }

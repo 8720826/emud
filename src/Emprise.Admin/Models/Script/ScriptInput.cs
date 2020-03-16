@@ -13,6 +13,8 @@ namespace Emprise.Admin.Models.Script
         /// </summary>
         public string Name { set; get; }
 
+        public string ActionName { set; get; }
+
         /// <summary>
         /// 默认对话
         /// </summary>

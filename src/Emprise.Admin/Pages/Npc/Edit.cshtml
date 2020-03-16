@@ -1,5 +1,5 @@
 ﻿@page
-@model Emprise.Admin.Pages.Npc.AddModel
+@model Emprise.Admin.Pages.Npc.EditModel
 @{
     ViewData["Title"] = "Npc管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -128,6 +128,7 @@
                         <div class="am-u-sm-6"></div>
                     </div>
 
+
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
                             Npc描述
@@ -167,15 +168,15 @@
                 Simditor.locale = 'zh-CN';//设置中文
                 var editor = new Simditor({
                     textarea: $("#description"),  //textarea的id
-                    placeholder: '请输入Npc描述',
+                    placeholder: '请输入房间描述',
                     toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
                     pasteImage: true,//允许粘贴图片
                     defaultImage: ''//编辑器插入的默认图片，此处可以删除
                 });
 
                 $("input[type=checkbox]:checked").each(function () {
-                $(this).parent(".am-btn").addClass("am-active");
-            });
+                    $(this).parent(".am-btn").addClass("am-active");
+                });
             });
     </script>
 }

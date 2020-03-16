@@ -43,6 +43,7 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">脚本名</th>
+                        <th class="table-title">命令名</th>
                         <th class="table-exits">状态</th>
                         <th class="table-exits">默认对话</th>
                         <th class="table-set">操作</th>
@@ -54,6 +55,7 @@
                     <tr>
                         <td>@(script.Id)</td>
                         <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
+                        <td>@(script.ActionName)</td>
                         <td>@(script.IsEnable)</td>
                         <td>@(script.InitWords)</td>
                         <td>
@@ -61,8 +63,9 @@
                                 <div class="am-btn-group am-btn-group-xs">
                                     <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
                                     <a asp-page="./Copy" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
-                                    <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                     <a asp-page="/NpcScript/Index" asp-route-sid="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-code"></span> 脚本分支</a>
+
+                                    <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                 </div>
                             </div>
                         </td>

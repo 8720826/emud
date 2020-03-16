@@ -23,6 +23,7 @@ namespace Emprise.Admin.Models.NpcScript
         public string Name { set; get; }
 
 
+
         public string CaseIf { set; get; }
 
 

@@ -11,12 +11,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Emprise.Admin.Pages.Npc
 {
-    public class AddModel : PageModel
+    public class EditModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public EditModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
@@ -29,9 +29,14 @@ namespace Emprise.Admin.Pages.Npc
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int id)
         {
+            if (id > 0)
+            {
+                var npc = await _db.Npcs.FindAsync(id);
 
+                Npc = _mapper.Map<NpcInput>(npc);
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(int id, string position)
@@ -44,7 +49,9 @@ namespace Emprise.Admin.Pages.Npc
                 return Page();
             }
 
-            var npc = _mapper.Map<NpcEntity>(Npc);
+
+            var npc = await _db.Npcs.FindAsync(id);
+            _mapper.Map(Npc, npc);
 
             npc.ScriptName = "";
             if (npc.ScriptId > 0)
@@ -56,15 +63,11 @@ namespace Emprise.Admin.Pages.Npc
                 }
             }
 
-
-
-            await _db.Npcs.AddAsync(npc);
-
             await _db.SaveChangesAsync();
 
 
 
-            SueccessMessage = $"添加成功！";
+            SueccessMessage = $"修改成功！";
 
             return RedirectToPage("Edit", new { id = npc.Id });
 
