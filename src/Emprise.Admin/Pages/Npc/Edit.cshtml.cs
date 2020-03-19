@@ -53,15 +53,6 @@ namespace Emprise.Admin.Pages.Npc
             var npc = await _db.Npcs.FindAsync(id);
             _mapper.Map(Npc, npc);
 
-            npc.ScriptName = "";
-            if (npc.ScriptId > 0)
-            {
-                var script = await _db.Scripts.FindAsync(npc.ScriptId);
-                if (script != null)
-                {
-                    npc.ScriptName = script.Name;
-                }
-            }
 
             await _db.SaveChangesAsync();
 

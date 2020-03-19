@@ -8,6 +8,8 @@ namespace Emprise.MudServer.Hubs.Actions
     {
         public int NpcId { get; set; }
 
+        public int ScriptId { get; set; }
+
         public string Action { get; set; }
     }
 }

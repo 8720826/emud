@@ -2,7 +2,6 @@
 using Emprise.Domain.Admin.Entity;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Script.Entity;
 using Emprise.Domain.Tasks.Entity;
 using Emprise.Domain.Ware.Entity;
 using Microsoft.EntityFrameworkCore;
@@ -33,11 +32,10 @@ namespace Emprise.Admin.Data
         public DbSet<TaskEntity> Tasks { get; set; }
 
 
-        public DbSet<ScriptEntity> Scripts { get; set; }
-
-
         public DbSet<NpcScriptEntity> NpcScripts { get; set; }
-        
+
+
+        public DbSet<NpcScriptCommandEntity> NpcScriptCommands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

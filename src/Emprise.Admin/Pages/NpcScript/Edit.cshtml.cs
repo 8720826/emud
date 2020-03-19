@@ -4,8 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.NpcScript;
-using Emprise.Domain.Npc.Entity;
+using Emprise.Admin.Models.Script;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -16,10 +15,12 @@ namespace Emprise.Admin.Pages.NpcScript
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
+
         public EditModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
+
         }
 
         [BindProperty]
@@ -31,7 +32,12 @@ namespace Emprise.Admin.Pages.NpcScript
 
         public async Task OnGetAsync(int id)
         {
+            if (id > 0)
+            {
+                var task = await _db.NpcScripts.FindAsync(id);
 
+                NpcScript = _mapper.Map<NpcScriptInput>(task);
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
@@ -44,14 +50,16 @@ namespace Emprise.Admin.Pages.NpcScript
                 return Page();
             }
 
-            var script = _mapper.Map<NpcScriptEntity>(NpcScript);
-            await _db.NpcScripts.AddAsync(script);
+            var script = await _db.NpcScripts.FindAsync(id);
+
+            _mapper.Map(NpcScript, script);
+
 
             await _db.SaveChangesAsync();
 
 
 
-            SueccessMessage = $"添加成功！";
+            SueccessMessage = $"修改成功！";
 
             return RedirectToPage("Edit", new { id = script.Id });
 

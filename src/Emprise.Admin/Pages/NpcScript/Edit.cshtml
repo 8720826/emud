@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{id}"
 @model Emprise.Admin.Pages.NpcScript.EditModel
 @{
     ViewData["Title"] = "脚本管理";
@@ -38,26 +38,25 @@
                         <div class="am-u-sm-6"></div>
                     </div>
 
-
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            是否入口
+                            命令名
                         </div>
-                        <div class="am-u-sm-2">
-                            <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="NpcScript.IsEntry"> 是否入口
-                            </label>
-
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="NpcScript.ActionName">
                         </div>
-                        <div class="am-u-sm-6">入口将显示在npc资料页面</div>
+                        <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            排序
+                            状态
                         </div>
-                        <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.SortId" value="99">
+                        <div class="am-u-sm-2">
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="NpcScript.IsEnable"> 启用
+                            </label>
+
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -65,69 +64,23 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            分支-如果
+                            默认对话
                         </div>
-                        <div class="am-u-sm-10">
-                            <input type="hidden" asp-for="NpcScript.CaseIf">
-                            <table class="am-table am-table-bd am-table-striped am-table-hover">
-                                <thead>
-                                    <tr>
-                                        <td>完成条件</td>
-                                        <td>相关id</td>
-                                        <td>相关name</td>
-                                        <td>相关值</td>
-                                        <td>操作</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                                <tfoot>
+                        <div class="am-u-sm-8">
+                            @foreach (var initWord in Model.NpcScript.InitWords)
+                            {
+                                <input type="text" class="am-input-sm" name="Script.InitWords" value="@initWord"><br />
+                            }
 
-                                    <tr>
-                                        <td>
-                                            <select id="state">
-                                                <option>请选择</option>
-                                                @foreach (var item in Enum.GetValues(typeof(TaskTargetEnum)))
-                                                {
-                                                    <option value="@(item.ToString())">@(item.ToString())</option>
-                                                }
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="button" class="addTr" value="保存" />
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <div class="am-u-sm-4"></div>
-                    </div>
+                            @if (Model.NpcScript.InitWords.Count < 4)
+                            {
+                                for (var i = 0; i < 4 - Model.NpcScript.InitWords.Count; i++)
+                                {
+                                    <input type="text" class="am-input-sm" name="Script.InitWords"><br />
+                                }
+                            }
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            分支-那么
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="NpcScript.CaseThen"></textarea>
-                        </div>
-                        <div class="am-u-sm-4"></div>
-                    </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            分支-否则
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="NpcScript.CaseElse"></textarea>
                         </div>
                         <div class="am-u-sm-4"></div>
                     </div>

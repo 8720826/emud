@@ -32,7 +32,7 @@ namespace Emprise.Application.Player.Services
 
         Task Exert(int playerId);
 
-        Task NpcAction(int playerId, int npcId, string action);
+        Task NpcAction(int playerId, int npcId, int scriptId, string action);
 
         Task<PlayerEntity> GetUserPlayer(int userId);
 

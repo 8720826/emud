@@ -20,4 +20,9 @@
     <ProjectReference Include="..\Emprise.Domain\Emprise.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\NpcScript\" />
+    <Folder Include="Models\Script\" />
+  </ItemGroup>
+
 </Project>

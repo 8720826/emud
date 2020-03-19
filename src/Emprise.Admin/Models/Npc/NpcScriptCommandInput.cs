@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Admin.Models.NpcScript
 {
-    public class NpcScriptInput
+    public class NpcScriptCommandInput
     {
         /// <summary>
         /// 是否入口，入口将显示在Npc资料页
@@ -30,5 +30,7 @@ namespace Emprise.Admin.Models.NpcScript
         public string CaseThen { set; get; }
 
         public string CaseElse { set; get; }
+
+        public int ScriptId { set; get; }
     }
 }

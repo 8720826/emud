@@ -14,12 +14,15 @@ namespace Emprise.Domain.Player.Commands
 
         public int PlayerId { get; set; }
 
+        public int ScriptId { get; set; }
 
-        public NpcActionCommand(int playerId, int npcId,string action)
+
+        public NpcActionCommand(int playerId, int npcId, int scriptId, string action)
         {
             NpcId = npcId;
             PlayerId = playerId;
             Action = action;
+            ScriptId = scriptId;
         }
 
     }

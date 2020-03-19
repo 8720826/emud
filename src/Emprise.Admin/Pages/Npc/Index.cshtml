@@ -64,7 +64,13 @@
                             @(npc.CanKill ? "杀死" : "")
                             @(npc.CanMove ? "移动" : "")
                         </td>
-                        <td><a asp-page="/Script/Edit" asp-route-id="@npc.ScriptId">@(npc.ScriptName)</a></td>
+                        <td>
+                            @* @foreach (var script in npc.NpcScripts)
+        {
+            <a asp-page="/Script/Edit" asp-route-id="@script.Key">@(script.Value)</a>
+        }*@
+
+                        </td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">

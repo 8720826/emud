@@ -7,7 +7,6 @@ using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
-using Emprise.Domain.Script.Services;
 using Emprise.Infra.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -28,17 +27,17 @@ namespace Emprise.Application.User.Services
         private readonly INpcDomainService _npcDomainService;
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IAccountContext _account;
-        private readonly IScriptDomainService _scriptDomainService;
+        private readonly INpcScriptCommandDomainService _npcScriptCommandDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
         private readonly IMudProvider _mudProvider;
-        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptDomainService scriptDomainService, INpcScriptDomainService npcScriptDomainService, IMudProvider mudProvider)
+        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, INpcScriptCommandDomainService npcScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService, IMudProvider mudProvider)
         {
             _bus = bus;
             _mapper = mapper;
             _npcDomainService = npcDomainService;
             _playerDomainService = playerDomainService;
             _account = account;
-            _scriptDomainService = scriptDomainService;
+            _npcScriptCommandDomainService = npcScriptCommandDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _mudProvider = mudProvider;
         }
@@ -88,17 +87,20 @@ namespace Emprise.Application.User.Services
             npcInfo.Descriptions.Add($"{genderStr}{npc.Per.ToPer(npc.Age, npc.Gender)}");
             npcInfo.Descriptions.Add($"{genderStr}{npc.Exp.ToKunFuLevel(player.Exp)}");
 
-            if (npc.ScriptId > 0)
+            if (!string.IsNullOrEmpty(npc.Scripts))
             {
-                var script = await _scriptDomainService.Get(npc.ScriptId);
-                if (script != null && script.IsEnable)
-                {
-                    var npcScripts = await _npcScriptDomainService.Query(x => x.ScriptId == script.Id);
+                var scriptIds = JsonConvert.DeserializeObject<Dictionary<int, string>>(npc.Scripts).Select(x => x.Key).ToList() ;
 
-                    var actions = npcScripts.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
+                var npcScripts = await _npcScriptDomainService.Query(x => scriptIds.Contains(x.Id));
+                foreach (var npcScript in npcScripts)
+                {
+                    var scriptCommands = await _npcScriptCommandDomainService.Query(x => x.ScriptId == npcScript.Id);
+
+                    var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
 
                     npcInfo.Actions.AddRange(actions);
 
+                    /*
                     if (!string.IsNullOrEmpty(script.InitWords))
                     {
                         var initWords = JsonConvert.DeserializeObject<List<string>>(script.InitWords);
@@ -107,10 +109,12 @@ namespace Emprise.Application.User.Services
                         var initWord = initWords[n];
                         if (!string.IsNullOrEmpty(initWord))
                         {
-                           await  _mudProvider.ShowMessage(playerId, initWord);
+                            await _mudProvider.ShowMessage(playerId, initWord);
                         }
-                    }
+                    }*/
                 }
+
+
             }
       
           

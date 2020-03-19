@@ -1,16 +1,17 @@
-﻿using Emprise.Domain.Core.Entity;
-using Emprise.Domain.Core.Enum;
+﻿using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Npc.Entity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Emprise.Domain.Npc.Entity
+namespace Emprise.Admin.Models.Npc
 {
-    [Table("Npc")]
-    public  class NpcEntity : BaseEntity
+    public class NpcModel
     {
+        public virtual int Id { get; set; }
+
         /// <summary>
         /// 名称
         /// </summary>
@@ -79,5 +80,6 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public string Scripts { set; get; }
 
+        public Dictionary<int, string> NpcScripts { get; set; }
     }
 }

@@ -2,39 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Script;
-using Emprise.Domain.Script.Entity;
+using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Script
+namespace Emprise.Admin.Pages.NpcScript
 {
-    public class AddModel : PageModel
+    public class DeleteModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
 
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public DeleteModel(EmpriseDbContext db)
         {
             _db = db;
-            _mapper = mapper;
         }
 
-        [BindProperty]
-        public ScriptInput Script { get; set; }
+        public NpcScriptEntity NpcScript { get; set; }
 
-        public string Tips { get; set; }
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
-
-        public async Task OnGetAsync()
+        public void OnGet(int id = 0)
         {
-
+            NpcScript = _db.NpcScripts.Find(id);
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, string position)
+        public async Task<IActionResult> OnPostAsync(int id = 0)
         {
             SueccessMessage = "";
             ErrorMessage = "";
@@ -44,16 +37,12 @@ namespace Emprise.Admin.Pages.Script
                 return Page();
             }
 
-            var script = _mapper.Map<ScriptEntity>(Script);
-            await _db.Scripts.AddAsync(script);
-
+             _db.NpcScripts.Remove(NpcScript);
             await _db.SaveChangesAsync();
 
+            SueccessMessage = $"删除成功！";
 
-
-            SueccessMessage = $"添加成功！";
-
-            return RedirectToPage("Edit", new { id = script.Id });
+            return RedirectToPage("Index");
 
 
         }

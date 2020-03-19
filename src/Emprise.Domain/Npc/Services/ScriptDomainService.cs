@@ -2,8 +2,8 @@
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Events;
+using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Script.Entity;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -17,11 +17,11 @@ namespace Emprise.Domain.Script.Services
 {
     public class ScriptDomainService : IScriptDomainService
     { 
-        private readonly IRepository<ScriptEntity> _scriptRepository;
+        private readonly IRepository<NpcScriptEntity> _scriptRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediatorHandler _bus;
 
-        public ScriptDomainService(IRepository<ScriptEntity> scriptRepository, IMemoryCache cache, IMediatorHandler bus)
+        public ScriptDomainService(IRepository<NpcScriptEntity> scriptRepository, IMemoryCache cache, IMediatorHandler bus)
         {
             _scriptRepository = scriptRepository;
             _cache = cache;
@@ -29,19 +29,19 @@ namespace Emprise.Domain.Script.Services
         }
 
 
-        public async Task<ScriptEntity> Get(Expression<Func<ScriptEntity, bool>> where)
+        public async Task<NpcScriptEntity> Get(Expression<Func<NpcScriptEntity, bool>> where)
         {
             return await _scriptRepository.Get(where);
         }
 
-        public async Task<List<ScriptEntity>> GetAll(Expression<Func<ScriptEntity, bool>> where)
+        public async Task<List<NpcScriptEntity>> GetAll(Expression<Func<NpcScriptEntity, bool>> where)
         {
             var query = await _scriptRepository.GetAll(where);
 
             return query.ToList();
         }
 
-        public async Task<ScriptEntity> Get(int id)
+        public async Task<NpcScriptEntity> Get(int id)
         {
             var key = string.Format(CacheKey.Script, id);
             return await _cache.GetOrCreateAsync(key, async p => {
@@ -53,15 +53,15 @@ namespace Emprise.Domain.Script.Services
             });
         }
 
-        public async Task Add(ScriptEntity entity)
+        public async Task Add(NpcScriptEntity entity)
         {
             await _scriptRepository.Add(entity);
         }
 
-        public async Task Update(ScriptEntity entity)
+        public async Task Update(NpcScriptEntity entity)
         {
             await _scriptRepository.Update(entity);
-            await _bus.RaiseEvent(new EntityUpdatedEvent<ScriptEntity>(entity)).ConfigureAwait(false);
+            await _bus.RaiseEvent(new EntityUpdatedEvent<NpcScriptEntity>(entity)).ConfigureAwait(false);
         }
 
         public void Dispose()

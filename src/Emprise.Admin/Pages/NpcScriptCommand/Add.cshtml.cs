@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Npc;
+using Emprise.Admin.Models.NpcScript;
+using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Npc
+namespace Emprise.Admin.Pages.NpcScriptCommand
 {
     public class AddModel : PageModel
     {
@@ -23,18 +24,37 @@ namespace Emprise.Admin.Pages.Npc
         }
 
         [BindProperty]
-        public NpcInput Npc { get; set; }
+        public NpcScriptCommandInput NpcScript { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
+        public Array Types { get; set; }
+
+        public Array Fields { get; set; }
+
+        public Array Relations { get; set; }
+
+        public Array Events { get; set; }
+
+        public Array Commonds { get; set; }
+
         public async Task OnGetAsync()
         {
+            Types =  Enum.GetNames(typeof(ConditionTypeEnum));
 
+            Fields = Enum.GetNames(typeof(PlayerConditionFieldEnum));
+
+            Relations = Enum.GetNames(typeof(LogicalRelationTypeEnum));
+
+            Events = Enum.GetNames(typeof(PlayerEventTypeEnum));
+
+            Commonds = Enum.GetNames(typeof(CommondTypeEnum));
+            
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, string position)
+        public async Task<IActionResult> OnPostAsync()
         {
             SueccessMessage = "";
             ErrorMessage = "";
@@ -44,13 +64,8 @@ namespace Emprise.Admin.Pages.Npc
                 return Page();
             }
 
-            var npc = _mapper.Map<NpcEntity>(Npc);
-
-
-
-
-
-            await _db.Npcs.AddAsync(npc);
+            var script = _mapper.Map<NpcScriptEntity>(NpcScript);
+            await _db.NpcScripts.AddAsync(script);
 
             await _db.SaveChangesAsync();
 
@@ -58,7 +73,7 @@ namespace Emprise.Admin.Pages.Npc
 
             SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit", new { id = npc.Id });
+            return RedirectToPage("Edit", new { id = script.Id });
 
 
         }

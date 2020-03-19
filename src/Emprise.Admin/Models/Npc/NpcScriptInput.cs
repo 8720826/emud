@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Admin.Models.Script
 {
-    public class ScriptInput
+    public class NpcScriptInput
     {
         /// <summary>
         /// 脚本名称

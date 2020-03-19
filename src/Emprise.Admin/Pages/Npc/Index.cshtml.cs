@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
+using Emprise.Admin.Models.Npc;
 using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,12 +15,14 @@ namespace Emprise.Admin.Pages.Npc
 {
     public class IndexModel : PageModel
     {
+        private readonly IMapper _mapper;
 
         protected readonly EmpriseDbContext _db;
 
-        public IndexModel(EmpriseDbContext db)
+        public IndexModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
 
@@ -36,6 +40,8 @@ namespace Emprise.Admin.Pages.Npc
             }
 
             Paging = query.Paged(pageIndex, 10, query.Count());
+
+
         }
     }
 }

@@ -11,6 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Npc\Services\IScriptDomainService.cs" />
+    <Compile Remove="Npc\Services\ScriptDomainService.cs" />
     <Compile Remove="User\Events\UserInRoomEvent.cs" />
     <Compile Remove="User\Events\UserOutRoomEvent.cs" />
   </ItemGroup>
@@ -29,6 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Script\Entity\" />
+    <Folder Include="Script\Services\" />
     <Folder Include="Tasks\Services\" />
   </ItemGroup>
 

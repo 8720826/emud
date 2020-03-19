@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Emprise.Admin.Models.Npc;
+using Emprise.Admin.Models.NpcScript;
 using Emprise.Admin.Models.Room;
 using Emprise.Admin.Models.Script;
 using Emprise.Admin.Models.Tasks;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Script.Entity;
 using Emprise.Domain.Tasks.Entity;
 using Newtonsoft.Json;
 using System;
@@ -33,14 +33,21 @@ namespace Emprise.Admin.Mapper
             CreateMap<TaskEntity, TaskInput>();
             CreateMap<TaskInput, TaskEntity>();
 
-            CreateMap<ScriptEntity, ScriptInput>()
+            CreateMap<NpcScriptEntity, NpcScriptInput>()
                 .ForMember(x => x.InitWords, y => y.MapFrom(y => JsonConvert.DeserializeObject<List<string>>(y.InitWords)));
 
-            CreateMap<ScriptInput, ScriptEntity>()
-                .ForMember(x => x.InitWords, y => y.MapFrom(y=> JsonConvert.SerializeObject(y.InitWords.Where(x=>!string.IsNullOrEmpty(x)))));
+            CreateMap<NpcScriptInput, NpcScriptEntity>()
+                .ForMember(x => x.InitWords, y => y.MapFrom(y => JsonConvert.SerializeObject(y.InitWords.Where(x=>!string.IsNullOrEmpty(x)))));
 
             CreateMap<NpcEntity, NpcInput>();
             CreateMap<NpcInput, NpcEntity>();
+
+            CreateMap<NpcEntity, NpcModel>() ;
+
+
+            CreateMap<NpcScriptEntity, NpcScriptCommandInput>();
+
+            CreateMap<NpcScriptCommandInput, NpcScriptEntity>();
 
         }
     }

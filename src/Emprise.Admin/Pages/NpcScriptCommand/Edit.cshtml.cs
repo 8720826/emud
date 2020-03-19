@@ -4,27 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Script;
+using Emprise.Admin.Models.NpcScript;
+using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin
+namespace Emprise.Admin.Pages.NpcScriptCommand
 {
     public class EditModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
-
         public EditModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
-
         }
 
         [BindProperty]
-        public ScriptInput Script { get; set; }
+        public NpcScriptCommandInput NpcScript { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -34,9 +33,9 @@ namespace Emprise.Admin
         {
             if (id > 0)
             {
-                var task = await _db.Scripts.FindAsync(id);
+                var npcScript = await _db.NpcScripts.FindAsync(id);
 
-                Script = _mapper.Map<ScriptInput>(task);
+                NpcScript = _mapper.Map<NpcScriptCommandInput>(npcScript);
             }
         }
 
@@ -50,11 +49,10 @@ namespace Emprise.Admin
                 return Page();
             }
 
-            var script = await _db.Scripts.FindAsync(id);
 
-            _mapper.Map(Script, script);
-
-
+            var script = await _db.NpcScripts.FindAsync(id);
+            _mapper.Map(NpcScript, script);
+    
             await _db.SaveChangesAsync();
 
 
