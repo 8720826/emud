@@ -77,7 +77,14 @@ namespace Emprise.Domain.Npc.Entity
         /// <summary>
         /// 脚本
         /// </summary>
-        public string Scripts { set; get; }
+
+
+        public List<NpcScriptEntity> NpcScripts { get; set; }
+
+        /// <summary>
+        /// 默认对话
+        /// </summary>
+        public string InitWords { set; get; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Npc.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,15 +68,14 @@ namespace Emprise.Admin.Models.Npc
         /// </summary>
         public int Exp { set; get; }
 
-        /// <summary>
-        /// 脚本
-        /// </summary>
-        public int ScriptId { set; get; }
 
 
+
+
+
         /// <summary>
-        /// 脚本名
+        /// 默认对话
         /// </summary>
-        public string ScriptName { set; get; }
+        public List<string> InitWords { set; get; }
     }
 }

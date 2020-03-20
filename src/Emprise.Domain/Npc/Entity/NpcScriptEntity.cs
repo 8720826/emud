@@ -12,22 +12,14 @@ namespace Emprise.Domain.Npc.Entity
     public class NpcScriptEntity : BaseEntity
     {
         /// <summary>
-        /// 脚本名称
+        /// NpcId
         /// </summary>
-        public string Name { set; get; }
+        public int NpcId { set; get; }
+        public NpcEntity Npc { get; set; }
 
 
-        public string ActionName { set; get; }
-        
+        public int ScriptId { set; get; }
+        public ScriptEntity Script { get; set; }
 
-        /// <summary>
-        /// 默认对话
-        /// </summary>
-        public string InitWords { set; get; }
-
-        /// <summary>
-        /// 是否启用
-        /// </summary>
-        public bool IsEnable { set; get; }
     }
 }

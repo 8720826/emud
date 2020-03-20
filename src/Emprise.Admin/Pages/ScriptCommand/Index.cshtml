@@ -1,5 +1,5 @@
 ﻿@page
-@model Emprise.Admin.Pages.NpcScriptCommand.IndexModel
+@model Emprise.Admin.Pages.ScriptCommand.IndexModel
 @{
     ViewData["Title"] = "脚本管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -42,23 +42,23 @@
                 <tbody>
                     @foreach (var script in Model.Commands)
                     {
-                    <tr>
-                        <td>@(script.Id)</td>
-                        <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
-                        <td>@(script.IsEntry)</td>
-                        <td>@(script.SortId)</td>
-                        <td>@(script.SortId)</td>
-                        <td>@(script.SortId)</td>
-                        <td>@(script.SortId)</td>
-                        <td>
-                            <div class="am-btn-toolbar">
-                                <div class="am-btn-group am-btn-group-xs">
-                                    <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                    <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                        <tr>
+                            <td>@(script.Id)</td>
+                            <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
+                            <td>@(script.IsEntry)</td>
+                            <td>@(script.SortId)</td>
+                            <td>@(script.SortId)</td>
+                            <td>@(script.SortId)</td>
+                            <td>@(script.SortId)</td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                        <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -69,6 +69,8 @@
     </div>
 
 </div>
+
+
 
 
 @section Scripts {

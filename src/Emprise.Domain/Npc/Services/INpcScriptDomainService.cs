@@ -10,14 +10,14 @@ namespace Emprise.Domain.Npc.Services
 {
     public interface INpcScriptDomainService : IBaseService
     {
-        Task<List<NpcScriptEntity>> Query(Expression<Func<NpcScriptEntity, bool>> where);
+        Task<List<ScriptEntity>> Query(Expression<Func<ScriptEntity, bool>> where);
 
-        Task<NpcScriptEntity> Get(Expression<Func<NpcScriptEntity, bool>> where);
+        Task<ScriptEntity> Get(Expression<Func<ScriptEntity, bool>> where);
 
-        Task<NpcScriptEntity> Get(int id);
+        Task<ScriptEntity> Get(int id);
 
-        Task Add(NpcScriptEntity entity);
+        Task Add(ScriptEntity entity);
 
-        Task Update(NpcScriptEntity entity);
+        Task Update(ScriptEntity entity);
     }
 }

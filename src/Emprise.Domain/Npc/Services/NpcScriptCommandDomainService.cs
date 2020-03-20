@@ -10,37 +10,37 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Npc.Services
 {
-    public class NpcScriptCommandDomainService : INpcScriptCommandDomainService
+    public class ScriptCommandDomainService : IScriptCommandDomainService
     {
-        private readonly IRepository<NpcScriptCommandEntity> _npcScriptRepository;
+        private readonly IRepository<ScriptCommandEntity> _npcScriptRepository;
 
-        public NpcScriptCommandDomainService(IRepository<NpcScriptCommandEntity> npcScriptRepository)
+        public ScriptCommandDomainService(IRepository<ScriptCommandEntity> npcScriptRepository)
         {
             _npcScriptRepository = npcScriptRepository;
         }
 
-        public async Task<List<NpcScriptCommandEntity>> Query(Expression<Func<NpcScriptCommandEntity, bool>> where)
+        public async Task<List<ScriptCommandEntity>> Query(Expression<Func<ScriptCommandEntity, bool>> where)
         {
             var query =  await _npcScriptRepository.GetAll(where);
             return query.ToList();
         }
 
-        public async Task<NpcScriptCommandEntity> Get(Expression<Func<NpcScriptCommandEntity, bool>> where)
+        public async Task<ScriptCommandEntity> Get(Expression<Func<ScriptCommandEntity, bool>> where)
         {
             return await _npcScriptRepository.Get(where);
         }
 
-        public async Task<NpcScriptCommandEntity> Get(int id)
+        public async Task<ScriptCommandEntity> Get(int id)
         {
             return await _npcScriptRepository.Get(id);
         }
 
-        public async Task Add(NpcScriptCommandEntity user)
+        public async Task Add(ScriptCommandEntity user)
         {
             await _npcScriptRepository.Add(user);
         }
 
-        public async Task Update(NpcScriptCommandEntity user)
+        public async Task Update(ScriptCommandEntity user)
         {
              await _npcScriptRepository.Update(user);
         }

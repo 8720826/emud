@@ -65,10 +65,10 @@
                             @(npc.CanMove ? "移动" : "")
                         </td>
                         <td>
-                            @* @foreach (var script in npc.NpcScripts)
-        {
-            <a asp-page="/Script/Edit" asp-route-id="@script.Key">@(script.Value)</a>
-        }*@
+                            @foreach (var script in npc.NpcScripts)
+                                {
+                            <a asp-page="/Script/Edit" asp-route-id="@script.Id">@(script.Script?.Name)</a>   
+                                }
 
                         </td>
                         <td>

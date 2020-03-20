@@ -7,7 +7,7 @@ using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.NpcScriptCommand
+namespace Emprise.Admin.Pages.ScriptCommand
 {
     public class IndexModel : PageModel
     {
@@ -21,11 +21,11 @@ namespace Emprise.Admin.Pages.NpcScriptCommand
 
 
 
-        public List<NpcScriptCommandEntity> Commands { get; set; }
+        public List<ScriptCommandEntity> Commands { get; set; }
 
         public void OnGet(int sId)
         {
-            Commands = _db.NpcScriptCommands.Where(x => x.ScriptId==sId).ToList();
+            Commands = _db.ScriptCommands.Where(x => x.ScriptId==sId).ToList();
         }
     }
 }

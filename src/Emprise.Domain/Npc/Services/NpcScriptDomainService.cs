@@ -12,35 +12,35 @@ namespace Emprise.Domain.Npc.Services
 {
     public class NpcScriptDomainService : INpcScriptDomainService
     {
-        private readonly IRepository<NpcScriptEntity> _npcScriptRepository;
+        private readonly IRepository<ScriptEntity> _npcScriptRepository;
 
-        public NpcScriptDomainService(IRepository<NpcScriptEntity> npcScriptRepository)
+        public NpcScriptDomainService(IRepository<ScriptEntity> npcScriptRepository)
         {
             _npcScriptRepository = npcScriptRepository;
         }
 
-        public async Task<List<NpcScriptEntity>> Query(Expression<Func<NpcScriptEntity, bool>> where)
+        public async Task<List<ScriptEntity>> Query(Expression<Func<ScriptEntity, bool>> where)
         {
             var query =  await _npcScriptRepository.GetAll(where);
             return query.ToList();
         }
 
-        public async Task<NpcScriptEntity> Get(Expression<Func<NpcScriptEntity, bool>> where)
+        public async Task<ScriptEntity> Get(Expression<Func<ScriptEntity, bool>> where)
         {
             return await _npcScriptRepository.Get(where);
         }
 
-        public async Task<NpcScriptEntity> Get(int id)
+        public async Task<ScriptEntity> Get(int id)
         {
             return await _npcScriptRepository.Get(id);
         }
 
-        public async Task Add(NpcScriptEntity user)
+        public async Task Add(ScriptEntity user)
         {
             await _npcScriptRepository.Add(user);
         }
 
-        public async Task Update(NpcScriptEntity user)
+        public async Task Update(ScriptEntity user)
         {
              await _npcScriptRepository.Update(user);
         }

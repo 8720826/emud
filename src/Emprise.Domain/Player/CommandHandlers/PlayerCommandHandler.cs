@@ -60,7 +60,7 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IMudProvider _mudProvider;
         private readonly AppConfig _appConfig;
         private readonly INpcScriptDomainService _npcScriptDomainService;
-        private readonly INpcScriptCommandDomainService _npcScriptCommandDomainService;
+        private readonly IScriptCommandDomainService _ScriptCommandDomainService;
         private readonly IRedisDb _redisDb;
 
         public PlayerCommandHandler(
@@ -77,7 +77,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IMudProvider mudProvider,
             IOptions<AppConfig> appConfig,
             INpcScriptDomainService npcScriptDomainService,
-            INpcScriptCommandDomainService npcScriptCommandDomainService,
+            IScriptCommandDomainService ScriptCommandDomainService,
             IRedisDb redisDb,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
@@ -95,7 +95,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _mudProvider = mudProvider;
             _appConfig = appConfig.Value;
             _npcScriptDomainService = npcScriptDomainService;
-            _npcScriptCommandDomainService = npcScriptCommandDomainService;
+            _ScriptCommandDomainService = ScriptCommandDomainService;
             _npcDomainService = npcDomainService;
             _redisDb = redisDb;
         }
@@ -492,20 +492,8 @@ namespace Emprise.Domain.User.CommandHandlers
             if (scriptId > 0)
             {
 
-                if (string.IsNullOrEmpty(npc.Scripts))
-                {
-                    await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                    return Unit.Value;
-                }
 
-                var dic = JsonConvert.DeserializeObject<Dictionary<int, string>>(npc.Scripts);
-                if (dic == null || dic.Count == 0)
-                {
-                    await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                    return Unit.Value;
-                }
-
-                var scriptIds = dic.Select(x => x.Key).ToList();
+                var scriptIds = npc.NpcScripts.Select(x => x.Id).ToList();
                 if (!scriptIds.Contains(scriptId))
                 {
                     await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
@@ -519,7 +507,7 @@ namespace Emprise.Domain.User.CommandHandlers
                     return Unit.Value;
                 }
 
-                var scriptCommands = await _npcScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
+                var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
 
                 var scriptCommand = scriptCommands.FirstOrDefault(x => string.Equals(x.ActionName, action, StringComparison.InvariantCultureIgnoreCase));
                 if (scriptCommand == null)

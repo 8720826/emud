@@ -4,26 +4,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.NpcScript;
-using Emprise.Domain.Npc.Entity;
+using Emprise.Admin.Models.Script;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.NpcScriptCommand
+namespace Emprise.Admin.Pages.NpcScript
 {
     public class EditModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
+
         public EditModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
+
         }
 
         [BindProperty]
-        public NpcScriptCommandInput NpcScript { get; set; }
+        public NpcScriptInput NpcScript { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -33,9 +34,9 @@ namespace Emprise.Admin.Pages.NpcScriptCommand
         {
             if (id > 0)
             {
-                var npcScript = await _db.NpcScripts.FindAsync(id);
+                var task = await _db.Script.FindAsync(id);
 
-                NpcScript = _mapper.Map<NpcScriptCommandInput>(npcScript);
+                NpcScript = _mapper.Map<NpcScriptInput>(task);
             }
         }
 
@@ -49,10 +50,11 @@ namespace Emprise.Admin.Pages.NpcScriptCommand
                 return Page();
             }
 
+            var script = await _db.Script.FindAsync(id);
 
-            var script = await _db.NpcScripts.FindAsync(id);
             _mapper.Map(NpcScript, script);
-    
+
+
             await _db.SaveChangesAsync();
 
 
@@ -63,5 +65,8 @@ namespace Emprise.Admin.Pages.NpcScriptCommand
 
 
         }
+
+
+
     }
 }

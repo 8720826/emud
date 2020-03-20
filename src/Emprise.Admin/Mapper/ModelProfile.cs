@@ -33,21 +33,23 @@ namespace Emprise.Admin.Mapper
             CreateMap<TaskEntity, TaskInput>();
             CreateMap<TaskInput, TaskEntity>();
 
-            CreateMap<NpcScriptEntity, NpcScriptInput>()
+            CreateMap<ScriptEntity, NpcScriptInput>()
+                ;
+
+            CreateMap<NpcScriptInput, ScriptEntity>()
+                ;
+
+            CreateMap<NpcEntity, NpcInput>()
                 .ForMember(x => x.InitWords, y => y.MapFrom(y => JsonConvert.DeserializeObject<List<string>>(y.InitWords)));
+            CreateMap<NpcInput, NpcEntity>()
+                .ForMember(x => x.InitWords, y => y.MapFrom(y => JsonConvert.SerializeObject(y.InitWords.Where(x => !string.IsNullOrEmpty(x)))));
 
-            CreateMap<NpcScriptInput, NpcScriptEntity>()
-                .ForMember(x => x.InitWords, y => y.MapFrom(y => JsonConvert.SerializeObject(y.InitWords.Where(x=>!string.IsNullOrEmpty(x)))));
-
-            CreateMap<NpcEntity, NpcInput>();
-            CreateMap<NpcInput, NpcEntity>();
-
-            CreateMap<NpcEntity, NpcModel>() ;
+            CreateMap<NpcEntity, NpcModel>();
 
 
-            CreateMap<NpcScriptEntity, NpcScriptCommandInput>();
+            CreateMap<ScriptEntity, ScriptCommandInput>();
 
-            CreateMap<NpcScriptCommandInput, NpcScriptEntity>();
+            CreateMap<ScriptCommandInput, ScriptEntity>();
 
         }
     }

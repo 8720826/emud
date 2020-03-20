@@ -1,5 +1,5 @@
-﻿@page "{id}"
-@model Emprise.Admin.Pages.NpcScript.EditModel
+﻿@page
+@model Emprise.Admin.Pages.NpcScript.AddModel
 @{
     ViewData["Title"] = "脚本管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -33,17 +33,7 @@
                             脚本名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.Name">
-                        </div>
-                        <div class="am-u-sm-6"></div>
-                    </div>
-
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
-                            命令名
-                        </div>
-                        <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.ActionName">
+                            <input type="text" class="am-input-sm" asp-for="Script.Name">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -54,7 +44,7 @@
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="NpcScript.IsEnable"> 启用
+                                <input type="checkbox" asp-for="Script.IsEnable" checked="checked"> 启用
                             </label>
 
                         </div>
@@ -62,28 +52,7 @@
                     </div>
 
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            默认对话
-                        </div>
-                        <div class="am-u-sm-8">
-                            @foreach (var initWord in Model.NpcScript.InitWords)
-                            {
-                                <input type="text" class="am-input-sm" name="Script.InitWords" value="@initWord"><br />
-                            }
 
-                            @if (Model.NpcScript.InitWords.Count < 4)
-                            {
-                                for (var i = 0; i < 4 - Model.NpcScript.InitWords.Count; i++)
-                                {
-                                    <input type="text" class="am-input-sm" name="Script.InitWords"><br />
-                                }
-                            }
-
-
-                        </div>
-                        <div class="am-u-sm-4"></div>
-                    </div>
 
 
                     <div class="am-g am-margin-top-sm">

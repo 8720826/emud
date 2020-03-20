@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Npc.Services
 {
-    public interface INpcScriptCommandDomainService : IBaseService
+    public interface IScriptCommandDomainService : IBaseService
     {
-        Task<List<NpcScriptCommandEntity>> Query(Expression<Func<NpcScriptCommandEntity, bool>> where);
+        Task<List<ScriptCommandEntity>> Query(Expression<Func<ScriptCommandEntity, bool>> where);
 
-        Task<NpcScriptCommandEntity> Get(Expression<Func<NpcScriptCommandEntity, bool>> where);
+        Task<ScriptCommandEntity> Get(Expression<Func<ScriptCommandEntity, bool>> where);
 
-        Task<NpcScriptCommandEntity> Get(int id);
+        Task<ScriptCommandEntity> Get(int id);
 
-        Task Add(NpcScriptCommandEntity entity);
+        Task Add(ScriptCommandEntity entity);
 
-        Task Update(NpcScriptCommandEntity entity);
+        Task Update(ScriptCommandEntity entity);
     }
 }

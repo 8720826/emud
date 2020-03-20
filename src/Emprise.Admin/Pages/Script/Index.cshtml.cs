@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Emprise.Admin.Pages.NpcScript
 {
+
     public class IndexModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
@@ -24,17 +25,39 @@ namespace Emprise.Admin.Pages.NpcScript
         [BindProperty(SupportsGet = true)]
         public string Keyword { get; set; }
 
-        public Paging<NpcScriptEntity> Paging { get; set; }
+        public Paging<ScriptEntity> Paging { get; set; }
 
         public void OnGet(int pageIndex)
         {
-            var query = _db.NpcScripts.OrderBy(x => x.Id);
+            var query = _db.Script.OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
             {
-                query = _db.NpcScripts.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
+                query = _db.Script.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
             }
 
             Paging = query.Paged(pageIndex, 10, query.Count());
+        }
+
+
+        public async Task<IActionResult> OnPostAsync([FromBody]EnableData enableData)
+        {
+            var npcScript = _db.Script.Find(enableData.SId);
+            if (npcScript == null)
+            {
+                return await Task.FromResult(new JsonResult(enableData));
+            }
+
+            npcScript.IsEnable = enableData.IsEnable;
+            await _db.SaveChangesAsync();
+
+            return  await Task.FromResult(new JsonResult(enableData));
+
+        }
+
+        public class EnableData
+        {
+            public int SId { get; set; }
+            public bool IsEnable { get; set; }
         }
     }
 }

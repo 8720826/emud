@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Npc.Entity
 {
-    [Table("NpcScriptCommand")]
-    public class NpcScriptCommandEntity : BaseEntity
+    [Table("ScriptCommand")]
+    public class ScriptCommandEntity : BaseEntity
     {
         public int ScriptId { set; get; }
 
@@ -39,5 +39,8 @@ namespace Emprise.Domain.Npc.Entity
         public string CaseThen { set; get; }
 
         public string CaseElse { set; get; }
+
+
+        public ScriptEntity Script { get; set; }
     }
 }

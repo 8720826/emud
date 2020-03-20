@@ -75,11 +75,11 @@ namespace Emprise.Admin.Models.Npc
         public int Exp { set; get; }
 
 
+
         /// <summary>
         /// 脚本
         /// </summary>
-        public string Scripts { set; get; }
+        public List<ScriptEntity> Script { set; get; }
 
-        public Dictionary<int, string> NpcScripts { get; set; }
     }
 }

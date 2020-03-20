@@ -32,16 +32,41 @@ namespace Emprise.Admin.Data
         public DbSet<TaskEntity> Tasks { get; set; }
 
 
+        public DbSet<ScriptEntity> Script { get; set; }
+
         public DbSet<NpcScriptEntity> NpcScripts { get; set; }
+        
 
 
-        public DbSet<NpcScriptCommandEntity> NpcScriptCommands { get; set; }
+        public DbSet<ScriptCommandEntity> ScriptCommands { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<NpcScriptEntity>()
+          .HasKey(t => new { t.NpcId, t.ScriptId });
+
+
+            modelBuilder.Entity<NpcScriptEntity>()
+                .HasOne(pt => pt.Npc)
+                .WithMany(p => p.NpcScripts)
+                .HasForeignKey(pt => pt.NpcId);
+
+            modelBuilder.Entity<NpcScriptEntity>()
+                .HasOne(pt => pt.Script)
+                .WithMany(t => t.NpcScripts)
+                .HasForeignKey(pt => pt.ScriptId);
+
+
+
+            modelBuilder.Entity<ScriptCommandEntity>()
+           .HasOne(p => p.Script)
+           .WithMany(b => b.ScriptCommands);
+
+
 
             base.OnModelCreating(modelBuilder);
         }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

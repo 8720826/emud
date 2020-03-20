@@ -15,10 +15,6 @@ namespace Emprise.Admin.Models.Script
 
         public string ActionName { set; get; }
 
-        /// <summary>
-        /// 默认对话
-        /// </summary>
-        public List<string> InitWords { set; get; }
 
         /// <summary>
         /// 是否启用

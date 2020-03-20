@@ -10,6 +10,7 @@ using Emprise.Admin.Models.Npc;
 using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Emprise.Admin.Pages.Npc
 {
@@ -33,10 +34,10 @@ namespace Emprise.Admin.Pages.Npc
 
         public void OnGet(int pageIndex)
         {
-            var query = _db.Npcs.OrderBy(x => x.Id);
+            var query = _db.Npcs.Include(x=>x.NpcScripts).ThenInclude(y => y.Script).OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
             {
-                query = _db.Npcs.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
+                query = _db.Npcs.Include(x => x.NpcScripts).ThenInclude(y => y.Script).Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
             }
 
             Paging = query.Paged(pageIndex, 10, query.Count());

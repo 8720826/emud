@@ -10,7 +10,7 @@ using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.NpcScriptCommand
+namespace Emprise.Admin.Pages.ScriptCommand
 {
     public class AddModel : PageModel
     {
@@ -24,7 +24,7 @@ namespace Emprise.Admin.Pages.NpcScriptCommand
         }
 
         [BindProperty]
-        public NpcScriptCommandInput NpcScript { get; set; }
+        public ScriptCommandInput NpcScript { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -64,8 +64,8 @@ namespace Emprise.Admin.Pages.NpcScriptCommand
                 return Page();
             }
 
-            var script = _mapper.Map<NpcScriptEntity>(NpcScript);
-            await _db.NpcScripts.AddAsync(script);
+            var script = _mapper.Map<ScriptEntity>(NpcScript);
+            await _db.Script.AddAsync(script);
 
             await _db.SaveChangesAsync();
 

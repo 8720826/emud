@@ -27,17 +27,17 @@ namespace Emprise.Application.User.Services
         private readonly INpcDomainService _npcDomainService;
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IAccountContext _account;
-        private readonly INpcScriptCommandDomainService _npcScriptCommandDomainService;
+        private readonly IScriptCommandDomainService _ScriptCommandDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
         private readonly IMudProvider _mudProvider;
-        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, INpcScriptCommandDomainService npcScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService, IMudProvider mudProvider)
+        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptCommandDomainService ScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService, IMudProvider mudProvider)
         {
             _bus = bus;
             _mapper = mapper;
             _npcDomainService = npcDomainService;
             _playerDomainService = playerDomainService;
             _account = account;
-            _npcScriptCommandDomainService = npcScriptCommandDomainService;
+            _ScriptCommandDomainService = ScriptCommandDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _mudProvider = mudProvider;
         }
@@ -87,37 +87,32 @@ namespace Emprise.Application.User.Services
             npcInfo.Descriptions.Add($"{genderStr}{npc.Per.ToPer(npc.Age, npc.Gender)}");
             npcInfo.Descriptions.Add($"{genderStr}{npc.Exp.ToKunFuLevel(player.Exp)}");
 
-            if (!string.IsNullOrEmpty(npc.Scripts))
+            var scriptIds = npc.NpcScripts.Select(x => x.Id).ToList();
+
+            var npcScripts = await _npcScriptDomainService.Query(x => scriptIds.Contains(x.Id));
+            foreach (var npcScript in npcScripts)
             {
-                var scriptIds = JsonConvert.DeserializeObject<Dictionary<int, string>>(npc.Scripts).Select(x => x.Key).ToList() ;
+                var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.Id);
 
-                var npcScripts = await _npcScriptDomainService.Query(x => scriptIds.Contains(x.Id));
-                foreach (var npcScript in npcScripts)
+                var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
+
+                npcInfo.Actions.AddRange(actions);
+
+                /*
+                if (!string.IsNullOrEmpty(script.InitWords))
                 {
-                    var scriptCommands = await _npcScriptCommandDomainService.Query(x => x.ScriptId == npcScript.Id);
-
-                    var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
-
-                    npcInfo.Actions.AddRange(actions);
-
-                    /*
-                    if (!string.IsNullOrEmpty(script.InitWords))
+                    var initWords = JsonConvert.DeserializeObject<List<string>>(script.InitWords);
+                    Random r = new Random();
+                    int n = r.Next(0, initWords.Count);
+                    var initWord = initWords[n];
+                    if (!string.IsNullOrEmpty(initWord))
                     {
-                        var initWords = JsonConvert.DeserializeObject<List<string>>(script.InitWords);
-                        Random r = new Random();
-                        int n = r.Next(0, initWords.Count);
-                        var initWord = initWords[n];
-                        if (!string.IsNullOrEmpty(initWord))
-                        {
-                            await _mudProvider.ShowMessage(playerId, initWord);
-                        }
-                    }*/
-                }
-
-
+                        await _mudProvider.ShowMessage(playerId, initWord);
+                    }
+                }*/
             }
-      
-          
+
+
 
             /*
             var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);
