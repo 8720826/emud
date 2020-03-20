@@ -47,7 +47,7 @@
                         <th class="table-desc">描述</th>
                         <th class="table-work">属性</th>
                         <th class="table-work">脚本</th>
-
+                        <th class="table-work">对话</th>
                         <th class="table-set">操作</th>
                     </tr>
                 </thead>
@@ -65,12 +65,16 @@
                             @(npc.CanMove ? "移动" : "")
                         </td>
                         <td>
-                            @foreach (var script in npc.NpcScripts)
+                            <ul>
+                                @foreach (var script in npc.NpcScripts)
                                 {
-                            <a asp-page="/Script/Edit" asp-route-id="@script.Id">@(script.Script?.Name)</a>   
+                                    <li>
+                                        <a asp-page="/Script/Edit" asp-route-id="@script.Id">@(script.Script?.Name)（@(script.Script?.ActionName)）</a>
+                                    </li>
                                 }
-
+                            </ul>
                         </td>
+                        <td>@(npc.InitWords)</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
