@@ -97,22 +97,20 @@ namespace Emprise.Application.User.Services
                 var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
 
                 npcInfo.Actions.AddRange(actions);
-
-                /*
-                if (!string.IsNullOrEmpty(script.InitWords))
-                {
-                    var initWords = JsonConvert.DeserializeObject<List<string>>(script.InitWords);
-                    Random r = new Random();
-                    int n = r.Next(0, initWords.Count);
-                    var initWord = initWords[n];
-                    if (!string.IsNullOrEmpty(initWord))
-                    {
-                        await _mudProvider.ShowMessage(playerId, initWord);
-                    }
-                }*/
             }
 
 
+            if (!string.IsNullOrEmpty(npc.InitWords))
+            {
+                var initWords = npc.InitWords.Split('\r').Where(x => !string.IsNullOrEmpty(x)).ToList();
+                Random r = new Random();
+                int n = r.Next(0, initWords.Count);
+                var initWord = initWords[n];
+                if (!string.IsNullOrEmpty(initWord))
+                {
+                    await _mudProvider.ShowMessage(playerId, initWord);
+                }
+            }
 
             /*
             var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);

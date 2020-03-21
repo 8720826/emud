@@ -76,6 +76,6 @@ namespace Emprise.Admin.Models.Npc
         /// <summary>
         /// 默认对话
         /// </summary>
-        public List<string> InitWords { set; get; }
+        public string InitWords { set; get; }
     }
 }

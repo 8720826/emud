@@ -1,0 +1,131 @@
+﻿@page
+@model Emprise.Admin.Pages.Npc.ListModel
+@{
+    Layout = null;
+}
+
+@section CssJs {
+    <link rel="stylesheet" href="/css/amazeui.switch.css" />
+}
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewData["Title"] - EMUD后台管理系统 - emprise.cn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="/css/amazeui.min.css" />
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body style="height:100%">
+    <div style="height:100%">
+        <div class="am-g am-padding">
+            <div class="am-u-md-3 am-cf">
+                <form class="am-form">
+                    <div class="am-fr">
+                        <div class="am-input-group am-input-group-sm">
+                            <input type="text" class="am-form-field" asp-for="Keyword">
+                            <span class="am-input-group-btn">
+                                <button class="am-btn am-btn-default" type="submit">搜索</button>
+                            </span>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="am-cf am-padding">
+
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th class="table-id">ID</th>
+                        <th class="table-title">名称</th>
+                        <th class="table-exits">类型</th>
+                        <th class="table-exits">性别</th>
+                        <th class="table-desc">描述</th>
+                        <th class="table-work">属性</th>
+                        <th class="table-work">对话</th>
+                        <th class="table-work">脚本</th>
+                        <th class="table-set">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var npc in Model.Paging.Data)
+                    {
+                        <tr>
+                            <td>@(npc.Id)</td>
+                            <td>@(npc.Name)</td>
+                            <td>@(npc.Type)</td>
+                            <td>@(npc.Gender)</td>
+                            <td>@(npc.Description)</td>
+                            <td>
+                                @(npc.CanFight ? "切磋" : "")
+                                @(npc.CanKill ? "杀死" : "")
+                                @(npc.CanMove ? "移动" : "")
+                            </td>
+                            <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
+                            <td>
+                                <ul>
+                                    @foreach (var script in npc.NpcScripts)
+                                    {
+                                        <li>
+                                            @(script.Script?.Name)（@(script.Script?.ActionName)）
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a id="@(npc.Id)" name="@(npc.Name)" href="javascript: ;" class="am-btn am-btn-default am-btn-xs am-text-secondary selectNpc"><span class="am-icon-dot-circle-o"></span> 选中</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="am-cf">
+                共 @(Model.Paging.Count) 条记录
+                <div class="am-fr">
+                    <ul class="am-pagination">
+                        <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
+
+                        @for (var i = 0; i < Model.Paging.PageCount; i++)
+                        {
+                            if (Model.Paging.PageIndex == i + 1)
+                            {
+                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
+                            }
+                        }
+
+                        <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr />
+            <p>注：.....</p>
+        </div>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".selectNpc").on("click", function () {
+                var id = $(this).attr("id");
+                var name = $(this).attr("name");
+                parent.selectNpc(id, name);
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+            })
+        });
+    </script>
+</body>
+</html>

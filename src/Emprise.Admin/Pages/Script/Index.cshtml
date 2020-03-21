@@ -49,6 +49,7 @@
                         <th class="table-id">ID</th>
                         <th class="table-title">脚本名</th>
                         <th class="table-title">按钮名</th>
+                        <th class="table-exits">使用该脚本的Npc</th>
                         <th class="table-exits">是否启用</th>
                         <th class="table-exits">分支管理</th>
                         <th class="table-set">操作</th>
@@ -57,29 +58,39 @@
                 <tbody>
                     @foreach (var script in Model.Paging.Data)
                     {
-                        <tr>
-                            <td>@(script.Id)</td>
-                            <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
-                            <td>@(script.ActionName)</td>
-                            <td>
-                                <input type="checkbox" data-size="xs" sId="@script.Id" asp-for="@script.IsEnable" data-off-text="否" data-on-text="是" data-am-switch />
-                            </td>
-                            <td>
-                                <a asp-page="/ScriptCommand/Index" asp-route-sid="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-code"></span> 脚本分支</a>
+                    <tr>
+                        <td>@(script.Id)</td>
+                        <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
+                        <td>@(script.ActionName)</td>
+                        <td>
+                            <ul>
+                                @foreach (var npcScript in script.NpcScripts)
+                                {
+                                    <li>
+                                        <a asp-page="/Script/Edit" asp-route-id="@npcScript.Npc?.Id">@(npcScript.Npc?.Name)（@(npcScript.Npc?.Id)）</a>
+                                    </li>
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            <input type="checkbox" data-size="xs" sId="@script.Id" asp-for="@script.IsEnable" data-off-text="否" data-on-text="是" data-am-switch />
+                        </td>
+                        <td>
+                            <a asp-page="/ScriptCommand/Index" asp-route-sid="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-code"></span> 脚本分支</a>
 
-                            </td>
-                            <td>
-                                <div class="am-btn-toolbar">
-                                    <div class="am-btn-group am-btn-group-xs">
-                                        <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                        <a asp-page="./Copy" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
+                        </td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                    <a asp-page="./Copy" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
 
 
-                                        <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
-                                    </div>
+                                    <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

@@ -43,11 +43,12 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">名称</th>
+                        <th class="table-exits">类型</th>
                         <th class="table-exits">性别</th>
                         <th class="table-desc">描述</th>
                         <th class="table-work">属性</th>
-                        <th class="table-work">脚本</th>
                         <th class="table-work">对话</th>
+                        <th class="table-work">脚本</th>
                         <th class="table-set">操作</th>
                     </tr>
                 </thead>
@@ -57,6 +58,7 @@
                     <tr>
                         <td>@(npc.Id)</td>
                         <td><a asp-page="./Edit" asp-route-id="@npc.Id">@(npc.Name)</a></td>
+                        <td>@(npc.Type)</td>
                         <td>@(npc.Gender)</td>
                         <td>@(npc.Description)</td>
                         <td>
@@ -64,17 +66,17 @@
                             @(npc.CanKill ? "杀死" : "")
                             @(npc.CanMove ? "移动" : "")
                         </td>
+                        <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
                         <td>
                             <ul>
                                 @foreach (var script in npc.NpcScripts)
                                 {
                                     <li>
-                                        <a asp-page="/Script/Edit" asp-route-id="@script.Id">@(script.Script?.Name)（@(script.Script?.ActionName)）</a>
+                                        <a asp-page="/Script/Edit" asp-route-id="@script.ScriptId">@(script.Script?.Name)（@(script.Script?.ActionName)）</a>
                                     </li>
                                 }
                             </ul>
                         </td>
-                        <td>@(npc.InitWords)</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">

@@ -33,7 +33,7 @@
                             脚本名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.Name">
+                            <input type="text" class="am-input-sm" asp-for="Script.Name">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -43,9 +43,33 @@
                             命令名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.ActionName">
+                            <input type="text" class="am-input-sm" asp-for="Script.ActionName">
                         </div>
                         <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            Npc
+                        </div>
+                        <div class="am-u-sm-10">
+                            <ul id="npcs">
+                                @foreach (var npc in Model.Npcs)
+                                {
+                                    <li>
+                                        @(npc.Name)(@(npc.Id))
+                                        <a href='javascript:;' class='removeNpc' id='@(npc.Id)'>X</a>
+                                        <input type="hidden" name="NpcIds" value="@(npc.Id)">
+                                    </li>
+                                }
+                            </ul>
+                            <a class="am-btn am-btn-default am-btn-xs" id="addNpc">
+                                <i class="am-icon-plus"></i>
+                                添加Npc
+                            </a>
+                        </div>
+
                     </div>
 
                     <div class="am-g am-margin-top">
@@ -54,7 +78,7 @@
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="NpcScript.IsEnable"> 启用
+                                <input type="checkbox" asp-for="Script.IsEnable"> 启用
                             </label>
 
                         </div>
@@ -87,12 +111,41 @@
     </div>
 </div>
 @section Scripts {
-
+    <script src="/layer/layer.js"></script>
     <script type="text/javascript">
             $(function () {
                 $("input[type=checkbox]:checked").each(function () {
                     $(this).parent(".am-btn").addClass("am-active");
                 });
+
+                $("#addNpc").on("click", function () {
+                    var index = layer.open({
+                        type: 2,
+                        title: "请选择要设置的脚本",
+                        area: ["800px", "1000px"],
+                        content: "@(Url.Page("/Npc/List"))",
+                        success: function (layero, index) {
+
+                        },
+                        end: function () {
+
+                        }
+                    });
+                    layer.full(index);
+                });
+
+                $(document).on("click", ".removeNpc", function () {
+                    $(this).parent().remove();
+                });
             });
+
+        function selectNpc(id, name) {
+            if ($("input[name='NpcIds'][value=" + id + "]").length > 0) {
+                return;
+            }
+            $("#npcs").append("<li>" + name + "(" + id + ")         <a href='javascript:;' class='removeNpc' id='" + id + "'>X</a><input type='hidden' name='NpcIds' value='" + id + "'></li> ");
+        }
+
+
     </script>
 }

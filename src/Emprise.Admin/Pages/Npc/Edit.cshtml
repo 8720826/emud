@@ -17,6 +17,11 @@
     <script type="text/javascript" src="/simditor/scripts/simditor-html.js"></script>
 
     <link rel="stylesheet" href="/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <style>
+        #scripts {
+            font-size: 1.4rem;
+        }
+    </style>
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
@@ -118,7 +123,48 @@
                         <div class="am-u-sm-6"></div>
                     </div>
 
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            所在房间
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" id="roomId"  class="am-input-sm" asp-for="Npc.RoomId">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
 
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            脚本
+                        </div>
+                        <div class="am-u-sm-10">
+                            <ul id="scripts">
+                                @foreach (var script in Model.Scripts)
+                                {
+                                    <li>
+                                        @(script.Name)(@(script.Id))
+                                        <a href='javascript:;' class='removeScript' id='@(script.Id)'>X</a>
+                                        <input type="hidden" name="ScriptIds" value="@(script.Id)">
+                                    </li>
+                                }
+                            </ul>
+                            <a class="am-btn am-btn-default am-btn-xs" id="addScript">
+                                <i class="am-icon-plus"></i>
+                                添加脚本
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            Npc默认对话
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="多条对话以换行隔开" id="InitWords" asp-for="Npc.InitWords"></textarea>
+                        </div>
+
+                    </div>
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
@@ -149,25 +195,80 @@
             <div class="am-margin">
 
             </div>
+
+            
         </form>
     </div>
 </div>
 @section Scripts {
-
+    <script src="/layer/layer.js"></script>
     <script type="text/javascript">
-            $(function () {
-                Simditor.locale = 'zh-CN';//设置中文
-                var editor = new Simditor({
-                    textarea: $("#description"),  //textarea的id
-                    placeholder: '请输入房间描述',
-                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
-                    pasteImage: true,//允许粘贴图片
-                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
-                });
 
-                $("input[type=checkbox]:checked").each(function () {
-                    $(this).parent(".am-btn").addClass("am-active");
-                });
+        $(function () {
+            //$("#ScriptIds").val(scriptIds);
+
+            Simditor.locale = 'zh-CN';//设置中文
+            var editor = new Simditor({
+                textarea: $("#description"),  //textarea的id
+                placeholder: '请输入房间描述',
+                toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                pasteImage: true,//允许粘贴图片
+                defaultImage: ''//编辑器插入的默认图片，此处可以删除
             });
+
+            $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+
+
+            $("#addScript").on("click", function () {
+                var index = layer.open({
+                    type: 2,
+                    title: "请选择要设置的脚本",
+                    area: ["800px", "1000px"],
+                    content: "@(Url.Page("/Script/List"))",
+                    success: function (layero, index) {
+
+                    },
+                    end: function () {
+
+                    }
+                });
+                layer.full(index);
+            });
+
+            $("#roomId").on("click", function () {
+                var index = layer.open({
+                    type: 2,
+                    title: "请选择要设置的房间",
+                    area: ["800px", "1000px"],
+                    content: "@(Url.Page("/Room/List"))",
+                    success: function (layero, index) {
+
+                    },
+                    end: function () {
+
+                    }
+                });
+                layer.full(index);
+            });
+            
+
+            $(document).on("click", ".removeScript", function () {
+                $(this).parent().remove();
+            });
+        });
+
+        function addScript(id, name) {
+            if ($("input[name='ScriptIds'][value=" + id+"]").length > 0) {
+                return;
+            }
+             $("#scripts").append("<li>" + name + "(" + id + ")         <a href='javascript:;' class='removeScript' id='" + id + "'>X</a><input type='hidden' name='ScriptIds' value='" + id + "'></li> ");
+        }
+
+
+        function selectRoom(id, name) {
+            $("#roomId").val(id);
+        }
     </script>
 }

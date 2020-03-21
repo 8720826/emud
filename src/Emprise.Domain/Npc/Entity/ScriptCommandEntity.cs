@@ -1,6 +1,7 @@
 ﻿using Emprise.Domain.Core.Entity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,11 +26,13 @@ namespace Emprise.Domain.Npc.Entity
         /// <summary>
         /// 分支名称
         /// </summary>
+        [StringLength(100)]
         public string Name { set; get; }
 
         /// <summary>
         /// 命令名称
         /// </summary>
+        [StringLength(100)]
         public string ActionName { set; get; }
 
 

@@ -33,7 +33,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
         {
             if (id > 0)
             {
-                var npcScript = await _db.Script.FindAsync(id);
+                var npcScript = await _db.Scripts.FindAsync(id);
 
                 NpcScript = _mapper.Map<ScriptCommandInput>(npcScript);
             }
@@ -50,7 +50,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
             }
 
 
-            var script = await _db.Script.FindAsync(id);
+            var script = await _db.Scripts.FindAsync(id);
             _mapper.Map(NpcScript, script);
     
             await _db.SaveChangesAsync();

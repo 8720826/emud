@@ -23,7 +23,7 @@ namespace Emprise.Admin.Pages.NpcScript
         }
 
         [BindProperty]
-        public NpcScriptInput Script { get; set; }
+        public ScriptInput Script { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -45,7 +45,7 @@ namespace Emprise.Admin.Pages.NpcScript
             }
 
             var script = _mapper.Map<ScriptEntity>(Script);
-            await _db.Script.AddAsync(script);
+            await _db.Scripts.AddAsync(script);
 
             await _db.SaveChangesAsync();
 

@@ -118,7 +118,25 @@
                         <div class="am-u-sm-6"></div>
                     </div>
 
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            所在房间
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" id="roomId" class="am-input-sm" asp-for="Npc.RoomId">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
 
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            Npc默认对话
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="多条对话以换行隔开" id="InitWords" asp-for="Npc.InitWords"></textarea>
+                        </div>
+
+                    </div>
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">

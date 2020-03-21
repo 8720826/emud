@@ -29,6 +29,11 @@ namespace Emprise.Admin.Pages.Npc
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
+        [BindProperty]
+        public List<int> ScriptIds { get; set; }
+
+        public List<ScriptEntity> Scripts { get; set; }
+
         public async Task OnGetAsync(int id)
         {
             if (id > 0)
@@ -36,10 +41,17 @@ namespace Emprise.Admin.Pages.Npc
                 var npc = await _db.Npcs.FindAsync(id);
 
                 Npc = _mapper.Map<NpcInput>(npc);
+
+                var npcScripts = _db.NpcScripts.Where(x => x.NpcId == id);
+
+                var ids = npcScripts.Select(x => x.ScriptId).ToList();
+
+
+                Scripts = _db.Scripts.Where(x => ids.Contains(x.Id)).ToList();
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, string position)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             SueccessMessage = "";
             ErrorMessage = "";
@@ -52,8 +64,31 @@ namespace Emprise.Admin.Pages.Npc
 
             var npc = await _db.Npcs.FindAsync(id);
             _mapper.Map(Npc, npc);
+            if (npc.InitWords == null)
+            {
+                npc.InitWords = "";
+            }
 
+            await _db.SaveChangesAsync();
 
+            var npcScripts = _db.NpcScripts.Where(x => x.NpcId == id);
+            foreach(var npcScript in npcScripts)
+            {
+                if (!ScriptIds.Contains(npcScript.ScriptId))
+                {
+                    _db.NpcScripts.Remove(npcScript);
+                }
+                else
+                {
+                    ScriptIds.Remove(npcScript.ScriptId);
+                }
+            }
+            await _db.SaveChangesAsync();
+
+            foreach (var scriptId in ScriptIds)
+            {
+                _db.NpcScripts.Add(new NpcScriptEntity { NpcId = id, ScriptId = scriptId });
+            }
             await _db.SaveChangesAsync();
 
 

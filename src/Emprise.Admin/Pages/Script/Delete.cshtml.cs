@@ -24,7 +24,7 @@ namespace Emprise.Admin.Pages.NpcScript
         public string ErrorMessage { get; set; }
         public void OnGet(int id = 0)
         {
-            NpcScript = _db.Script.Find(id);
+            NpcScript = _db.Scripts.Find(id);
         }
 
         public async Task<IActionResult> OnPostAsync(int id = 0)
@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.NpcScript
                 return Page();
             }
 
-             _db.Script.Remove(NpcScript);
+             _db.Scripts.Remove(NpcScript);
             await _db.SaveChangesAsync();
 
             SueccessMessage = $"删除成功！";

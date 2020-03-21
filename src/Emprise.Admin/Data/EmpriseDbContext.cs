@@ -32,7 +32,7 @@ namespace Emprise.Admin.Data
         public DbSet<TaskEntity> Tasks { get; set; }
 
 
-        public DbSet<ScriptEntity> Script { get; set; }
+        public DbSet<ScriptEntity> Scripts { get; set; }
 
         public DbSet<NpcScriptEntity> NpcScripts { get; set; }
         

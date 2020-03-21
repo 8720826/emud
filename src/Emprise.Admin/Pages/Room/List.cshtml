@@ -125,7 +125,7 @@
             $(".exitroom").on("click", function () {
                 var id = $(this).attr("id");
                 var name = $(this).attr("name");
-                parent.setExit(id, name);
+                parent.selectRoom(id, name);
                 var index = parent.layer.getFrameIndex(window.name);
                 parent.layer.close(index);
             })

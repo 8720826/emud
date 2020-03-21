@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Script;
+using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -24,7 +25,13 @@ namespace Emprise.Admin.Pages.NpcScript
         }
 
         [BindProperty]
-        public NpcScriptInput NpcScript { get; set; }
+        public ScriptInput Script { get; set; }
+
+        public List<NpcEntity> Npcs { get; set; }
+
+
+        [BindProperty]
+        public List<int> NpcIds { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -34,9 +41,17 @@ namespace Emprise.Admin.Pages.NpcScript
         {
             if (id > 0)
             {
-                var task = await _db.Script.FindAsync(id);
+                var script = await _db.Scripts.FindAsync(id);
 
-                NpcScript = _mapper.Map<NpcScriptInput>(task);
+                Script = _mapper.Map<ScriptInput>(script);
+
+
+                var npcScripts = _db.NpcScripts.Where(x => x.ScriptId == id);
+
+                var ids = npcScripts.Select(x => x.NpcId).ToList();
+
+
+                Npcs = _db.Npcs.Where(x => ids.Contains(x.Id)).ToList();
             }
         }
 
@@ -50,14 +65,30 @@ namespace Emprise.Admin.Pages.NpcScript
                 return Page();
             }
 
-            var script = await _db.Script.FindAsync(id);
-
-            _mapper.Map(NpcScript, script);
-
-
+            var script = await _db.Scripts.FindAsync(id);
+            _mapper.Map(Script, script);
             await _db.SaveChangesAsync();
 
 
+            var npcScripts = _db.NpcScripts.Where(x => x.ScriptId == id);
+            foreach (var npcScript in npcScripts)
+            {
+                if (!NpcIds.Contains(npcScript.NpcId))
+                {
+                    _db.NpcScripts.Remove(npcScript);
+                }
+                else
+                {
+                    NpcIds.Remove(npcScript.NpcId);
+                }
+            }
+            await _db.SaveChangesAsync();
+
+            foreach (var npcId in NpcIds)
+            {
+                _db.NpcScripts.Add(new NpcScriptEntity { NpcId = npcId, ScriptId = id });
+            }
+            await _db.SaveChangesAsync();
 
             SueccessMessage = $"修改成功！";
 
