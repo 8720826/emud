@@ -33,19 +33,27 @@
                             分支名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.Name">
+                            <input type="text" class="am-input-sm" asp-for="ScriptCommand.Name">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
-
-
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            描述
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="ScriptCommand.Description">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+                    
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
                             是否入口
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="NpcScript.IsEntry"> 是否入口
+                                <input type="checkbox" asp-for="ScriptCommand.IsEntry"> 是否入口
                             </label>
 
                         </div>
@@ -57,7 +65,7 @@
                             排序
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.SortId" value="99">
+                            <input type="text" class="am-input-sm" asp-for="ScriptCommand.SortId" value="99">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -68,7 +76,7 @@
                             分支-如果
                         </div>
                         <div class="am-u-sm-10">
-                            <input type="hidden" asp-for="NpcScript.CaseIf">
+                            <input type="hidden" asp-for="ScriptCommand.CaseIf">
                             <table class="am-table am-table-bd am-table-striped am-table-hover">
                                 <thead>
                                     <tr>
@@ -117,7 +125,7 @@
                             分支-那么
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="NpcScript.CaseThen"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="ScriptCommand.CaseThen"></textarea>
                         </div>
                         <div class="am-u-sm-4"></div>
                     </div>
@@ -127,7 +135,7 @@
                             分支-否则
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="NpcScript.CaseElse"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="ScriptCommand.CaseElse"></textarea>
                         </div>
                         <div class="am-u-sm-4"></div>
                     </div>
@@ -139,7 +147,7 @@
                         </div>
                         <div class="am-u-sm-10">
                             <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
-                            <a asp-page="/NpcScript/Index" asp-route-sId="@(Model.NpcScript.ScriptId)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <a asp-page="/ScriptCommand/Index" asp-route-sId="@(Model.ScriptCommand.ScriptId)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
                                 <p style="color:#5FB878">@(Model.SueccessMessage)</p>

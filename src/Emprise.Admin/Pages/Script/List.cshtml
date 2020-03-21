@@ -44,7 +44,7 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">脚本名</th>
-                        <th class="table-title">按钮名</th>
+                        <th class="table-title">描述</th>
                         <th class="table-exits">使用该脚本的Npc</th>
                         <th class="table-exits">是否启用</th>
                         <th class="table-set">操作</th>
@@ -56,7 +56,7 @@
                         <tr>
                             <td>@(script.Id)</td>
                             <td>@(script.Name)</td>
-                            <td>@(script.ActionName)</td>
+                            <td>@(script.Description)</td>
                             <td>
                                 <ul>
                                     @foreach (var npcScript in script.NpcScripts)

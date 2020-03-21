@@ -13,7 +13,7 @@ namespace Emprise.Admin.Models.Script
         /// </summary>
         public string Name { set; get; }
 
-        public string ActionName { set; get; }
+        public string Description { set; get; }
 
 
         /// <summary>

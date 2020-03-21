@@ -30,10 +30,10 @@ namespace Emprise.Domain.Npc.Entity
         public string Name { set; get; }
 
         /// <summary>
-        /// 命令名称
+        /// 分支描述
         /// </summary>
-        [StringLength(100)]
-        public string ActionName { set; get; }
+        [StringLength(500)]
+        public string Description { set; get; }
 
 
         public string CaseIf { set; get; }

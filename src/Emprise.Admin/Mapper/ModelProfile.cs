@@ -45,9 +45,10 @@ namespace Emprise.Admin.Mapper
             CreateMap<NpcEntity, NpcModel>();
 
 
-            CreateMap<ScriptEntity, ScriptCommandInput>();
+            CreateMap<ScriptCommandEntity, ScriptCommandInput>();
 
-            CreateMap<ScriptCommandInput, ScriptEntity>();
+            CreateMap<ScriptCommandInput, ScriptCommandEntity>();
+
 
         }
     }

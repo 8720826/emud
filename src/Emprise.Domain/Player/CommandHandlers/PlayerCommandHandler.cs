@@ -509,7 +509,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
                 var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
 
-                var scriptCommand = scriptCommands.FirstOrDefault(x => string.Equals(x.ActionName, action, StringComparison.InvariantCultureIgnoreCase));
+                var scriptCommand = scriptCommands.FirstOrDefault(x => string.Equals(x.Name, action, StringComparison.InvariantCultureIgnoreCase));
                 if (scriptCommand == null)
                 {
                     return Unit.Value;

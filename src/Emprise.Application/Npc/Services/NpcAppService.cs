@@ -94,7 +94,7 @@ namespace Emprise.Application.User.Services
             {
                 var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.Id);
 
-                var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.ActionName).ToList();
+                var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.Name).ToList();
 
                 npcInfo.Actions.AddRange(actions);
             }

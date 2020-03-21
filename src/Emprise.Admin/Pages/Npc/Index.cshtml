@@ -72,7 +72,7 @@
                                 @foreach (var script in npc.NpcScripts)
                                 {
                                     <li>
-                                        <a asp-page="/Script/Edit" asp-route-id="@script.ScriptId">@(script.Script?.Name)（@(script.Script?.ActionName)）</a>
+                                        <a asp-page="/Script/Edit" asp-route-id="@script.ScriptId">@(script.Script?.Name)（@(script.Script?.Description)）</a>
                                     </li>
                                 }
                             </ul>

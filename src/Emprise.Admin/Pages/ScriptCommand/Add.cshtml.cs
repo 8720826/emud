@@ -24,7 +24,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
         }
 
         [BindProperty]
-        public ScriptCommandInput NpcScript { get; set; }
+        public ScriptCommandInput ScriptCommand { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -64,8 +64,8 @@ namespace Emprise.Admin.Pages.ScriptCommand
                 return Page();
             }
 
-            var script = _mapper.Map<ScriptEntity>(NpcScript);
-            await _db.Scripts.AddAsync(script);
+            var scriptCommand = _mapper.Map<ScriptCommandEntity>(ScriptCommand);
+            await _db.ScriptCommands.AddAsync(scriptCommand);
 
             await _db.SaveChangesAsync();
 
@@ -73,7 +73,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit", new { id = script.Id });
+            return RedirectToPage("Edit", new { id = scriptCommand.Id });
 
 
         }

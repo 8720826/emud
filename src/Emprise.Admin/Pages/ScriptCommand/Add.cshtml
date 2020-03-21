@@ -35,7 +35,17 @@
                             脚本名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.Name">
+                            <input type="text" class="am-input-sm" asp-for="ScriptCommand.Name">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            描述
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="ScriptCommand.Description">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -46,7 +56,7 @@
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="NpcScript.IsEntry"> 是否入口
+                                <input type="checkbox" asp-for="ScriptCommand.IsEntry"> 是否入口
                             </label>
 
                         </div>
@@ -58,7 +68,7 @@
                             排序
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="NpcScript.SortId" value="99">
+                            <input type="text" class="am-input-sm" asp-for="ScriptCommand.SortId" value="99">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -69,7 +79,7 @@
                             分支-如果
                         </div>
                         <div class="am-u-sm-10">
-                            <input type="hidden" asp-for="NpcScript.CaseIf">
+                            <input type="hidden" asp-for="ScriptCommand.CaseIf">
                             <div class="am-form-inline am-u-sm-10 am-form-group">
                                 <select class="am-input-sm am-form-field types">
                                     <option>请选择</option>
@@ -88,7 +98,7 @@
                             分支-那么
                         </div>
                         <div class="am-u-sm-10">
-                            <input type="hidden" asp-for="NpcScript.CaseThen">
+                            <input type="hidden" asp-for="ScriptCommand.CaseThen">
                             <div class="am-form-inline am-u-sm-10 am-form-group">
                                 <select class="am-input-sm am-form-field commonds">
                                     <option>请选择</option>
@@ -107,7 +117,7 @@
                             分支-否则
                         </div>
                         <div class="am-u-sm-10">
-                            <input type="hidden" asp-for="NpcScript.CaseElse">
+                            <input type="hidden" asp-for="ScriptCommand.CaseElse">
                             <div class="am-form-inline am-u-sm-10 am-form-group">
                                 <select class="am-input-sm am-form-field commonds">
                                     <option>请选择</option>

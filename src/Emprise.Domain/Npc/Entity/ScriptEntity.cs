@@ -18,8 +18,11 @@ namespace Emprise.Domain.Npc.Entity
         [StringLength(100)]
         public string Name { set; get; }
 
-        [StringLength(100)]
-        public string ActionName { set; get; }
+        /// <summary>
+        /// 脚本描述
+        /// </summary>
+        [StringLength(500)]
+        public string Description { set; get; }
         
 
         /// <summary>
