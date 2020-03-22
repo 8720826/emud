@@ -87,5 +87,11 @@ namespace Emprise.Domain.Npc.Entity
         [StringLength(4000)]
         public string InitWords { set; get; }
 
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        public bool IsEnable { set; get; }
+
     }
 }

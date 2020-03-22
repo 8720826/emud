@@ -50,42 +50,46 @@
                         <th class="table-work">属性</th>
                         <th class="table-work">对话</th>
                         <th class="table-work">脚本</th>
+                        <th class="table-work">是否启用</th>
                         <th class="table-set">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var npc in Model.Paging.Data)
                     {
-                        <tr>
-                            <td>@(npc.Id)</td>
-                            <td>@(npc.Name)</td>
-                            <td>@(npc.Type)</td>
-                            <td>@(npc.Gender)</td>
-                            <td>@(npc.Description)</td>
-                            <td>
-                                @(npc.CanFight ? "切磋" : "")
-                                @(npc.CanKill ? "杀死" : "")
-                                @(npc.CanMove ? "移动" : "")
-                            </td>
-                            <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
-                            <td>
-                                <ul>
-                                    @foreach (var script in npc.NpcScripts)
-                                    {
-                                        <li>
-                                            @(script.Script?.Name)（@(script.Script?.Description)）
-                                        </li>
-                                    }
-                                </ul>
-                            </td>
-                            <td>
-                                <div class="am-btn-toolbar">
-                                    <div class="am-btn-group am-btn-group-xs">
-                                        <a id="@(npc.Id)" name="@(npc.Name)" href="javascript: ;" class="am-btn am-btn-default am-btn-xs am-text-secondary selectNpc"><span class="am-icon-dot-circle-o"></span> 选中</a>
-                                    </div>
+                    <tr>
+                        <td>@(npc.Id)</td>
+                        <td>@(npc.Name)</td>
+                        <td>@(npc.Type)</td>
+                        <td>@(npc.Gender)</td>
+                        <td>@(npc.Description)</td>
+                        <td>
+                            @(npc.CanFight ? "切磋" : "")
+                            @(npc.CanKill ? "杀死" : "")
+                            @(npc.CanMove ? "移动" : "")
+                        </td>
+                        <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
+                        <td>
+                            <ul>
+                                @foreach (var script in npc.NpcScripts)
+                                {
+                                    <li>
+                                        @(script.Script?.Name)（@(script.Script?.Description)）
+                                    </li>
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            @(npc.IsEnable?"是":"否")
+                        </td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <a id="@(npc.Id)" name="@(npc.Name)" href="javascript: ;" class="am-btn am-btn-default am-btn-xs am-text-secondary selectNpc"><span class="am-icon-dot-circle-o"></span> 选中</a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

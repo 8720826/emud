@@ -75,6 +75,10 @@ namespace Emprise.Admin.Models.Npc
         public int Exp { set; get; }
 
 
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        public bool IsEnable { set; get; }
 
         /// <summary>
         /// 脚本

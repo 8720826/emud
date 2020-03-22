@@ -128,7 +128,20 @@
                             所在房间
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" id="roomId"  class="am-input-sm" asp-for="Npc.RoomId">
+                            <input type="text" id="roomId" class="am-input-sm" asp-for="Npc.RoomId">
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            状态
+                        </div>
+                        <div class="am-u-sm-2">
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Npc.IsEnable" checked="checked"> 启用
+                            </label>
+
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>

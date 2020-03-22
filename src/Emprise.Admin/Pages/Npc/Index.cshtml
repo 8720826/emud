@@ -5,6 +5,10 @@
     ViewData["MenuGroup"] = MenuGroupEnum.System;
 }
 
+@section CssJs {
+    <link rel="stylesheet" href="/css/amazeui.switch.css" />
+}
+
 <div class="am-cf am-padding">
     <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Npc管理</strong> / <small>Npc</small></div>
 </div>
@@ -49,44 +53,48 @@
                         <th class="table-work">属性</th>
                         <th class="table-work">对话</th>
                         <th class="table-work">脚本</th>
+                        <th class="table-work">是否启用</th>
                         <th class="table-set">操作</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var npc in Model.Paging.Data)
                     {
-                    <tr>
-                        <td>@(npc.Id)</td>
-                        <td><a asp-page="./Edit" asp-route-id="@npc.Id">@(npc.Name)</a></td>
-                        <td>@(npc.Type)</td>
-                        <td>@(npc.Gender)</td>
-                        <td>@(npc.Description)</td>
-                        <td>
-                            @(npc.CanFight ? "切磋" : "")
-                            @(npc.CanKill ? "杀死" : "")
-                            @(npc.CanMove ? "移动" : "")
-                        </td>
-                        <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
-                        <td>
-                            <ul>
-                                @foreach (var script in npc.NpcScripts)
-                                {
-                                    <li>
-                                        <a asp-page="/Script/Edit" asp-route-id="@script.ScriptId">@(script.Script?.Name)（@(script.Script?.Description)）</a>
-                                    </li>
-                                }
-                            </ul>
-                        </td>
-                        <td>
-                            <div class="am-btn-toolbar">
-                                <div class="am-btn-group am-btn-group-xs">
-                                    <a asp-page="./Edit" asp-route-id="@npc.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                    <a asp-page="./Copy" asp-route-id="@npc.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
-                                    <a asp-page="./Delete" asp-route-id="@npc.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                        <tr>
+                            <td>@(npc.Id)</td>
+                            <td><a asp-page="./Edit" asp-route-id="@npc.Id">@(npc.Name)</a></td>
+                            <td>@(npc.Type)</td>
+                            <td>@(npc.Gender)</td>
+                            <td>@(npc.Description)</td>
+                            <td>
+                                @(npc.CanFight ? "切磋" : "")
+                                @(npc.CanKill ? "杀死" : "")
+                                @(npc.CanMove ? "移动" : "")
+                            </td>
+                            <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
+                            <td>
+                                <ul>
+                                    @foreach (var script in npc.NpcScripts)
+                                    {
+                                        <li>
+                                            <a asp-page="/Script/Edit" asp-route-id="@script.ScriptId">@(script.Script?.Name)（@(script.Script?.Description)）</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td>
+                                <input type="checkbox" data-size="xs" sId="@npc.Id" asp-for="@npc.IsEnable" data-off-text="否" data-on-text="是" data-am-switch />
+                            </td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a asp-page="./Edit" asp-route-id="@npc.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                        <a asp-page="./Copy" asp-route-id="@npc.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
+                                        <a asp-page="./Delete" asp-route-id="@npc.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -120,8 +128,36 @@
 </div>
 
 
-@section Scripts {
-    <script type="text/javascript">
+@Html.AntiForgeryToken()
 
+@section Scripts {
+
+    <script src="/js/amazeui.switch.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('[type="checkbox"]').bootstrapSwitch();
+
+
+            $('[type="checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                var sId = $(this).attr("sId")*1;
+                axios.post('@(Url.Page("/Npc/Index"))', {
+                    sId: sId,
+                    isEnable: state
+                },
+                    {
+                        headers: {
+                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                        }
+                    })
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            });
+        });
     </script>
 }

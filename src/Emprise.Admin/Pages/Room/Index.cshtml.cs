@@ -36,5 +36,7 @@ namespace Emprise.Admin.Pages.Room
 
             Paging = query.Paged(pageIndex, 10, query.Count());
         }
+
+
     }
 }

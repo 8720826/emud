@@ -44,5 +44,26 @@ namespace Emprise.Admin.Pages.Npc
 
 
         }
+
+        public async Task<IActionResult> OnPostAsync([FromBody]EnableData enableData)
+        {
+            var npc = _db.Npcs.Find(enableData.SId);
+            if (npc == null)
+            {
+                return await Task.FromResult(new JsonResult(enableData));
+            }
+
+            npc.IsEnable = enableData.IsEnable;
+            await _db.SaveChangesAsync();
+
+            return await Task.FromResult(new JsonResult(enableData));
+
+        }
+
+        public class EnableData
+        {
+            public int SId { get; set; }
+            public bool IsEnable { get; set; }
+        }
     }
 }

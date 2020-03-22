@@ -77,5 +77,11 @@ namespace Emprise.Admin.Models.Npc
         /// 默认对话
         /// </summary>
         public string InitWords { set; get; }
+
+
+        /// <summary>
+        /// 是否启用
+        /// </summary>
+        public bool IsEnable { set; get; }
     }
 }
