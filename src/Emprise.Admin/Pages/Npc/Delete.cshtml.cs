@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Emprise.Admin.Data;
-using Emprise.Domain.Room.Entity;
+using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Room
+namespace Emprise.Admin.Pages.Npc
 {
     public class DeleteModel : PageModel
     {
@@ -18,34 +18,32 @@ namespace Emprise.Admin.Pages.Room
             _db = db;
         }
 
-        public RoomEntity Room { get; set; }
+        public NpcEntity Npc { get; set; }
 
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-
         [BindProperty]
         public string UrlReferer { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync(int id = 0)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Room/Index");
+                UrlReferer = Url.Page("/Npc/Index");
             }
-
 
             if (id > 0)
             {
-                Room = _db.Rooms.Find(id);
+                Npc = _db.Npcs.Find(id);
                 return Page();
             }
             else
             {
-                return RedirectToPage("/Room/Index");
+                return RedirectToPage("/Npc/Index");
             }
-           
         }
 
         public async Task<IActionResult> OnPostAsync(int id = 0)
@@ -57,15 +55,15 @@ namespace Emprise.Admin.Pages.Room
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var room = _db.Rooms.Find(id);
-            _db.Rooms.Remove(room);
+            var npc = _db.Npcs.Find(id);
+            _db.Npcs.Remove(npc);
             await _db.SaveChangesAsync();
 
             SueccessMessage = $"删除成功！";
 
+            //return RedirectToPage("Index");
+
             return Redirect(UrlReferer);
-
-
         }
     }
 }

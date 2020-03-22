@@ -18,7 +18,7 @@ namespace Emprise.Admin.Pages.NpcScript
             _db = db;
         }
 
-        public ScriptEntity NpcScript { get; set; }
+        public ScriptEntity Script { get; set; }
 
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.NpcScript
 
             if (id > 0)
             {
-                NpcScript = _db.Scripts.Find(id);
+                Script = _db.Scripts.Find(id);
                 return Page();
             }
             else
