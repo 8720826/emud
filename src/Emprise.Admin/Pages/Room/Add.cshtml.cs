@@ -32,15 +32,32 @@ namespace Emprise.Admin.Pages.Room
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
         public async Task OnGetAsync(int id, string position)
         {
+            UrlReferer = Request.Headers["Referer"].ToString();
+
+
+
             if (id > 0)
             {
                 var room = await _db.Rooms.FindAsync(id);
                 if (room != null)
                 {
                     Tips = $"在房间 {room.Name}(id={id}) 的{position}添加新房间";
+
+                    if (string.IsNullOrEmpty(UrlReferer))
+                    {
+                        UrlReferer = Url.Page("/Room/Edit/"+ id);
+                    }
                 }
+            }
+
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Room/Index");
             }
         }
 
@@ -117,8 +134,9 @@ namespace Emprise.Admin.Pages.Room
 
             SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit",new { id= room.Id });
+            //return RedirectToPage("Edit",new { id= room.Id });
 
+            return Redirect(UrlReferer);
 
         }
     }

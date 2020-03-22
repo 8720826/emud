@@ -33,13 +33,31 @@ namespace Emprise.Admin.Pages.Room
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task OnGetAsync(int id)
+
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int id)
         {
-            Id = id;
-            var room = await _db.Rooms.FindAsync(id);
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Room/Index");
+            }
 
-            Room = _mapper.Map<RoomInput>(room);
+            if (id > 0)
+            {
+                Id = id;
+                var room = await _db.Rooms.FindAsync(id);
 
+                Room = _mapper.Map<RoomInput>(room);
+
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Room/Index");
+            }
         }
 
 
@@ -194,13 +212,13 @@ namespace Emprise.Admin.Pages.Room
 
 
 
-            SueccessMessage = $"修改成功！";
+            //SueccessMessage = $"修改成功！";
 
-            Room = _mapper.Map<RoomInput>(room);
+            //Room = _mapper.Map<RoomInput>(room);
 
-            return Page();
-        
+            //return Page();
 
+            return Redirect(UrlReferer);
         }
     }
 }

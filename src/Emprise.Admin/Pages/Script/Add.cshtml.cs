@@ -29,9 +29,16 @@ namespace Emprise.Admin.Pages.NpcScript
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
         public async Task OnGetAsync()
         {
-
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Script/Index");
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(int id, string position)
@@ -53,9 +60,9 @@ namespace Emprise.Admin.Pages.NpcScript
 
             SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit", new { id = script.Id });
+            //return RedirectToPage("Edit", new { id = script.Id });
 
-
+            return Redirect(UrlReferer);
         }
     }
 }

@@ -22,9 +22,30 @@ namespace Emprise.Admin.Pages.Room
 
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
-        public void OnGet(int id = 0)
+
+
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int id = 0)
         {
-            Room = _db.Rooms.Find(id);
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Room/Index");
+            }
+
+
+            if (id > 0)
+            {
+                Room = _db.Rooms.Find(id);
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Room/Index");
+            }
+           
         }
 
         public async Task<IActionResult> OnPostAsync(int id = 0)

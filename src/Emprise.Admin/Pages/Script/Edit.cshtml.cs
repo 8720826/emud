@@ -27,7 +27,7 @@ namespace Emprise.Admin.Pages.NpcScript
         [BindProperty]
         public ScriptInput Script { get; set; }
 
-        public List<NpcEntity> Npcs { get; set; }
+        public List<NpcEntity> Npcs { get; set; } = new List<NpcEntity>();
 
 
         [BindProperty]
@@ -37,8 +37,17 @@ namespace Emprise.Admin.Pages.NpcScript
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task OnGetAsync(int id)
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int id)
         {
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Script/Index");
+            }
+
             if (id > 0)
             {
                 var script = await _db.Scripts.FindAsync(id);
@@ -52,11 +61,19 @@ namespace Emprise.Admin.Pages.NpcScript
 
 
                 Npcs = _db.Npcs.Where(x => ids.Contains(x.Id)).ToList();
+
+                return Page();
+
+            }
+            else
+            {
+                return RedirectToPage("/Script/Index");
             }
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
+
             SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
@@ -92,9 +109,9 @@ namespace Emprise.Admin.Pages.NpcScript
 
             SueccessMessage = $"修改成功！";
 
-            return RedirectToPage("Edit", new { id = script.Id });
+            //return RedirectToPage("Edit", new { id = script.Id });
 
-
+            return Redirect(UrlReferer);
         }
 
 
