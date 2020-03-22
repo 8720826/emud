@@ -26,7 +26,7 @@
     </div>
 
     <div class="am-margin">
-        <form class="am-form" method="post">
+        <form class="am-form" method="post"  onsubmit="return check()">
             <div class="am-g">
                 <p>@(Model.Tips)</p>
                 <div class="am-fade  am-in am-active">
@@ -79,9 +79,9 @@
                         </div>
                         <div class="am-u-sm-10">
                             <input type="hidden" asp-for="ScriptCommand.CaseIf">
-                            <div class="am-form-inline am-u-sm-10 am-form-group">
-                                <select class="am-input-sm am-form-field types">
-                                    <option>请选择</option>
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field conditions" style="width: 100px;">
+                                    <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(ConditionTypeEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
@@ -98,9 +98,9 @@
                         </div>
                         <div class="am-u-sm-10">
                             <input type="hidden" asp-for="ScriptCommand.CaseThen">
-                            <div class="am-form-inline am-u-sm-10 am-form-group">
-                                <select class="am-input-sm am-form-field commonds">
-                                    <option>请选择</option>
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field commonds" style="width: 100px;">
+                                    <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(CommondTypeEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
@@ -117,9 +117,9 @@
                         </div>
                         <div class="am-u-sm-10">
                             <input type="hidden" asp-for="ScriptCommand.CaseElse">
-                            <div class="am-form-inline am-u-sm-10 am-form-group">
-                                <select class="am-input-sm am-form-field commonds">
-                                    <option>请选择</option>
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field commonds" style="width: 100px;">
+                                    <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(CommondTypeEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
@@ -155,17 +155,17 @@
 </div>
 
 
-<script id="type-角色属性" type="text/html">
+<script id="condition-角色属性" type="text/html">
 
     <select class="am-input-sm am-form-field fields attr" attr="Field">
-        <option>  请选择  </option>
+        <option value="">  请选择  </option>
         {{each fields}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
 
     <select class="am-input-sm am-form-field relations attr" attr="Relation">
-        <option>  请选择  </option>
+        <option value="">  请选择  </option>
         {{each relations}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
@@ -173,13 +173,13 @@
 
     <input type="text" placeholder="数值" class="am-input-sm am-form-field attr" attr="Value" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" attr="Type" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" attr="Type" value="保存">*@
 </script>
 
-<script id="type-拥有物品" type="text/html">
+<script id="condition-拥有物品" type="text/html">
     <input type="text" placeholder="物品名" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
     <select class="am-input-sm am-form-field relations attr">
-        <option>  请选择  </option>
+        <option value="">  请选择  </option>
         {{each relations}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
@@ -187,22 +187,22 @@
 
     <input type="text" placeholder="数量" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
-<script id="type-完成任务" type="text/html">
+<script id="condition-完成任务" type="text/html">
 
 
     <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
-<script id="type-活动记录" type="text/html">
+<script id="condition-活动记录" type="text/html">
 
     <input type="text" class="am-input-sm am-form-field " style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 
@@ -211,7 +211,7 @@
 
     <input type="text" placeholder="对话内容" class="am-input-sm am-form-field" style="display:inline-block; width:380px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-对话选项" type="text/html">
@@ -220,7 +220,7 @@
 
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-输入选项" type="text/html">
@@ -229,7 +229,7 @@
 
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-选择选项" type="text/html">
@@ -238,7 +238,14 @@
 
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
 
-    <input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
+</script>
+
+<script id="commond-跳转到分支" type="text/html">
+
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field" style="display:inline-block; width:180px;">
+
+    @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 
@@ -251,7 +258,7 @@
 @section Scripts {
 
     <script type="text/javascript">
-        var types = @Html.Raw(JsonConvert.SerializeObject(Model.Types));
+        var conditions = @Html.Raw(JsonConvert.SerializeObject(Model.Conditions));
         var fields = @Html.Raw(JsonConvert.SerializeObject(Model.Fields));
         var relations = @Html.Raw(JsonConvert.SerializeObject(Model.Relations));
         var events = @Html.Raw(JsonConvert.SerializeObject(Model.Events));
@@ -262,27 +269,62 @@
                 $(this).parent(".am-btn").addClass("am-active");
             });
 
-            $(document).on("change", ".types", function () {
-                var type = $(this).val();
-                console.log("type=" + type);
+            $(document).on("change", ".conditions", function () {
+                var condition = $(this).val();
+                console.log("condition=" + condition);
                 $(this).nextAll("select").remove();
                 $(this).nextAll("input").remove();
+
+                if (condition == "") {
+                    return;
+                }
+
                 var data = { fields: fields, relations: relations };
 
-                if ($("#type-" + type).length>0) {
-                    $(this).after(template("type-"+type, data));
+                if ($("#condition-" + condition).length>0) {
+                    $(this).after(template("condition-" + condition, data));
                 }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".conditions").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var conditionDiv = $(".conditions").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(conditionDiv);
+
+                    $(this).parent().parent().find(".conditions:last").parent().after($(div));
+                }
+
             });
 
             $(document).on("change", ".commonds", function () {
-                var type = $(this).val();
-                console.log("type=" + type);
+                var commond = $(this).val();
+                console.log("commond=" + commond);
                 $(this).nextAll("select").remove();
                 $(this).nextAll("input").remove();
+
+                if (commond == "") {
+                    return;
+                }
+
                 var data = { fields: fields, relations: relations };
 
-                if ($("#commond-" + type).length>0) {
-                    $(this).after(template("commond-"+type, data));
+                if ($("#commond-" + commond).length>0) {
+                    $(this).after(template("commond-" + commond, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".commonds").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    console.log(1111);
+
+                    var commondDiv = $(".commonds").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(commondDiv);
+
+                    $(this).parent().parent().find(".commonds:last").parent().after($(div));
                 }
             });
 
@@ -298,14 +340,21 @@
                 $.each(attrs, function () {
                     var val = $(this).val();
                     var attr = $(this).attr("attr");
-                    desc += "   "+val;
+                    //desc += "   "+val;
                     obj.attrs.push({ attr: attr, val:val });
                 });
                 var data = JSON.stringify(obj);
-                $(this).parent().prev(template("data", { data: data, desc: desc }));
+                console.log("data=" + data);
+                //$(this).parent().prev(template("data", { data: data, desc: desc }));
 
-                $(this).parent().children().not(":first").remove();
+                //$(this).parent().children().not(":first").remove();
             });
         });
+
+
+        function check() {
+            console.log(22222);
+            return false;
+        }
     </script>
 }

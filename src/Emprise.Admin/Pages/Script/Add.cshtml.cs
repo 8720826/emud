@@ -52,6 +52,7 @@ namespace Emprise.Admin.Pages.NpcScript
             }
 
             var script = _mapper.Map<ScriptEntity>(Script);
+    
             await _db.Scripts.AddAsync(script);
 
             await _db.SaveChangesAsync();

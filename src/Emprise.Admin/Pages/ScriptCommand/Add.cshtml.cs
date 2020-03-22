@@ -43,7 +43,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public async Task OnGetAsync(int id)
+        public async Task OnGetAsync(int sId)
         {
             Types =  Enum.GetNames(typeof(ConditionTypeEnum));
 
@@ -58,12 +58,12 @@ namespace Emprise.Admin.Pages.ScriptCommand
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/ScriptCommand/Index", new { sId = id });
+                UrlReferer = Url.Page("/ScriptCommand/Index", new { sId = sId });
             }
 
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int sId)
         {
             SueccessMessage = "";
             ErrorMessage = "";
@@ -74,6 +74,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
             }
 
             var scriptCommand = _mapper.Map<ScriptCommandEntity>(ScriptCommand);
+            scriptCommand.ScriptId = sId;
             await _db.ScriptCommands.AddAsync(scriptCommand);
 
             await _db.SaveChangesAsync();

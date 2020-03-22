@@ -30,7 +30,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public Array Types { get; set; }
+        public Array Conditions { get; set; }
 
         public Array Fields { get; set; }
 
@@ -51,7 +51,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
                 UrlReferer = Url.Page("/ScriptCommand/Index",new { sId = id });
             }
 
-            Types = Enum.GetNames(typeof(ConditionTypeEnum));
+            Conditions = Enum.GetNames(typeof(ConditionTypeEnum));
 
             Fields = Enum.GetNames(typeof(PlayerConditionFieldEnum));
 

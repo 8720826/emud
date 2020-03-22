@@ -103,6 +103,7 @@ namespace Emprise.Domain.Core.Enum
         输入选项 = 3,
         选择选项 = 4,
         关闭窗口 = 5,
+        跳转到分支 = 6
     }
 
 
