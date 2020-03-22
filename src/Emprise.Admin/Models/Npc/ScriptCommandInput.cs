@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -22,7 +23,9 @@ namespace Emprise.Admin.Models.NpcScript
         /// </summary>
         public string Name { set; get; }
 
+        [Required(ErrorMessage = "描述 是必填项")]
 
+        [StringLength(100,ErrorMessage = "描述 长度不能超过100")]
         public string Description { set; get; }
 
         public string CaseIf { set; get; }

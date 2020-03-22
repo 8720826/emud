@@ -31,6 +31,7 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">分支名</th>
+                        <th class="table-title">描述</th>
                         <th class="table-exits">是否入口</th>
                         <th class="table-exits">排序</th>
                         <th class="table-exits">分支-如果</th>
@@ -42,23 +43,24 @@
                 <tbody>
                     @foreach (var script in Model.Commands)
                     {
-                        <tr>
-                            <td>@(script.Id)</td>
-                            <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
-                            <td>@(script.IsEntry)</td>
-                            <td>@(script.SortId)</td>
-                            <td>@(script.SortId)</td>
-                            <td>@(script.SortId)</td>
-                            <td>@(script.SortId)</td>
-                            <td>
-                                <div class="am-btn-toolbar">
-                                    <div class="am-btn-group am-btn-group-xs">
-                                        <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                        <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
-                                    </div>
+                    <tr>
+                        <td>@(script.Id)</td>
+                        <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
+                        <td>@(script.Description)</td>
+                        <td>@(script.IsEntry?"是":"否")</td>
+                        <td>@(script.SortId)</td>
+                        <td>@(script.CaseIf)</td>
+                        <td>@(script.CaseThen)</td>
+                        <td>@(script.CaseElse)</td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <a asp-page="./Edit" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                    <a asp-page="./Delete" asp-route-id="@script.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.NpcScript;
+using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -29,13 +30,49 @@ namespace Emprise.Admin.Pages.ScriptCommand
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public async Task OnGetAsync(int id)
+        public Array Types { get; set; }
+
+        public Array Fields { get; set; }
+
+        public Array Relations { get; set; }
+
+        public Array Events { get; set; }
+
+        public Array Commonds { get; set; }
+
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int id)
         {
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/ScriptCommand/Index",new { sId = id });
+            }
+
+            Types = Enum.GetNames(typeof(ConditionTypeEnum));
+
+            Fields = Enum.GetNames(typeof(PlayerConditionFieldEnum));
+
+            Relations = Enum.GetNames(typeof(LogicalRelationTypeEnum));
+
+            Events = Enum.GetNames(typeof(PlayerEventTypeEnum));
+
+            Commonds = Enum.GetNames(typeof(CommondTypeEnum));
+
+
             if (id > 0)
             {
                 var scriptCommand = await _db.ScriptCommands.FindAsync(id);
 
                 ScriptCommand = _mapper.Map<ScriptCommandInput>(scriptCommand);
+                return Page();
+
+            }
+            else
+            {
+                return RedirectToPage("/Script/Index");
             }
         }
 
@@ -59,9 +96,9 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             SueccessMessage = $"修改成功！";
 
-            return RedirectToPage("Edit", new { id = scriptCommand.Id });
+            //return RedirectToPage("Edit", new { id = scriptCommand.Id });
 
-
+            return Redirect(UrlReferer);
         }
     }
 }
