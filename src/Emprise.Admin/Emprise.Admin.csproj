@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Emprise.Domain\Emprise.Domain.csproj" />
+    <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
   </ItemGroup>
 
 </Project>

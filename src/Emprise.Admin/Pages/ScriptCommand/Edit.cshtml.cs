@@ -96,7 +96,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             SueccessMessage = $"修改成功！";
 
-            //return RedirectToPage("Edit", new { id = scriptCommand.Id });
+            //return RedirectToPage("/ScriptCommand/Index", new { sId = scriptCommand.ScriptId });
 
             return Redirect(UrlReferer);
         }

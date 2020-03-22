@@ -21,6 +21,9 @@ namespace Emprise.Admin.Models.NpcScript
         /// <summary>
         /// 分支名称
         /// </summary>
+        [Required(ErrorMessage = "分支名称 是必填项")]
+
+        [StringLength(100, ErrorMessage = "分支名称 长度不能超过20")]
         public string Name { set; get; }
 
         [Required(ErrorMessage = "描述 是必填项")]

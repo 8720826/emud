@@ -76,7 +76,7 @@
                             <input type="checkbox" data-size="xs" sId="@script.Id" asp-for="@script.IsEnable" data-off-text="否" data-on-text="是" data-am-switch />
                         </td>
                         <td>
-                            <a asp-page="/ScriptCommand/Index" asp-route-sid="@script.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-code"></span> 脚本分支</a>
+                            <a asp-page="/ScriptCommand/Index" asp-route-sid="@script.Id" asp-route-ref="@($"{Request.Path}{Request.QueryString}")" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-code"></span> 脚本分支</a>
 
                         </td>
                         <td>

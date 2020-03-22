@@ -101,5 +101,10 @@ namespace Emprise.Infra.Extensions
                 .Select(s => s.Trim())
                 .ToList();
         }
+
+        public static string GetRequestUrl(this HttpRequest source)
+        {
+            return $"{source.PathBase}{source.Path}{source.QueryString}";
+        }
     }
 }

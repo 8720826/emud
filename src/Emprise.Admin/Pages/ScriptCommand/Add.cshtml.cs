@@ -40,7 +40,10 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public Array Commonds { get; set; }
 
-        public async Task OnGetAsync()
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
+        public async Task OnGetAsync(int id)
         {
             Types =  Enum.GetNames(typeof(ConditionTypeEnum));
 
@@ -51,7 +54,13 @@ namespace Emprise.Admin.Pages.ScriptCommand
             Events = Enum.GetNames(typeof(PlayerEventTypeEnum));
 
             Commonds = Enum.GetNames(typeof(CommondTypeEnum));
-            
+
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/ScriptCommand/Index", new { sId = id });
+            }
+
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -73,9 +82,9 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit", new { id = scriptCommand.Id });
+            //return RedirectToPage("Edit", new { id = scriptCommand.Id });
 
-
+            return Redirect(UrlReferer);
         }
     }
 }

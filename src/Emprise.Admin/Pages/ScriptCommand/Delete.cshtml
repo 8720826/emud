@@ -1,16 +1,16 @@
-﻿@page "{id}"
-@model Emprise.Admin.Pages.NpcScript.DeleteModel
+﻿@page
+@model Emprise.Admin.Pages.ScriptCommand.DeleteModel
 @{
     ViewData["Title"] = "脚本管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
 }
 
 <div class="am-cf am-padding">
-    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">脚本管理</strong> / <small>Script</small></div>
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">分支管理</strong> / <small>Script</small></div>
 </div>
 
 <div class="am-tabs am-margin" data-am-tabs>
-    是否要删除脚本  "@(Model.Script?.Name)(id=@(Model.Script?.Id))" ?
+    是否要删除分支  "@(Model.ScriptCommand?.Name)(id=@(Model.ScriptCommand?.Id))" ?
 </div>
 
 <div class="am-margin">
