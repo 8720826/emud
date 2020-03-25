@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
+using Emprise.Admin.Models.Npc;
 using Emprise.Admin.Models.NpcScript;
 using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Npc.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.ScriptCommand
 {
@@ -43,8 +45,16 @@ namespace Emprise.Admin.Pages.ScriptCommand
         [BindProperty]
         public string UrlReferer { get; set; }
 
+
+        public List<CaseIf> CaseIfs { get; set; } = new List<CaseIf>();
+
+        public List<CaseThen> CaseThens { get; set; } = new List<CaseThen>();
+
+        public List<CaseElse> CaseElses { get; set; } = new List<CaseElse>();
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            ErrorMessage = "";
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
@@ -67,6 +77,25 @@ namespace Emprise.Admin.Pages.ScriptCommand
                 var scriptCommand = await _db.ScriptCommands.FindAsync(id);
 
                 ScriptCommand = _mapper.Map<ScriptCommandInput>(scriptCommand);
+
+                if (!string.IsNullOrEmpty(scriptCommand.CaseIf))
+                {
+                    CaseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(scriptCommand.CaseIf);
+                }
+
+
+                if (!string.IsNullOrEmpty(scriptCommand.CaseThen))
+                {
+                    CaseThens = JsonConvert.DeserializeObject<List<CaseThen>>(scriptCommand.CaseThen);
+                }
+
+
+                if (!string.IsNullOrEmpty(scriptCommand.CaseElse))
+                {
+                    CaseElses = JsonConvert.DeserializeObject<List<CaseElse>>(scriptCommand.CaseElse);
+                }
+
+
                 return Page();
 
             }
@@ -83,13 +112,33 @@ namespace Emprise.Admin.Pages.ScriptCommand
             if (!ModelState.IsValid)
             {
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
+
+                Conditions = Enum.GetNames(typeof(ConditionTypeEnum));
+
+                Fields = Enum.GetNames(typeof(PlayerConditionFieldEnum));
+
+                Relations = Enum.GetNames(typeof(LogicalRelationTypeEnum));
+
+                Events = Enum.GetNames(typeof(PlayerEventTypeEnum));
+
+                Commonds = Enum.GetNames(typeof(CommondTypeEnum));
                 return Page();
             }
 
 
             var scriptCommand = await _db.ScriptCommands.FindAsync(id);
             _mapper.Map(ScriptCommand, scriptCommand);
-    
+
+            if (scriptCommand.IsEntry)
+            {
+                var scriptCommands = _db.ScriptCommands.Where(x => x.ScriptId == scriptCommand.ScriptId).ToList();
+
+                foreach (var command in scriptCommands.Where(x => x.Id != scriptCommand.Id))
+                {
+                    command.IsEntry = false;
+                }
+            }
+
             await _db.SaveChangesAsync();
 
 

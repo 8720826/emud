@@ -38,6 +38,5 @@ namespace Emprise.Admin.Models.NpcScript
 
         public string CaseElse { set; get; }
 
-        public int ScriptId { set; get; }
     }
 }
