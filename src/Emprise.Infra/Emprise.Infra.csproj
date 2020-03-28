@@ -5,12 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Middleware\**" />
-    <EmbeddedResource Remove="Middleware\**" />
-    <None Remove="Middleware\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Authorization\AuthenticationFailedContext.cs" />
     <Compile Remove="Authorization\JwtAuthenticationBuilderExtension.cs" />
     <Compile Remove="Authorization\JwtAuthenticationEvents.cs" />

@@ -52,7 +52,7 @@ namespace Emprise.Application.User.Services
             var npcInfo = new NpcInfo()
             {
                 Descriptions = new List<string>(),
-                Actions = new List<string>()
+                Actions = new List<NpcAction>()
             };
             var npc = await _npcDomainService.Get(id);
             if (npc == null)
@@ -67,17 +67,17 @@ namespace Emprise.Application.User.Services
 
             if(npc.Type == NpcTypeEnum.人物)
             {
-                npcInfo.Actions.Add(NpcActionEnum.给予.ToString());
+                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.给予.ToString() });
             }        
 
             if (npc.CanFight)
             {
-                npcInfo.Actions.Add(NpcActionEnum.切磋.ToString());
+                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.切磋.ToString() });
             }
 
             if (npc.CanKill)
             {
-                npcInfo.Actions.Add(NpcActionEnum.杀死.ToString());
+                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.杀死.ToString() });
             }
 
             var player = await _playerDomainService.Get(_account.PlayerId);
@@ -87,14 +87,13 @@ namespace Emprise.Application.User.Services
             npcInfo.Descriptions.Add($"{genderStr}{npc.Per.ToPer(npc.Age, npc.Gender)}");
             npcInfo.Descriptions.Add($"{genderStr}{npc.Exp.ToKunFuLevel(player.Exp)}");
 
-            var scriptIds = npc.NpcScripts.Select(x => x.Id).ToList();
 
-            var npcScripts = await _npcScriptDomainService.Query(x => scriptIds.Contains(x.Id));
+            var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
             foreach (var npcScript in npcScripts)
             {
                 var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.Id);
 
-                var actions = scriptCommands.Where(x => x.IsEntry).Select(x => x.Name).ToList();
+                var actions = scriptCommands.Where(x => x.IsEntry).Select(x => new NpcAction { Name = x.Name, ScriptId = x.ScriptId, CommandId = x.Id }).ToList();
 
                 npcInfo.Actions.AddRange(actions);
             }

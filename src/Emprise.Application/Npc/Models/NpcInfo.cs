@@ -22,6 +22,16 @@ namespace Emprise.Application.Npc.Models
         /// <summary>
         /// 操作
         /// </summary>
-        public List<string> Actions { set; get; }
+        public List<NpcAction> Actions { set; get; }
+    }
+
+    public class NpcAction
+    {
+        public int CommandId { set; get; }
+
+        public string Name { set; get; }
+
+        public int ScriptId { set; get; }
+   
     }
 }

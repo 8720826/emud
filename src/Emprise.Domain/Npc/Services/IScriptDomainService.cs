@@ -6,18 +6,18 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Emprise.Domain.Script.Services
+namespace Emprise.Domain.Npc.Services
 {
     public interface IScriptDomainService : IBaseService
     {
-        Task<NpcScriptEntity> Get(Expression<Func<NpcScriptEntity, bool>> where);
+        Task<ScriptEntity> Get(Expression<Func<ScriptEntity, bool>> where);
 
-        Task<List<NpcScriptEntity>> GetAll(Expression<Func<NpcScriptEntity, bool>> where);
+        Task<List<ScriptEntity>> GetAll(Expression<Func<ScriptEntity, bool>> where);
 
-        Task<NpcScriptEntity> Get(int id);
+        Task<ScriptEntity> Get(int id);
 
-        Task Add(NpcScriptEntity entity);
+        Task Add(ScriptEntity entity);
 
-        Task Update(NpcScriptEntity entity);
+        Task Update(ScriptEntity entity);
     }
 }

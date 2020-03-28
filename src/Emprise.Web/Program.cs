@@ -28,11 +28,11 @@ namespace Emprise.Web
                 .Enrich.FromLogContext()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
-               //.WriteTo.File(Path.Combine("logs", @"log.txt"), rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information)
-               .WriteTo.MySQL(hostingContext.Configuration.GetSection("ConnectionStrings:MySql").Value,"SystemLog", LogEventLevel.Debug)
+                //.WriteTo.File(Path.Combine("logs", @"log.txt"), rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information)
+                .WriteTo.MySQL(hostingContext.Configuration.GetSection("ConnectionStrings:MySql").Value,"SystemLog", LogEventLevel.Debug)
                
                
-               //.WriteTo.Console()
+                .WriteTo.Console()
             );
     }
 }

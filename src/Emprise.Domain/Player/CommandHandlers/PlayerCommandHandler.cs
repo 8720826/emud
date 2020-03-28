@@ -7,6 +7,7 @@ using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Npc.Models;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
@@ -59,6 +60,7 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMudProvider _mudProvider;
         private readonly AppConfig _appConfig;
+        private readonly IScriptDomainService _scriptDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
         private readonly IScriptCommandDomainService _ScriptCommandDomainService;
         private readonly IRedisDb _redisDb;
@@ -76,6 +78,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IRecurringQueue recurringQueue,
             IMudProvider mudProvider,
             IOptions<AppConfig> appConfig,
+            IScriptDomainService scriptDomainService,
             INpcScriptDomainService npcScriptDomainService,
             IScriptCommandDomainService ScriptCommandDomainService,
             IRedisDb redisDb,
@@ -94,6 +97,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _recurringQueue = recurringQueue;
             _mudProvider = mudProvider;
             _appConfig = appConfig.Value;
+            _scriptDomainService = scriptDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _ScriptCommandDomainService = ScriptCommandDomainService;
             _npcDomainService = npcDomainService;
@@ -473,7 +477,8 @@ namespace Emprise.Domain.User.CommandHandlers
 
             var npcId = command.NpcId;
             var playerId = command.PlayerId;
-            var action = command.Action;
+            var commandId = command.CommandId;
+            var commandName = command.CommandName;
             var scriptId = command.ScriptId;
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
@@ -489,19 +494,19 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            if (scriptId > 0)
+            if (scriptId > 0 && commandId > 0)
             {
 
-
-                var scriptIds = npc.NpcScripts.Select(x => x.Id).ToList();
+                var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
+                var scriptIds = npcScripts.Select(x => x.Id).ToList();
                 if (!scriptIds.Contains(scriptId))
                 {
                     await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
                     return Unit.Value;
                 }
 
-                var npcScript = await _npcScriptDomainService.Get(scriptId);
-                if (npcScript == null)
+                var script = await _scriptDomainService.Get(scriptId);
+                if (script == null)
                 {
                     await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
                     return Unit.Value;
@@ -509,7 +514,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
                 var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
 
-                var scriptCommand = scriptCommands.FirstOrDefault(x => string.Equals(x.Name, action, StringComparison.InvariantCultureIgnoreCase));
+                var scriptCommand = scriptCommands.FirstOrDefault(x => x.Id == commandId);
                 if (scriptCommand == null)
                 {
                     return Unit.Value;
@@ -524,27 +529,76 @@ namespace Emprise.Domain.User.CommandHandlers
                     }
                 }
 
-                var caseIf = scriptCommand.CaseIf;
+                var checkIf = true;//判断if条件是否为true
 
-                await _bus.RaiseEvent(new DomainNotification($"执行指令 {action}！"));
-                return Unit.Value;
+                var caseIfStr = scriptCommand.CaseIf;
+                if (!string.IsNullOrEmpty(caseIfStr))
+                {
+                    var caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
+                    foreach (var caseIf in caseIfs)
+                    {
+                        switch (caseIf.Condition)
+                        {
+                            case "角色属性":
+                                var field = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Field");
+                                var relation = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Relation");
+                                var value = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Value");
+
+
+                                break;
+
+                            case "拥有物品":
+
+                                break;
+
+                            case "完成任务":
+
+                                break;
+
+                            case "活动记录":
+
+                                break;
+                        }
+                    }
+                }
+
+
+                if (checkIf)
+                {
+                    //执行then分支
+
+
+                    await _bus.RaiseEvent(new DomainNotification($"执行指令 {commandName}, {scriptCommand.Name}，then分支！"));
+                    return Unit.Value;
+                }
+                else
+                {
+                    //执行else分支
+
+
+                    await _bus.RaiseEvent(new DomainNotification($"执行指令 {commandName}, {scriptCommand.Name}，else分支！"));
+                    return Unit.Value;
+                }
+
+
+
             }
             else
             {
                 NpcActionEnum actionEnum;
-                if (Enum.TryParse(action, out actionEnum))
+                if (Enum.TryParse(commandName, out actionEnum))
                 {
                     switch (actionEnum)
                     {
                         case NpcActionEnum.切磋:
                             if (!npc.CanFight)
                             {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
                                 return Unit.Value;
                             }
                             else
                             {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {action} 未实现！"));
+                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
                                 return Unit.Value;
                             }
                             break;
@@ -552,12 +606,12 @@ namespace Emprise.Domain.User.CommandHandlers
                         case NpcActionEnum.杀死:
                             if (!npc.CanKill)
                             {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
                                 return Unit.Value;
                             }
                             else
                             {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {action} 未实现！"));
+                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
                                 return Unit.Value;
                             }
                             break;
@@ -565,12 +619,12 @@ namespace Emprise.Domain.User.CommandHandlers
                         case NpcActionEnum.给予:
                             if (npc.Type != NpcTypeEnum.人物)
                             {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
+                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
                                 return Unit.Value;
                             }
                             else
                             {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {action} 未实现！"));
+                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
                                 return Unit.Value;
                             }
                             break;

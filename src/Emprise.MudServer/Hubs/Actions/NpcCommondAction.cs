@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Emprise.Application.Npc.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,8 +9,6 @@ namespace Emprise.MudServer.Hubs.Actions
     {
         public int NpcId { get; set; }
 
-        public int ScriptId { get; set; }
-
-        public string Action { get; set; }
+        public NpcAction Action { get; set; }
     }
 }

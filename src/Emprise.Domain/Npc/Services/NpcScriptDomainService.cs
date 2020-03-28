@@ -12,37 +12,37 @@ namespace Emprise.Domain.Npc.Services
 {
     public class NpcScriptDomainService : INpcScriptDomainService
     {
-        private readonly IRepository<ScriptEntity> _npcScriptRepository;
+        private readonly IRepository<NpcScriptEntity> _npcScriptRepository;
 
-        public NpcScriptDomainService(IRepository<ScriptEntity> npcScriptRepository)
+        public NpcScriptDomainService(IRepository<NpcScriptEntity> npcScriptRepository)
         {
             _npcScriptRepository = npcScriptRepository;
         }
 
-        public async Task<List<ScriptEntity>> Query(Expression<Func<ScriptEntity, bool>> where)
+        public async Task<List<NpcScriptEntity>> Query(Expression<Func<NpcScriptEntity, bool>> where)
         {
-            var query =  await _npcScriptRepository.GetAll(where);
+            var query = await _npcScriptRepository.GetAll(where);
             return query.ToList();
         }
 
-        public async Task<ScriptEntity> Get(Expression<Func<ScriptEntity, bool>> where)
+        public async Task<NpcScriptEntity> Get(Expression<Func<NpcScriptEntity, bool>> where)
         {
             return await _npcScriptRepository.Get(where);
         }
 
-        public async Task<ScriptEntity> Get(int id)
+        public async Task<NpcScriptEntity> Get(int id)
         {
             return await _npcScriptRepository.Get(id);
         }
 
-        public async Task Add(ScriptEntity user)
+        public async Task Add(NpcScriptEntity entity)
         {
-            await _npcScriptRepository.Add(user);
+            await _npcScriptRepository.Add(entity);
         }
 
-        public async Task Update(ScriptEntity user)
+        public async Task Update(NpcScriptEntity entity)
         {
-             await _npcScriptRepository.Update(user);
+             await _npcScriptRepository.Update(entity);
         }
 
         public void Dispose()

@@ -13,10 +13,20 @@ namespace Emprise.Domain.Npc.Services
     public class NpcDomainService : INpcDomainService
     {
         private readonly IRepository<NpcEntity> _npcRepository;
+        private readonly IRepository<ScriptEntity> _scriptRepository;
+        private readonly IRepository<NpcScriptEntity> _npcScriptRepository;
+        private readonly IRepository<ScriptCommandEntity> _scriptCommandERepository;
 
-        public NpcDomainService(IRepository<NpcEntity> npcRepository)
+        public NpcDomainService(
+            IRepository<NpcEntity> npcRepository, 
+            IRepository<ScriptEntity> scriptRepository, 
+            IRepository<NpcScriptEntity> npcScriptRepository, 
+            IRepository<ScriptCommandEntity> scriptCommandERepository)
         {
             _npcRepository = npcRepository;
+            _scriptRepository = scriptRepository;
+            _npcScriptRepository = npcScriptRepository;
+            _scriptCommandERepository = scriptCommandERepository;
         }
 
         public async Task<List<NpcEntity>> Query(Expression<Func<NpcEntity, bool>> where)

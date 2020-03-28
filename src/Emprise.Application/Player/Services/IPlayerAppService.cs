@@ -1,4 +1,5 @@
-﻿using Emprise.Application.Player.Dtos;
+﻿using Emprise.Application.Npc.Models;
+using Emprise.Application.Player.Dtos;
 using Emprise.Application.Player.Models;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Player.Entity;
@@ -32,7 +33,7 @@ namespace Emprise.Application.Player.Services
 
         Task Exert(int playerId);
 
-        Task NpcAction(int playerId, int npcId, int scriptId, string action);
+        Task NpcAction(int playerId, int npcId, NpcAction action);
 
         Task<PlayerEntity> GetUserPlayer(int userId);
 

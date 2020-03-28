@@ -8,6 +8,7 @@ using Emprise.Admin.Models.Npc;
 using Emprise.Admin.Models.NpcScript;
 using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Npc.Entity;
+using Emprise.Domain.Npc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;

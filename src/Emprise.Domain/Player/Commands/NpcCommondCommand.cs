@@ -10,19 +10,22 @@ namespace Emprise.Domain.Player.Commands
     {
         public int NpcId { get; set; }
 
-        public string Action { get; set; }
+        public int CommandId { get; set; }
+
+        public string CommandName { get; set; }
 
         public int PlayerId { get; set; }
 
         public int ScriptId { get; set; }
 
 
-        public NpcActionCommand(int playerId, int npcId, int scriptId, string action)
+        public NpcActionCommand(int playerId, int npcId, int scriptId, int commandId, string commandName)
         {
             NpcId = npcId;
             PlayerId = playerId;
-            Action = action;
+            CommandId = commandId;
             ScriptId = scriptId;
+            CommandName = commandName;
         }
 
     }

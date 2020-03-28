@@ -6,6 +6,7 @@ using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Mapper;
 using Emprise.Admin.Models;
+using Emprise.Infra.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -95,6 +96,7 @@ namespace Emprise.Admin
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
 
             app.UseEndpoints(endpoints =>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Application.Npc.Models;
 using Emprise.Application.Player.Dtos;
 using Emprise.Application.Player.Models;
 using Emprise.Domain.Core.Authorization;
@@ -94,9 +95,9 @@ namespace Emprise.Application.Player.Services
             await _bus.SendCommand(commond);
         }
 
-        public async Task NpcAction(int playerId, int npcId, int scriptId, string action)
+        public async Task NpcAction(int playerId, int npcId, NpcAction action)
         {
-            var commond = new NpcActionCommand(playerId, npcId, scriptId, action);
+            var commond = new NpcActionCommand(playerId, npcId, action.ScriptId, action.CommandId, action.Name);
             await _bus.SendCommand(commond);
         }
 
