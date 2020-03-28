@@ -14,6 +14,7 @@ using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
+using Emprise.Domain.Ware.Services;
 using Emprise.Infra.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -63,6 +64,8 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IScriptDomainService _scriptDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
         private readonly IScriptCommandDomainService _ScriptCommandDomainService;
+        private readonly IWareDomainService _wareDomainService;
+        private readonly IPlayerWareDomainService _playerWareDomainService;
         private readonly IRedisDb _redisDb;
 
         public PlayerCommandHandler(
@@ -81,6 +84,8 @@ namespace Emprise.Domain.User.CommandHandlers
             IScriptDomainService scriptDomainService,
             INpcScriptDomainService npcScriptDomainService,
             IScriptCommandDomainService ScriptCommandDomainService,
+            IWareDomainService wareDomainService,
+            IPlayerWareDomainService playerWareDomainService,
             IRedisDb redisDb,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
@@ -101,6 +106,8 @@ namespace Emprise.Domain.User.CommandHandlers
             _npcScriptDomainService = npcScriptDomainService;
             _ScriptCommandDomainService = ScriptCommandDomainService;
             _npcDomainService = npcDomainService;
+            _wareDomainService = wareDomainService;
+            _playerWareDomainService = playerWareDomainService;
             _redisDb = redisDb;
         }
 
@@ -280,7 +287,6 @@ namespace Emprise.Domain.User.CommandHandlers
             return Unit.Value;
         }
 
-
         public async Task<Unit> Handle(MoveCommand command, CancellationToken cancellationToken)
         {
 
@@ -349,9 +355,6 @@ namespace Emprise.Domain.User.CommandHandlers
 
             return Unit.Value;
         }
-
-
-
 
         public async Task<Unit> Handle(SearchCommand command, CancellationToken cancellationToken)
         {
@@ -435,8 +438,6 @@ namespace Emprise.Domain.User.CommandHandlers
             return Unit.Value;
         }
 
-
-        
         public async Task<Unit> Handle(ExertCommand command, CancellationToken cancellationToken)
         {
             //await _bus.RaiseEvent(new DomainNotification("功能暂时未实现"));
@@ -537,17 +538,32 @@ namespace Emprise.Domain.User.CommandHandlers
                     var caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
                     foreach (var caseIf in caseIfs)
                     {
+                        if (!checkIf)
+                        {
+                            break;
+                        }
+
+                        var field = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Field")?.Val;
+                        var relation = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Relation")?.Val;
+                        var value = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Value")?.Val;
+                        var wareName = caseIf.Attrs.FirstOrDefault(x => x.Attr == "WareName")?.Val;
+                        var number = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Number")?.Val;
+
+
                         switch (caseIf.Condition)
                         {
                             case "角色属性":
-                                var field = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Field");
-                                var relation = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Relation");
-                                var value = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Value");
-
-
+                                if (!CheckField(player, field, value, relation))
+                                {
+                                    checkIf = false;
+                                }
                                 break;
 
                             case "拥有物品":
+                                if (!await CheckWare(player.Id, wareName, number, relation))
+                                {
+                                    checkIf = false;
+                                }
 
                                 break;
 
@@ -635,49 +651,84 @@ namespace Emprise.Domain.User.CommandHandlers
 
 
             return Unit.Value;
+        }
 
-            /*
-            var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);
-            if (type != null)
+
+
+        #region 私有方法
+
+        private async Task<bool> CheckWare(int playerId, string wareName, string number, string relation)
+        {
+            if(!int.TryParse(number, out int numberValue))
             {
-                using (var serviceScope = _services.CreateScope())
-                {
-                    var argtypes = type.GetConstructors()
-                    .First()
-                    .GetParameters()
-                    .Select(x =>
-                    {
-                        if (x.Name == "player")
-                            return player;
-                        else if (x.Name == "npc")
-                            return npc;
-                        else if (x.ParameterType == typeof(IServiceProvider))
-                            return serviceScope.ServiceProvider;
-                        else
-                            return serviceScope.ServiceProvider.GetService(x.ParameterType);
-                    })
-                    .ToArray();
-
-                    +var job = Activator.CreateInstance(type, argtypes);
-                    if (!hasCheckAction)
-                    {
-                        MethodInfo method = type.GetMethod("GetActions");
-                        var actions = (List<string>)method.Invoke(job, new object[] { });
-
-                        if (!actions.Contains(action))
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {action} 错误！"));
-                            return Unit.Value;
-                        }
-                    }
-
- 
-                }
-
+                return false;
             }
-            */
+
+            var ware = await _wareDomainService.Get(x=>x.Name== wareName);
+            if (ware==null)
+            {
+                return false;
+            }
+
+            var playerWare = await _playerWareDomainService.Get(x=>x.WareId== ware.Id && x.PlayerId== playerId);
+            if (playerWare == null)
+            {
+                return false;
+            }
+
+            return CheckRelation(playerWare.Number, numberValue, relation);
 
         }
-        
+
+        private bool CheckRelation(int value1,int value2, string relation)
+        {
+            switch (relation)
+            {
+                case "等于": return value1 == value2;
+                case "不等于": return value1 != value2;
+                case "大于": return value1 > value2;
+                case "大于等于": return value1 >= value2;
+                case "小于": return value1 < value2;
+                case "小于等于": return value1 <= value2;
+                default: return false;
+            }
+        }
+
+        private bool CheckField(PlayerEntity player, string field, string value, string relation)
+        {
+            try
+            {
+                var fieldValue = GetFieldValue(player, field);
+
+                int.TryParse(value, out int attrValue);
+
+                return CheckRelation(fieldValue, attrValue, relation);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
+        private int GetFieldValue(PlayerEntity player, string field)
+        {
+            var fieldEnum = (PlayerConditionFieldEnum)Enum.Parse(typeof(PlayerConditionFieldEnum), field, true);
+            switch (fieldEnum)
+            {
+                case PlayerConditionFieldEnum.先天悟性:
+                    return player.Int;
+
+                case PlayerConditionFieldEnum.等级:
+                    return player.Level;
+
+                default:
+                    throw new Exception($"属性 {field} 不存在");
+            }
+        }
+
+
+        #endregion
+
     }
 }
