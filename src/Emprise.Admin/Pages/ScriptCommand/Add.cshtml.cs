@@ -30,7 +30,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public Array Types { get; set; }
+        public Array Conditions { get; set; }
 
         public Array Fields { get; set; }
 
@@ -45,7 +45,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public async Task OnGetAsync(int sId)
         {
-            Types =  Enum.GetNames(typeof(ConditionTypeEnum));
+            Conditions = Enum.GetNames(typeof(ConditionTypeEnum));
 
             Fields = Enum.GetNames(typeof(PlayerConditionFieldEnum));
 
@@ -76,6 +76,16 @@ namespace Emprise.Admin.Pages.ScriptCommand
             var scriptCommand = _mapper.Map<ScriptCommandEntity>(ScriptCommand);
             scriptCommand.ScriptId = sId;
             await _db.ScriptCommands.AddAsync(scriptCommand);
+
+            if (scriptCommand.IsEntry)
+            {
+                var scriptCommands = _db.ScriptCommands.Where(x => x.ScriptId == scriptCommand.ScriptId).ToList();
+
+                foreach (var command in scriptCommands.Where(x => x.Id != scriptCommand.Id))
+                {
+                    command.IsEntry = false;
+                }
+            }
 
             await _db.SaveChangesAsync();
 

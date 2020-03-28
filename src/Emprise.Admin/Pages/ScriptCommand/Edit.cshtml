@@ -182,15 +182,15 @@
 </script>
 
 <script id="condition-拥有物品" type="text/html">
-    <input type="text" placeholder="物品名" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
-    <select class="am-input-sm am-form-field relations attr">
+    <input type="text" placeholder="物品名" class="am-input-sm am-form-field attr"  attr="WareName" style="display:inline-block; width:180px;">
+    <select class="am-input-sm am-form-field relations attr"  attr="Relation">
         <option value="">  请选择  </option>
         {{each relations}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
 
-    <input type="text" placeholder="数量" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="数量" class="am-input-sm am-form-field attr"  attr="Number" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
@@ -198,7 +198,7 @@
 <script id="condition-完成任务" type="text/html">
 
 
-    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr"  attr="TaskId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
@@ -214,51 +214,46 @@
 <script id="commond-播放对话" type="text/html">
 
 
-    <input type="text" placeholder="对话内容" class="am-input-sm am-form-field attr" style="display:inline-block; width:380px;">
+    <input type="text" placeholder="对话内容" class="am-input-sm am-form-field attr"  attr="Message" style="display:inline-block; width:380px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-对话选项" type="text/html">
 
-    <input type="text" placeholder="标题" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="标题" class="am-input-sm am-form-field attr"  attr="Title" style="display:inline-block; width:180px;">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"   attr="CommondId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-输入选项" type="text/html">
 
-    <input type="text" placeholder="提示" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="提示" class="am-input-sm am-form-field attr"  attr="Tips" style="display:inline-block; width:180px;">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommondId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-选择选项" type="text/html">
 
-    <input type="text" placeholder="标题" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="标题" class="am-input-sm am-form-field attr"  attr="Title" style="display:inline-block; width:180px;">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommondId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 <script id="commond-跳转到分支" type="text/html">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommondId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
 
-<script id="data" type="text/html">
-    <div class="am-form-inline am-u-sm-10 am-form-group" data="{{$data}}">
-        {{$desc}}
-    </div>
-</script>
 
 @section Scripts {
 
@@ -278,6 +273,10 @@
             $("input[type=checkbox]:checked").each(function () {
                 $(this).parent(".am-btn").addClass("am-active");
             });
+
+  
+
+
 
             $(document).on("change", ".conditions", function () {
                 var condition = $(this).val();
@@ -337,26 +336,68 @@
             });
 
 
-            $(document).on("click", ".save", function () {
-                var type = $(this).attr("attr");
-                var obj = {
-                    type: type,
-                    attrs :[]
-                };
-                var desc = "";
-                var attrs = $(this).parent().find(".attr");
-                $.each(attrs, function () {
-                    var val = $(this).val();
-                    var attr = $(this).attr("attr");
-                    //desc += "   "+val;
-                    obj.attrs.push({ attr: attr, val:val });
-                });
-                var data = JSON.stringify(obj);
-                console.log("data=" + data);
-                //$(this).parent().prev(template("data", { data: data, desc: desc }));
 
-                //$(this).parent().children().not(":first").remove();
-            });
+            $.each(caseIfs, function (i, item) {
+                $("#caseIf").find(".conditions").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.condition).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            }); 
+
+            $.each(caseThens, function (i, item) {
+                $("#caseThen").find(".commonds").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.commond).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });  
+
+
+            $.each(caseElses, function (i, item) {
+                $("#caseElse").find(".commonds").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.commond).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });  
+
         });
 
 
