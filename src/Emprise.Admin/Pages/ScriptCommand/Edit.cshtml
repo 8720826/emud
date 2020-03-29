@@ -104,9 +104,9 @@
                         <div class="am-u-sm-10" id="caseThen">
                             <input type="hidden" asp-for="ScriptCommand.CaseThen">
                             <div class="am-form-inline am-form-group">
-                                <select class="am-input-sm am-form-field commonds" style="width: 100px;">
+                                <select class="am-input-sm am-form-field commands" style="width: 100px;">
                                     <option value="">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(CommondTypeEnum)))
+                                    @foreach (var item in Enum.GetValues(typeof(CommandTypeEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
@@ -123,9 +123,9 @@
                         <div class="am-u-sm-10" id="caseElse">
                             <input type="hidden" asp-for="ScriptCommand.CaseElse">
                             <div class="am-form-inline am-form-group">
-                                <select class="am-input-sm am-form-field commonds" style="width: 100px;">
+                                <select class="am-input-sm am-form-field commands" style="width: 100px;">
                                     <option value="">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(CommondTypeEnum)))
+                                    @foreach (var item in Enum.GetValues(typeof(CommandTypeEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
@@ -211,7 +211,7 @@
 </script>
 
 
-<script id="commond-播放对话" type="text/html">
+<script id="command-播放对话" type="text/html">
 
 
     <input type="text" placeholder="对话内容" class="am-input-sm am-form-field attr"  attr="Message" style="display:inline-block; width:380px;">
@@ -219,36 +219,36 @@
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
-<script id="commond-对话选项" type="text/html">
+<script id="command-对话选项" type="text/html">
 
     <input type="text" placeholder="标题" class="am-input-sm am-form-field attr"  attr="Title" style="display:inline-block; width:180px;">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"   attr="CommondId" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"   attr="CommandId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
-<script id="commond-输入选项" type="text/html">
+<script id="command-输入选项" type="text/html">
 
     <input type="text" placeholder="提示" class="am-input-sm am-form-field attr"  attr="Tips" style="display:inline-block; width:180px;">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommondId" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommandId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
-<script id="commond-选择选项" type="text/html">
+<script id="command-选择选项" type="text/html">
 
     <input type="text" placeholder="标题" class="am-input-sm am-form-field attr"  attr="Title" style="display:inline-block; width:180px;">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommondId" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommandId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
 
-<script id="commond-跳转到分支" type="text/html">
+<script id="command-跳转到分支" type="text/html">
 
-    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommondId" style="display:inline-block; width:180px;">
+    <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr"  attr="CommandId" style="display:inline-block; width:180px;">
 
     @*<input type="button" class="am-btn am-btn-default am-btn-xs save" value="保存">*@
 </script>
@@ -262,7 +262,7 @@
         var fields = @Html.Raw(JsonConvert.SerializeObject(Model.Fields));
         var relations = @Html.Raw(JsonConvert.SerializeObject(Model.Relations));
         var events = @Html.Raw(JsonConvert.SerializeObject(Model.Events));
-        var commonds = @Html.Raw(JsonConvert.SerializeObject(Model.Commonds));
+        var commands = @Html.Raw(JsonConvert.SerializeObject(Model.Commands));
 
         var caseIfs = @Html.Raw(JsonConvert.SerializeObject(Model.CaseIfs));
         var caseThens = @Html.Raw(JsonConvert.SerializeObject(Model.CaseThens));
@@ -307,31 +307,31 @@
 
             });
 
-            $(document).on("change", ".commonds", function () {
-                var commond = $(this).val();
-                console.log("commond=" + commond);
+            $(document).on("change", ".commands", function () {
+                var command = $(this).val();
+                console.log("command=" + command);
                 $(this).nextAll("select").remove();
                 $(this).nextAll("input").remove();
 
-                if (commond == "") {
+                if (command == "") {
                     return;
                 }
 
                 var data = { fields: fields, relations: relations };
 
-                if ($("#commond-" + commond).length>0) {
-                    $(this).after(template("commond-" + commond, data));
+                if ($("#command-" + command).length>0) {
+                    $(this).after(template("command-" + command, data));
                 }
 
                 var hasValue = true;
-                $(this).parent().parent().find(".commonds").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+                $(this).parent().parent().find(".commands").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
 
                 if (hasValue) {
-                    var commondDiv = $(".commonds").eq(0).clone();
+                    var commandDiv = $(".commands").eq(0).clone();
                     var div = $("<div class='am-form-inline am-form-group'></div>");
-                    $(div).append(commondDiv);
+                    $(div).append(commandDiv);
 
-                    $(this).parent().parent().find(".commonds:last").parent().after($(div));
+                    $(this).parent().parent().find(".commands:last").parent().after($(div));
                 }
             });
 
@@ -358,9 +358,9 @@
             }); 
 
             $.each(caseThens, function (i, item) {
-                $("#caseThen").find(".commonds").each(function () {
+                $("#caseThen").find(".commands").each(function () {
                     if ($(this).val() == "") {
-                        $(this).val(item.commond).trigger("change");
+                        $(this).val(item.command).trigger("change");
                         $(this).parent().children(".attr").each(function () {
                             var $this = $(this);
                             var attr = $(this).attr("attr");
@@ -379,9 +379,9 @@
 
 
             $.each(caseElses, function (i, item) {
-                $("#caseElse").find(".commonds").each(function () {
+                $("#caseElse").find(".commands").each(function () {
                     if ($(this).val() == "") {
-                        $(this).val(item.commond).trigger("change");
+                        $(this).val(item.command).trigger("change");
                         $(this).parent().children(".attr").each(function () {
                             var $this = $(this);
                             var attr = $(this).attr("attr");
@@ -439,14 +439,14 @@
 
             caseThens = [];
             $("#caseThen").find(".am-form-group").each(function () {
-                var commond = $(this).children(".commonds").val();
-                if (commond == "") {
+                var command = $(this).children(".commands").val();
+                if (command == "") {
                     return true;
                 }
-                console.log("commond=" + commond);
+                console.log("command=" + command);
 
                 var caseThen = {
-                    commond: commond,
+                    command: command,
                     attrs: []
                 };
                 $(this).children(".attr").each(function () {
@@ -474,14 +474,14 @@
 
             caseElses = [];
             $("#caseElse").find(".am-form-group").each(function () {
-                var commond = $(this).children(".commonds").val();
-                if (commond == "") {
+                var command = $(this).children(".commands").val();
+                if (command == "") {
                     return true;
                 }
-                console.log("commond=" + commond);
+                console.log("command=" + command);
 
                 var caseElse = {
-                    commond: commond,
+                    command: command,
                     attrs: []
                 };
                 $(this).children(".attr").each(function () {

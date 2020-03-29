@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Emprise.Domain.Core.Models.Script
 {
-    public class ChatCommondModel: BaseCommondModel
+    public class ChatCommandModel: BaseCommandModel
     {
-        public new CommondTypeEnum Type { get; } = CommondTypeEnum.播放对话;
+        public new CommandTypeEnum Type { get; } = CommandTypeEnum.播放对话;
 
         public string Content { get; set; }
     }

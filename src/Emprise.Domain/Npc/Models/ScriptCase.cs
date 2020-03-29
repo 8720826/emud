@@ -12,28 +12,28 @@ namespace Emprise.Domain.Npc.Models
         public string Condition { get; set; }
 
         [JsonProperty("attrs")]
-        public List<Attribute> Attrs { get; set; }
+        public List<CaseAttribute> Attrs { get; set; }
     }
 
     public class CaseThen
     {
-        [JsonProperty("commond")]
-        public string Commond { get; set; }
+        [JsonProperty("command")]
+        public string Command { get; set; }
 
         [JsonProperty("attrs")]
-        public List<Attribute> Attrs { get; set; }
+        public List<CaseAttribute> Attrs { get; set; }
     }
 
     public class CaseElse
     {
-        [JsonProperty("commond")]
-        public string Commond { get; set; }
+        [JsonProperty("command")]
+        public string Command { get; set; }
 
         [JsonProperty("attrs")]
-        public List<Attribute> Attrs { get; set; }
+        public List<CaseAttribute> Attrs { get; set; }
     }
 
-    public class Attribute
+    public class CaseAttribute
     {
         [JsonProperty("attr")]
         public string Attr { get; set; }

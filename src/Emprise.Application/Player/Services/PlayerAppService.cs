@@ -36,69 +36,69 @@ namespace Emprise.Application.Player.Services
             _account = account;
         }
 
-        #region commond
+        #region command
 
         public async Task Create(int userId, PlayerCreateDto dto)
         {
-            var commond = new CreateCommand(dto.Name, dto.Gender, userId, dto.Str, dto.Con, dto.Dex, dto.Int);
-            await _bus.SendCommand(commond);
+            var command = new CreateCommand(dto.Name, dto.Gender, userId, dto.Str, dto.Con, dto.Dex, dto.Int);
+            await _bus.SendCommand(command);
         }
 
         public async Task Delete(int id)
         {
-            var commond = new DeleteCommand(id);
-            await _bus.SendCommand(commond);
+            var command = new DeleteCommand(id);
+            await _bus.SendCommand(command);
         }
 
         public async Task JoinGame(int userId, int playerId)
         {
-            var commond = new JoinGameCommand(userId, playerId);
-            await _bus.SendCommand(commond);
+            var command = new JoinGameCommand(userId, playerId);
+            await _bus.SendCommand(command);
         }
 
         
         public async Task InitGame(int playerId)
         {
             _logger.LogDebug($"InitGame:{playerId}");
-            var commond = new InitGameCommand(playerId);
-            await _bus.SendCommand(commond).ConfigureAwait(false); ;
+            var command = new InitGameCommand(playerId);
+            await _bus.SendCommand(command).ConfigureAwait(false); ;
         }
         
 
         public async Task Move(int playerId, int roomId)
         {
-            var commond = new MoveCommand(playerId, roomId);
-            await _bus.SendCommand(commond);
+            var command = new MoveCommand(playerId, roomId);
+            await _bus.SendCommand(command);
         }
 
         public async Task Search(int playerId)
         {
-            var commond = new SearchCommand(playerId);
-            await _bus.SendCommand(commond);
+            var command = new SearchCommand(playerId);
+            await _bus.SendCommand(command);
         }
 
         public async Task Meditate(int playerId)
         {
-            var commond = new MeditateCommand(playerId);
-            await _bus.SendCommand(commond);
+            var command = new MeditateCommand(playerId);
+            await _bus.SendCommand(command);
         }
 
         public async Task StopAction(int playerId)
         {
-            var commond = new StopActionCommand(playerId);
-            await _bus.SendCommand(commond);
+            var command = new StopActionCommand(playerId);
+            await _bus.SendCommand(command);
         }
 
         public async Task Exert(int playerId)
         {
-            var commond = new ExertCommand(playerId);
-            await _bus.SendCommand(commond);
+            var command = new ExertCommand(playerId);
+            await _bus.SendCommand(command);
         }
 
         public async Task NpcAction(int playerId, int npcId, NpcAction action)
         {
-            var commond = new NpcActionCommand(playerId, npcId, action.ScriptId, action.CommandId, action.Name);
-            await _bus.SendCommand(commond);
+            var command = new NpcActionCommand(playerId, npcId, action.ScriptId, action.CommandId, action.Name);
+            await _bus.SendCommand(command);
         }
 
 

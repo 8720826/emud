@@ -25,55 +25,55 @@ namespace Emprise.Application.User.Services
             _userDomainService = userDomainService;
         }
 
-        #region commond
+        #region command
         public async Task Visit()
         {
-            var commond = new VisitCommand();
-            await _bus.SendCommand(commond);
+            var command = new VisitCommand();
+            await _bus.SendCommand(command);
 
         }
 
         public async Task SendRegEmail(string email)
         {
-            var commond = new SendRegEmailCommand(email);
-            await _bus.SendCommand(commond);
+            var command = new SendRegEmailCommand(email);
+            await _bus.SendCommand(command);
         }
 
         public async Task Reg(UserRegDto dto)
         {
-            var commond = new RegCommand(dto.Email, dto.Password, dto.Code);
-            await _bus.SendCommand(commond);
+            var command = new RegCommand(dto.Email, dto.Password, dto.Code);
+            await _bus.SendCommand(command);
         }
 
         public async Task Login(UserLoginDto dto)
         {
-            var commond = new LoginCommand(dto.Email, dto.Password);
-            await _bus.SendCommand(commond);
+            var command = new LoginCommand(dto.Email, dto.Password);
+            await _bus.SendCommand(command);
         }
 
         public async Task Logout(int id)
         {
-            var commond = new LogoutCommand(id);
-            await _bus.SendCommand(commond);
+            var command = new LogoutCommand(id);
+            await _bus.SendCommand(command);
         }
 
         public async Task ModifyPassword(int userId, ModifyPasswordDto dto)
         {
-            var commond = new ModifyPasswordCommand(userId, dto.Password, dto.NewPassword);
-            await _bus.SendCommand(commond);
+            var command = new ModifyPasswordCommand(userId, dto.Password, dto.NewPassword);
+            await _bus.SendCommand(command);
         }
 
         public async Task ResetPassword(ResetPasswordDto dto)
         {
-            var commond = new ResetPasswordCommand(dto.Email);
-            await _bus.SendCommand(commond);
+            var command = new ResetPasswordCommand(dto.Email);
+            await _bus.SendCommand(command);
         }
 
         /*
         public async Task SendVerifyEmail(int userId, SendVerifyEmailDto dto)
         {
-            var commond = new SendVerifyEmailCommand(userId, dto.Email, dto.Password);
-            await _bus.SendCommand(commond);
+            var command = new SendVerifyEmailCommand(userId, dto.Email, dto.Password);
+            await _bus.SendCommand(command);
         }*/
 
         #endregion

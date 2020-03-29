@@ -38,7 +38,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public Array Events { get; set; }
 
-        public Array Commonds { get; set; }
+        public Array Commands { get; set; }
 
         [BindProperty]
         public string UrlReferer { get; set; }
@@ -53,7 +53,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             Events = Enum.GetNames(typeof(PlayerEventTypeEnum));
 
-            Commonds = Enum.GetNames(typeof(CommondTypeEnum));
+            Commands = Enum.GetNames(typeof(CommandTypeEnum));
 
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))

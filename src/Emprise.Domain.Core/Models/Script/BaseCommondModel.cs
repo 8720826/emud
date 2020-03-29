@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Emprise.Domain.Core.Models.Script
 {
-    public class BaseCommondModel
+    public class BaseCommandModel
     {
-        public CommondTypeEnum Type { get; set; }
+        public CommandTypeEnum Type { get; set; }
     }
 }

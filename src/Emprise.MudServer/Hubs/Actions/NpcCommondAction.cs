@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Emprise.MudServer.Hubs.Actions
 {
-    public class NpcCommondAction
+    public class NpcCommandAction
     {
         public int NpcId { get; set; }
 

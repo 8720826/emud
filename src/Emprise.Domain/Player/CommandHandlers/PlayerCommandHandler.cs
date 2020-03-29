@@ -7,6 +7,7 @@ using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Models;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Commands;
@@ -497,165 +498,220 @@ namespace Emprise.Domain.User.CommandHandlers
 
             if (scriptId > 0 && commandId > 0)
             {
-
-                var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
-                var scriptIds = npcScripts.Select(x => x.Id).ToList();
-                if (!scriptIds.Contains(scriptId))
-                {
-                    await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                    return Unit.Value;
-                }
-
-                var script = await _scriptDomainService.Get(scriptId);
-                if (script == null)
-                {
-                    await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                    return Unit.Value;
-                }
-
-                var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
-
-                var scriptCommand = scriptCommands.FirstOrDefault(x => x.Id == commandId);
-                if (scriptCommand == null)
-                {
-                    return Unit.Value;
-                }
-
-                if (!scriptCommand.IsEntry)
-                {
-                    var commandIds = await _redisDb.StringGet<List<int>>($"commandIds_{npc.Id}_{scriptId}");
-                    if (!commandIds.Contains(scriptCommand.Id))
-                    {
-                        return Unit.Value;
-                    }
-                }
-
-                var checkIf = true;//判断if条件是否为true
-
-                var caseIfStr = scriptCommand.CaseIf;
-                if (!string.IsNullOrEmpty(caseIfStr))
-                {
-                    var caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
-                    foreach (var caseIf in caseIfs)
-                    {
-                        if (!checkIf)
-                        {
-                            break;
-                        }
-
-                        var field = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Field")?.Val;
-                        var relation = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Relation")?.Val;
-                        var value = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Value")?.Val;
-                        var wareName = caseIf.Attrs.FirstOrDefault(x => x.Attr == "WareName")?.Val;
-                        var number = caseIf.Attrs.FirstOrDefault(x => x.Attr == "Number")?.Val;
-
-
-                        switch (caseIf.Condition)
-                        {
-                            case "角色属性":
-                                if (!CheckField(player, field, value, relation))
-                                {
-                                    checkIf = false;
-                                }
-                                break;
-
-                            case "拥有物品":
-                                if (!await CheckWare(player.Id, wareName, number, relation))
-                                {
-                                    checkIf = false;
-                                }
-
-                                break;
-
-                            case "完成任务":
-
-                                break;
-
-                            case "活动记录":
-
-                                break;
-                        }
-                    }
-                }
-
-
-                if (checkIf)
-                {
-                    //执行then分支
-
-
-                    await _bus.RaiseEvent(new DomainNotification($"执行指令 {commandName}, {scriptCommand.Name}，then分支！"));
-                    return Unit.Value;
-                }
-                else
-                {
-                    //执行else分支
-
-
-                    await _bus.RaiseEvent(new DomainNotification($"执行指令 {commandName}, {scriptCommand.Name}，else分支！"));
-                    return Unit.Value;
-                }
-
-
-
+                await DoScript(player, npc, scriptId, commandId);
             }
             else
             {
-                NpcActionEnum actionEnum;
-                if (Enum.TryParse(commandName, out actionEnum))
-                {
-                    switch (actionEnum)
-                    {
-                        case NpcActionEnum.切磋:
-                            if (!npc.CanFight)
-                            {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
-                                return Unit.Value;
-                            }
-                            else
-                            {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
-                                return Unit.Value;
-                            }
-                            break;
-
-                        case NpcActionEnum.杀死:
-                            if (!npc.CanKill)
-                            {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
-                                return Unit.Value;
-                            }
-                            else
-                            {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
-                                return Unit.Value;
-                            }
-                            break;
-
-                        case NpcActionEnum.给予:
-                            if (npc.Type != NpcTypeEnum.人物)
-                            {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
-                                return Unit.Value;
-                            }
-                            else
-                            {
-                                await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
-                                return Unit.Value;
-                            }
-                            break;
-                    }
-                }
+                await DoAction(player, npc, commandName);
             }
-
-
-
             return Unit.Value;
         }
 
 
 
         #region 私有方法
+
+        private async Task DoAction(PlayerEntity player, NpcEntity npc,string commandName)
+        {
+            NpcActionEnum actionEnum;
+            if (Enum.TryParse(commandName, out actionEnum))
+            {
+                switch (actionEnum)
+                {
+                    case NpcActionEnum.切磋:
+                        if (!npc.CanFight)
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
+                        }
+                        else
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
+                        }
+                        break;
+
+                    case NpcActionEnum.杀死:
+                        if (!npc.CanKill)
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
+                        }
+                        else
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
+                        }
+                        break;
+
+                    case NpcActionEnum.给予:
+                        if (npc.Type != NpcTypeEnum.人物)
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
+                        }
+                        else
+                        {
+                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
+                        }
+                        break;
+                }
+            }
+        }
+
+        private async Task DoScript(PlayerEntity player, NpcEntity npc, int scriptId, int commandId)
+        {
+            var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
+            var scriptIds = npcScripts.Select(x => x.Id).ToList();
+            if (!scriptIds.Contains(scriptId))
+            {
+                //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
+                return;
+            }
+
+            var script = await _scriptDomainService.Get(scriptId);
+            if (script == null)
+            {
+                //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
+                return;
+            }
+
+            var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
+
+            var scriptCommand = scriptCommands.FirstOrDefault(x => x.Id == commandId);
+            if (scriptCommand == null)
+            {
+                return;
+            }
+
+            if (!scriptCommand.IsEntry)
+            {
+                var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
+                var commandIds = await _redisDb.StringGet<List<int>>(key);
+                if (!commandIds.Contains(scriptCommand.Id))
+                {
+                    return;
+                }
+            }
+
+            var checkIf = true;//判断if条件是否为true
+
+            var caseIfStr = scriptCommand.CaseIf;
+            if (!string.IsNullOrEmpty(caseIfStr))
+            {
+                var caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
+                foreach (var caseIf in caseIfs)
+                {
+                    checkIf = await CheckIf(player, caseIf.Condition, caseIf.Attrs);
+                    if (!checkIf)
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            if (checkIf)
+            {
+                //执行then分支
+                var caseThenStr = scriptCommand.CaseThen;
+                if (!string.IsNullOrEmpty(caseThenStr))
+                {
+                    var caseThens = JsonConvert.DeserializeObject<List<CaseThen>>(caseThenStr);
+                    foreach (var caseThen in caseThens)
+                    {
+                        await DoCommand(player, npc, scriptId, caseThen.Command, caseThen.Attrs);
+                    }
+                }
+            }
+            else
+            {
+                //执行else分支
+                var caseElseStr = scriptCommand.CaseElse;
+                if (!string.IsNullOrEmpty(caseElseStr))
+                {
+                    var caseElses = JsonConvert.DeserializeObject<List<CaseElse>>(caseElseStr);
+                    foreach (var caseElse in caseElses)
+                    {
+                        await DoCommand(player, npc, scriptId, caseElse.Command, caseElse.Attrs);
+                    }
+                }
+            }
+        }
+
+        private async Task<bool> CheckIf(PlayerEntity player, string condition, List<CaseAttribute> attrs)
+        {
+            var field = attrs.FirstOrDefault(x => x.Attr == "Field")?.Val;
+            var relation = attrs.FirstOrDefault(x => x.Attr == "Relation")?.Val;
+            var value = attrs.FirstOrDefault(x => x.Attr == "Value")?.Val;
+            var wareName = attrs.FirstOrDefault(x => x.Attr == "WareName")?.Val;
+            var number = attrs.FirstOrDefault(x => x.Attr == "Number")?.Val;
+
+
+            switch (condition)
+            {
+                case "角色属性":
+                    if (!CheckField(player, field, value, relation))
+                    {
+                        return false;
+                    }
+                    break;
+
+                case "拥有物品":
+                    if (!await CheckWare(player.Id, wareName, number, relation))
+                    {
+                        return false;
+                    }
+
+                    break;
+
+                case "完成任务":
+
+                    break;
+
+                case "活动记录":
+
+                    break;
+            }
+
+            return true;
+        }
+
+        private async Task DoCommand(PlayerEntity player, NpcEntity npc, int scriptId, string command,List<CaseAttribute> attrs)
+        {
+            var title = attrs.FirstOrDefault(x => x.Attr == "Title")?.Val;
+            var message = attrs.FirstOrDefault(x => x.Attr == "Message")?.Val;
+            var tips = attrs.FirstOrDefault(x => x.Attr == "Tips")?.Val;
+            var commandIdStr = attrs.FirstOrDefault(x => x.Attr == "commandId")?.Val;
+
+            //await _bus.RaiseEvent(new DomainNotification($"command= {command}"));
+            switch (command)
+            {
+                case "播放对话":
+
+                    await _mudProvider.ShowMessage(player.Id, message);
+
+                    break;
+
+                case "对话选项":
+                    await _mudProvider.ShowMessage(player.Id, $"<a href='javascript:;' class='chat'>{title}</a><br />");
+                    break;
+
+                case "输入选项":
+                    await _mudProvider.ShowMessage(player.Id, $"<a href = 'javascript:;' class='chat'>{tips}</a><input type = 'text' name='input' style='width:120px;margin-left:10px;' /><input type = 'button' class='input'  value='确定' /><br />");
+                    break;
+
+
+                case "选择选项":
+                    await _mudProvider.ShowMessage(player.Id, $"<select><option value =''> 请选择</ option ></select>< input type = 'button' class='input'  value='确定' /><br />");
+
+
+                    break;
+
+                case "跳转到分支":
+
+                    int.TryParse(commandIdStr,out int commandId);
+
+                    await DoScript(player, npc, scriptId, commandId);
+
+                    break;
+            }
+        }
 
         private async Task<bool> CheckWare(int playerId, string wareName, string number, string relation)
         {

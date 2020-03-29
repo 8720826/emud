@@ -203,11 +203,11 @@ namespace Emprise.MudServer.Hubs
         }
 
 
-        public async Task NpcAction(NpcCommondAction commondAction)
+        public async Task NpcAction(NpcCommandAction commandAction)
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.NpcAction(playerId, commondAction.NpcId, commondAction.Action);
+                await _playerAppService.NpcAction(playerId, commandAction.NpcId, commandAction.Action);
             });
         }
     }

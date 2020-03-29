@@ -96,7 +96,7 @@ namespace Emprise.Domain.Core.Enum
         聊天 = 5
     }
 
-    public enum CommondTypeEnum
+    public enum CommandTypeEnum
     {
         播放对话 =1,
         对话选项 = 2,
