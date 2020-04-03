@@ -246,9 +246,29 @@ new Vue({
         setRoom: function (direction) {
             console.log(direction);
         },
-        npcAction: function (npcId,action) {
-            console.log("npcId=" + npcId + ",action=" + action);
+        npcAction: function (npcId, action) {
+            console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
             connection.invoke("NpcAction",  {  npcId,  action});
+        },
+        clickCommand: function (e) {
+            var that = this;
+            var obj = e.target;
+            var action = {  };
+            var npcId = obj.getAttribute('npcId')*1;
+            action.scriptId = obj.getAttribute('scriptId')*1;
+            action.commandId = obj.getAttribute('commandId')*1;
+
+            if (obj.className === 'chat') {
+                action.name = "22";
+                connection.invoke("NpcAction", { npcId, action });
+                //console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
+
+            } else if (obj.className === 'button') {
+                action.message = obj.previousElementSibling.value;
+                //console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
+                connection.invoke("NpcAction", { npcId, action });
+                obj.previousElementSibling.value = "";
+            }
         }
     },
     watch: {

@@ -32,6 +32,8 @@ namespace Emprise.Application.Npc.Models
         public string Name { set; get; }
 
         public int ScriptId { set; get; }
-   
+
+        public string Message { set; get; }
+
     }
 }

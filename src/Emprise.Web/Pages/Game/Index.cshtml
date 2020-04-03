@@ -101,7 +101,19 @@
 
         <div id="message" ref="message">
             <ul>
-                <li  v-for="message,index in messages" :class="index===messages.length-1?'cur':''"><p v-html="message.content">{{message.content}}</p><em>({{message.postDate}})</em></li>
+                <li v-for="message,index in messages" :class="index===messages.length-1&&message.type==1?'cur':''">
+                    <template v-if="message.type==1">
+                        <p v-html="message.content">{{message.content}}</p>
+                    </template>
+                    <template v-else-if="message.type==2">
+                        <p v-html="message.content" style="margin:1px 0px;" @@click="clickCommand">{{message.content}}</p>
+                    </template>
+                    <template v-else>
+                        <p v-html="message.content">{{message.content}}</p>
+                        <em>({{message.postDate}})</em>
+                    </template>
+
+                </li>
             </ul>
         </div>
 

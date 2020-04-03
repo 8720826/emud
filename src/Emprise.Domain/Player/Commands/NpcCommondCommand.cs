@@ -18,14 +18,18 @@ namespace Emprise.Domain.Player.Commands
 
         public int ScriptId { get; set; }
 
+        public string Message { get; set; }
+        
 
-        public NpcActionCommand(int playerId, int npcId, int scriptId, int commandId, string commandName)
+
+        public NpcActionCommand(int playerId, int npcId, int scriptId, int commandId, string commandName, string message)
         {
             NpcId = npcId;
             PlayerId = playerId;
             CommandId = commandId;
             ScriptId = scriptId;
             CommandName = commandName;
+            Message = message;
         }
 
     }

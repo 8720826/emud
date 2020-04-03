@@ -11,5 +11,15 @@ namespace Emprise.Domain.Core.Enum
         /// </summary>
         提示 = 1,
 
+        /// <summary>
+        /// 指令
+        /// </summary>
+        指令 = 2,
+
+        /// <summary>
+        /// 聊天
+        /// </summary>
+        聊天 = 3,
+
     }
 }

@@ -97,7 +97,7 @@ namespace Emprise.Application.Player.Services
 
         public async Task NpcAction(int playerId, int npcId, NpcAction action)
         {
-            var command = new NpcActionCommand(playerId, npcId, action.ScriptId, action.CommandId, action.Name);
+            var command = new NpcActionCommand(playerId, npcId, action.ScriptId, action.CommandId, action.Name, action.Message);
             await _bus.SendCommand(command);
         }
 

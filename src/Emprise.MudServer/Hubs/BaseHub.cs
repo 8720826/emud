@@ -23,7 +23,7 @@ namespace Emprise.MudServer.Hubs
         protected readonly IMudOnlineProvider _mudOnlineProvider;
         protected readonly AppConfig _appConfig;
         protected readonly IPlayerAppService _playerAppService;
-        protected readonly ILogger<BaseHub> _logger;
+        public readonly ILogger<BaseHub> _logger;
 
         public BaseHub(IAccountContext account, INotificationHandler<DomainNotification> notifications, IMudOnlineProvider mudOnlineProvider, IOptions<AppConfig> appConfig, IPlayerAppService playerAppService, ILogger<MudHub> logger)
         {

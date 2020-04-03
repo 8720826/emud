@@ -583,7 +583,7 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
                 var commandIds = await _redisDb.StringGet<List<int>>(key);
-                if (!commandIds.Contains(scriptCommand.Id))
+                if (commandIds == null || !commandIds.Contains(scriptCommand.Id))
                 {
                     return;
                 }
@@ -592,9 +592,20 @@ namespace Emprise.Domain.User.CommandHandlers
             var checkIf = true;//判断if条件是否为true
 
             var caseIfStr = scriptCommand.CaseIf;
+         
+
             if (!string.IsNullOrEmpty(caseIfStr))
             {
-                var caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
+                List<CaseIf> caseIfs = new List<CaseIf>();
+                try
+                {
+                    caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError($"Convert CaseIf:{ex}");
+                }
+
                 foreach (var caseIf in caseIfs)
                 {
                     checkIf = await CheckIf(player, caseIf.Condition, caseIf.Attrs);
@@ -612,7 +623,17 @@ namespace Emprise.Domain.User.CommandHandlers
                 var caseThenStr = scriptCommand.CaseThen;
                 if (!string.IsNullOrEmpty(caseThenStr))
                 {
-                    var caseThens = JsonConvert.DeserializeObject<List<CaseThen>>(caseThenStr);
+                    List<CaseThen> caseThens = new List<CaseThen>();
+                    try
+                    {
+                        caseThens = JsonConvert.DeserializeObject<List<CaseThen>>(caseThenStr);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Convert CaseThen:{ex}");
+                    }
+
+
                     foreach (var caseThen in caseThens)
                     {
                         await DoCommand(player, npc, scriptId, caseThen.Command, caseThen.Attrs);
@@ -625,7 +646,16 @@ namespace Emprise.Domain.User.CommandHandlers
                 var caseElseStr = scriptCommand.CaseElse;
                 if (!string.IsNullOrEmpty(caseElseStr))
                 {
-                    var caseElses = JsonConvert.DeserializeObject<List<CaseElse>>(caseElseStr);
+                    List<CaseElse> caseElses = new List<CaseElse>();
+                    try
+                    {
+                        caseElses = JsonConvert.DeserializeObject<List<CaseElse>>(caseElseStr);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Convert CaseElse:{ex}");
+                    }
+
                     foreach (var caseElse in caseElses)
                     {
                         await DoCommand(player, npc, scriptId, caseElse.Command, caseElse.Attrs);
@@ -677,7 +707,14 @@ namespace Emprise.Domain.User.CommandHandlers
             var title = attrs.FirstOrDefault(x => x.Attr == "Title")?.Val;
             var message = attrs.FirstOrDefault(x => x.Attr == "Message")?.Val;
             var tips = attrs.FirstOrDefault(x => x.Attr == "Tips")?.Val;
-            var commandIdStr = attrs.FirstOrDefault(x => x.Attr == "commandId")?.Val;
+            var commandIdStr = attrs.FirstOrDefault(x => x.Attr == "CommandId")?.Val;
+            int.TryParse(commandIdStr, out int commandId);
+
+            var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
+            var commandIds = await _redisDb.StringGet<List<int>>(key) ?? new List<int>();
+            commandIds.Add(commandId);
+            await _redisDb.StringSet(key, commandIds);
+
 
             //await _bus.RaiseEvent(new DomainNotification($"command= {command}"));
             switch (command)
@@ -689,23 +726,17 @@ namespace Emprise.Domain.User.CommandHandlers
                     break;
 
                 case "对话选项":
-                    await _mudProvider.ShowMessage(player.Id, $"<a href='javascript:;' class='chat'>{title}</a><br />");
+                    await _mudProvider.ShowMessage(player.Id, $" → <a href='javascript:;' class='chat' npcId='{npc.Id}' scriptId='{scriptId}' commandId='{commandId}'>{title}</a><br />", MessageTypeEnum.指令);
                     break;
 
                 case "输入选项":
-                    await _mudProvider.ShowMessage(player.Id, $"<a href = 'javascript:;' class='chat'>{tips}</a><input type = 'text' name='input' style='width:120px;margin-left:10px;' /><input type = 'button' class='input'  value='确定' /><br />");
+                    await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;' class='chat'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='button' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
                     break;
 
 
-                case "选择选项":
-                    await _mudProvider.ShowMessage(player.Id, $"<select><option value =''> 请选择</ option ></select>< input type = 'button' class='input'  value='确定' /><br />");
-
-
-                    break;
 
                 case "跳转到分支":
 
-                    int.TryParse(commandIdStr,out int commandId);
 
                     await DoScript(player, npc, scriptId, commandId);
 
