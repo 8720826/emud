@@ -845,8 +845,9 @@ namespace Emprise.Domain.User.CommandHandlers
                         throw new Exception($"不支持的数据类型： {typeCode}");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"CheckField Exception:{ex}");
                 return false;
             }
         }
