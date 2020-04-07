@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Domain.Core.Attributes;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Bus.Models;
@@ -16,11 +17,12 @@ using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
 using Emprise.Domain.Ware.Services;
+using Emprise.Infra;
 using Emprise.Infra.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -28,7 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,6 +69,7 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IWareDomainService _wareDomainService;
         private readonly IPlayerWareDomainService _playerWareDomainService;
         private readonly IRedisDb _redisDb;
+        private readonly IMemoryCache _cache;
 
         public PlayerCommandHandler(
             IMediatorHandler bus,
@@ -88,10 +90,11 @@ namespace Emprise.Domain.User.CommandHandlers
             IWareDomainService wareDomainService,
             IPlayerWareDomainService playerWareDomainService,
             IRedisDb redisDb,
+            IMemoryCache cache,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
-           
 
+            _cache = cache;
             _bus = bus;
             _logger = logger;
             _httpAccessor = httpAccessor;
@@ -730,7 +733,7 @@ namespace Emprise.Domain.User.CommandHandlers
                     break;
 
                 case "输入选项":
-                    await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;' class='chat'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='button' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
+                    await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='button' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
                     break;
 
 
@@ -744,7 +747,7 @@ namespace Emprise.Domain.User.CommandHandlers
             }
         }
 
-        private async Task<bool> CheckWare(int playerId, string wareName, string number, string relation)
+        private async Task<bool> CheckWare(int playerId, string wareName, string number, string strRelation)
         {
             if(!int.TryParse(number, out int numberValue))
             {
@@ -763,33 +766,84 @@ namespace Emprise.Domain.User.CommandHandlers
                 return false;
             }
 
-            return CheckRelation(playerWare.Number, numberValue, relation);
-
+            var relations = GetRelations(strRelation);
+            return relations.Contains(playerWare.Number.CompareTo(numberValue));
         }
 
-        private bool CheckRelation(int value1,int value2, string relation)
+        private List<int> GetRelations(string relation)
         {
-            switch (relation)
+            List<int> relations = new List<int>();// 1 大于，0 等于 ，-1 小于
+            var relationEnum = (LogicalRelationTypeEnum)Enum.Parse(typeof(LogicalRelationTypeEnum), relation, true);
+            switch (relationEnum)
             {
-                case "等于": return value1 == value2;
-                case "不等于": return value1 != value2;
-                case "大于": return value1 > value2;
-                case "大于等于": return value1 >= value2;
-                case "小于": return value1 < value2;
-                case "小于等于": return value1 <= value2;
-                default: return false;
+                case LogicalRelationTypeEnum.不等于:
+                    relations = new List<int>() { 1, -1 };
+                    break;
+
+                case LogicalRelationTypeEnum.大于:
+                    relations = new List<int>() { 1 };
+                    break;
+
+                case LogicalRelationTypeEnum.大于等于:
+                    relations = new List<int>() { 1, 0 };
+                    break;
+
+                case LogicalRelationTypeEnum.小于:
+                    relations = new List<int>() { -1 };
+                    break;
+
+                case LogicalRelationTypeEnum.小于等于:
+                    relations = new List<int>() { 0, -1 };
+                    break;
+
+                case LogicalRelationTypeEnum.等于:
+                    relations = new List<int>() { 0 };
+                    break;
             }
+
+            return relations;
         }
 
-        private bool CheckField(PlayerEntity player, string field, string value, string relation)
+        private bool CheckField(PlayerEntity player, string field, string strValue, string strRelation)
         {
             try
             {
-                var fieldValue = GetFieldValue(player, field);
+                var relations = GetRelations(strRelation);// 1 大于，0 等于 ，-1 小于
 
-                int.TryParse(value, out int attrValue);
+                var fieldProp = GetFieldPropertyInfo(player, field);
+                if (fieldProp==null)
+                {
+                    return false;
+                }
 
-                return CheckRelation(fieldValue, attrValue, relation);
+                var objectValue = fieldProp.GetValue(player);
+                var typeCode = Type.GetTypeCode(fieldProp.GetType());
+                switch (typeCode)
+                {
+                    case TypeCode.Int32:
+                        return relations.Contains(Convert.ToInt32(strValue).CompareTo(Convert.ToInt32(objectValue)));
+
+                    case TypeCode.Int64:
+                        return relations.Contains(Convert.ToInt64(strValue).CompareTo(Convert.ToInt64(objectValue)));
+
+                    case TypeCode.Decimal:
+                        return relations.Contains(Convert.ToDecimal(strValue).CompareTo(Convert.ToDecimal(objectValue)));
+
+                    case TypeCode.Double:
+                        return relations.Contains(Convert.ToDouble(strValue).CompareTo(Convert.ToDouble(objectValue)));
+
+                    case TypeCode.Boolean: 
+                        return relations.Contains(Convert.ToBoolean(strValue).CompareTo(Convert.ToBoolean(objectValue)));
+
+                    case TypeCode.DateTime:
+                        return relations.Contains(Convert.ToDateTime(strValue).CompareTo(Convert.ToDateTime(objectValue)));
+
+                    case TypeCode.String:
+                        return relations.Contains(strValue.CompareTo(objectValue));
+
+                    default:
+                        throw new Exception($"不支持的数据类型： {typeCode}");
+                }
             }
             catch (Exception)
             {
@@ -798,22 +852,32 @@ namespace Emprise.Domain.User.CommandHandlers
         }
 
 
-        private int GetFieldValue(PlayerEntity player, string field)
+
+        private PropertyInfo GetFieldPropertyInfo(PlayerEntity player, string field)
         {
             var fieldEnum = (PlayerConditionFieldEnum)Enum.Parse(typeof(PlayerConditionFieldEnum), field, true);
-            switch (fieldEnum)
+
+
+            var key = $"player_properties";
+            var properties = _cache.GetOrCreate(key, p => {
+                p.SetAbsoluteExpiration(TimeSpan.FromHours(24));
+                return player.GetType().GetProperties();
+            });
+
+            foreach (var prop in properties)
             {
-                case PlayerConditionFieldEnum.先天悟性:
-                    return player.Int;
-
-                case PlayerConditionFieldEnum.等级:
-                    return player.Level;
-
-                default:
-                    throw new Exception($"属性 {field} 不存在");
+                var attribute = prop.GetCustomAttributes(typeof(ConditionFieldAttribute), true).FirstOrDefault();
+                if (attribute != null)
+                {
+                    if ((attribute as ConditionFieldAttribute).FieldEnum == fieldEnum)
+                    {
+                        return prop;
+                    }
+                }
             }
-        }
 
+            return null;
+        }
 
         #endregion
 
