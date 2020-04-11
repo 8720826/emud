@@ -484,6 +484,7 @@ namespace Emprise.Domain.User.CommandHandlers
             var playerId = command.PlayerId;
             var commandId = command.CommandId;
             var commandName = command.CommandName;
+            var input = command.Message;
             var scriptId = command.ScriptId;
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
@@ -501,7 +502,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
             if (scriptId > 0 && commandId > 0)
             {
-                await DoScript(player, npc, scriptId, commandId);
+                await DoScript(player, npc, scriptId, commandId, input);
             }
             else
             {
@@ -557,7 +558,7 @@ namespace Emprise.Domain.User.CommandHandlers
             }
         }
 
-        private async Task DoScript(PlayerEntity player, NpcEntity npc, int scriptId, int commandId)
+        private async Task DoScript(PlayerEntity player, NpcEntity npc, int scriptId, int commandId, string input = "")
         {
             var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
             var scriptIds = npcScripts.Select(x => x.Id).ToList();
@@ -611,7 +612,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
                 foreach (var caseIf in caseIfs)
                 {
-                    checkIf = await CheckIf(player, caseIf.Condition, caseIf.Attrs);
+                    checkIf = await CheckIf(player, caseIf.Condition, caseIf.Attrs, input);
                     if (!checkIf)
                     {
                         break;
@@ -639,7 +640,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
                     foreach (var caseThen in caseThens)
                     {
-                        await DoCommand(player, npc, scriptId, caseThen.Command, caseThen.Attrs);
+                        await DoCommand(player, npc, scriptId, caseThen.Command, caseThen.Attrs, input);
                     }
                 }
             }
@@ -661,13 +662,13 @@ namespace Emprise.Domain.User.CommandHandlers
 
                     foreach (var caseElse in caseElses)
                     {
-                        await DoCommand(player, npc, scriptId, caseElse.Command, caseElse.Attrs);
+                        await DoCommand(player, npc, scriptId, caseElse.Command, caseElse.Attrs, input);
                     }
                 }
             }
         }
 
-        private async Task<bool> CheckIf(PlayerEntity player, string condition, List<CaseAttribute> attrs)
+        private async Task<bool> CheckIf(PlayerEntity player, string condition, List<CaseAttribute> attrs, string input)
         {
             var field = attrs.FirstOrDefault(x => x.Attr == "Field")?.Val;
             var relation = attrs.FirstOrDefault(x => x.Attr == "Relation")?.Val;
@@ -676,16 +677,19 @@ namespace Emprise.Domain.User.CommandHandlers
             var number = attrs.FirstOrDefault(x => x.Attr == "Number")?.Val;
 
 
-            switch (condition)
+            var conditionEnum = (ConditionTypeEnum)Enum.Parse(typeof(ConditionTypeEnum), condition, true);
+            
+
+            switch (conditionEnum)
             {
-                case "角色属性":
+                case ConditionTypeEnum.角色属性:
                     if (!CheckField(player, field, value, relation))
                     {
                         return false;
                     }
                     break;
 
-                case "拥有物品":
+                case ConditionTypeEnum.拥有物品:
                     if (!await CheckWare(player.Id, wareName, number, relation))
                     {
                         return false;
@@ -693,11 +697,11 @@ namespace Emprise.Domain.User.CommandHandlers
 
                     break;
 
-                case "完成任务":
+                case ConditionTypeEnum.完成任务:
 
                     break;
 
-                case "活动记录":
+                case ConditionTypeEnum.活动记录:
 
                     break;
             }
@@ -705,7 +709,7 @@ namespace Emprise.Domain.User.CommandHandlers
             return true;
         }
 
-        private async Task DoCommand(PlayerEntity player, NpcEntity npc, int scriptId, string command,List<CaseAttribute> attrs)
+        private async Task DoCommand(PlayerEntity player, NpcEntity npc, int scriptId, string command,List<CaseAttribute> attrs, string input)
         {
             var title = attrs.FirstOrDefault(x => x.Attr == "Title")?.Val;
             var message = attrs.FirstOrDefault(x => x.Attr == "Message")?.Val;
@@ -718,27 +722,28 @@ namespace Emprise.Domain.User.CommandHandlers
             commandIds.Add(commandId);
             await _redisDb.StringSet(key, commandIds);
 
+            var commandEnum = (CommandTypeEnum)Enum.Parse(typeof(CommandTypeEnum), command, true);
 
             //await _bus.RaiseEvent(new DomainNotification($"command= {command}"));
-            switch (command)
+            switch (commandEnum)
             {
-                case "播放对话":
+                case CommandTypeEnum.播放对话:
 
                     await _mudProvider.ShowMessage(player.Id, message);
 
                     break;
 
-                case "对话选项":
+                case CommandTypeEnum.对话选项:
                     await _mudProvider.ShowMessage(player.Id, $" → <a href='javascript:;' class='chat' npcId='{npc.Id}' scriptId='{scriptId}' commandId='{commandId}'>{title}</a><br />", MessageTypeEnum.指令);
                     break;
 
-                case "输入选项":
+                case CommandTypeEnum.输入选项:
                     await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='button' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
                     break;
 
 
 
-                case "跳转到分支":
+                case CommandTypeEnum.跳转到分支:
 
 
                     await DoScript(player, npc, scriptId, commandId);
