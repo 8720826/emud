@@ -560,6 +560,8 @@ namespace Emprise.Domain.User.CommandHandlers
 
         private async Task DoScript(PlayerEntity player, NpcEntity npc, int scriptId, int commandId, string input = "")
         {
+            _logger.LogDebug($"npc={npc.Id},scriptId={scriptId},commandId={commandId},input={input}");
+
             var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
             var scriptIds = npcScripts.Select(x => x.Id).ToList();
             if (!scriptIds.Contains(scriptId))

@@ -43,6 +43,8 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public Array Commands { get; set; }
 
+        public Array Activities { get; set; }
+
         [BindProperty]
         public string UrlReferer { get; set; }
 
@@ -72,6 +74,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             Commands = Enum.GetNames(typeof(CommandTypeEnum));
 
+            Activities = Enum.GetNames(typeof(ActivityTypeEnum));
 
             if (id > 0)
             {

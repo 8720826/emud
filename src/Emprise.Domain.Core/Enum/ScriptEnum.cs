@@ -28,7 +28,9 @@ namespace Emprise.Domain.Core.Enum
         /// <summary>
         /// 判断近期是否进行某个操作，关联 （活动类型、相关id、数量）
         /// </summary>
-        活动记录 = 4
+        活动记录 = 4,
+
+        检查输入 = 5,
     }
 
 
@@ -125,7 +127,10 @@ namespace Emprise.Domain.Core.Enum
     }
 
 
-
+    public enum ActivityTypeEnum
+    {
+        进入过某房间 =1
+    }
 
     public enum ScriptTypeEnum
     {
