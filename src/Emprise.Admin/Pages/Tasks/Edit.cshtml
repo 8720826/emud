@@ -152,46 +152,15 @@
                         </div>
                         <div class="am-u-sm-8">
                             <input type="hidden" asp-for="Task.Trigger">
-                            <table class="am-table am-table-bd am-table-striped am-table-hover" id="tableTrigger">
-                                <thead>
-                                    <tr>
-                                        <td>触发条件</td>
-                                        <td>相关id</td>
-                                        <td>相关name</td>
-                                        <td>相关值</td>
-                                        <td>操作</td>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td>
-                                            <select id="state">
-                                                <option>请选择</option>
-                                                @foreach (var item in Enum.GetValues(typeof(TaskTriggerConditionEnum)))
-                                                {
-                                                    <option value="@(item.ToString())">@(item.ToString())</option>
-                                                }
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="button" class="addTr" value="保存" />
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field conditions" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(TaskTriggerConditionEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
 
                         <div class="am-u-sm-1"></div>
@@ -203,50 +172,38 @@
                         </div>
                         <div class="am-u-sm-8">
                             <input type="hidden" asp-for="Task.Target">
-                            <table class="am-table am-table-bd am-table-striped am-table-hover">
-                                <thead>
-                                    <tr>
-                                        <td>完成条件</td>
-                                        <td>相关id</td>
-                                        <td>相关name</td>
-                                        <td>相关值</td>
-                                        <td>操作</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                                <tfoot>
-
-                                    <tr>
-                                        <td>
-                                            <select id="state">
-                                                <option>请选择</option>
-                                                @foreach (var item in Enum.GetValues(typeof(TaskTargetEnum)))
-                                                {
-                                                    <option value="@(item.ToString())">@(item.ToString())</option>
-                                                }
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="button" class="addTr" value="保存" />
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field targets" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(TaskTargetEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                         <div class="am-u-sm-1"></div>
                     </div>
 
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            任务消耗
+                        </div>
+                        <div class="am-u-sm-8">
+                            <input type="hidden" asp-for="Task.Consume">
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field consumes" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(TaskConsumeEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="am-u-sm-1"></div>
+                    </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
@@ -254,45 +211,15 @@
                         </div>
                         <div class="am-u-sm-8">
                             <input type="hidden" asp-for="Task.Reward">
-                            <table class="am-table am-table-bd am-table-striped am-table-hover">
-                                <thead>
-                                    <tr>
-                                        <td>奖励</td>
-                                        <td>相关id</td>
-                                        <td>相关name</td>
-                                        <td>相关值</td>
-                                        <td>操作</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td>
-                                            <select id="state">
-                                                <option>请选择</option>
-                                                @foreach (var item in Enum.GetValues(typeof(TaskRewardEnum)))
-                                                {
-                                                    <option value="@(item.ToString())">@(item.ToString())</option>
-                                                }
-                                            </select>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="text" class="am-input-sm">
-                                        </td>
-                                        <td>
-                                            <input type="button" class="addTr" value="保存" />
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field rewards" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(TaskRewardEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
                         <div class="am-u-sm-1"></div>
                     </div>
@@ -367,49 +294,171 @@
         </form>
     </div>
 </div>
+
+
+<partial name="_ScriptTemplate.cshtml" />
+
 @section Scripts {
 
     <script type="text/javascript">
-            $(function () {
-                Simditor.locale = 'zh-CN';//设置中文
+        var conditions = @Html.Raw(JsonConvert.SerializeObject(Model.Conditions));
 
-                $("textarea").each(function () {
-                    var obj = $(this);
-                    var editor = new Simditor({
-                        textarea: obj,  //textarea的id
-                        placeholder: '',
-                        toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
-                        pasteImage: true,//允许粘贴图片
-                        defaultImage: ''//编辑器插入的默认图片，此处可以删除
-                    });
-                });
+        $(function () {
+            $(document).on("change", ".conditions", function () {
+                var condition = $(this).val();
+                console.log("condition=" + condition);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (condition == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#condition-" + condition).length > 0) {
+                    $(this).after(template("condition-" + condition, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".conditions").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var conditionDiv = $(".conditions").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(conditionDiv);
+
+                    $(this).parent().parent().find(".conditions:last").parent().after($(div));
+                }
+
+            });
 
 
+            $(document).on("change", ".targets", function () {
+                var target = $(this).val();
+                console.log("target=" + target);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
 
-                $("input[type=checkbox]:checked").each(function () {
-                    $(this).parent(".am-btn").addClass("am-active");
-                });
+                if (target == "") {
+                    return;
+                }
 
-               $(document).on("click",".addTr", function () {
-                    var tr = $(this).parent().parent("tr");
-                    var selectVal = $(tr).find("select").eq(0).val();
-                    if (selectVal == "" || selectVal == "请选择") {
-                        return false;
-                    }
-                    var id = $(tr).find("input").eq(0).val()*1;
-                    var name = $(tr).find("input").eq(1).val();
-                    var value = $(tr).find("input").eq(2).val() * 1;
-                    if (id == 0 && name == "" && value==0) {
-                        return false;
-                    }
+                var data = {};
 
-                   var html = "<tr><td>" + selectVal + "</td><td>" + id + "</td><td>" + name + "</td><td>" + value + "</td><td><input type=\"button\"  class=\"deleteTr\"  value=\"删除\" /></td></tr>";
-                   $(tr).parent().parent().find("tbody").append(html);
-                });
+                if ($("#target-" + target).length > 0) {
+                    $(this).after(template("target-" + target, data));
+                }
 
-                $(document).on("click",".deleteTr", function () {
-                    $(this).parent().parent("tr").remove();
+                var hasValue = true;
+                $(this).parent().parent().find(".targets").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var targetDiv = $(".targets").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(targetDiv);
+
+                    $(this).parent().parent().find(".targets:last").parent().after($(div));
+                }
+            });
+
+
+            $(document).on("change", ".consumes", function () {
+                var consume = $(this).val();
+                console.log("consume=" + consume);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (consume == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#consume-" + consume).length > 0) {
+                    $(this).after(template("consume-" + consume, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".consumes").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var consumeDiv = $(".consumes").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(consumeDiv);
+
+                    $(this).parent().parent().find(".consumes:last").parent().after($(div));
+                }
+            });
+
+            $(document).on("change", ".rewards", function () {
+                var reward = $(this).val();
+                console.log("reward=" + reward);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (reward == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#reward-" + reward).length > 0) {
+                    $(this).after(template("reward-" + reward, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".rewards").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var rewardDiv = $(".rewards").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(rewardDiv);
+
+                    $(this).parent().parent().find(".rewards:last").parent().after($(div));
+                }
+            });
+
+
+            Simditor.locale = 'zh-CN';//设置中文
+
+            $("textarea").each(function () {
+                var obj = $(this);
+                var editor = new Simditor({
+                    textarea: obj,  //textarea的id
+                    placeholder: '',
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    pasteImage: true,//允许粘贴图片
+                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
                 });
             });
+
+
+
+            $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+
+            $(document).on("click", ".addTr", function () {
+                var tr = $(this).parent().parent("tr");
+                var selectVal = $(tr).find("select").eq(0).val();
+                if (selectVal == "" || selectVal == "请选择") {
+                    return false;
+                }
+                var id = $(tr).find("input").eq(0).val() * 1;
+                var name = $(tr).find("input").eq(1).val();
+                var value = $(tr).find("input").eq(2).val() * 1;
+                if (id == 0 && name == "" && value == 0) {
+                    return false;
+                }
+
+                var html = "<tr><td>" + selectVal + "</td><td>" + id + "</td><td>" + name + "</td><td>" + value + "</td><td><input type=\"button\"  class=\"deleteTr\"  value=\"删除\" /></td></tr>";
+                $(tr).parent().parent().find("tbody").append(html);
+            });
+
+            $(document).on("click", ".deleteTr", function () {
+                $(this).parent().parent("tr").remove();
+            });
+        });
     </script>
 }

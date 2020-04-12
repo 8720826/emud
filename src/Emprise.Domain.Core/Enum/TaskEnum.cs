@@ -92,6 +92,8 @@ namespace Emprise.Domain.Core.Enum
     /// </summary>
     public enum TaskTriggerTypeEnum 
     {
+        无 = 0,
+
         升级 = 1,
 
         获得经验 = 2,
@@ -121,7 +123,6 @@ namespace Emprise.Domain.Core.Enum
     /// </summary>
     public enum TaskTriggerConditionEnum
     {
-
         /// <summary>
         /// 升级时触发
         /// </summary>
@@ -200,6 +201,14 @@ namespace Emprise.Domain.Core.Enum
         经验 = 2,
         物品 = 3
     }
+
+    public enum TaskConsumeEnum
+    {
+        金钱 = 1,
+        经验 = 2,
+        物品 = 3
+    }
+    
 
 
     /// <summary>

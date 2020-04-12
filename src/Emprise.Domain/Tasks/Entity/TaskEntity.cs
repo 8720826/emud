@@ -17,7 +17,7 @@ namespace Emprise.Domain.Tasks.Entity
         /// <summary>
         /// 任务分组
         /// </summary>
-        public TaskTypeEnum Group { set; get; }
+        public TaskTypeEnum Type { set; get; }
 
         /// <summary>
         /// 触发方式
@@ -67,7 +67,10 @@ namespace Emprise.Domain.Tasks.Entity
         public string CompletedWords { set; get; }
 
 
-
+        /// <summary>
+        /// 任务消耗
+        /// </summary>
+        public string Consume { set; get; }
 
         /// <summary>
         /// 交付方式
@@ -79,6 +82,9 @@ namespace Emprise.Domain.Tasks.Entity
         /// </summary>
         public string Target { set; get; }
 
+        /// <summary>
+        /// 任务奖励
+        /// </summary>
         public string Reward { set; get; }
 
         /// <summary>

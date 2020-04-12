@@ -80,6 +80,9 @@ namespace Emprise.Admin.Models.Tasks
 
         public string Command { set; get; }
 
+        public string Consume { set; get; }
+        
+
         public string Reward { set; get; }
 
         /// <summary>

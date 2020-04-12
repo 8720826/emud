@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Tasks;
+using Emprise.Domain.Core.Enum;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -30,6 +31,7 @@ namespace Emprise.Admin.Pages.Tasks
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
+        public Array Conditions { get; set; }
         public async Task OnGetAsync(int id)
         {
             if (id > 0)
@@ -37,6 +39,8 @@ namespace Emprise.Admin.Pages.Tasks
                 var task = await _db.Tasks.FindAsync(id);
 
                 Task = _mapper.Map<TaskInput>(task);
+
+                Conditions = Enum.GetNames(typeof(TaskTriggerConditionEnum));
             }
         }
 
