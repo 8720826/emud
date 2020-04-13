@@ -19,7 +19,7 @@ namespace Emprise.Admin.Models.Tasks
         /// <summary>
         /// 触发条件 json格式，{TaskTriggerEnum,TriggerValue}
         /// </summary>
-        public string Trigger { set; get; }
+        public string TriggerCondition { set; get; }
 
 
         /// <summary>
@@ -36,6 +36,11 @@ namespace Emprise.Admin.Models.Tasks
         /// 领取方式
         /// </summary>
         public TaskTakeTypeEnum TakeType { set; get; }
+
+        /// <summary>
+        /// 触发方式
+        /// </summary>
+        public TaskTriggerTypeEnum TriggerType { set; get; }
 
         /// <summary>
         /// 创建任务前的提示文本

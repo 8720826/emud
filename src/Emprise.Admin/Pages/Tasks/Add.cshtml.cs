@@ -34,6 +34,8 @@ namespace Emprise.Admin.Pages.Tasks
 
         public Array Conditions { get; set; }
 
+        [BindProperty]
+        public string UrlReferer { get; set; }
 
         public async Task OnGetAsync(int id)
         {
@@ -43,6 +45,12 @@ namespace Emprise.Admin.Pages.Tasks
             {
                 var task = await _db.Tasks.FindAsync(id);
 
+            }
+
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Task/Index");
             }
         }
 
@@ -65,7 +73,7 @@ namespace Emprise.Admin.Pages.Tasks
 
             SueccessMessage = $"添加成功！";
 
-            return RedirectToPage("Edit", new { id = task.Id });
+            return Redirect(UrlReferer);
 
 
         }

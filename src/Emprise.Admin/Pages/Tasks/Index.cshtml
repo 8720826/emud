@@ -42,15 +42,16 @@
                 <thead>
                     <tr>
                         <th class="table-id">ID</th>
-                        <th class="table-title">任务名</th>
-                        <th class="table-exits">任务类型</th>
-                        <th class="table-desc">任务周期</th>
-                        <th class="table-work">限时</th>
-                        <th class="table-work">任务目标</th>
-                        <th class="table-work">任务消耗</th>
-                        <th class="table-work">任务奖励</th>
-                        <th class="table-work">描述</th>
-                        <th class="table-set">操作</th>
+                        <th>任务名</th>
+                        <th>任务类型</th>
+                        <th>任务周期</th>
+                        <th>限时</th>
+                        <th>触发条件</th>
+                        <th>任务目标</th>
+                        <th>任务消耗</th>
+                        <th>任务奖励</th>
+                        <th>描述</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +70,9 @@
                             @(task.TimeLimit)
                         </td>
                         <td>
+                            @(task.TriggerCondition)
+                        </td>
+                        <td>
                             @(task.Target)
                         </td>
                         <td>
@@ -82,7 +86,6 @@
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
                                     <a asp-page="./Edit" asp-route-id="@task.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                    <a asp-page="./Copy" asp-route-id="@task.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
                                     <a asp-page="./Delete" asp-route-id="@task.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                 </div>
                             </div>

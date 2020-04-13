@@ -242,7 +242,7 @@
 
         function check() {
             var hasEmptyValue = false;
-            caseIfs = [];
+            var  caseIfs = [];
             $("#caseIf").find(".am-form-group").each(function () {
                 var condition = $(this).children(".conditions").val();
                 if (condition == "") {
@@ -276,7 +276,7 @@
             var caseIfData = JSON.stringify(caseIfs);
             $("#ScriptCommand_CaseIf").val(caseIfData);
 
-            caseThens = [];
+            var  caseThens = [];
             $("#caseThen").find(".am-form-group").each(function () {
                 var command = $(this).children(".commands").val();
                 if (command == "") {
@@ -311,7 +311,7 @@
             $("#ScriptCommand_CaseThen").val(caseThenData);
 
 
-            caseElses = [];
+            var  caseElses = [];
             $("#caseElse").find(".am-form-group").each(function () {
                 var command = $(this).children(".commands").val();
                 if (command == "") {

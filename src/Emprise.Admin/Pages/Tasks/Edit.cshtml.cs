@@ -6,8 +6,10 @@ using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Tasks;
 using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Tasks.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Tasks
 {
@@ -32,6 +34,20 @@ namespace Emprise.Admin.Pages.Tasks
         public string ErrorMessage { get; set; }
 
         public Array Conditions { get; set; }
+
+
+        public List<TaskTrigger> TaskTriggers { get; set; } = new List<TaskTrigger>();
+
+        public List<TaskTarget> TaskTargets { get; set; } = new List<TaskTarget>();
+
+        public List<TaskConsume> TaskConsumes { get; set; } = new List<TaskConsume>();
+
+        public List<TaskReward> TaskRewards { get; set; } = new List<TaskReward>();
+
+
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
         public async Task OnGetAsync(int id)
         {
             if (id > 0)
@@ -41,6 +57,34 @@ namespace Emprise.Admin.Pages.Tasks
                 Task = _mapper.Map<TaskInput>(task);
 
                 Conditions = Enum.GetNames(typeof(TaskTriggerConditionEnum));
+
+                if (!string.IsNullOrEmpty(task.TriggerCondition))
+                {
+                    TaskTriggers = JsonConvert.DeserializeObject<List<TaskTrigger>>(task.TriggerCondition);
+                }
+
+
+                if (!string.IsNullOrEmpty(task.Target))
+                {
+                    TaskTargets = JsonConvert.DeserializeObject<List<TaskTarget>>(task.Target);
+                }
+
+                if (!string.IsNullOrEmpty(task.Consume))
+                {
+                    TaskConsumes = JsonConvert.DeserializeObject<List<TaskConsume>>(task.Consume);
+                }
+
+                if (!string.IsNullOrEmpty(task.Reward))
+                {
+                    TaskRewards = JsonConvert.DeserializeObject<List<TaskReward>>(task.Reward);
+                }
+
+            }
+
+            UrlReferer = Request.Headers["Referer"].ToString();
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Url.Page("/Task/Index");
             }
         }
 
@@ -65,7 +109,7 @@ namespace Emprise.Admin.Pages.Tasks
 
             SueccessMessage = $"修改成功！";
 
-            return RedirectToPage("Edit", new { id = task.Id });
+            return Redirect(UrlReferer);
 
 
         }
