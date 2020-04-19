@@ -1,0 +1,28 @@
+﻿@page
+@model Emprise.Admin.Pages.Tasks.DeleteModel
+@{
+    ViewData["Title"] = "脚本管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Task</small></div>
+</div>
+
+<div class="am-tabs am-margin" data-am-tabs>
+    是否要删除分支  "@(Model.Task?.Name)(id=@(Model.Task?.Id))" ?
+</div>
+
+<div class="am-margin">
+    <form class="am-form" method="post">
+        <button type="submit" class="am-btn am-btn-primary am-btn-xs">确认删除</button>
+        <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+        <input type="hidden" asp-for="UrlReferer">
+    </form>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}
