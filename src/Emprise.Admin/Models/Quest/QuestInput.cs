@@ -14,12 +14,17 @@ namespace Emprise.Admin.Models.Quest
         /// <summary>
         /// 任务类型
         /// </summary>
-        public string Type { set; get; }
+        public QuestTypeEnum Type { set; get; }
 
         /// <summary>
         /// 触发条件 json格式，{TaskTriggerEnum,TriggerValue}
         /// </summary>
         public string TriggerCondition { set; get; }
+
+        /// <summary>
+        /// 领取条件 json格式，{TaskTriggerEnum,TriggerValue}
+        /// </summary>
+        public string TakeCondition { set; get; }
 
 
         /// <summary>

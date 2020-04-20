@@ -2,7 +2,7 @@
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Events;
-using Emprise.Domain.Room.Entity;
+using Emprise.Domain.Quest.Entity;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -16,51 +16,59 @@ namespace Emprise.Domain.Quest.Services
 {
     public class QuestDomainService : IQuestDomainService
     {
-        private readonly IRepository<RoomEntity> _roomRepository;
+        private readonly IRepository<QuestEntity> _questRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediatorHandler _bus;
 
-        public QuestDomainService(IRepository<RoomEntity> roomRepository, IMemoryCache cache, IMediatorHandler bus)
+        public QuestDomainService(IRepository<QuestEntity> questRepository, IMemoryCache cache, IMediatorHandler bus)
         {
-            _roomRepository = roomRepository;
+            _questRepository = questRepository;
             _cache = cache;
             _bus = bus;
         }
 
 
-        public async Task<RoomEntity> Get(Expression<Func<RoomEntity, bool>> where)
+        public async Task<QuestEntity> Get(Expression<Func<QuestEntity, bool>> where)
         {
-            return await _roomRepository.Get(where);
+            return await _questRepository.Get(where);
         }
 
-        public async Task<List<RoomEntity>> GetAll(Expression<Func<RoomEntity, bool>> where)
+        public async Task<List<QuestEntity>> GetAll()
         {
-            var query = await _roomRepository.GetAll(where);
-
-            return query.ToList();
-        }
-
-        public async Task<RoomEntity> Get(int id)
-        {
-            var key = string.Format(CacheKey.Room, id);
+           
+            var key = CacheKey.QuestList;
             return await _cache.GetOrCreateAsync(key, async p => {
                 p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
                 return await Task.Run(async () =>
                 {
-                    return await _roomRepository.Get(id);
+                    var query = await _questRepository.GetAll();
+                    return query.ToList();
+                });
+            });
+  
+        }
+
+        public async Task<QuestEntity> Get(int id)
+        {
+            var key = string.Format(CacheKey.Quest, id);
+            return await _cache.GetOrCreateAsync(key, async p => {
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+                return await Task.Run(async () =>
+                {
+                    return await _questRepository.Get(id);
                 });
             });
         }
 
-        public async Task Add(RoomEntity room)
+        public async Task Add(QuestEntity room)
         {
-            await _roomRepository.Add(room);
+            await _questRepository.Add(room);
         }
 
-        public async Task Update(RoomEntity room)
+        public async Task Update(QuestEntity room)
         {
-            await _roomRepository.Update(room);
-            await _bus.RaiseEvent(new EntityUpdatedEvent<RoomEntity>(room)).ConfigureAwait(false);
+            await _questRepository.Update(room);
+            await _bus.RaiseEvent(new EntityUpdatedEvent<QuestEntity>(room)).ConfigureAwait(false);
         }
 
         public void Dispose()

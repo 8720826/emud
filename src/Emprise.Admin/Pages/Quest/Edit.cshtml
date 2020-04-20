@@ -70,7 +70,7 @@
                             @foreach (var item in Enum.GetValues(typeof(QuestTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Quest.Type" type="radio" name="Task.Type" value="@(item.ToString())"> @(item.ToString())
+                                    <input asp-for="Quest.Type" type="radio" name="Quest.Type" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -87,7 +87,7 @@
                             @foreach (var item in Enum.GetValues(typeof(QuestPeriodEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Quest.Period" type="radio" name="Task.Period" value="@(item.ToString())"> @(item.ToString())
+                                    <input asp-for="Quest.Period" type="radio" name="Quest.Period" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -105,7 +105,7 @@
                             @foreach (var item in Enum.GetValues(typeof(QuestTakeTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Quest.TakeType" type="radio" name="Task.TakeType" value="@(item.ToString())"> @(item.ToString())
+                                    <input asp-for="Quest.TakeType" type="radio" name="Quest.TakeType" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -123,23 +123,7 @@
                             @foreach (var item in Enum.GetValues(typeof(QuestDeliverTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Quest.DeliverType" type="radio" name="Task.DeliverType" value="@(item.ToString())"> @(item.ToString())
-                                </label>
-                            }
-
-                        </div>
-                        <div class="am-u-sm-6"></div>
-                    </div>
-
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
-                            触发方式
-                        </div>
-                        <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(QuestTriggerTypeEnum)))
-                            {
-                                <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Quest.TriggerType" type="radio" name="Task.TriggerType" value="@(item.ToString())"> @(item.ToString())
+                                    <input asp-for="Quest.DeliverType" type="radio" name="Quest.DeliverType" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -152,12 +136,35 @@
                         <div class="am-u-sm-2 am-text-right">
                             触发条件
                         </div>
-                        <div class="am-u-sm-10" id="taskTrigger">
+                        <div class="am-u-sm-10" id="triggerCondition">
+                            <input type="hidden" asp-for="Quest.TriggerType">
                             <input type="hidden" asp-for="Quest.TriggerCondition">
                             <div class="am-form-inline am-form-group">
-                                <select class="am-input-sm am-form-field conditions" style="width: 180px;">
+
+                                <select class="am-input-sm am-form-field triggerConditions" style="width: 180px; ">
                                     <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(QuestTriggerConditionEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            领取条件
+                        </div>
+                        <div class="am-u-sm-10" id="takeCondition">
+                            <input type="hidden" asp-for="Quest.TakeCondition">
+                            <div class="am-form-inline am-form-group">
+                                
+                                <select class="am-input-sm am-form-field takeConditions" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(QuestTakeConditionEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
@@ -214,6 +221,7 @@
                         <div class="am-u-sm-10" id="taskReward">
                             <input type="hidden" asp-for="Quest.Reward">
                             <div class="am-form-inline am-form-group">
+                                
                                 <select class="am-input-sm am-form-field rewards" style="width: 180px;">
                                     <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(QuestRewardEnum)))
@@ -303,41 +311,68 @@
 @section Scripts {
 
     <script type="text/javascript">
-        var conditions = @Html.Raw(JsonConvert.SerializeObject(Model.Conditions));
 
+        var triggerConditions = @Html.Raw(JsonConvert.SerializeObject(Model.TriggerConditions));
+         var takeConditions = @Html.Raw(JsonConvert.SerializeObject(Model.TakeConditions));
+        
 
-        var taskTriggers = @Html.Raw(JsonConvert.SerializeObject(Model.TaskTriggers));
         var taskTargets = @Html.Raw(JsonConvert.SerializeObject(Model.TaskTargets));
         var taskConsumes = @Html.Raw(JsonConvert.SerializeObject(Model.TaskConsumes));
         var taskRewards = @Html.Raw(JsonConvert.SerializeObject(Model.TaskRewards));
 
 
         $(function () {
-            $(document).on("change", ".conditions", function () {
-                var condition = $(this).val();
-                console.log("condition=" + condition);
+
+
+
+            $(document).on("change", ".triggerConditions", function () {
+
+                var triggerCondition = $(this).val();
+                console.log("triggerCondition=" + triggerCondition);
                 $(this).nextAll("select").remove();
                 $(this).nextAll("input").remove();
 
-                if (condition == "") {
+                if (triggerCondition == "") {
+                    return;
+                }
+
+                var triggerType = $(this).prop("selectedIndex");
+                $("#Quest_TriggerType").val(triggerType);
+
+                var data = {};
+
+                if ($("#condition-" + triggerCondition).length > 0) {
+                    $(this).after(template("condition-" + triggerCondition, data));
+                }
+
+
+            });
+
+            $(document).on("change", ".takeConditions", function () {
+                var takeCondition = $(this).val();
+                console.log("takeCondition=" + takeCondition);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (takeCondition == "") {
                     return;
                 }
 
                 var data = {};
 
-                if ($("#condition-" + condition).length > 0) {
-                    $(this).after(template("condition-" + condition, data));
+                if ($("#condition-" + takeCondition).length > 0) {
+                    $(this).after(template("condition-" + takeCondition, data));
                 }
 
                 var hasValue = true;
-                $(this).parent().parent().find(".conditions").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+                $(this).parent().parent().find(".takeConditions").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
 
                 if (hasValue) {
-                    var conditionDiv = $(".conditions").eq(0).clone();
+                    var takeConditionDiv = $(".takeConditions").eq(0).clone();
                     var div = $("<div class='am-form-inline am-form-group'></div>");
-                    $(div).append(conditionDiv);
+                    $(div).append(takeConditionDiv);
 
-                    $(this).parent().parent().find(".conditions:last").parent().after($(div));
+                    $(this).parent().parent().find(".takeConditions:last").parent().after($(div));
                 }
 
             });
@@ -449,9 +484,31 @@
             });
 
 
-            $.each(taskTriggers, function (i, item) {
-                $("#taskTrigger").find(".conditions").each(function () {
+            $.each(triggerConditions, function (i, item) {
+                $("#triggerCondition").find(".triggerConditions").each(function () {
                     if ($(this).val() == "") {
+
+                        $(this).val(item.condition).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
+
+            $.each(takeConditions, function (i, item) {
+                $("#takeCondition").find(".takeConditions").each(function () {
+                    if ($(this).val() == "") {
+
                         $(this).val(item.condition).trigger("change");
                         $(this).parent().children(".attr").each(function () {
                             var $this = $(this);
@@ -536,7 +593,7 @@
             var hasEmptyValue = false;
             var triggers = [];
             $("#taskTrigger").find(".am-form-group").each(function () {
-                var condition = $(this).children(".conditions").val();
+                var condition = $(this).children(".triggerConditions").val();
                 if (condition == "") {
                     return true;
                 }
@@ -567,6 +624,41 @@
             });
             var triggerData = JSON.stringify(triggers);
             $("#Task_TriggerCondition").val(triggerData);
+
+            var takes = [];
+            $("#takeCondition").find(".am-form-group").each(function () {
+                var condition = $(this).children(".takeConditions").val();
+                if (condition == "") {
+                    return true;
+                }
+                console.log("condition=" + condition);
+
+                var takeCondition = {
+                    condition: condition,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    takeCondition.attrs.push({ attr: attr, val: val });
+                });
+
+                takes.push(takeCondition);
+
+                //console.log("triggers=" + JSON.stringify(triggers));
+            });
+
+            var takeData = JSON.stringify(takes);
+            $("#Quest_TakeCondition").val(takeData);
 
             var targets = [];
             $("#taskTarget").find(".am-form-group").each(function () {
@@ -600,7 +692,7 @@
 
             });
             var targetData = JSON.stringify(targets);
-            $("#Task_Target").val(targetData);
+            $("#Quest_Target").val(targetData);
 
 
             var consumes = [];
@@ -636,7 +728,7 @@
 
             });
             var consumeData = JSON.stringify(consumes);
-            $("#Task_Consume").val(consumeData);
+            $("#Quest_Consume").val(consumeData);
 
 
             var rewards = [];
@@ -672,7 +764,7 @@
 
             });
             var rewardData = JSON.stringify(rewards);
-            $("#Task_Reward").val(rewardData);
+            $("#Quest_Reward").val(rewardData);
 
 
             if (hasEmptyValue) {

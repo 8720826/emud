@@ -1,5 +1,5 @@
 ﻿using Emprise.Domain.Core.Interfaces;
-using Emprise.Domain.Room.Entity;
+using Emprise.Domain.Quest.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -10,14 +10,14 @@ namespace Emprise.Domain.Quest.Services
 {
     public interface IQuestDomainService : IBaseService
     {
-        Task<RoomEntity> Get(Expression<Func<RoomEntity, bool>> where);
+        Task<QuestEntity> Get(Expression<Func<QuestEntity, bool>> where);
 
-        Task<List<RoomEntity>> GetAll(Expression<Func<RoomEntity, bool>> where);
+        Task<List<QuestEntity>> GetAll();
 
-        Task<RoomEntity> Get(int id);
+        Task<QuestEntity> Get(int id);
 
-        Task Add(RoomEntity user);
+        Task Add(QuestEntity user);
 
-        Task Update(RoomEntity user);
+        Task Update(QuestEntity user);
     }
 }

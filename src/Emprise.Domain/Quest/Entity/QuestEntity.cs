@@ -15,7 +15,7 @@ namespace Emprise.Domain.Quest.Entity
         public string Name { set; get; }
 
         /// <summary>
-        /// 任务分组
+        /// 任务类型
         /// </summary>
         public QuestTypeEnum Type { set; get; }
 
@@ -24,10 +24,17 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public QuestTriggerTypeEnum TriggerType { set; get; }
 
+
         /// <summary>
         /// 触发条件 json格式，{TaskTriggerEnum,TriggerValue}
         /// </summary>
         public string TriggerCondition { set; get; }
+
+
+        /// <summary>
+        /// 领取条件 json格式，{TaskTriggerEnum,TriggerValue}
+        /// </summary>
+        public string TakeCondition { set; get; }
 
 
         /// <summary>

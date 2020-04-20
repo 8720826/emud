@@ -61,7 +61,7 @@
                         <td>@(task.Id)</td>
                         <td><a asp-page="./Edit" asp-route-id="@task.Id">@(task.Name)</a></td>
                         <td>
-                            @(task.Type)
+                            @(task.Type.ToString())
                         </td>
                         <td>
                             @(task.Period)

@@ -33,10 +33,11 @@ namespace Emprise.Admin.Pages.Quest
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-        public Array Conditions { get; set; }
 
+        public List<TaskTrigger> TriggerConditions { get; set; } = new List<TaskTrigger>();
 
-        public List<TaskTrigger> TaskTriggers { get; set; } = new List<TaskTrigger>();
+        public List<TaskTrigger> TakeConditions { get; set; } = new List<TaskTrigger>();
+        
 
         public List<TaskTarget> TaskTargets { get; set; } = new List<TaskTarget>();
 
@@ -56,13 +57,19 @@ namespace Emprise.Admin.Pages.Quest
 
                 Quest = _mapper.Map<QuestInput>(quest);
 
-                Conditions = Enum.GetNames(typeof(QuestTriggerConditionEnum));
 
                 if (!string.IsNullOrEmpty(quest.TriggerCondition))
                 {
-                    TaskTriggers = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TriggerCondition);
+                    TriggerConditions = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TriggerCondition);
                 }
 
+
+                if (!string.IsNullOrEmpty(quest.TakeCondition))
+                {
+                    TakeConditions = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TakeCondition);
+                }
+
+                
 
                 if (!string.IsNullOrEmpty(quest.Target))
                 {
@@ -84,7 +91,7 @@ namespace Emprise.Admin.Pages.Quest
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Task/Index");
+                UrlReferer = Url.Page("/Quest/Index");
             }
         }
 

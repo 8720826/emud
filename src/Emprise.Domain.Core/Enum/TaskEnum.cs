@@ -88,7 +88,7 @@ namespace Emprise.Domain.Core.Enum
     }
 
     /// <summary>
-    /// 任务触发方式
+    /// 任务触发方式，与QuestTriggerConditionEnum对应
     /// </summary>
     public enum QuestTriggerTypeEnum 
     {
@@ -119,7 +119,7 @@ namespace Emprise.Domain.Core.Enum
 
 
     /// <summary>
-    /// 任务触发条件
+    /// 任务触发条件，与QuestTriggerTypeEnum对应
     /// </summary>
     public enum QuestTriggerConditionEnum
     {
@@ -154,6 +154,49 @@ namespace Emprise.Domain.Core.Enum
         杀死某个Npc = 7,
 
         探索某个房间 = 8,
+
+        拥有金钱 = 9
+    }
+
+
+    /// <summary>
+    /// 任务触发条件，与QuestTriggerTypeEnum对应
+    /// </summary>
+    public enum QuestTakeConditionEnum
+    {
+        /// <summary>
+        /// 升级时触发
+        /// </summary>
+        角色等级达到 = 1,
+
+        /// <summary>
+        /// 获得经验时触发
+        /// </summary>
+        角色经验值达到 = 2,
+
+        /// <summary>
+        /// 移动后触发
+        /// </summary>
+        所在房间 = 3,
+
+        /// <summary>
+        /// 获得物品时触发
+        /// </summary>
+        拥有某件物品达到数量 = 4,
+
+        /// <summary>
+        /// 必须完成该任务才能被触发
+        /// </summary>
+        完成前置任务 = 5,
+
+        与某个Npc对话 = 6,
+
+
+        杀死某个Npc = 7,
+
+        探索某个房间 = 8,
+
+        拥有金钱 = 9
     }
 
     /// <summary>

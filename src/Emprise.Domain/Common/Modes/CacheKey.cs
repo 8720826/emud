@@ -14,6 +14,10 @@ namespace Emprise.Domain.Common.Modes
         public const string Script = "Script_{0}";
 
         public const string Ware = "Ware_{0}";
-        
+
+
+        public const string QuestList = "QuestList";
+        public const string Quest = "Quest_{0}";
+
     }
 }
