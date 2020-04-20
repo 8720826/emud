@@ -5,7 +5,7 @@ using System.Text;
 namespace Emprise.Domain.Core.Enum
 {
 
-    public enum TaskTypeEnum
+    public enum QuestTypeEnum
     {
         新手 = 1,
 
@@ -20,7 +20,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务类型
     /// </summary>
-    public enum TaskTypeEnum
+    public enum QuestTypeEnum
     {
         其他 = 0,
 
@@ -42,7 +42,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务周期
     /// </summary>
-    public enum TaskPeriodEnum
+    public enum QuestPeriodEnum
     {
         不可重复 = 1,
 
@@ -61,7 +61,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 领取方式
     /// </summary>
-    public enum TaskTakeTypeEnum
+    public enum QuestTakeTypeEnum
     {
         /// <summary>
         /// 通常通过command命令等实现
@@ -76,7 +76,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 交付方式
     /// </summary>
-    public enum TaskDeliverTypeEnum
+    public enum QuestDeliverTypeEnum
     {
         /// <summary>
         /// 通常通过command命令等实现
@@ -90,9 +90,9 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务触发方式
     /// </summary>
-    public enum TaskTriggerTypeEnum 
+    public enum QuestTriggerTypeEnum 
     {
-        无 = 0,
+        无 = 0,//此项为任务不会自动+触发
 
         升级 = 1,
 
@@ -121,7 +121,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务触发条件
     /// </summary>
-    public enum TaskTriggerConditionEnum
+    public enum QuestTriggerConditionEnum
     {
         /// <summary>
         /// 升级时触发
@@ -159,7 +159,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务目标，完成条件
     /// </summary>
-    public enum TaskTargetEnum
+    public enum QuestTargetEnum
     {
 
         /// <summary>
@@ -195,14 +195,14 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务奖励
     /// </summary>
-    public enum TaskRewardEnum
+    public enum QuestRewardEnum
     {
         金钱 = 1,
         经验 = 2,
         物品 = 3
     }
 
-    public enum TaskConsumeEnum
+    public enum QuestConsumeEnum
     {
         金钱 = 1,
         经验 = 2,
@@ -214,7 +214,7 @@ namespace Emprise.Domain.Core.Enum
     /// <summary>
     /// 任务状态
     /// </summary>
-    public enum TaskStateEnum
+    public enum QuestStateEnum
     {
         未领取 = 0,
         进行中 = 1,

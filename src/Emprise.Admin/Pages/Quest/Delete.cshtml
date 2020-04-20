@@ -1,16 +1,16 @@
 ﻿@page
-@model Emprise.Admin.Pages.Tasks.DeleteModel
+@model Emprise.Admin.Pages.Quest.DeleteModel
 @{
     ViewData["Title"] = "脚本管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
 }
 
 <div class="am-cf am-padding">
-    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Task</small></div>
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Quest</small></div>
 </div>
 
 <div class="am-tabs am-margin" data-am-tabs>
-    是否要删除分支  "@(Model.Task?.Name)(id=@(Model.Task?.Id))" ?
+    是否要删除分支  "@(Model.Quest?.Name)(id=@(Model.Quest?.Id))" ?
 </div>
 
 <div class="am-margin">

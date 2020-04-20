@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.Tasks.Models
+namespace Emprise.Domain.Quest.Models
 {
     public class TaskTrigger
     {

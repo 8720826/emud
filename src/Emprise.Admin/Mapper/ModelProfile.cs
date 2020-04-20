@@ -3,10 +3,10 @@ using Emprise.Admin.Models.Npc;
 using Emprise.Admin.Models.NpcScript;
 using Emprise.Admin.Models.Room;
 using Emprise.Admin.Models.Script;
-using Emprise.Admin.Models.Tasks;
+using Emprise.Admin.Models.Quest;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Tasks.Entity;
+using Emprise.Domain.Quest.Entity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,8 +30,8 @@ namespace Emprise.Admin.Mapper
                 .ForMember(x => x.SouthName, y => y.Ignore())
                 .ForMember(x => x.NorthName, y => y.Ignore());
 
-            CreateMap<TaskEntity, TaskInput>();
-            CreateMap<TaskInput, TaskEntity>();
+            CreateMap<QuestEntity, QuestInput>();
+            CreateMap<QuestInput, QuestEntity>();
 
             CreateMap<ScriptEntity, ScriptInput>()
                 ;

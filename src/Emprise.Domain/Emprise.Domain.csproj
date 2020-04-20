@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tasks\Services\" />
-  </ItemGroup>
-
 </Project>

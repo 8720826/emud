@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Emprise.Admin.Data;
-using Emprise.Domain.Tasks.Entity;
+using Emprise.Domain.Quest.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Tasks
+namespace Emprise.Admin.Pages.Quest
 {
     public class DeleteModel : PageModel
     {
@@ -18,7 +18,7 @@ namespace Emprise.Admin.Pages.Tasks
             _db = db;
         }
 
-        public TaskEntity Task { get; set; }
+        public QuestEntity Quest { get; set; }
 
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
@@ -32,17 +32,17 @@ namespace Emprise.Admin.Pages.Tasks
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Script/Index");
+                UrlReferer = Url.Page("/Task/Index");
             }
 
             if (id > 0)
             {
-                Task = _db.Tasks.Find(id);
+                Quest = _db.Quests.Find(id);
                 return Page();
             }
             else
             {
-                return RedirectToPage("/Script/Index");
+                return RedirectToPage("/Task/Index");
             }
         }
 
@@ -55,8 +55,8 @@ namespace Emprise.Admin.Pages.Tasks
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var task = _db.Tasks.Find(id);
-            _db.Tasks.Remove(task);
+            var quest = _db.Quests.Find(id);
+            _db.Quests.Remove(quest);
             await _db.SaveChangesAsync();
 
             SueccessMessage = $"删除成功！";

@@ -1,20 +1,28 @@
-﻿using Emprise.Domain.Core.Enum;
+﻿using Emprise.Domain.Core.Entity;
+using Emprise.Domain.Core.Enum;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Emprise.Admin.Models.Tasks
+namespace Emprise.Domain.Quest.Entity
 {
-    public class TaskInput
+    [Table("Quest")]
+    public class QuestEntity : BaseEntity
     {
-
         public string Name { set; get; }
 
         /// <summary>
-        /// 任务类型
+        /// 任务分组
         /// </summary>
-        public string Type { set; get; }
+        public QuestTypeEnum Type { set; get; }
+
+        /// <summary>
+        /// 触发方式
+        /// </summary>
+        public QuestTriggerTypeEnum TriggerType { set; get; }
 
         /// <summary>
         /// 触发条件 json格式，{TaskTriggerEnum,TriggerValue}
@@ -25,7 +33,7 @@ namespace Emprise.Admin.Models.Tasks
         /// <summary>
         /// 任务周期
         /// </summary>
-        public TaskPeriodEnum Period { set; get; }
+        public QuestPeriodEnum Period { set; get; }
 
         /// <summary>
         /// 限时（分钟）
@@ -35,12 +43,7 @@ namespace Emprise.Admin.Models.Tasks
         /// <summary>
         /// 领取方式
         /// </summary>
-        public TaskTakeTypeEnum TakeType { set; get; }
-
-        /// <summary>
-        /// 触发方式
-        /// </summary>
-        public TaskTriggerTypeEnum TriggerType { set; get; }
+        public QuestTakeTypeEnum TakeType { set; get; }
 
         /// <summary>
         /// 创建任务前的提示文本
@@ -58,41 +61,36 @@ namespace Emprise.Admin.Models.Tasks
         /// </summary>
         public string InProgressWords { set; get; }
 
-
-        /// <summary>
-        /// 提交任务时候的提示文字
-        /// </summary>
-        public string BeforeCompleteWords { set; get; }
-
         /// <summary>
         /// 完成任务后的提示文本
         /// </summary>
         public string CompletedWords { set; get; }
 
 
-
+        /// <summary>
+        /// 任务消耗
+        /// </summary>
+        public string Consume { set; get; }
 
         /// <summary>
         /// 交付方式
         /// </summary>
-        public TaskDeliverTypeEnum DeliverType { set; get; }
+        public QuestDeliverTypeEnum DeliverType { set; get; }
 
         /// <summary>
-        /// 任务目标 json格式，{TaskTargetEnum,TargetName,TargetNumber}
+        /// 任务目标 json格式，{QuestTargetEnum,TargetName,TargetNumber}
         /// </summary>
         public string Target { set; get; }
 
-
-        public string Command { set; get; }
-
-        public string Consume { set; get; }
-        
-
+        /// <summary>
+        /// 任务奖励
+        /// </summary>
         public string Reward { set; get; }
 
         /// <summary>
         /// 描述
         /// </summary>
+        [StringLength(500)]
         public string Description { set; get; }
     }
 }

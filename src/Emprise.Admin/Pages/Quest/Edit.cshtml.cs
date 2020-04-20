@@ -4,14 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Tasks;
+using Emprise.Admin.Models.Quest;
 using Emprise.Domain.Core.Enum;
-using Emprise.Domain.Tasks.Models;
+using Emprise.Domain.Quest.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
-namespace Emprise.Admin.Pages.Tasks
+namespace Emprise.Admin.Pages.Quest
 {
     public class EditModel : PageModel
     {
@@ -27,7 +27,7 @@ namespace Emprise.Admin.Pages.Tasks
         }
 
         [BindProperty]
-        public TaskInput Task { get; set; }
+        public QuestInput Quest { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -52,31 +52,31 @@ namespace Emprise.Admin.Pages.Tasks
         {
             if (id > 0)
             {
-                var task = await _db.Tasks.FindAsync(id);
+                var quest = await _db.Quests.FindAsync(id);
 
-                Task = _mapper.Map<TaskInput>(task);
+                Quest = _mapper.Map<QuestInput>(quest);
 
-                Conditions = Enum.GetNames(typeof(TaskTriggerConditionEnum));
+                Conditions = Enum.GetNames(typeof(QuestTriggerConditionEnum));
 
-                if (!string.IsNullOrEmpty(task.TriggerCondition))
+                if (!string.IsNullOrEmpty(quest.TriggerCondition))
                 {
-                    TaskTriggers = JsonConvert.DeserializeObject<List<TaskTrigger>>(task.TriggerCondition);
+                    TaskTriggers = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TriggerCondition);
                 }
 
 
-                if (!string.IsNullOrEmpty(task.Target))
+                if (!string.IsNullOrEmpty(quest.Target))
                 {
-                    TaskTargets = JsonConvert.DeserializeObject<List<TaskTarget>>(task.Target);
+                    TaskTargets = JsonConvert.DeserializeObject<List<TaskTarget>>(quest.Target);
                 }
 
-                if (!string.IsNullOrEmpty(task.Consume))
+                if (!string.IsNullOrEmpty(quest.Consume))
                 {
-                    TaskConsumes = JsonConvert.DeserializeObject<List<TaskConsume>>(task.Consume);
+                    TaskConsumes = JsonConvert.DeserializeObject<List<TaskConsume>>(quest.Consume);
                 }
 
-                if (!string.IsNullOrEmpty(task.Reward))
+                if (!string.IsNullOrEmpty(quest.Reward))
                 {
-                    TaskRewards = JsonConvert.DeserializeObject<List<TaskReward>>(task.Reward);
+                    TaskRewards = JsonConvert.DeserializeObject<List<TaskReward>>(quest.Reward);
                 }
 
             }
@@ -98,9 +98,9 @@ namespace Emprise.Admin.Pages.Tasks
                 return Page();
             }
 
-            var task = await _db.Tasks.FindAsync(id);
+            var quest = await _db.Quests.FindAsync(id);
 
-            _mapper.Map(Task, task);
+            _mapper.Map(Quest, quest);
 
 
             await _db.SaveChangesAsync();

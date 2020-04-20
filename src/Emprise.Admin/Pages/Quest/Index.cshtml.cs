@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Emprise.Admin.Data;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
-using Emprise.Domain.Tasks.Entity;
+using Emprise.Domain.Quest.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Tasks
+namespace Emprise.Admin.Pages.Quest
 {
     public class IndexModel : PageModel
     {
@@ -24,14 +24,14 @@ namespace Emprise.Admin.Pages.Tasks
         [BindProperty(SupportsGet = true)]
         public string Keyword { get; set; }
 
-        public Paging<TaskEntity> Paging { get; set; }
+        public Paging<QuestEntity> Paging { get; set; }
 
         public void OnGet(int pageIndex)
         {
-            var query = _db.Tasks.OrderBy(x => x.Id);
+            var query = _db.Quests.OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
             {
-                query = _db.Tasks.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
+                query = _db.Quests.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
             }
 
             Paging = query.Paged(pageIndex, 10, query.Count());

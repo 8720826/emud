@@ -1,5 +1,5 @@
 ﻿@page
-@model Emprise.Admin.Pages.Tasks.EditModel
+@model Emprise.Admin.Pages.Quest.AddModel
 @{
     ViewData["Title"] = "任务管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -34,7 +34,7 @@
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Task</small></div>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Quest</small></div>
     </div>
 
     <div class="am-margin">
@@ -47,7 +47,7 @@
                             任务名
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="Task.Name">
+                            <input type="text" class="am-input-sm" asp-for="Quest.Name">
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -57,7 +57,7 @@
                             限时（分钟）
                         </div>
                         <div class="am-u-sm-4">
-                            <input type="text" class="am-input-sm" asp-for="Task.TimeLimit">
+                            <input type="text" class="am-input-sm" asp-for="Quest.TimeLimit">
                         </div>
                         <div class="am-u-sm-6">0为不限制</div>
                     </div>
@@ -67,10 +67,10 @@
                             任务类型
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(TaskTypeEnum)))
+                            @foreach (var item in Enum.GetValues(typeof(QuestTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Task.Type" type="radio" name="Task.Type" value="@(item.ToString())"> @(item.ToString())
+                                    <input type="radio" name="Task.Type" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -84,10 +84,10 @@
                             任务周期
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(TaskPeriodEnum)))
+                            @foreach (var item in Enum.GetValues(typeof(QuestPeriodEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Task.Period" type="radio" name="Task.Period" value="@(item.ToString())"> @(item.ToString())
+                                    <input type="radio" name="Task.Period" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -102,10 +102,10 @@
                             领取方式
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(TaskTakeTypeEnum)))
+                            @foreach (var item in Enum.GetValues(typeof(QuestTakeTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Task.TakeType" type="radio" name="Task.TakeType" value="@(item.ToString())"> @(item.ToString())
+                                    <input type="radio" name="Task.TakeType" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -120,10 +120,10 @@
                             交付方式
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(TaskDeliverTypeEnum)))
+                            @foreach (var item in Enum.GetValues(typeof(QuestDeliverTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Task.DeliverType" type="radio" name="Task.DeliverType" value="@(item.ToString())"> @(item.ToString())
+                                    <input type="radio" name="Task.DeliverType" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -136,10 +136,10 @@
                             触发方式
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(TaskTriggerTypeEnum)))
+                            @foreach (var item in Enum.GetValues(typeof(QuestTriggerTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Task.TriggerType" type="radio" name="Task.TriggerType" value="@(item.ToString())"> @(item.ToString())
+                                    <input type="radio" name="Task.TriggerType" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
 
@@ -153,16 +153,17 @@
                             触发条件
                         </div>
                         <div class="am-u-sm-10" id="taskTrigger">
-                            <input type="hidden" asp-for="Task.TriggerCondition">
+                            <input type="hidden" asp-for="Quest.TriggerCondition">
                             <div class="am-form-inline am-form-group">
                                 <select class="am-input-sm am-form-field conditions" style="width: 180px;">
                                     <option value="">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(TaskTriggerConditionEnum)))
+                                    @foreach (var item in Enum.GetValues(typeof(QuestTriggerConditionEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
                             </div>
+
                         </div>
 
                         <div class="am-u-sm-1"></div>
@@ -173,16 +174,17 @@
                             完成条件
                         </div>
                         <div class="am-u-sm-10" id="taskTarget">
-                            <input type="hidden" asp-for="Task.Target">
+                            <input type="hidden" asp-for="Quest.Target">
                             <div class="am-form-inline am-form-group">
                                 <select class="am-input-sm am-form-field targets" style="width: 180px;">
                                     <option value="">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(TaskTargetEnum)))
+                                    @foreach (var item in Enum.GetValues(typeof(QuestTargetEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
                             </div>
+
                         </div>
                         <div class="am-u-sm-1"></div>
                     </div>
@@ -192,11 +194,11 @@
                             任务消耗
                         </div>
                         <div class="am-u-sm-10" id="taskConsume">
-                            <input type="hidden" asp-for="Task.Consume">
+                            <input type="hidden" asp-for="Quest.Consume">
                             <div class="am-form-inline am-form-group">
                                 <select class="am-input-sm am-form-field consumes" style="width: 180px;">
                                     <option value="">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(TaskConsumeEnum)))
+                                    @foreach (var item in Enum.GetValues(typeof(QuestConsumeEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
@@ -212,16 +214,18 @@
                             任务奖励
                         </div>
                         <div class="am-u-sm-10" id="taskReward">
-                            <input type="hidden" asp-for="Task.Reward">
+                            <input type="hidden" asp-for="Quest.Reward">
                             <div class="am-form-inline am-form-group">
                                 <select class="am-input-sm am-form-field rewards" style="width: 180px;">
                                     <option value="">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(TaskRewardEnum)))
+                                    @foreach (var item in Enum.GetValues(typeof(QuestRewardEnum)))
                                     {
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
                             </div>
+
+
                         </div>
                         <div class="am-u-sm-1"></div>
                     </div>
@@ -231,7 +235,7 @@
                             描述
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Task.Description"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.Description"></textarea>
                         </div>
                     </div>
 
@@ -240,7 +244,7 @@
                             领取前文本
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Task.BeforeCreate"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.BeforeCreate"></textarea>
                         </div>
                     </div>
 
@@ -249,17 +253,16 @@
                             领取后文本
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Task.CreatedWords"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
                         </div>
                     </div>
-
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
                             进行中文本
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Task.InProgressWords"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
                         </div>
                     </div>
 
@@ -268,11 +271,9 @@
                             完成后文本
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Task.CompletedWords"></textarea>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
                         </div>
                     </div>
-
-
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
@@ -298,6 +299,7 @@
 </div>
 
 
+
 <partial name="_ScriptTemplate.cshtml" />
 
 @section Scripts {
@@ -306,13 +308,8 @@
         var conditions = @Html.Raw(JsonConvert.SerializeObject(Model.Conditions));
 
 
-        var taskTriggers = @Html.Raw(JsonConvert.SerializeObject(Model.TaskTriggers));
-        var taskTargets = @Html.Raw(JsonConvert.SerializeObject(Model.TaskTargets));
-        var taskConsumes = @Html.Raw(JsonConvert.SerializeObject(Model.TaskConsumes));
-        var taskRewards = @Html.Raw(JsonConvert.SerializeObject(Model.TaskRewards));
-
-
         $(function () {
+
             $(document).on("change", ".conditions", function () {
                 var condition = $(this).val();
                 console.log("condition=" + condition);
@@ -323,7 +320,7 @@
                     return;
                 }
 
-                var data = {};
+                var data = { };
 
                 if ($("#condition-" + condition).length > 0) {
                     $(this).after(template("condition-" + condition, data));
@@ -353,7 +350,7 @@
                     return;
                 }
 
-                var data = {};
+                var data = {  };
 
                 if ($("#target-" + target).length > 0) {
                     $(this).after(template("target-" + target, data));
@@ -382,7 +379,7 @@
                     return;
                 }
 
-                var data = {};
+                var data = {  };
 
                 if ($("#consume-" + consume).length > 0) {
                     $(this).after(template("consume-" + consume, data));
@@ -410,7 +407,7 @@
                     return;
                 }
 
-                var data = {};
+                var data = {  };
 
                 if ($("#reward-" + reward).length > 0) {
                     $(this).after(template("reward-" + reward, data));
@@ -444,90 +441,10 @@
 
 
 
-            $("input[type=radio]:checked").each(function () {
+            $("input[type=checkbox]:checked").each(function () {
                 $(this).parent(".am-btn").addClass("am-active");
             });
 
-
-            $.each(taskTriggers, function (i, item) {
-                $("#taskTrigger").find(".conditions").each(function () {
-                    if ($(this).val() == "") {
-                        $(this).val(item.condition).trigger("change");
-                        $(this).parent().children(".attr").each(function () {
-                            var $this = $(this);
-                            var attr = $(this).attr("attr");
-
-                            $.each(item.attrs, function (j, data) {
-                                console.log("data.attr=" + data.attr);
-                                if (data.attr == attr) {
-                                    $this.val(data.val);
-                                }
-                            });
-                        });
-                        return false;
-                    }
-                });
-            });
-
-            $.each(taskTargets, function (i, item) {
-                $("#taskTarget").find(".targets").each(function () {
-                    if ($(this).val() == "") {
-                        $(this).val(item.target).trigger("change");
-                        $(this).parent().children(".attr").each(function () {
-                            var $this = $(this);
-                            var attr = $(this).attr("attr");
-
-                            $.each(item.attrs, function (j, data) {
-                                console.log("data.attr=" + data.attr);
-                                if (data.attr == attr) {
-                                    $this.val(data.val);
-                                }
-                            });
-                        });
-                        return false;
-                    }
-                });
-            });
-
-            $.each(taskConsumes, function (i, item) {
-                $("#taskConsume").find(".consumes").each(function () {
-                    if ($(this).val() == "") {
-                        $(this).val(item.consume).trigger("change");
-                        $(this).parent().children(".attr").each(function () {
-                            var $this = $(this);
-                            var attr = $(this).attr("attr");
-
-                            $.each(item.attrs, function (j, data) {
-                                console.log("data.attr=" + data.attr);
-                                if (data.attr == attr) {
-                                    $this.val(data.val);
-                                }
-                            });
-                        });
-                        return false;
-                    }
-                });
-            });
-
-            $.each(taskRewards, function (i, item) {
-                $("#taskReward").find(".rewards").each(function () {
-                    if ($(this).val() == "") {
-                        $(this).val(item.reward).trigger("change");
-                        $(this).parent().children(".attr").each(function () {
-                            var $this = $(this);
-                            var attr = $(this).attr("attr");
-
-                            $.each(item.attrs, function (j, data) {
-                                console.log("data.attr=" + data.attr);
-                                if (data.attr == attr) {
-                                    $this.val(data.val);
-                                }
-                            });
-                        });
-                        return false;
-                    }
-                });
-            });
         });
 
 

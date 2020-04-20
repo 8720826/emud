@@ -1,8 +1,8 @@
 ﻿
 using Emprise.Domain.Admin.Entity;
 using Emprise.Domain.Npc.Entity;
+using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Tasks.Entity;
 using Emprise.Domain.Ware.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,7 +29,7 @@ namespace Emprise.Admin.Data
 
         public DbSet<WareEntity> Wares { get; set; }
 
-        public DbSet<TaskEntity> Tasks { get; set; }
+        public DbSet<QuestEntity> Quests { get; set; }
 
 
         public DbSet<ScriptEntity> Scripts { get; set; }

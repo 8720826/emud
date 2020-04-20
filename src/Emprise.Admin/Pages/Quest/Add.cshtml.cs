@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Tasks;
+using Emprise.Admin.Models.Quest;
 using Emprise.Domain.Core.Enum;
-using Emprise.Domain.Tasks.Entity;
+using Emprise.Domain.Quest.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Tasks
+namespace Emprise.Admin.Pages.Quest
 {
     public class AddModel : PageModel
     {
@@ -26,7 +26,7 @@ namespace Emprise.Admin.Pages.Tasks
         }
 
         [BindProperty]
-        public TaskInput Task { get; set; }
+        public QuestInput Quest { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -39,11 +39,11 @@ namespace Emprise.Admin.Pages.Tasks
 
         public async Task OnGetAsync(int id)
         {
-            Conditions = Enum.GetNames(typeof(TaskTriggerConditionEnum));
+            Conditions = Enum.GetNames(typeof(QuestTriggerConditionEnum));
 
             if (id > 0)
             {
-                var task = await _db.Tasks.FindAsync(id);
+                var task = await _db.Quests.FindAsync(id);
 
             }
 
@@ -64,8 +64,8 @@ namespace Emprise.Admin.Pages.Tasks
                 return Page();
             }
 
-            var task = _mapper.Map<TaskEntity>(Task);
-            await _db.Tasks.AddAsync(task);
+            var task = _mapper.Map<QuestEntity>(Quest);
+            await _db.Quests.AddAsync(task);
 
             await _db.SaveChangesAsync();
 
