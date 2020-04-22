@@ -15,6 +15,8 @@ using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Quest.Models;
+using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Services;
 using Emprise.Domain.Ware.Services;
 using Emprise.Infra;
@@ -68,6 +70,7 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IScriptCommandDomainService _ScriptCommandDomainService;
         private readonly IWareDomainService _wareDomainService;
         private readonly IPlayerWareDomainService _playerWareDomainService;
+        private readonly IQuestDomainService _questDomainService ;
         private readonly IRedisDb _redisDb;
         private readonly IMemoryCache _cache;
 
@@ -89,6 +92,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IScriptCommandDomainService ScriptCommandDomainService,
             IWareDomainService wareDomainService,
             IPlayerWareDomainService playerWareDomainService,
+            IQuestDomainService questDomainService,
             IRedisDb redisDb,
             IMemoryCache cache,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
@@ -112,6 +116,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _npcDomainService = npcDomainService;
             _wareDomainService = wareDomainService;
             _playerWareDomainService = playerWareDomainService;
+            _questDomainService = questDomainService;
             _redisDb = redisDb;
         }
 
@@ -508,12 +513,16 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 await DoAction(player, npc, commandName);
             }
+
+         
             return Unit.Value;
         }
 
 
 
         #region 私有方法
+
+
 
         private async Task DoAction(PlayerEntity player, NpcEntity npc,string commandName)
         {

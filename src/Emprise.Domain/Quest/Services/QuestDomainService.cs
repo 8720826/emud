@@ -1,9 +1,14 @@
 ﻿using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Events;
+using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Quest.Entity;
+using Emprise.Domain.Quest.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +24,13 @@ namespace Emprise.Domain.Quest.Services
         private readonly IRepository<QuestEntity> _questRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediatorHandler _bus;
-
-        public QuestDomainService(IRepository<QuestEntity> questRepository, IMemoryCache cache, IMediatorHandler bus)
+        private readonly ILogger<QuestDomainService> _logger;
+        public QuestDomainService(IRepository<QuestEntity> questRepository, IMemoryCache cache, IMediatorHandler bus, ILogger<QuestDomainService> logger)
         {
             _questRepository = questRepository;
             _cache = cache;
             _bus = bus;
+            _logger = logger;
         }
 
 
@@ -70,6 +76,68 @@ namespace Emprise.Domain.Quest.Services
             await _questRepository.Update(room);
             await _bus.RaiseEvent(new EntityUpdatedEvent<QuestEntity>(room)).ConfigureAwait(false);
         }
+
+
+        public async Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum, int playerId, NpcEntity npc)
+        {
+            var quests = (await GetAll()).Where(x => x.TriggerType == triggerTypeEnum).ToList();
+            _logger.LogInformation($"quests.Count={quests.Count}");
+            foreach (var quest in quests)
+            {
+                _logger.LogInformation($"quest={quest.Id}");
+                List<TaskTrigger> taskTriggers = new List<TaskTrigger>();
+                try
+                {
+                    taskTriggers = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TriggerCondition);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Convert TaskTrigger:{ex}");
+                }
+
+                if (taskTriggers == null || taskTriggers.Count == 0)
+                {
+                    continue;
+                }
+
+                var taskTrigger = taskTriggers.FirstOrDefault();
+                if (taskTrigger == null || taskTrigger.Attrs == null || taskTrigger.Attrs.Count == 0)
+                {
+                    continue;
+                }
+
+
+                int.TryParse(taskTrigger.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val,out int npcId);
+
+                _logger.LogInformation($"npcId={npcId}");
+                switch (triggerTypeEnum)
+                {
+                    case QuestTriggerTypeEnum.与Npc对话:
+                        if (npc.Id == npcId)
+                        {
+                            return quest;
+                        }
+
+
+                        break;
+                }
+
+                if (taskTrigger.Attrs.FirstOrDefault().Attr != "NpcId")
+                {
+                    continue;
+                }
+                /*
+                int.TryParse(taskTrigger.Attrs.FirstOrDefault().Val, out int npcId);
+                if (npcId != npc.Id)
+                {
+                    continue;
+                }*/
+
+            }
+
+            return null;
+        }
+
 
         public void Dispose()
         {

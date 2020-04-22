@@ -7,8 +7,11 @@ using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Quest.Models;
+using Emprise.Domain.Quest.Services;
 using Emprise.Infra.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -29,8 +32,11 @@ namespace Emprise.Application.User.Services
         private readonly IAccountContext _account;
         private readonly IScriptCommandDomainService _ScriptCommandDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
+        private readonly IQuestDomainService _questDomainService;
         private readonly IMudProvider _mudProvider;
-        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptCommandDomainService ScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService, IMudProvider mudProvider)
+        private readonly ILogger<NpcAppService> _logger;
+
+        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptCommandDomainService ScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService, IQuestDomainService questDomainService, IMudProvider mudProvider, ILogger<NpcAppService> logger)
         {
             _bus = bus;
             _mapper = mapper;
@@ -40,6 +46,8 @@ namespace Emprise.Application.User.Services
             _ScriptCommandDomainService = ScriptCommandDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _mudProvider = mudProvider;
+            _questDomainService = questDomainService;
+            _logger = logger;
         }
 
         public async Task<NpcEntity> Get(int id)
@@ -111,42 +119,24 @@ namespace Emprise.Application.User.Services
                 }
             }
 
-            /*
-            var type = Type.GetType("Emprise.MudServer.Scripts." + npc.Script + ",Emprise.MudServer", false, true);
-            if (type != null)
-            {
-                using (var serviceScope = _services.CreateScope())
-                {
-                     var argtypes = type.GetConstructors()
-                     .First()
-                     .GetParameters()
-                     .Select(x =>
-                     {
-                         if (x.Name == "player")
-                             return player;
-                         else if (x.Name == "npc")
-                             return npc;
-                         else if (x.ParameterType == typeof(IServiceProvider))
-                             return serviceScope.ServiceProvider;
-                         else
-                             return serviceScope.ServiceProvider.GetService(x.ParameterType);
-                     })
-                     .ToArray();
+            await CheckQuest(playerId, npc);
 
-                    var job = Activator.CreateInstance(type, argtypes);
-
-                    MethodInfo method = type.GetMethod("GetActions");
-                    var actions =  method.Invoke(job, new object[] { }) as Task<List<string>>; ;
-
-
-                    npcInfo.Actions.AddRange(actions.Result);
-                }
-
-            }
-
-            */
 
             return npcInfo;
+        }
+        
+        
+        private async Task CheckQuest(int playerId, NpcEntity npc)
+        {
+            _logger.LogInformation($"CheckQuest  playerId={playerId},{npc.Id}");
+            var quest = await _questDomainService.CheckQuest(QuestTriggerTypeEnum.与Npc对话, playerId, npc);
+            if (quest != null)
+            {
+                _logger.LogInformation($"CheckQuest questId= {quest.Id}");
+                await _mudProvider.ShowMessage(playerId, quest.BeforeCreate);
+            }
+
+            
         }
 
         public void Dispose()
