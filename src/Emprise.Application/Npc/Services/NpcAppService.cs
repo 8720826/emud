@@ -4,7 +4,9 @@ using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Interfaces;
+using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Npc.Entity;
+using Emprise.Domain.Npc.Events;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Quest.Models;
@@ -32,11 +34,10 @@ namespace Emprise.Application.User.Services
         private readonly IAccountContext _account;
         private readonly IScriptCommandDomainService _ScriptCommandDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
-        private readonly IQuestDomainService _questDomainService;
         private readonly IMudProvider _mudProvider;
         private readonly ILogger<NpcAppService> _logger;
 
-        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptCommandDomainService ScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService, IQuestDomainService questDomainService, IMudProvider mudProvider, ILogger<NpcAppService> logger)
+        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptCommandDomainService ScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService,  IMudProvider mudProvider, ILogger<NpcAppService> logger)
         {
             _bus = bus;
             _mapper = mapper;
@@ -46,7 +47,6 @@ namespace Emprise.Application.User.Services
             _ScriptCommandDomainService = ScriptCommandDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _mudProvider = mudProvider;
-            _questDomainService = questDomainService;
             _logger = logger;
         }
 
@@ -119,25 +119,16 @@ namespace Emprise.Application.User.Services
                 }
             }
 
-            await CheckQuest(playerId, npc);
+            //await CheckQuest(playerId, npc);
 
+
+            await _bus.RaiseEvent(new ChatWithNpcEvent(playerId, npc.Id)).ConfigureAwait(false);
 
             return npcInfo;
         }
         
-        
-        private async Task CheckQuest(int playerId, NpcEntity npc)
-        {
-            _logger.LogInformation($"CheckQuest  playerId={playerId},{npc.Id}");
-            var quest = await _questDomainService.CheckQuest(QuestTriggerTypeEnum.与Npc对话, playerId, npc);
-            if (quest != null)
-            {
-                _logger.LogInformation($"CheckQuest questId= {quest.Id}");
-                await _mudProvider.ShowMessage(playerId, quest.BeforeCreate);
-            }
+         
 
-            
-        }
 
         public void Dispose()
         {

@@ -2,6 +2,7 @@
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Quest.Entity;
+using Emprise.Domain.Quest.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -22,6 +23,6 @@ namespace Emprise.Domain.Quest.Services
 
         Task Update(QuestEntity user);
 
-        Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum, int playerId, NpcEntity npc);
+        Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum,  QuestTriggerCheckModel checkModel);
     }
 }

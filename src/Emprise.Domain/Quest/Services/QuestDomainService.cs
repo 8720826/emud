@@ -78,7 +78,9 @@ namespace Emprise.Domain.Quest.Services
         }
 
 
-        public async Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum, int playerId, NpcEntity npc)
+
+
+        public async Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum, QuestTriggerCheckModel checkModel)
         {
             var quests = (await GetAll()).Where(x => x.TriggerType == triggerTypeEnum).ToList();
             _logger.LogInformation($"quests.Count={quests.Count}");
@@ -113,7 +115,8 @@ namespace Emprise.Domain.Quest.Services
                 switch (triggerTypeEnum)
                 {
                     case QuestTriggerTypeEnum.与Npc对话:
-                        if (npc.Id == npcId)
+                    case QuestTriggerTypeEnum.杀死Npc:
+                        if (checkModel.NpcId == npcId)
                         {
                             return quest;
                         }
@@ -122,16 +125,6 @@ namespace Emprise.Domain.Quest.Services
                         break;
                 }
 
-                if (taskTrigger.Attrs.FirstOrDefault().Attr != "NpcId")
-                {
-                    continue;
-                }
-                /*
-                int.TryParse(taskTrigger.Attrs.FirstOrDefault().Val, out int npcId);
-                if (npcId != npc.Id)
-                {
-                    continue;
-                }*/
 
             }
 
