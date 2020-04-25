@@ -6,10 +6,15 @@ namespace Emprise.Domain.Common.Modes
 {
     public class RedisKey
     {
-        public const string ChatWithNpc = "chatWithNpc_{0}";
+        /// <summary>
+        /// chatWithNpc_{playerId}_{npcId}
+        /// </summary>
+        public const string ChatWithNpc = "chatWithNpc_{0}_{1}";
 
-
-        public const string CompleteQuest = "completeQuest_{0}";
+        /// <summary>
+        /// completeQuest_{playerId}_{questId}
+        /// </summary>
+        public const string CompleteQuest = "completeQuest_{0}_{1}";
 
         /// <summary>
         /// commandIds_{playerId}_{npcId}_{scriptId}

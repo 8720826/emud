@@ -34,16 +34,16 @@ namespace Emprise.Admin.Pages.Quest
         public string ErrorMessage { get; set; }
 
 
-        public List<TaskTrigger> TriggerConditions { get; set; } = new List<TaskTrigger>();
+        public List<QuestTrigger> TriggerConditions { get; set; } = new List<QuestTrigger>();
 
-        public List<TaskTrigger> TakeConditions { get; set; } = new List<TaskTrigger>();
+        public List<QuestTrigger> TakeConditions { get; set; } = new List<QuestTrigger>();
         
 
-        public List<TaskTarget> TaskTargets { get; set; } = new List<TaskTarget>();
+        public List<QuestTarget> TaskTargets { get; set; } = new List<QuestTarget>();
 
-        public List<TaskConsume> TaskConsumes { get; set; } = new List<TaskConsume>();
+        public List<QuestConsume> TaskConsumes { get; set; } = new List<QuestConsume>();
 
-        public List<TaskReward> TaskRewards { get; set; } = new List<TaskReward>();
+        public List<QuestReward> TaskRewards { get; set; } = new List<QuestReward>();
 
 
         [BindProperty]
@@ -60,30 +60,30 @@ namespace Emprise.Admin.Pages.Quest
 
                 if (!string.IsNullOrEmpty(quest.TriggerCondition))
                 {
-                    TriggerConditions = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TriggerCondition);
+                    TriggerConditions = JsonConvert.DeserializeObject<List<QuestTrigger>>(quest.TriggerCondition);
                 }
 
 
                 if (!string.IsNullOrEmpty(quest.TakeCondition))
                 {
-                    TakeConditions = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TakeCondition);
+                    TakeConditions = JsonConvert.DeserializeObject<List<QuestTrigger>>(quest.TakeCondition);
                 }
 
                 
 
                 if (!string.IsNullOrEmpty(quest.Target))
                 {
-                    TaskTargets = JsonConvert.DeserializeObject<List<TaskTarget>>(quest.Target);
+                    TaskTargets = JsonConvert.DeserializeObject<List<QuestTarget>>(quest.Target);
                 }
 
                 if (!string.IsNullOrEmpty(quest.Consume))
                 {
-                    TaskConsumes = JsonConvert.DeserializeObject<List<TaskConsume>>(quest.Consume);
+                    TaskConsumes = JsonConvert.DeserializeObject<List<QuestConsume>>(quest.Consume);
                 }
 
                 if (!string.IsNullOrEmpty(quest.Reward))
                 {
-                    TaskRewards = JsonConvert.DeserializeObject<List<TaskReward>>(quest.Reward);
+                    TaskRewards = JsonConvert.DeserializeObject<List<QuestReward>>(quest.Reward);
                 }
 
             }
