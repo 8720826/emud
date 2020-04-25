@@ -65,7 +65,7 @@ namespace Emprise.Domain.Npc.EventHandlers
             var npcId = message.NpcId;
 
 
-            await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpc, npcId), 1, DateTime.Now.AddDays(30));
+            await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpc, playerId, npcId), 1, DateTime.Now.AddDays(30));
 
 
             _logger.LogInformation($"CheckQuest  playerId={playerId},{npcId}");
