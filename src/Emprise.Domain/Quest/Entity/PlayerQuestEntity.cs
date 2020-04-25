@@ -11,7 +11,7 @@ namespace Emprise.Domain.Quest.Entity
     {
         public int PlayerId { set; get; }
 
-        public int TaskId { set; get; }
+        public int QuestId { set; get; }
 
 
         /// <summary>

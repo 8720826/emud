@@ -23,6 +23,6 @@ namespace Emprise.Domain.Quest.Services
 
         Task Update(QuestEntity user);
 
-        Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum,  QuestTriggerCheckModel checkModel);
+        Task<QuestEntity> CheckTriggerCondition(QuestTriggerTypeEnum triggerTypeEnum,  QuestTriggerCheckModel checkModel);
     }
 }

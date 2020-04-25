@@ -16,6 +16,7 @@ namespace Emprise.Web.Controllers
     [ApiController]
     public class UserController : BaseController
     {
+
         private readonly IUserAppService _userService;
         private readonly IAccountContext _accountContext;
         public UserController(IUserAppService userService,
@@ -25,6 +26,7 @@ namespace Emprise.Web.Controllers
             _accountContext = accountContext;
         }
 
+        /*
         [Route("SendRegEmail")]
         [AllowAnonymous, HttpPost]
         public async Task<IActionResult> SendRegEmail(SendRegEmailDto dto)
@@ -80,7 +82,7 @@ namespace Emprise.Web.Controllers
 
             return MyResponse();
         }
-
+        */
         
         /*
         [Route("sendVerifyEmail")]

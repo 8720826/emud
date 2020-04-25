@@ -11,6 +11,10 @@ namespace Emprise.Domain.Npc.Events
     {
 
         public int PlayerId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public int NpcId { get; set; }
 
         public ChatWithNpcEvent(int playerId, int npcId)

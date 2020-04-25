@@ -56,14 +56,14 @@ namespace Emprise.Application.Player.Services
             await _bus.SendCommand(command);
         }
 
-        
+
         public async Task InitGame(int playerId)
         {
             _logger.LogDebug($"InitGame:{playerId}");
             var command = new InitGameCommand(playerId);
             await _bus.SendCommand(command).ConfigureAwait(false); ;
         }
-        
+
 
         public async Task Move(int playerId, int roomId)
         {
@@ -100,6 +100,13 @@ namespace Emprise.Application.Player.Services
             var command = new NpcActionCommand(playerId, npcId, action.ScriptId, action.CommandId, action.Name, action.Message);
             await _bus.SendCommand(command);
         }
+
+        public async Task TakeQuest(int playerId, int questId)
+        {
+            var command = new QuestCommand(playerId, questId);
+            await _bus.SendCommand(command);
+        }
+
 
 
         #endregion
@@ -161,6 +168,9 @@ namespace Emprise.Application.Player.Services
             myInfo = _mapper.Map<MyInfo>(player);
             return myInfo;
         }
+
+   
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);

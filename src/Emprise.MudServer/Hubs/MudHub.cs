@@ -20,6 +20,7 @@ using MediatR;
 using Emprise.Domain.Core.Models.Chat;
 using Emprise.Domain.Player.Events;
 using Emprise.Application.Player.Services;
+using Emprise.Domain.Player.Commands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -208,6 +209,15 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
                 await _playerAppService.NpcAction(playerId, commandAction.NpcId, commandAction.Action);
+            });
+        }
+
+
+        public async Task TakeQuest(QuestAction questAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+                await _playerAppService.TakeQuest(playerId, questAction.QuestId);
             });
         }
     }

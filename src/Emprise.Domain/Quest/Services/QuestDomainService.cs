@@ -79,18 +79,23 @@ namespace Emprise.Domain.Quest.Services
 
 
 
-
-        public async Task<QuestEntity> CheckQuest(QuestTriggerTypeEnum triggerTypeEnum, QuestTriggerCheckModel checkModel)
+        /// <summary>
+        /// 检查是否触发
+        /// </summary>
+        /// <param name="triggerTypeEnum"></param>
+        /// <param name="checkModel"></param>
+        /// <returns></returns>
+        public async Task<QuestEntity> CheckTriggerCondition(QuestTriggerTypeEnum triggerTypeEnum, QuestTriggerCheckModel checkModel)
         {
             var quests = (await GetAll()).Where(x => x.TriggerType == triggerTypeEnum).ToList();
             _logger.LogInformation($"quests.Count={quests.Count}");
             foreach (var quest in quests)
             {
                 _logger.LogInformation($"quest={quest.Id}");
-                List<TaskTrigger> taskTriggers = new List<TaskTrigger>();
+                List<QuestTrigger> taskTriggers = new List<QuestTrigger>();
                 try
                 {
-                    taskTriggers = JsonConvert.DeserializeObject<List<TaskTrigger>>(quest.TriggerCondition);
+                    taskTriggers = JsonConvert.DeserializeObject<List<QuestTrigger>>(quest.TriggerCondition);
                 }
                 catch (Exception ex)
                 {
@@ -130,6 +135,7 @@ namespace Emprise.Domain.Quest.Services
 
             return null;
         }
+
 
 
         public void Dispose()

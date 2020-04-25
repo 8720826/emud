@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Enum;
@@ -89,7 +90,7 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            string key = $"regemail_{email}";
+            string key = string.Format(RedisKey.RegEmail, email);// $"regemail_{email}";
             long ttl = await _redisDb.KeyTimeToLive(key);
             if (ttl < 0)
             {
@@ -243,8 +244,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
             int expiryMin = 60*24;
 
-            string key = $"resetpassword_{user.Id}";
-
+            string key = string.Format(RedisKey.ResetPassword, user.Id);// $"resetpassword_{user.Id}";
             if (await _redisDb.KeyTimeToLive(key) > 0)
             {
                 await _bus.RaiseEvent(new DomainNotification($"找回密码操作需要间隔24小时"));
@@ -278,7 +278,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
             int expiryMin = 30;
 
-            string key = $"regemail_{email}";
+            string key = string.Format(RedisKey.RegEmail, email); //$"regemail_{email}";
 
             if (await _redisDb.KeyTimeToLive(key) > 0)
             {

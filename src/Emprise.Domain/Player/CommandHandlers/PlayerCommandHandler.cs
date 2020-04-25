@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Attributes;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
@@ -15,6 +16,7 @@ using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Services;
@@ -48,10 +50,11 @@ namespace Emprise.Domain.User.CommandHandlers
         IRequestHandler<MeditateCommand, Unit>,
         IRequestHandler<StopActionCommand, Unit>,
         IRequestHandler<ExertCommand, Unit>,
-        IRequestHandler<NpcActionCommand, Unit>
-
+        IRequestHandler<NpcActionCommand, Unit>,
+        IRequestHandler<QuestCommand, Unit>
 
         
+
     {
         private readonly IMediatorHandler _bus;
         private readonly ILogger<PlayerCommandHandler> _logger;
@@ -71,6 +74,7 @@ namespace Emprise.Domain.User.CommandHandlers
         private readonly IWareDomainService _wareDomainService;
         private readonly IPlayerWareDomainService _playerWareDomainService;
         private readonly IQuestDomainService _questDomainService ;
+        private readonly IPlayerQuestDomainService _playerQuestDomainService;
         private readonly IRedisDb _redisDb;
         private readonly IMemoryCache _cache;
 
@@ -93,6 +97,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IWareDomainService wareDomainService,
             IPlayerWareDomainService playerWareDomainService,
             IQuestDomainService questDomainService,
+            IPlayerQuestDomainService playerQuestDomainService,
             IRedisDb redisDb,
             IMemoryCache cache,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
@@ -117,6 +122,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _wareDomainService = wareDomainService;
             _playerWareDomainService = playerWareDomainService;
             _questDomainService = questDomainService;
+            _playerQuestDomainService = playerQuestDomainService;
             _redisDb = redisDb;
         }
 
@@ -519,7 +525,148 @@ namespace Emprise.Domain.User.CommandHandlers
         }
 
 
+        public async Task<Unit> Handle(QuestCommand command, CancellationToken cancellationToken)
+        {
 
+            var playerId = command.PlayerId;
+            var questId = command.QuestId;
+
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            var quest = await _questDomainService.Get(questId);
+            if (quest == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"任务不存在！"));
+                return Unit.Value;
+            }
+
+            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == playerId && x.QuestId == quest.Id);
+            if (playerQuest != null)
+            {
+                if (playerQuest.HasTake)
+                {
+                    await _mudProvider.ShowMessage(playerId, quest.InProgressWords);
+                    return Unit.Value;
+                }
+
+                if (playerQuest.IsComplete)
+                {
+                    switch (quest.Period)
+                    {
+                        case QuestPeriodEnum.不可重复:
+                            await _mudProvider.ShowMessage(playerId, "该任务仅可领取一次，你已经领取过！");
+                            return Unit.Value;
+                            break;
+
+                        case QuestPeriodEnum.无限制:
+                 
+                            break;
+
+                        case QuestPeriodEnum.每周一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays <= 7)
+                            {
+                                await _mudProvider.ShowMessage(playerId, "该任务每周仅可领取一次，你已经领取过！");
+                                return Unit.Value;
+                            }
+                            break;
+
+                        case QuestPeriodEnum.每天一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalHours <= 24)
+                            {
+                                await _mudProvider.ShowMessage(playerId, "该任务每天仅可领取一次，你已经领取过！");
+                                return Unit.Value;
+                            }
+                            break;
+
+                        case QuestPeriodEnum.每年一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays <= 365)
+                            {
+                                await _mudProvider.ShowMessage(playerId, "该任务每年仅可领取一次，你已经领取过！");
+                                return Unit.Value;
+                            }
+                            break;
+
+                        case QuestPeriodEnum.每月一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays <= 30)
+                            {
+                                await _mudProvider.ShowMessage(playerId, "该任务每月仅可领取一次，你已经领取过！");
+                                return Unit.Value;
+                            }
+                            break;
+                    }
+                }
+                else
+                {
+                    await _mudProvider.ShowMessage(playerId, quest.InProgressWords);
+                    return Unit.Value;
+                }
+
+            }
+
+            var takeConditionStr = quest.TakeCondition;
+
+
+            if (!string.IsNullOrEmpty(takeConditionStr))
+            {
+                List<QuestTakeCondition> takeConditions = new List<QuestTakeCondition>();
+                try
+                {
+                    takeConditions = JsonConvert.DeserializeObject<List<QuestTakeCondition>>(takeConditionStr);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Convert CaseIf:{ex}");
+                }
+
+                foreach (var takeCondition in takeConditions)
+                {
+                    var checkCondition = await CheckTakeCondition(player, takeCondition.Condition, takeCondition.Attrs);
+                    if (!checkCondition)
+                    {
+                        await _bus.RaiseEvent(new DomainNotification($"你还不能领取这个任务 ！"));
+                        return Unit.Value;
+                    }
+                }
+            }
+
+            if (playerQuest == null)
+            {
+                playerQuest = new PlayerQuestEntity
+                {
+                    PlayerId = player.Id,
+                    QuestId = questId,
+                    IsComplete = false,
+                    TakeDate = DateTime.Now,
+                    CompleteDate = DateTime.Now,
+                    CreateDate = DateTime.Now,
+                    DayTimes = 1,
+                    HasComplete = false,
+                    HasTake = true,
+                    Target = "",
+                    Times = 1,
+                    UpdateDate = DateTime.Now
+                };
+                await _playerQuestDomainService.Add(playerQuest);
+            }
+            else
+            {
+
+
+                await _playerQuestDomainService.Update(playerQuest);
+            }
+
+
+          
+
+            await _bus.RaiseEvent(new DomainNotification($"领取任务 {quest.Name} ！"));
+
+            return Unit.Value;
+        }
         #region 私有方法
 
 
@@ -596,7 +743,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
             if (!scriptCommand.IsEntry)
             {
-                var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
+                var key = string.Format(RedisKey.CommandIds, player.Id, npc.Id, scriptId);
                 var commandIds = await _redisDb.StringGet<List<int>>(key);
                 if (commandIds == null || !commandIds.Contains(scriptCommand.Id))
                 {
@@ -749,7 +896,7 @@ namespace Emprise.Domain.User.CommandHandlers
                     break;
 
                 case CommandTypeEnum.输入选项:
-                    await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='button' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
+                    await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='input' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
                     break;
 
 
@@ -868,8 +1015,6 @@ namespace Emprise.Domain.User.CommandHandlers
             }
         }
 
-
-
         private PropertyInfo GetFieldPropertyInfo(PlayerEntity player, string field)
         {
             var fieldEnum = (PlayerConditionFieldEnum)Enum.Parse(typeof(PlayerConditionFieldEnum), field, true);
@@ -894,6 +1039,50 @@ namespace Emprise.Domain.User.CommandHandlers
             }
 
             return null;
+        }
+
+
+        /// <summary>
+        /// 判断是否可以领取某个任务
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="condition"></param>
+        /// <param name="attrs"></param>
+        /// <returns></returns>
+        public async Task<bool> CheckTakeCondition(PlayerEntity player, string condition, List<QuestAttribute> attrs)
+        {
+
+            var npcId = attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
+            var questId = attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val;
+
+            var conditionEnum = (QuestTakeConditionEnum)Enum.Parse(typeof(QuestTakeConditionEnum), condition, true);
+
+
+            switch (conditionEnum)
+            {
+
+
+                case QuestTakeConditionEnum.与某个Npc对话:
+                    if (await _redisDb.StringGet<int>(string.Format(RedisKey.ChatWithNpc, npcId)) != 1)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case QuestTakeConditionEnum.完成前置任务:
+                    if (await _redisDb.StringGet<int>(string.Format(RedisKey.CompleteQuest, questId)) != 1)
+                    {
+                        return false;
+                    }
+
+
+                    break;
+
+
+            }
+
+
+            return true;
         }
 
         #endregion

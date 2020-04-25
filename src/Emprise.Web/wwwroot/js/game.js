@@ -258,16 +258,22 @@ new Vue({
             action.scriptId = obj.getAttribute('scriptId')*1;
             action.commandId = obj.getAttribute('commandId')*1;
 
+            console.log("TakeQuest=" + obj.className);
+
             if (obj.className === 'chat') {
-                action.name = "22";
+                action.name = "";
                 connection.invoke("NpcAction", { npcId, action });
                 //console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
 
-            } else if (obj.className === 'button') {
+            } else if (obj.className === 'input') {
                 action.message = obj.previousElementSibling.value;
                 //console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
                 connection.invoke("NpcAction", { npcId, action });
                 obj.previousElementSibling.value = "";
+            } else if (obj.className === 'quest') {
+                var questId = obj.getAttribute('questId') * 1;
+                console.log("TakeQuest=" + questId);
+                connection.invoke("TakeQuest", { questId: questId });
             }
         }
     },

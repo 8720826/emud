@@ -1,8 +1,10 @@
-﻿using Emprise.Domain.Core.Enum;
+﻿using Emprise.Domain.Common.Modes;
+using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Events;
+using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Quest.Services;
 using MediatR;
@@ -22,13 +24,22 @@ namespace Emprise.Domain.Npc.EventHandlers
         INotificationHandler<ChatWithNpcEvent>
     {
         private readonly IQuestDomainService _questDomainService;
+        private readonly IPlayerQuestDomainService _playerQuestDomainService;
         private readonly IMudProvider _mudProvider;
-        private readonly ILogger<NpcEventHandler> _logger;
-        public NpcEventHandler(ILogger<NpcEventHandler> logger, IMudProvider mudProvider, IQuestDomainService questDomainService)
+        private readonly ILogger<NpcEventHandler> _logger; 
+        private readonly IRedisDb _redisDb;
+
+        public NpcEventHandler(ILogger<NpcEventHandler> logger, 
+            IMudProvider mudProvider, 
+            IQuestDomainService questDomainService, 
+            IPlayerQuestDomainService playerQuestDomainService, 
+            IRedisDb redisDb)
         {
             _logger = logger;
             _mudProvider = mudProvider;
             _questDomainService = questDomainService;
+            _playerQuestDomainService = playerQuestDomainService;
+            _redisDb = redisDb;
         }
 
         public async Task Handle(EntityUpdatedEvent<NpcEntity> message, CancellationToken cancellationToken)
@@ -54,13 +65,78 @@ namespace Emprise.Domain.Npc.EventHandlers
             var npcId = message.NpcId;
 
 
+            await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpc, npcId), 1, DateTime.Now.AddDays(30));
+
+
             _logger.LogInformation($"CheckQuest  playerId={playerId},{npcId}");
             var questTriggerCheckModel = new QuestTriggerCheckModel { NpcId = npcId, PlayerId = playerId };
-            var quest = await _questDomainService.CheckQuest(QuestTriggerTypeEnum.与Npc对话, questTriggerCheckModel);
-            if (quest != null)
+            var quest = await _questDomainService.CheckTriggerCondition(QuestTriggerTypeEnum.与Npc对话, questTriggerCheckModel);
+            if (quest == null)
+            {
+                return;
+            }
+
+            bool canTake = false;
+
+            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == playerId && x.QuestId == quest.Id);
+            if (playerQuest == null)
+            {
+                canTake = true;
+            }
+            else
+            {
+                if (playerQuest.IsComplete)
+                {
+                    switch (quest.Period)
+                    {
+                        case QuestPeriodEnum.不可重复: break;
+
+                        case QuestPeriodEnum.无限制:
+                            canTake = true;
+                            break;
+
+                        case QuestPeriodEnum.每周一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays > 7)
+                            {
+                                canTake = true;
+                            }
+                            break;
+
+                        case QuestPeriodEnum.每天一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalHours > 24)
+                            {
+                                canTake = true;
+                            }
+                            break;
+
+                        case QuestPeriodEnum.每年一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays > 365)
+                            {
+                                canTake = true;
+                            }
+                            break;
+
+                        case QuestPeriodEnum.每月一次:
+                            if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays > 30)
+                            {
+                                canTake = true;
+                            }
+                            break;
+                    }
+                }
+                else
+                {
+                    await _mudProvider.ShowMessage(playerId, quest.InProgressWords);
+                }
+
+            }
+
+            if (canTake)
             {
                 _logger.LogInformation($"CheckQuest questId= {quest.Id}");
                 await _mudProvider.ShowMessage(playerId, quest.BeforeCreate);
+
+                await _mudProvider.ShowMessage(playerId, $"是否领取该任务 [{quest.Name}]?  <button type = 'button' class='quest' style='padding:1px 3px;' questId='{quest.Id}'> 确定 </button> ", MessageTypeEnum.指令);
             }
 
         }

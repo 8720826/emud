@@ -5,45 +5,55 @@ using System.Text;
 
 namespace Emprise.Domain.Quest.Models
 {
-    public class TaskTrigger
+    public class QuestTrigger
     {
         [JsonProperty("condition")]
         public string Condition { get; set; }
 
         [JsonProperty("attrs")]
-        public List<TaskAttribute> Attrs { get; set; }
+        public List<QuestAttribute> Attrs { get; set; }
     }
 
-    public class TaskTarget
+
+    public class QuestTakeCondition
+    {
+        [JsonProperty("condition")]
+        public string Condition { get; set; }
+
+        [JsonProperty("attrs")]
+        public List<QuestAttribute> Attrs { get; set; }
+    }
+
+    public class QuestTarget
     {
         [JsonProperty("target")]
         public string Target { get; set; }
 
         [JsonProperty("attrs")]
-        public List<TaskAttribute> Attrs { get; set; }
+        public List<QuestAttribute> Attrs { get; set; }
     }
 
-    public class TaskReward
+    public class QuestReward
     {
         [JsonProperty("reward")]
         public string Reward { get; set; }
 
         [JsonProperty("attrs")]
-        public List<TaskAttribute> Attrs { get; set; }
+        public List<QuestAttribute> Attrs { get; set; }
     }
 
-    public class TaskConsume
+    public class QuestConsume
     {
         [JsonProperty("consume")]
         public string Consume { get; set; }
 
         [JsonProperty("attrs")]
-        public List<TaskAttribute> Attrs { get; set; }
+        public List<QuestAttribute> Attrs { get; set; }
     }
     
 
 
-    public class TaskAttribute
+    public class QuestAttribute
     {
         [JsonProperty("attr")]
         public string Attr { get; set; }
