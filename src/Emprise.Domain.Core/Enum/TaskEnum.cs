@@ -16,28 +16,7 @@ namespace Emprise.Domain.Core.Enum
         日常 = 4
     }
 
-    /*
-    /// <summary>
-    /// 任务类型
-    /// </summary>
-    public enum QuestTypeEnum
-    {
-        其他 = 0,
 
-
-        收集 = 1,
-
-        杀怪 = 2,
-
-        对话 = 3,
-
-        护送 = 4,
-
-        探索 = 5,
-
-        
-
-    }*/
 
     /// <summary>
     /// 任务周期
@@ -92,7 +71,7 @@ namespace Emprise.Domain.Core.Enum
     /// </summary>
     public enum QuestTriggerTypeEnum 
     {
-        无 = 0,//此项为任务不会自动+触发
+        无 = 0,//此项为任务不会自动触发
 
         升级 = 1,
 
@@ -160,32 +139,32 @@ namespace Emprise.Domain.Core.Enum
 
 
     /// <summary>
-    /// 任务触发条件，与QuestTriggerTypeEnum对应
+    /// 任务领取条件
     /// </summary>
     public enum QuestTakeConditionEnum
     {
         /// <summary>
-        /// 升级时触发
+        /// 角色等级达到
         /// </summary>
         角色等级达到 = 1,
 
         /// <summary>
-        /// 获得经验时触发
+        /// 角色经验值达到
         /// </summary>
         角色经验值达到 = 2,
 
         /// <summary>
-        /// 移动后触发
+        /// 所在房间
         /// </summary>
         所在房间 = 3,
 
         /// <summary>
-        /// 获得物品时触发
+        /// 拥有某件物品达到数量
         /// </summary>
         拥有某件物品达到数量 = 4,
 
         /// <summary>
-        /// 必须完成该任务才能被触发
+        /// 完成前置任务
         /// </summary>
         完成前置任务 = 5,
 

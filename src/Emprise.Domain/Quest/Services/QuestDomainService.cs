@@ -79,62 +79,6 @@ namespace Emprise.Domain.Quest.Services
 
 
 
-        /// <summary>
-        /// 检查是否触发
-        /// </summary>
-        /// <param name="triggerTypeEnum"></param>
-        /// <param name="checkModel"></param>
-        /// <returns></returns>
-        public async Task<QuestEntity> CheckTriggerCondition(QuestTriggerTypeEnum triggerTypeEnum, QuestTriggerCheckModel checkModel)
-        {
-            var quests = (await GetAll()).Where(x => x.TriggerType == triggerTypeEnum).ToList();
-            _logger.LogInformation($"quests.Count={quests.Count}");
-            foreach (var quest in quests)
-            {
-                _logger.LogInformation($"quest={quest.Id}");
-                List<QuestTrigger> taskTriggers = new List<QuestTrigger>();
-                try
-                {
-                    taskTriggers = JsonConvert.DeserializeObject<List<QuestTrigger>>(quest.TriggerCondition);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert TaskTrigger:{ex}");
-                }
-
-                if (taskTriggers == null || taskTriggers.Count == 0)
-                {
-                    continue;
-                }
-
-                var taskTrigger = taskTriggers.FirstOrDefault();
-                if (taskTrigger == null || taskTrigger.Attrs == null || taskTrigger.Attrs.Count == 0)
-                {
-                    continue;
-                }
-
-
-                int.TryParse(taskTrigger.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val,out int npcId);
-
-                _logger.LogInformation($"npcId={npcId}");
-                switch (triggerTypeEnum)
-                {
-                    case QuestTriggerTypeEnum.与Npc对话:
-                    case QuestTriggerTypeEnum.杀死Npc:
-                        if (checkModel.NpcId == npcId)
-                        {
-                            return quest;
-                        }
-
-
-                        break;
-                }
-
-
-            }
-
-            return null;
-        }
 
 
 

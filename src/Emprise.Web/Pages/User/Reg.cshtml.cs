@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
 using Emprise.Infra.Authorization;
 using Emprise.Infra.Extensions;

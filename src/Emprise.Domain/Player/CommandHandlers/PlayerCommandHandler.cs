@@ -6,6 +6,7 @@ using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Bus.Models;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
@@ -23,6 +24,7 @@ using Emprise.Domain.Room.Services;
 using Emprise.Domain.Ware.Services;
 using Emprise.Infra;
 using Emprise.Infra.Authorization;
+using Emprise.Infra.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -603,8 +605,6 @@ namespace Emprise.Domain.User.CommandHandlers
             }
 
             var takeConditionStr = quest.TakeCondition;
-
-
             if (!string.IsNullOrEmpty(takeConditionStr))
             {
                 List<QuestTakeCondition> takeConditions = new List<QuestTakeCondition>();
@@ -649,7 +649,7 @@ namespace Emprise.Domain.User.CommandHandlers
             }
             else
             {
-
+                //TODO
 
                 await _playerQuestDomainService.Update(playerQuest);
             }
@@ -661,6 +661,101 @@ namespace Emprise.Domain.User.CommandHandlers
 
             return Unit.Value;
         }
+
+        public async Task<Unit> Handle(CompleteQuestCommand command, CancellationToken cancellationToken)
+        {
+
+            var playerId = command.PlayerId;
+            var questId = command.QuestId;
+
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            var quest = await _questDomainService.Get(questId);
+            if (quest == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"任务不存在！"));
+                return Unit.Value;
+            }
+
+            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == playerId && x.QuestId == quest.Id);
+            if (playerQuest == null) 
+            {
+                await _mudProvider.ShowMessage(playerId, "请先领取任务！");
+                return Unit.Value;
+            }
+
+            //未领取
+            if (!playerQuest.HasTake)
+            {
+                await _mudProvider.ShowMessage(playerId, "请先领取任务！");
+                return Unit.Value;
+            }
+
+            var targetStr = quest.Target;
+            if (!string.IsNullOrEmpty(targetStr))
+            {
+                List<QuestTarget> questTargets = new List<QuestTarget>();
+                try
+                {
+                    questTargets = JsonConvert.DeserializeObject<List<QuestTarget>>(targetStr);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Convert QuestTarget:{ex}");
+                }
+
+                foreach (var questTarget in questTargets)
+                {
+                    var checkResult = await CheckQuestIfComplete(player, questTarget.Target, questTarget.Attrs);
+                    if (!checkResult.IsSuccess)
+                    {
+                        //任务未完成
+                        await _mudProvider.ShowMessage(player.Id, "任务未完成！");
+                        return Unit.Value;
+                    }
+                }
+            }
+
+
+            var consumeStr = quest.Consume;
+            if (!string.IsNullOrEmpty(consumeStr))
+            {
+                List<QuestConsume> questConsumes = new List<QuestConsume>();
+                try
+                {
+                    questConsumes = JsonConvert.DeserializeObject<List<QuestConsume>>(consumeStr);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Convert QuestConsume:{ex}");
+                }
+
+                foreach (var questConsume in questConsumes)
+                {
+                    var checkResult = await CheckQuestConsume(player, questConsume.Consume, questConsume.Attrs);
+                    if (!checkResult.IsSuccess)
+                    {
+                        //任务未完成
+                        await _mudProvider.ShowMessage(player.Id, $"领取奖励失败！{checkResult.ErrorMessage}");
+                        return Unit.Value;
+                    }
+                }
+            }
+
+
+            //TODO  领取奖励
+
+            return Unit.Value;
+        }
+
+
+
+        
         #region 私有方法
 
 
@@ -713,7 +808,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _logger.LogDebug($"npc={npc.Id},scriptId={scriptId},commandId={commandId},input={input}");
 
             var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
-            var scriptIds = npcScripts.Select(x => x.Id).ToList();
+            var scriptIds = npcScripts.Select(x => x.ScriptId).ToList();
             if (!scriptIds.Contains(scriptId))
             {
                 //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
@@ -777,6 +872,8 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 //执行then分支
                 var caseThenStr = scriptCommand.CaseThen;
+
+
                 if (!string.IsNullOrEmpty(caseThenStr))
                 {
                     List<CaseThen> caseThens = new List<CaseThen>();
@@ -866,8 +963,10 @@ namespace Emprise.Domain.User.CommandHandlers
             var title = attrs.FirstOrDefault(x => x.Attr == "Title")?.Val;
             var message = attrs.FirstOrDefault(x => x.Attr == "Message")?.Val;
             var tips = attrs.FirstOrDefault(x => x.Attr == "Tips")?.Val;
-            var commandIdStr = attrs.FirstOrDefault(x => x.Attr == "CommandId")?.Val;
-            int.TryParse(commandIdStr, out int commandId);
+            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "CommandId")?.Val, out int commandId);
+            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val, out int questId);
+
+
 
             var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
             var commandIds = await _redisDb.StringGet<List<int>>(key) ?? new List<int>();
@@ -899,6 +998,116 @@ namespace Emprise.Domain.User.CommandHandlers
 
 
                     await DoScript(player, npc, scriptId, commandId);
+
+                    break;
+
+                case CommandTypeEnum.触发任务:
+
+
+                    var quest = await _questDomainService.Get(questId);
+                    if (quest == null)
+                    {
+                        return;
+                    }
+
+
+                    bool canTake = false;
+
+                    var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == player.Id && x.QuestId == quest.Id);
+                    if (playerQuest == null)
+                    {
+                        canTake = true;
+                    }
+                    else
+                    {
+                        if (playerQuest.HasTake)
+                        {
+
+
+                            var targetStr = quest.Target;
+                            if (!string.IsNullOrEmpty(targetStr))
+                            {
+                                List<QuestTarget> questTargets = new List<QuestTarget>();
+                                try
+                                {
+                                    questTargets = JsonConvert.DeserializeObject<List<QuestTarget>>(targetStr);
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError($"Convert CaseIf:{ex}");
+                                }
+
+                                foreach (var questTarget in questTargets)
+                                {
+                                    var checkResult = await CheckQuestIfComplete(player, questTarget.Target, questTarget.Attrs);
+                                    if (!checkResult.IsSuccess)
+                                    {
+                                        //任务未完成
+                                        await _mudProvider.ShowMessage(player.Id, quest.InProgressWords);
+                                        return;
+                                    }
+                                }
+                            }
+      
+
+                            await _mudProvider.ShowMessage(player.Id, quest.CompletedWords);
+
+                            await _mudProvider.ShowMessage(player.Id, $"你已经完成任务 [{quest.Name}]。  <button type = 'button' class='completeQuest' style='padding:1px 3px;' questId='{quest.Id}'> 领取奖励 </button> ", MessageTypeEnum.指令);
+                            return;
+                        }
+
+                        switch (quest.Period)
+                        {
+                            case QuestPeriodEnum.不可重复: break;
+
+                            case QuestPeriodEnum.无限制:
+                                canTake = true;
+                                break;
+
+                            case QuestPeriodEnum.每周一次:
+                                if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays > 7)
+                                {
+                                    canTake = true;
+                                }
+                                break;
+
+                            case QuestPeriodEnum.每天一次:
+                                if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalHours > 24)
+                                {
+                                    canTake = true;
+                                }
+                                break;
+
+                            case QuestPeriodEnum.每年一次:
+                                if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays > 365)
+                                {
+                                    canTake = true;
+                                }
+                                break;
+
+                            case QuestPeriodEnum.每月一次:
+                                if (DateTime.Now.Subtract(playerQuest.TakeDate).TotalDays > 30)
+                                {
+                                    canTake = true;
+                                }
+                                break;
+                        }
+
+
+
+                    }
+
+
+                    if (canTake)
+                    {
+                        await _mudProvider.ShowMessage(player.Id, quest.BeforeCreate);
+
+                        await _mudProvider.ShowMessage(player.Id, $"是否领取该任务 [{quest.Name}]?  <button type = 'button' class='quest' style='padding:1px 3px;' questId='{quest.Id}'> 确定 </button> ", MessageTypeEnum.指令);
+                    }
+                    else
+                    {
+                        await _mudProvider.ShowMessage(player.Id, quest.CompletedWords);
+                    }
 
                     break;
             }
@@ -1037,7 +1246,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
 
         /// <summary>
-        /// 判断是否可以领取某个任务
+        /// 判断用户是否完成某个任务
         /// </summary>
         /// <param name="player"></param>
         /// <param name="condition"></param>
@@ -1049,11 +1258,12 @@ namespace Emprise.Domain.User.CommandHandlers
 
             var npcId = attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
             var questId = attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val;
+            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "RoomId")?.Val, out int roomId);
 
-            var conditionEnum = (QuestTakeConditionEnum)Enum.Parse(typeof(QuestTakeConditionEnum), condition, true);
+            var targetEnum = (QuestTakeConditionEnum)Enum.Parse(typeof(QuestTakeConditionEnum), condition, true);
 
 
-            switch (conditionEnum)
+            switch (targetEnum)
             {
 
 
@@ -1066,7 +1276,48 @@ namespace Emprise.Domain.User.CommandHandlers
                     break;
 
                 case QuestTakeConditionEnum.完成前置任务:
+
                     if (await _redisDb.StringGet<int>(string.Format(RedisKey.CompleteQuest, player.Id, questId)) != 1)
+                    {
+                        result.ErrorMessage = $"";
+                        return result;
+                    }
+
+                    break;
+
+
+            }
+
+            result.IsSuccess = true;
+            return result;
+        }
+
+
+        private async Task<ResultModel> CheckQuestIfComplete(PlayerEntity player, string target, List<QuestAttribute> attrs)
+        {
+            var result = new ResultModel { IsSuccess = false };
+
+            var npcId = attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
+            var questId = attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val;
+            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "RoomId")?.Val, out int roomId);
+
+            var targetEnum = (QuestTargetEnum)Enum.Parse(typeof(QuestTargetEnum), target, true);
+
+
+            switch (targetEnum)
+            {
+
+
+                case QuestTargetEnum.与某个Npc对话:
+                    if (await _redisDb.StringGet<int>(string.Format(RedisKey.ChatWithNpc, player.Id, npcId)) != 1)
+                    {
+                        result.ErrorMessage = $"";
+                        return result;
+                    }
+                    break;
+
+                case QuestTargetEnum.所在房间:
+                    if (player.RoomId != roomId)
                     {
                         result.ErrorMessage = "";
                         return result;
@@ -1082,6 +1333,53 @@ namespace Emprise.Domain.User.CommandHandlers
             return result;
         }
 
+
+        private async Task<ResultModel> CheckQuestConsume(PlayerEntity player, string consume, List<QuestAttribute> attrs)
+        {
+            var result = new ResultModel { IsSuccess = false };
+
+            var npcId = attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
+            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "Exp")?.Val, out int exp);
+            long.TryParse(attrs.FirstOrDefault(x => x.Attr == "Money")?.Val, out long money);
+
+            var consumeEnum = (QuestConsumeEnum)Enum.Parse(typeof(QuestConsumeEnum), consume, true);
+
+
+            switch (consumeEnum)
+            {
+
+
+                case QuestConsumeEnum.物品:
+
+                    //TODO
+                    result.ErrorMessage = $"完成任务需要消耗物品";
+                    return result;
+                    break;
+
+                case QuestConsumeEnum.经验:
+                    if (player.Exp < exp)
+                    {
+                        result.ErrorMessage = $"完成任务需要消耗经验 {exp}";
+                        return result;
+                    }
+                    break;
+
+                case QuestConsumeEnum.金钱:
+                    if (player.Money < money)
+                    {
+                        result.ErrorMessage = $"完成任务需要消耗 {money.ToMoney()}";
+                        return result;
+                    }
+
+                    break;
+
+
+            }
+
+            result.IsSuccess = true;
+            return await Task.FromResult(result);
+        }
+        
         #endregion
 
     }

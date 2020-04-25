@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Infra.Extensions
+namespace Emprise.Domain.Core.Extensions
 {
     public static class ChineseExtension
     {

@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,13 +69,18 @@ namespace Emprise.Domain.Npc.EventHandlers
             await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpc, playerId, npcId), 1, DateTime.Now.AddDays(30));
 
 
+
+
+            /*
             _logger.LogInformation($"CheckQuest  playerId={playerId},{npcId}");
-            var questTriggerCheckModel = new QuestTriggerCheckModel { NpcId = npcId, PlayerId = playerId };
-            var quest = await _questDomainService.CheckTriggerCondition(QuestTriggerTypeEnum.与Npc对话, questTriggerCheckModel);
-            if (quest == null)
+
+            var quests = (await _questDomainService.GetAll()).Where(x=>x.NpcId== npcId).ToList();
+            if (quests.Count == 0)
             {
                 return;
             }
+
+
 
             bool canTake = false;
 
@@ -127,6 +133,8 @@ namespace Emprise.Domain.Npc.EventHandlers
                 else
                 {
                     await _mudProvider.ShowMessage(playerId, quest.InProgressWords);
+
+                    await _mudProvider.ShowMessage(playerId, $"是否领取该任务 [{quest.Name}]?  <button type = 'button' class='quest' style='padding:1px 3px;' questId='{quest.Id}'> 确定 </button> ", MessageTypeEnum.指令);
                 }
 
             }
@@ -138,7 +146,7 @@ namespace Emprise.Domain.Npc.EventHandlers
 
                 await _mudProvider.ShowMessage(playerId, $"是否领取该任务 [{quest.Name}]?  <button type = 'button' class='quest' style='padding:1px 3px;' questId='{quest.Id}'> 确定 </button> ", MessageTypeEnum.指令);
             }
-
+            */
         }
     }
 }

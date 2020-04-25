@@ -33,9 +33,6 @@ namespace Emprise.Admin.Pages.Quest
         public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
-
-        public List<QuestTrigger> TriggerConditions { get; set; } = new List<QuestTrigger>();
-
         public List<QuestTrigger> TakeConditions { get; set; } = new List<QuestTrigger>();
         
 
@@ -57,11 +54,6 @@ namespace Emprise.Admin.Pages.Quest
 
                 Quest = _mapper.Map<QuestInput>(quest);
 
-
-                if (!string.IsNullOrEmpty(quest.TriggerCondition))
-                {
-                    TriggerConditions = JsonConvert.DeserializeObject<List<QuestTrigger>>(quest.TriggerCondition);
-                }
 
 
                 if (!string.IsNullOrEmpty(quest.TakeCondition))

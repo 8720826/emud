@@ -3,10 +3,26 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Infra.Extensions
+namespace Emprise.Domain.Core.Extensions
 {
     public static class GameExtension
     {
+        public static string ToMoney(this long money)
+        {
+            if (money / 1000000 > 0)
+            {
+                return $"{money / 1000000}两金子{money / 1000}两银子{money % 1000}个铜板";
+            }
+            else if (money/1000>0)
+            {
+                return $"{money/1000}两银子{money % 1000}个铜板";
+            }
+            else
+            {
+                return $"{money % 1000}个铜板";
+            }
+        }
+
         public static string ToAge(this int age)
         {
             if (age < 10 * 12)

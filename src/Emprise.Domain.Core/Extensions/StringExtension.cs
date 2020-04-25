@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Emprise.Infra.Extensions
+namespace Emprise.Domain.Core.Extensions
 {
     public static class StringExtension
     {

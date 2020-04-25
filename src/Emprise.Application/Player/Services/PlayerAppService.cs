@@ -4,6 +4,7 @@ using Emprise.Application.Player.Dtos;
 using Emprise.Application.Player.Models;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
@@ -107,7 +108,12 @@ namespace Emprise.Application.Player.Services
             await _bus.SendCommand(command);
         }
 
-
+        public async Task CompleteQuest(int playerId, int questId)
+        {
+            var command = new CompleteQuestCommand(playerId, questId);
+            await _bus.SendCommand(command);
+        }
+        
 
         #endregion
 

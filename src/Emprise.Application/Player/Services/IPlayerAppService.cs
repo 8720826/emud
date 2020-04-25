@@ -37,6 +37,8 @@ namespace Emprise.Application.Player.Services
 
         Task TakeQuest(int playerId, int questId);
 
+        Task CompleteQuest(int playerId, int questId);
+
         Task<PlayerEntity> GetUserPlayer(int userId);
 
         Task<PlayerEntity> GetPlayer(int playerId);

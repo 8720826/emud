@@ -19,17 +19,6 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public QuestTypeEnum Type { set; get; }
 
-        /// <summary>
-        /// 触发方式
-        /// </summary>
-        public QuestTriggerTypeEnum TriggerType { set; get; }
-
-
-        /// <summary>
-        /// 触发条件 json格式，{TaskTriggerEnum,TriggerValue}
-        /// </summary>
-        public string TriggerCondition { set; get; }
-
 
         /// <summary>
         /// 领取条件 json格式，{TaskTriggerEnum,TriggerValue}
@@ -94,10 +83,5 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public string Reward { set; get; }
 
-        /// <summary>
-        /// 描述
-        /// </summary>
-        [StringLength(500)]
-        public string Description { set; get; }
     }
 }

@@ -220,5 +220,14 @@ namespace Emprise.MudServer.Hubs
                 await _playerAppService.TakeQuest(playerId, questAction.QuestId);
             });
         }
+
+        public async Task CompleteQuest(QuestAction questAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+                await _playerAppService.CompleteQuest(playerId, questAction.QuestId);
+            });
+        }
+        
     }
 }

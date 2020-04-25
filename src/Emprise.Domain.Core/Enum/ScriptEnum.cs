@@ -123,7 +123,8 @@ namespace Emprise.Domain.Core.Enum
         播放对话 =1,
         对话选项 = 2,
         输入选项 = 3,
-        跳转到分支 = 4
+        跳转到分支 = 4,
+        触发任务 = 5,
     }
 
 

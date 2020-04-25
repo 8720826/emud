@@ -99,62 +99,6 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            领取方式
-                        </div>
-                        <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(QuestTakeTypeEnum)))
-                            {
-                                <label class="am-btn am-btn-default am-btn-xs">
-                                    <input type="radio" name="Quest.TakeType" value="@(item.ToString())"> @(item.ToString())
-                                </label>
-                            }
-
-                        </div>
-                        <div class="am-u-sm-6"></div>
-                    </div>
-
-
-
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
-                            交付方式
-                        </div>
-                        <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(QuestDeliverTypeEnum)))
-                            {
-                                <label class="am-btn am-btn-default am-btn-xs">
-                                    <input type="radio" name="Quest.DeliverType" value="@(item.ToString())"> @(item.ToString())
-                                </label>
-                            }
-
-                        </div>
-                        <div class="am-u-sm-6"></div>
-                    </div>
-
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
-                            触发条件
-                        </div>
-                        <div class="am-u-sm-10" id="taskTrigger">
-                            <input type="hidden" asp-for="Quest.TriggerType">
-                            <input type="hidden" asp-for="Quest.TriggerCondition">
-                            <div class="am-form-inline am-form-group">
-
-                                <select class="am-input-sm am-form-field triggerConditions" style="width: 180px; ">
-                                    <option value="0">请选择</option>
-                                    @foreach (var item in Enum.GetValues(typeof(QuestTriggerConditionEnum)))
-                                    {
-                                        <option value="@((int)item)">@(item.ToString())</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="am-u-sm-1"></div>
-                    </div>
-
-                    <div class="am-g am-margin-top">
-                        <div class="am-u-sm-2 am-text-right">
                             领取条件
                         </div>
                         <div class="am-u-sm-10" id="taskTrigger">
@@ -235,14 +179,6 @@
                         <div class="am-u-sm-1"></div>
                     </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            描述
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.Description"></textarea>
-                        </div>
-                    </div>
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">

@@ -3,6 +3,7 @@ using Emprise.Application.Npc.Models;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Npc.Entity;
@@ -99,14 +100,16 @@ namespace Emprise.Application.User.Services
             var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
             foreach (var npcScript in npcScripts)
             {
-                var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.Id);
+                var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.ScriptId && x.IsEntry);
 
-                var actions = scriptCommands.Where(x => x.IsEntry).Select(x => new NpcAction { Name = x.Name, ScriptId = x.ScriptId, CommandId = x.Id }).ToList();
+                var actions = scriptCommands.Select(x => new NpcAction { Name = x.Name, ScriptId = x.ScriptId, CommandId = x.Id }).ToList();
+
+
 
                 npcInfo.Actions.AddRange(actions);
             }
 
-
+            /*
             if (!string.IsNullOrEmpty(npc.InitWords))
             {
                 var initWords = npc.InitWords.Split('\r').Where(x => !string.IsNullOrEmpty(x)).ToList();
@@ -118,7 +121,7 @@ namespace Emprise.Application.User.Services
                     await _mudProvider.ShowMessage(playerId, initWord);
                 }
             }
-
+            */
             //await CheckQuest(playerId, npc);
 
 

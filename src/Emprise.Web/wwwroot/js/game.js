@@ -274,6 +274,10 @@ new Vue({
                 var questId = obj.getAttribute('questId') * 1;
                 console.log("TakeQuest=" + questId);
                 connection.invoke("TakeQuest", { questId: questId });
+            } else if (obj.className === 'completeQuest') {
+                var questId = obj.getAttribute('questId') * 1;
+                console.log("TakeQuest=" + questId);
+                connection.invoke("CompleteQuest", { questId: questId });
             }
         }
     },
