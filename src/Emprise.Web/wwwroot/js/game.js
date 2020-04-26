@@ -194,6 +194,12 @@ new Vue({
                 console.log("UpdatePlayerStatus:" + result);
                 that.myinfo.status = result;
             });
+
+            connection.on("offline", () => {
+                connection.stop();
+                connection = null;
+                location.replace("/game/offline");
+            });
         },
         move: function (roomId) {
             if (roomId > 0) {
@@ -257,7 +263,7 @@ new Vue({
             var npcId = obj.getAttribute('npcId')*1;
             action.scriptId = obj.getAttribute('scriptId')*1;
             action.commandId = obj.getAttribute('commandId')*1;
-
+            var questId = obj.getAttribute('questId') * 1;
             console.log("TakeQuest=" + obj.className);
 
             if (obj.className === 'chat') {
@@ -271,11 +277,10 @@ new Vue({
                 connection.invoke("NpcAction", { npcId, action });
                 obj.previousElementSibling.value = "";
             } else if (obj.className === 'quest') {
-                var questId = obj.getAttribute('questId') * 1;
+                
                 console.log("TakeQuest=" + questId);
                 connection.invoke("TakeQuest", { questId: questId });
             } else if (obj.className === 'completeQuest') {
-                var questId = obj.getAttribute('questId') * 1;
                 console.log("TakeQuest=" + questId);
                 connection.invoke("CompleteQuest", { questId: questId });
             }

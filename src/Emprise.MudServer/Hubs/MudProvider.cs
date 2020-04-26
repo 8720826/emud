@@ -120,6 +120,10 @@ namespace Emprise.MudServer.Hubs
         /// <param name="channel"></param>
         public async Task ShowMessage(int playerId, string content, MessageTypeEnum type = MessageTypeEnum.提示)
         {
+            if (string.IsNullOrEmpty(content))
+            {
+                return;
+            }
             await Send(new PlayerHubData
             {
                 Action = ClientMethod.ShowMessage,
