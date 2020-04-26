@@ -43,10 +43,6 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public bool HasTake { set; get; }
 
-        /// <summary>
-        /// 是否领取奖励
-        /// </summary>
-        public bool HasComplete { set; get; }
 
         /// <summary>
         /// 更新实际

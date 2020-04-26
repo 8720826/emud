@@ -623,7 +623,6 @@ namespace Emprise.Domain.User.CommandHandlers
                     CompleteDate = DateTime.Now,
                     CreateDate = DateTime.Now,
                     DayTimes = 1,
-                    HasComplete = false,
                     HasTake = true,
                     Target = quest.Target,
                     Times = 1,
@@ -636,7 +635,6 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 //TODO 领取任务
                 playerQuest.HasTake = true;
-                playerQuest.HasComplete = false;
                 playerQuest.IsComplete = false;
                 playerQuest.TakeDate = DateTime.Now;
                 playerQuest.Times += 1;
@@ -708,7 +706,7 @@ namespace Emprise.Domain.User.CommandHandlers
             //TODO 修改任务状态
             playerQuest.HasTake = false;
             playerQuest.CompleteDate = DateTime.Now;
-            playerQuest.HasComplete = true;
+            playerQuest.IsComplete = true;
             await _playerQuestDomainService.Update(playerQuest);
 
             await DoQuestConsume(player, quest.Consume);
