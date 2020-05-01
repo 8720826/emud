@@ -17,6 +17,8 @@
     <script type="text/javascript" src="/simditor/scripts/simditor-html.js"></script>
 
     <link rel="stylesheet" href="/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+
+    <script type="text/javascript" src="/js/template-web.js"></script>
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
@@ -46,7 +48,7 @@
                             @foreach (var item in Enum.GetValues(typeof(WareCategoryEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category" value="@(item.ToString())"> @(item.ToString())
+                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category" value="@((int)item)"> @(item.ToString())
                                 </label>
                             }
 
@@ -59,10 +61,10 @@
                             小类
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
-                            @foreach (var item in Enum.GetValues(typeof(WareEffectEnum)))
+                            @foreach (var item in Enum.GetValues(typeof(WareTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@(item.ToString())"> @(item.ToString())
+                                    <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@((int)item)"> @(item.ToString())
                                 </label>
                             }
 
@@ -74,10 +76,10 @@
                         <div class="am-u-sm-2 am-text-right">
                             属性
                         </div>
-                        <div class="am-u-sm-10" id="caseIf">
+                        <div class="am-u-sm-10" id="effect">
                             <input type="hidden" asp-for="Ware.Effect">
                             <div class="am-form-inline am-form-group">
-                                <select class="am-input-sm am-form-field conditions" style="width: 100px;">
+                                <select class="am-input-sm am-form-field effects" style="width: 100px;">
                                     <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(WareEffectEnum)))
                                     {
@@ -121,22 +123,75 @@
         </form>
     </div>
 </div>
+
+<partial name="_EffectTemplate.cshtml" />
+
+
 @section Scripts {
 
     <script type="text/javascript">
-            $(function () {
-                Simditor.locale = 'zh-CN';//设置中文
-                var editor = new Simditor({
-                    textarea: $("#description"),  //textarea的id
-                    placeholder: '请输入物品描述',
-                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
-                    pasteImage: true,//允许粘贴图片
-                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
-                });
+        $(function () {
+            Simditor.locale = 'zh-CN';//设置中文
+            var editor = new Simditor({
+                textarea: $("#description"),  //textarea的id
+                placeholder: '请输入物品描述',
+                toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                pasteImage: true,//允许粘贴图片
+                defaultImage: ''//编辑器插入的默认图片，此处可以删除
+            });
 
-                $("input[type=checkbox]:checked").each(function () {
+            $("input[type=checkbox]:checked").each(function () {
                 $(this).parent(".am-btn").addClass("am-active");
             });
+
+
+
+            $(document).on("change", "#Ware_Category", function () {
+                $("#Ware_Type").val(0);
+                var cate = $(this).val();
+                $("input[name='Ware.Type']").each(function () {
+                    $(this).parent().show();
+                    var type = $(this).val();
+                    if (!type.startsWith(cate)) {
+                        $(this).parent().hide();
+                    }
+                });
             });
+
+
+
+            $(document).on("change", ".effects", function () {
+                var effect = $(this).val();
+                console.log("effect=" + effect);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (effect == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#effect-" + effect).length > 0) {
+                    $(this).after(template("effect-" + effect, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".effects").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var effectDiv = $(".effects").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(effectDiv);
+
+                    $(this).parent().parent().find(".effects:last").parent().after($(div));
+                }
+
+            });
+        });
+
+        var startsWith = function (prefix) {
+            return this.slice(0, prefix.length) === prefix;
+        };
     </script>
 }
