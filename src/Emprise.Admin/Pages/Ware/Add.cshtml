@@ -147,10 +147,9 @@
 
 
             $(document).on("change", "#Ware_Category", function () {
-                $("#Ware_Type").val(0);
                 var cate = $(this).val();
                 $("input[name='Ware.Type']").each(function () {
-                    $(this).parent().show();
+                    $(this).attr("checked", false).parent().show();
                     var type = $(this).val();
                     if (!type.startsWith(cate)) {
                         $(this).parent().hide();
