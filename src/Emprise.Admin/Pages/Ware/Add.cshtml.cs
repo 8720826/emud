@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Npc;
+using Emprise.Admin.Models.Ware;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Npc
+namespace Emprise.Admin.Pages.Ware
 {
     public class AddModel : PageModel
     {
@@ -23,7 +23,7 @@ namespace Emprise.Admin.Pages.Npc
         }
 
         [BindProperty]
-        public NpcInput Npc { get; set; }
+        public WareInput Ware { get; set; }
 
         public string Tips { get; set; }
         public string SueccessMessage { get; set; }
@@ -37,11 +37,11 @@ namespace Emprise.Admin.Pages.Npc
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Npc/Index");
+                UrlReferer = Url.Page("/Ware/Index");
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, string position)
+        public async Task<IActionResult> OnPostAsync()
         {
             SueccessMessage = "";
             ErrorMessage = "";
@@ -51,21 +51,19 @@ namespace Emprise.Admin.Pages.Npc
                 return Page();
             }
 
-            var npc = _mapper.Map<NpcEntity>(Npc);
+            var ware = _mapper.Map<WareEntity>(Ware);
 
 
 
 
 
-            await _db.Npcs.AddAsync(npc);
+            await _db.Wares.AddAsync(ware);
 
             await _db.SaveChangesAsync();
 
 
 
             SueccessMessage = $"添加成功！";
-
-            //return RedirectToPage("Edit", new { id = npc.Id });
 
             return Redirect(UrlReferer);
         }

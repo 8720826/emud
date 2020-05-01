@@ -31,9 +31,6 @@ namespace Emprise.Domain.Npc.Entity
         public bool IsEnable { set; get; }
 
 
-        public List<NpcScriptEntity> NpcScripts { get; set; }
 
-
-        public List<ScriptCommandEntity> ScriptCommands { get; set; }
     }
 }

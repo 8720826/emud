@@ -74,12 +74,7 @@ namespace Emprise.Domain.Npc.Entity
         public int Exp { set; get; }
 
 
-        /// <summary>
-        /// 脚本
-        /// </summary>
 
-
-        public List<NpcScriptEntity> NpcScripts { get; set; }
 
         /// <summary>
         /// 默认对话

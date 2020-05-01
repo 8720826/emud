@@ -8,7 +8,6 @@ using Emprise.Admin.Data;
 using Emprise.Admin.Models.Room;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace Emprise.Admin.Pages.Room
 {

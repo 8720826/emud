@@ -1,9 +1,5 @@
 ﻿
-using Emprise.Domain.Admin.Entity;
-using Emprise.Domain.Npc.Entity;
-using Emprise.Domain.Quest.Entity;
-using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Ware.Entity;
+using Emprise.Admin.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

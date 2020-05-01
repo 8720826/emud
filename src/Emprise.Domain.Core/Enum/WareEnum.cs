@@ -47,4 +47,13 @@ namespace Emprise.Domain.Core.Enum
         卸下 = 0,
         寄售 = 2
     }
+
+    public enum WareEffectEnum
+    {
+        攻击 = 1,
+        防御 = 2,
+        内力 = 3,
+        气血 = 4,
+
+    }
 }

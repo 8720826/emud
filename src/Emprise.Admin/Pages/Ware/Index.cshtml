@@ -43,33 +43,37 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">名称</th>
-                        <th class="table-exits">类型</th>
-                        <th class="table-desc">性别</th>
-                        <th class="table-desc">等级</th>
-
-                        <th class="table-work">房间</th>
-
+                        <th class="table-exits">大类</th>
+                        <th class="table-desc">小类</th>
+                        <th class="table-desc">图片</th>
+                        <th class="table-work">描述</th>
+                        <th class="table-work">属性</th>
                         <th class="table-set">操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var room in Model.Paging.Data)
+                    @foreach (var ware in Model.Paging.Data)
                     {
                     <tr>
-                        <td>@(room.Id)</td>
-                        <td><a asp-page="./Edit" asp-route-id="@room.Id">@(room.Name)</a></td>
-                        <td>
+                        <td>@(ware.Id)</td>
+                        <td><a asp-page="./Edit" asp-route-id="@ware.Id">@(ware.Name)</a></td>
+                        <td>@(ware.Category)
                         </td>
-                        <td>@(room.Description)</td>
                         <td>
-  
+                            @(ware.Type)
+                        </td>
+                        <td>
+                           <img src="@(ware.Img)" />"
+                        </td>
+                        <td>@(ware.Description)</td>
+                        <td>
                         </td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
-                                    <a asp-page="./Edit" asp-route-id="@room.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                    <a asp-page="./Copy" asp-route-id="@room.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
-                                    <a asp-page="./Delete" asp-route-id="@room.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                                    <a asp-page="./Edit" asp-route-id="@ware.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                    <a asp-page="./Copy" asp-route-id="@ware.Id" class="am-btn am-btn-default am-btn-xs"><span class="am-icon-copy"></span> 复制</a>
+                                    <a asp-page="./Delete" asp-route-id="@ware.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                 </div>
                             </div>
                         </td>

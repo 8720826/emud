@@ -44,6 +44,6 @@ namespace Emprise.Domain.Npc.Entity
         public string CaseElse { set; get; }
 
 
-        public ScriptEntity Script { get; set; }
+
     }
 }

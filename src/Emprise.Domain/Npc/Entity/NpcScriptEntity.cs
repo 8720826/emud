@@ -15,11 +15,11 @@ namespace Emprise.Domain.Npc.Entity
         /// NpcId
         /// </summary>
         public int NpcId { set; get; }
-        public NpcEntity Npc { get; set; }
+
 
 
         public int ScriptId { set; get; }
-        public ScriptEntity Script { get; set; }
+
 
     }
 }

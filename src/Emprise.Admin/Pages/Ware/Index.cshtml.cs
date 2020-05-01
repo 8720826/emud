@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Emprise.Admin.Data;
+using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
-using Emprise.Domain.Ware.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 

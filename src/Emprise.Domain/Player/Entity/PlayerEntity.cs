@@ -150,6 +150,7 @@ namespace Emprise.Domain.Player.Entity
         /// <summary>
         /// 气血
         /// </summary>
+        [WareEffectField(WareEffectEnum.气血)]
         [ConditionField(PlayerConditionFieldEnum.气血)]
         public int Hp { set; get; }
 
@@ -169,6 +170,7 @@ namespace Emprise.Domain.Player.Entity
         /// <summary>
         /// 内力
         /// </summary>
+        [WareEffectField(WareEffectEnum.内力)]
         [ConditionField(PlayerConditionFieldEnum.内力)]
         public int Mp { set; get; }
 
@@ -199,12 +201,14 @@ namespace Emprise.Domain.Player.Entity
         /// <summary>
         /// 攻击
         /// </summary>
+        [WareEffectField(WareEffectEnum.攻击)]
         [ConditionField(PlayerConditionFieldEnum.攻击)]
         public int Atk { set; get; }
 
         /// <summary>
         /// 防御
         /// </summary>
+        [WareEffectField(WareEffectEnum.防御)]
         [ConditionField(PlayerConditionFieldEnum.防御)]
         public int Def { set; get; }
 
