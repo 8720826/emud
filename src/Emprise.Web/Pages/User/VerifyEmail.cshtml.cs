@@ -16,7 +16,7 @@ namespace Emprise.Web.Pages.User
     {
         private readonly IAccountContext _accountContext;
 
-        public VerifyEmailModel(IAccountContext accountContext, IOptions<AppConfig> appConfig) : base(appConfig)
+        public VerifyEmailModel(IAccountContext accountContext, IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
             _accountContext = accountContext;
         }

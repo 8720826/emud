@@ -16,7 +16,7 @@ namespace Emprise.Web.Pages.User
     [AllowAnonymous]
     public class LoginModel : BasePageModel
     {
-        public LoginModel(IOptions<AppConfig> appConfig) : base(appConfig)
+        public LoginModel(IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
 
         }

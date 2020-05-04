@@ -1,4 +1,5 @@
 ﻿using Emprise.Admin.Models;
+using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,7 +37,7 @@ namespace Emprise.Admin.Api
 
             using (var scope = _services.CreateScope())
             {
-                var appConfig = scope.ServiceProvider.GetRequiredService<IOptions<AppConfig>>().Value;
+                var appConfig = scope.ServiceProvider.GetRequiredService<IOptionsMonitor<AppConfig>>().CurrentValue;
                 var httpAccessor = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Emprise.Domain.Core.Models
@@ -8,7 +9,6 @@ namespace Emprise.Domain.Core.Models
     {
         public EmailConfig Email { get; set; }
 
-        public ConnectionStringConfig ConnectionStrings { get; set; }
 
         public AliyunConfig Aliyun { get; set; }
 
@@ -19,46 +19,52 @@ namespace Emprise.Domain.Core.Models
 
     public class EmailConfig
     {
-        public string SmtpServer { get; set; }
 
-        public int SmtpPort { get; set; }
-
+        [DisplayName("邮件发信帐号")]
         public string AccountName { get; set; }
 
-        public string Password { get; set; }
 
+        [DisplayName("邮件发信人")]
         public string FromAlias { get; set; }
     }
 
     public class AliyunConfig
     {
+        [DisplayName("阿里云Endpoint")]
+        public string Endpoint { get; set; }
+
+        [DisplayName("阿里云RegionId")]
         public string RegionId { get; set; }
 
+        [DisplayName("阿里云BucketName")]
+        public string BucketName { get; set; }
+
+        [DisplayName("阿里云AccessKeyId")]
         public string AccessKeyId { get; set; }
 
-        public string Secret { get; set; }
+        [DisplayName("阿里云AccessKeySecret")]
+        public string AccessKeySecret { get; set; }
 
     }
 
-    public class ConnectionStringConfig
+    public class SiteConfig 
     {
-        public string Redis { get; set; }
-
-        public string Mysql { get; set; }
-
-        public string MsSql { get; set; }
-    }
-
-    public class SiteConfig
-    {
+        [DisplayName("站点名")]
         public string Name { get; set; }
 
+        [DisplayName("站点网址")]
         public string Url { get; set; }
 
+        [DisplayName("备案号")]
         public string BeiAn { get; set; }
 
+        [DisplayName("游戏欢迎词")]
         public string WelcomeWords { get; set; }
 
+        /// <summary>
+        /// 出生地房间id，该id必须存在
+        /// </summary>
+        [DisplayName("出生房间Id")]
         public int BornRoomId { get; set; }
         
 
@@ -72,8 +78,16 @@ namespace Emprise.Domain.Core.Models
         /// </summary>
         public bool IsNeedVerifyEmail { get; set; }
 
+        /// <summary>
+        /// 是否开启远程api，开启后，后台管理操作将更新游戏缓存。当不需要使用后台时，建议关闭
+        /// </summary>
+        [DisplayName("是否开启远程api")]
         public bool IsApiEnable { get; set; }
 
+        /// <summary>
+        /// 远程api验证密钥，请妥善保管，切勿泄漏！！！
+        /// </summary>
+        [DisplayName("远程api验证密钥")]
         public string ApiKey { get; set; }
 
 

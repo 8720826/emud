@@ -6,6 +6,7 @@ using Emprise.Admin.Data;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
 using Emprise.Admin.Models.Admin;
+using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,10 @@ namespace Emprise.Admin.Pages
         protected readonly EmpriseDbContext _db;
         private readonly AppConfig _appConfig;
 
-        public ModifyPasswordModel(EmpriseDbContext db, IOptions<AppConfig> appConfig)
+        public ModifyPasswordModel(EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig)
         {
             _db = db;
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
         }
 
         public string SueccessMessage { get; set; }

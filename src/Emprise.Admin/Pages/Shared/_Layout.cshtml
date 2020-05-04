@@ -54,6 +54,7 @@
                 <li class="admin-parent" id="system">
                     <a class="am-cf @(menuGroupEnum == MenuGroupEnum.System?"":"am-collapsed")" data-am-collapse="{target: '#collapse-nav1'}"><span class="am-icon-th"></span> 系统设置 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                     <ul class="am-list admin-sidebar-sub am-collapse @(menuGroupEnum == MenuGroupEnum.System?" am-in":"")" id="collapse-nav1">
+                        <li><a asp-page="/Config/Index" class="am-cf"><span class="am-icon-table"></span> 配置管理</a></li>
                         <li><a asp-page="/Room/Index" class="am-cf"><span class="am-icon-table"></span> 地图管理</a></li>
                         <li><a asp-page="/Npc/Index"><span class="am-icon-puzzle-piece"></span> NPC管理</a></li>
                         <li><a asp-page="/Script/Index"><span class="am-icon-puzzle-piece"></span> NPC脚本</a></li>

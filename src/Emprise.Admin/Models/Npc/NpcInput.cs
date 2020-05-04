@@ -1,5 +1,4 @@
 ﻿using Emprise.Domain.Core.Enum;
-using Emprise.Domain.Npc.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

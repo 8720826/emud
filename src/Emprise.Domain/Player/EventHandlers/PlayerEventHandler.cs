@@ -48,7 +48,7 @@ namespace Emprise.Domain.User.EventHandlers
         private readonly AppConfig _appConfig;
         private readonly IChatLogDomainService _chatLogDomainService;
 
-        public PlayerEventHandler(IRoomDomainService roomDomainService, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IMudProvider chatProvider, IMudOnlineProvider chatOnlineProvider, IMapper mapper, IOptions<AppConfig> appConfig, IChatLogDomainService chatLogDomainService)
+        public PlayerEventHandler(IRoomDomainService roomDomainService, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IMudProvider chatProvider, IMudOnlineProvider chatOnlineProvider, IMapper mapper, IOptionsMonitor<AppConfig> appConfig, IChatLogDomainService chatLogDomainService)
         {
             _roomDomainService = roomDomainService;
             _npcDomainService = npcDomainService;
@@ -56,7 +56,7 @@ namespace Emprise.Domain.User.EventHandlers
             _mudProvider = chatProvider;
             _chatOnlineProvider = chatOnlineProvider;
             _mapper = mapper;
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
             _chatLogDomainService = chatLogDomainService;
         }
 

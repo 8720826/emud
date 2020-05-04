@@ -16,7 +16,7 @@ namespace Emprise.Web.Pages.User
     [AllowAnonymous]
     public class RegModel : BasePageModel
     {
-        public RegModel(IOptions<AppConfig> appConfig) : base(appConfig)
+        public RegModel(IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
 
         }

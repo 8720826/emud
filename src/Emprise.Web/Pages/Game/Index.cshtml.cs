@@ -14,7 +14,7 @@ namespace Emprise.Web.Pages.Game
     {
         private readonly IAccountContext _account;
 
-        public IndexModel(IAccountContext account, IOptions<AppConfig> appConfig) : base(appConfig)
+        public IndexModel(IAccountContext account, IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
             _account = account;
         }

@@ -14,7 +14,7 @@ namespace Emprise.Web.Pages.User
     [AllowAnonymous]
     public class ForgotPasswordModel : BasePageModel
     {
-        public ForgotPasswordModel(IOptions<AppConfig> appConfig) : base(appConfig)
+        public ForgotPasswordModel(IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
 
         }

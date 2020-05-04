@@ -9,6 +9,7 @@ using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
 using Emprise.Admin.Models.Admin;
+using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -24,11 +25,11 @@ namespace EmpriseAdmin.Pages
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
         private readonly AppConfig _appConfig;
-        public LoginModel(EmpriseDbContext db, IMapper mapper, IOptions<AppConfig> appConfig)
+        public LoginModel(EmpriseDbContext db, IMapper mapper, IOptionsMonitor<AppConfig> appConfig)
         {
             _db = db;
             _mapper = mapper;
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
         }
 
         public bool HasSetAdmin { get; set; }

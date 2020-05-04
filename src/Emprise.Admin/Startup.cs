@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Mapper;
-using Emprise.Admin.Models;
+using Emprise.Admin.Middlewares;
+using Emprise.Domain.Core.Configuration;
+using Emprise.Domain.Core.Models;
 using Emprise.Infra.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -28,8 +30,11 @@ namespace Emprise.Admin
             Configuration = configuration;
 
             var builder = new ConfigurationBuilder()
-               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+               //.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               //.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            .AddRedisConfiguration(configuration.GetConnectionString("Redis"), "configurations", 60);
+
             Configuration = builder.Build();
         }
 
@@ -39,6 +44,7 @@ namespace Emprise.Admin
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppConfig>(Configuration);
+
 
             services.AddRazorPages().AddRazorPagesOptions(options =>
             {
@@ -98,9 +104,12 @@ namespace Emprise.Admin
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
+            app.MapWhen(context => context.Request.Path.ToString().EndsWith("/fileupload"), appBranch => appBranch.UseMiddleware<UploadMiddleware>());
+
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapRazorPages();
             });
         }

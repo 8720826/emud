@@ -17,8 +17,11 @@
     <script type="text/javascript" src="/simditor/scripts/simditor-html.js"></script>
 
     <link rel="stylesheet" href="/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="/webuploader/webuploader.css">
 
     <script type="text/javascript" src="/js/template-web.js"></script>
+    <script type="text/javascript" src="/webuploader/webuploader.html5only.js"></script>
+
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
@@ -63,13 +66,29 @@
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(WareTypeEnum)))
                             {
-                                <label class="am-btn am-btn-default am-btn-xs">
+                                <label class="am-btn am-btn-default am-btn-xs" style="display:none">
                                     <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@((int)item)"> @(item.ToString())
                                 </label>
                             }
 
                         </div>
                         <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            图片
+                        </div>
+                        <div class="am-u-sm-10">
+                            <div id="uploader" class="wu-example">
+                                <!--用来存放文件信息-->
+                                <input asp-for="Ware.Img" type="hidden" name="Ware.Img" /> 
+                                <div id="img"></div>
+                                <div class="btns">
+                                    <div id="picker">选择文件</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="am-g am-margin-top-sm">
@@ -130,7 +149,64 @@
 @section Scripts {
 
     <script type="text/javascript">
+        var endpoint = "@(Model.Endpoint)";
+        var filepath = "";
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // 文件接收服务端。
+            server: endpoint,
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#picker',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+
+        uploader.on('uploadBeforeSend', function (obj, data) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "/oss/token",
+                dataType: "json"
+            }).done(function (result, status, xhr) {
+                //传入表单参数
+                var suffix = get_suffix(data.name);
+                filepath = result.key + suffix
+                data = $.extend(data, {
+                    "key": filepath,
+                    "policy": result.policy,
+                    "ossAccessKeyId": result.ossAccessKeyId,
+                    "success_action_status": 200,
+                    "signature": result.signature
+                });
+
+            });
+
+            if (!data.signature) {
+                return false;
+            }
+        });
+
+        //当文件上传成功时触发
+        uploader.on('uploadSuccess', function (file) {
+            var host = "https://img.emprise.cn/"
+            $("#img").append("<img src='" + host+ filepath + "'>");
+            $("#Ware_Img").val(filepath);
+        });
+
+
+
         $(function () {
+
             Simditor.locale = 'zh-CN';//设置中文
             var editor = new Simditor({
                 textarea: $("#description"),  //textarea的id
@@ -192,5 +268,18 @@
         var startsWith = function (prefix) {
             return this.slice(0, prefix.length) === prefix;
         };
+
+
+        var get_suffix = function (filename) {
+            if (!filename) {
+                return "";
+            }
+            var pos = filename.lastIndexOf('.')
+            var suffix = "";
+            if (pos != -1) {
+                suffix = filename.substring(pos)
+            }
+            return suffix;
+        }
     </script>
 }

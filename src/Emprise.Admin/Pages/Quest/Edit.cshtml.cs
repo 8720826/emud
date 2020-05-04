@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Quest;
-using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Quest.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

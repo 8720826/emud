@@ -93,7 +93,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IDelayedQueue delayedQueue,
             IRecurringQueue recurringQueue,
             IMudProvider mudProvider,
-            IOptions<AppConfig> appConfig,
+            IOptionsMonitor<AppConfig> appConfig,
             IScriptDomainService scriptDomainService,
             INpcScriptDomainService npcScriptDomainService,
             IScriptCommandDomainService ScriptCommandDomainService,
@@ -117,7 +117,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _delayedQueue = delayedQueue;
             _recurringQueue = recurringQueue;
             _mudProvider = mudProvider;
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
             _scriptDomainService = scriptDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _ScriptCommandDomainService = ScriptCommandDomainService;

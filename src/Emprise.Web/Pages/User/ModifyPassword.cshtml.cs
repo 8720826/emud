@@ -11,7 +11,7 @@ namespace Emprise.Web.Pages.User
 {
     public class ModifyPasswordModel : BasePageModel
     {
-        public ModifyPasswordModel(IOptions<AppConfig> appConfig) : base(appConfig)
+        public ModifyPasswordModel(IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
 
         }

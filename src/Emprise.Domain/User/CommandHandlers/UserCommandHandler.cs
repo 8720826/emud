@@ -54,7 +54,7 @@ namespace Emprise.Domain.User.CommandHandlers
             IHttpContextAccessor httpAccessor,
             IMapper mapper,
             IMail mail,
-            IOptions<AppConfig> appConfig,
+            IOptionsMonitor<AppConfig> appConfig,
             IRedisDb redisDb,
             INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
         {
@@ -65,7 +65,7 @@ namespace Emprise.Domain.User.CommandHandlers
             _httpAccessor = httpAccessor;
             _mapper = mapper;
             _mail = mail;
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
             _redisDb = redisDb;
         }
 

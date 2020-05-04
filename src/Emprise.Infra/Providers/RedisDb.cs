@@ -1,5 +1,6 @@
 ﻿using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -18,12 +19,14 @@ namespace Emprise.Infra.Providers
         private readonly AppConfig _appConfig;
         private readonly ISubscriber sub;
         private readonly ILogger<RedisDb> _logger;
+        private readonly IConfiguration _configuration;
 
-        public RedisDb(IOptions<AppConfig> appConfig, ILogger<RedisDb> logger)
+        public RedisDb(IOptionsMonitor<AppConfig> appConfig, ILogger<RedisDb> logger, IConfiguration configuration)
         {
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
             _logger = logger;
-            var redis = ConnectionMultiplexer.Connect(_appConfig.ConnectionStrings.Redis);
+            _configuration = configuration;
+            var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
             db = redis.GetDatabase();
             sub = redis.GetSubscriber();
         }

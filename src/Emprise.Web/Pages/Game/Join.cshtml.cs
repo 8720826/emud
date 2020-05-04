@@ -18,7 +18,7 @@ namespace Emprise.Web.Pages.Game
         private readonly IAccountContext _account;
         private readonly IPlayerAppService _playerAppService;
         private readonly DomainNotificationHandler _notifications;
-        public JoinModel(IPlayerAppService playerAppService, IAccountContext account, INotificationHandler<DomainNotification> notifications, IOptions<AppConfig> appConfig) : base(appConfig)
+        public JoinModel(IPlayerAppService playerAppService, IAccountContext account, INotificationHandler<DomainNotification> notifications, IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
             _account = account;
             _playerAppService = playerAppService;

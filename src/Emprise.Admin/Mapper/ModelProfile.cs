@@ -4,14 +4,13 @@ using Emprise.Admin.Models.NpcScript;
 using Emprise.Admin.Models.Room;
 using Emprise.Admin.Models.Script;
 using Emprise.Admin.Models.Quest;
-using Emprise.Domain.Npc.Entity;
-using Emprise.Domain.Room.Entity;
-using Emprise.Domain.Quest.Entity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Emprise.Admin.Models.Ware;
+using Emprise.Admin.Entity;
 
 namespace Emprise.Admin.Mapper
 {
@@ -49,7 +48,8 @@ namespace Emprise.Admin.Mapper
 
             CreateMap<ScriptCommandInput, ScriptCommandEntity>();
 
-
+            CreateMap<WareInput, WareEntity>();
+            
         }
     }
 }

@@ -15,16 +15,16 @@ namespace Emprise.Infra.Providers
     public class AliyunMail: IMail
     {
         private readonly AppConfig _appConfig;
-        public AliyunMail(IOptions<AppConfig> appConfig)
+        public AliyunMail(IOptionsMonitor<AppConfig> appConfig)
         {
-            _appConfig = appConfig.Value;
+            _appConfig = appConfig.CurrentValue;
         }
 
 
         public async Task Send(MailModel message)
         {
             await Task.Run(()=> {
-                IClientProfile profile = DefaultProfile.GetProfile(_appConfig.Aliyun.RegionId, _appConfig.Aliyun.AccessKeyId, _appConfig.Aliyun.Secret);
+                IClientProfile profile = DefaultProfile.GetProfile(_appConfig.Aliyun.RegionId, _appConfig.Aliyun.AccessKeyId, _appConfig.Aliyun.AccessKeySecret);
                 IAcsClient client = new DefaultAcsClient(profile);
                 SingleSendMailRequest request = new SingleSendMailRequest();
                 try

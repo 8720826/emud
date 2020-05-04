@@ -1,5 +1,5 @@
-﻿using Emprise.Domain.Core.Enum;
-using Emprise.Domain.Npc.Entity;
+﻿using Emprise.Admin.Entity;
+using Emprise.Domain.Core.Enum;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

@@ -20,7 +20,7 @@ namespace Emprise.Web.Pages.User
         private readonly IAccountContext _accountContext;
         private readonly IUserAppService _userAppService;
         private readonly IPlayerAppService _playerAppService;
-        public IndexModel(IAccountContext accountContext, IUserAppService userAppService, IPlayerAppService playerAppService, IOptions<AppConfig> appConfig) : base(appConfig)
+        public IndexModel(IAccountContext accountContext, IUserAppService userAppService, IPlayerAppService playerAppService, IOptionsMonitor<AppConfig> appConfig) : base(appConfig)
         {
             _accountContext = accountContext;
             _userAppService = userAppService;

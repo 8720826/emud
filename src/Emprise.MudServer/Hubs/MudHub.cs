@@ -31,7 +31,7 @@ namespace Emprise.MudServer.Hubs
         private readonly IDelayedQueue  _delayedQueue;
         private readonly IRecurringQueue  _recurringQueue;
         private readonly IMediatorHandler _bus;
-        public MudHub(IAccountContext account, IMudOnlineProvider mudOnlineProvider, IOptions<AppConfig> appConfig, IPlayerAppService playerAppService,  ILogger<MudHub> logger, INpcAppService npcAppService, IDelayedQueue delayedQueue, IRecurringQueue recurringQueue, INotificationHandler<DomainNotification> notifications, IMediatorHandler bus) : base(account,notifications, mudOnlineProvider, appConfig, playerAppService, logger)
+        public MudHub(IAccountContext account, IMudOnlineProvider mudOnlineProvider, IOptionsMonitor<AppConfig> appConfig, IPlayerAppService playerAppService,  ILogger<MudHub> logger, INpcAppService npcAppService, IDelayedQueue delayedQueue, IRecurringQueue recurringQueue, INotificationHandler<DomainNotification> notifications, IMediatorHandler bus) : base(account,notifications, mudOnlineProvider, appConfig, playerAppService, logger)
         {
             _npcAppService = npcAppService;
             _delayedQueue = delayedQueue;
