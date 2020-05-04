@@ -17,7 +17,7 @@ namespace Emprise.Web.Controllers
     [ApiController]
     public class RoomController : ControllerBase
     {
-        /*
+        
         private readonly ILogger<RoomController> _logger;
         private readonly IRoomDomainService _roomDomainService;
         private readonly IMediatorHandler _bus;
@@ -35,6 +35,6 @@ namespace Emprise.Web.Controllers
             var room = await _roomDomainService.Get(id);
             await _bus.RaiseEvent(new EntityUpdatedEvent<RoomEntity>(room)).ConfigureAwait(false);
             return Ok();
-        }*/
+        }
     }
 }

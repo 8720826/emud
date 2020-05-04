@@ -26,7 +26,7 @@ namespace EmpriseAdmin.Pages
 
         public void OnGet()
         {
-            SiteName = _appConfig.Site.Name;
+            SiteName = _appConfig?.Site?.Name;
         }
     }
 }

@@ -6,51 +6,53 @@
 @{
     Layout = "_Layout";
 }
-    <div class="big_bg" id="app">
-        <div class="nav">
-            <h2 class="nav-title">使用邮箱注册</h2>
-            <a href="@(Url.Page("/User/Login"))" class="nav-back"><span><<返回</span></a>
-        </div>
-
-        <div class="main">
-            <div>
-                <template v-if="!hasSend">
-                    <div class="login-nonreg">
-                        <form>
-                            <div class="form-text-login">
-                                <label>邮箱：</label>
-                                <input type="text" class="form-text" v-model="email" />
-                                <a href="javascript:;" class="form-text-clear fn-hide"><i class="icon icon-clear"></i></a>
-                            </div>
-
-                        </form>
-                    </div>
-                    <div class="fn-mt-login fn-mlr">
-                        <a class="btn btn-bar-tawny" href="javascript:;" v-on:click="send"> 发送邮件 </a>
-                    </div>
-                </template>
-                <div class="fn-mt-login fn-mlr" v-else>
-                    <div>
-                        <p>已发送邮件到 <span>{{emailToLower}}</span>，请登录邮箱查看。</p>
-                        <p>验证成功后，点击下面按钮</p>
-                    </div>
-
-                    <a class="btn btn-bar-tawny mt15" v-bind:href="loginUrl"> 登录游戏 </a>
-                </div>
-                <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
-                <div class="fn-mt-login fn-mlr" style="text-align:right;">
-                    <a style="font-size:12px;" href="@(Url.Page("/User/Login"))">已有账号，直接登录</a>
-                </div>
-            </div>
-
-        </div>
-
-        @await Html.PartialAsync("_Footer", Model.SiteConfig)
-
-        <div class="loading" v-show="loading">
-            <img src="/images/loading.gif">
-        </div>
+<div class="big_bg" id="app">
+    <div class="nav">
+        <h2 class="nav-title">使用邮箱注册</h2>
+        <a href="@(Url.Page("/User/Login"))" class="nav-back"><span><<返回</span></a>
     </div>
+
+    <div class="main">
+        <div>
+            <template v-if="!hasSend">
+                <div class="login-nonreg">
+                    <form>
+                        <div class="form-text-login">
+                            <label>邮箱：</label>
+                            <input type="text" class="form-text" v-model="email" />
+                            <a href="javascript:;" class="form-text-clear fn-hide"><i class="icon icon-clear"></i></a>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="fn-mt-login fn-mlr">
+                    <a class="btn btn-bar-tawny" href="javascript:;" v-on:click="send"> 发送邮件 </a>
+                </div>
+            </template>
+            <div class="fn-mt-login fn-mlr" v-else>
+                <div>
+                    <p>已发送邮件到 <span>{{emailToLower}}</span>，请登录邮箱查看。</p>
+                    <p>验证成功后，点击下面按钮</p>
+                </div>
+
+                <a class="btn btn-bar-tawny mt15" v-bind:href="loginUrl"> 登录游戏 </a>
+            </div>
+            <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
+            <div class="fn-mt-login fn-mlr" style="text-align:right;">
+                <a style="font-size:12px;" href="@(Url.Page("/User/Login"))">已有账号，直接登录</a>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="loading" v-show="loading">
+        <img src="/images/loading.gif">
+    </div>
+</div>
+
+@await Html.PartialAsync("_Footer", Model.SiteConfig)
 @section Scripts {
     <script type="text/javascript">
         var vm = new Vue({
@@ -73,7 +75,7 @@
                 }
             },
             methods: {
-                send: function () { 
+                send: function () {
                     var that = this;
                     that.tips = "";
 

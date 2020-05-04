@@ -89,6 +89,12 @@ namespace Emprise.Domain.Core.Models
         public string ApiKey { get; set; }
 
 
+        /// <summary>
+        /// 统计代码
+        /// </summary>
+        [DisplayName("统计代码")]
+        public string StatsScript { get; set; }
+
 
     }
 }

@@ -36,6 +36,16 @@ namespace Emprise.Admin.Data
 
         public DbSet<ScriptCommandEntity> ScriptCommands { get; set; }
 
+        public DbSet<UserEntity> Users { get; set; }
+
+        public DbSet<PlayerEntity> Players { get; set; }
+        public DbSet<PlayerQuestEntity> PlayerQuests { get; set; }
+        public DbSet<PlayerWareEntity> PlayerWares { get; set; }
+        public DbSet<ChatLogEntity> ChatLogs { get; set; }
+        public DbSet<SystemLogEntity> SystemLogs { get; set; }
+
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NpcScriptEntity>()
