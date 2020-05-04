@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Emprise.Domain.Core.Configuration;
 using Emprise.Domain.Core.Models;
 using Emprise.Infra.Authorization;
 using Emprise.Infra.Data;
@@ -31,7 +32,9 @@ namespace Emprise.Web
 
             var builder = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+
+            .AddRedisConfiguration(configuration.GetConnectionString("Redis"), "configurations", 60);
             Configuration = builder.Build();
         }
 
@@ -89,7 +92,7 @@ namespace Emprise.Web
 
             //services.AddDbContext<EmpriseDbContext>(options => options.UseMySql(Configuration.GetValue<string>("ConnectionStrings:Mysql")));
             services.AddDbContext<EmpriseDbContext>( // replace "YourDbContext" with the class name of your DbContext
-               options => options.UseMySql(Configuration.GetValue<string>("ConnectionStrings:Mysql"), // replace with your Connection String
+               options => options.UseMySql(Configuration.GetConnectionString("Mysql"), // replace with your Connection String
                    mySqlOptions =>
                    {
                        mySqlOptions.ServerVersion(new Version(5, 7, 17), ServerType.MySql); // replace with your Server Version and Type

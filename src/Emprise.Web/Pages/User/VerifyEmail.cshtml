@@ -38,6 +38,9 @@
                     <a class="btn btn-bar-tawny mt15" v-bind:href="loginUrl"> 登录游戏 </a>
                 </div>
                 <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
+                <div class="fn-mt-login fn-mlr" style="text-align:right;">
+                    <a style="font-size:12px;" href="@(Url.Page("/User/Login"))">已有账号，直接登录</a>
+                </div>
             </div>
 
         </div>
@@ -62,6 +65,9 @@
                 loginUrl:function(){
                     return "/user/login?email=" + this.emailToLower;
                 },
+                regUrl: function () {
+                    return "/user/reg?email=" + this.emailToLower;
+                },
                 emailToLower: function () {
                     return this.email.toLowerCase();
                 }
@@ -84,9 +90,11 @@
                     .then(function (response) {
                         var result = response.data;
                         if (result.status) {
-                            that.hasSend = true;
+                            console.log(that.regUrl);
+                            location.replace(that.regUrl);
+                            //that.hasSend = true;
                         } else {
-                            var error = result.errorMessage || "登录失败";
+                            var error = result.errorMessage || "发送邮件失败";
                             if (result.data) {
                                 error += "<br>" + result.data;
                             }
@@ -102,73 +110,5 @@
             }
         });
 
-        @*
-    ({
-        send: function () {
-            $("#msgTip").html("");
-
-            if (!$("input[name=email]").val()) {
-                return false;
-            }
-
-            var index = layer.load(2);
-
-            $.ajax({
-                type: "POST",
-                url: "/api/user/SendRegEmail",
-                data: $("form").serialize(),
-                success: function (result) {
-                    if (result.status) {
-                        layer.msg('发送邮件成功！');
-                        $("#formSend").hide();
-                        $(".login-nonreg").hide();
-
-                        var email = $("input[name=email]").val();
-                        $("#email").html(email);
-                        $("#sendResult").show();
-                        $("#formModify").attr("href", "/user/login?email=" + email);
-
-                    } else {
-                        var error = result.errorMessage||"发送邮件失败";
-                        if (result.data) {
-                            error += "<br>" + result.data;
-                        }
-                        $("#msgTip").html(error);
-                    }
-                    layer.close(index);
-                }, error: function () {
-                    layer.close(index);
-                }
-            });
-        },
-        init : function () {
-            var that = this;
-
-            $(function () {
-                layer.config({
-                    skin: 'layui-layer-hei'
-                });
-
-                $(document).on("click", "#formSend", function () {
-                    that.send();
-                });
-
-                $(document).on("keyup", "input", function () {
-                    var obj = $(this);
-                    if (obj.val()) {
-                        obj.next("a").show();
-                    } else {
-                        obj.next("a").hide();
-                    }
-                });
-
-                $(document).on("click", ".form-text-clear", function () {
-                    var obj = $(this);
-                    obj.prev("input").val("");
-                    obj.hide();
-                });
-            });
-        }
-    }).init();*@
     </script>
 }

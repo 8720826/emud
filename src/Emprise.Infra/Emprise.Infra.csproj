@@ -13,7 +13,9 @@
     <Compile Remove="Authorization\JwtAuthenticationScheme.cs" />
     <Compile Remove="Authorization\JwtChallengeContext.cs" />
     <Compile Remove="Authorization\TokenValidatedContext.cs" />
+    <Compile Remove="Providers\AliyunMail.cs" />
     <Compile Remove="Providers\JobProvider.cs" />
+    <Compile Remove="Providers\SmtpMail.cs" />
     <Compile Remove="Queue\DelayDispatcherQueue.cs" />
     <Compile Remove="Queue\IMessageQueue.cs" />
     <Compile Remove="Queue\MessageQueueDelay.cs" />
@@ -27,7 +29,7 @@
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Hangfire.Core" Version="1.7.9" />
-    <PackageReference Include="MailKit" Version="2.5.2" />
+    <PackageReference Include="MailKit" Version="2.6.0" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />

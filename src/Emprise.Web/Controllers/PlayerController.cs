@@ -25,7 +25,7 @@ namespace Emprise.Web.Controllers
             _accountContext = accountContext;
         }
 
-        /*
+        
         [Route("create")]
         [HttpPost]
         public async Task<IActionResult> Create(PlayerCreateDto dto)
@@ -54,7 +54,7 @@ namespace Emprise.Web.Controllers
 
             return MyResponse();
         }
-        */
+        
 
         /*
         [Route("initGame")]

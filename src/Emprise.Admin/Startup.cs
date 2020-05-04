@@ -30,8 +30,8 @@ namespace Emprise.Admin
             Configuration = configuration;
 
             var builder = new ConfigurationBuilder()
-               //.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-               //.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 
             .AddRedisConfiguration(configuration.GetConnectionString("Redis"), "configurations", 60);
 
@@ -69,7 +69,7 @@ namespace Emprise.Admin
              ;
 
             services.AddDbContext<EmpriseDbContext>( // replace "YourDbContext" with the class name of your DbContext
-               options => options.UseMySql(Configuration.GetValue<string>("ConnectionStrings:Mysql"), // replace with your Connection String
+               options => options.UseMySql(Configuration.GetConnectionString("Mysql"), // replace with your Connection String
                    mySqlOptions =>
                    {
                        mySqlOptions.ServerVersion(new Version("5.7.17"), ServerType.MySql); // replace with your Server Version and Type

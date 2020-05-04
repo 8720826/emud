@@ -19,6 +19,14 @@ namespace Emprise.Domain.Core.Models
 
     public class EmailConfig
     {
+        [DisplayName("SMTP服务地址")]
+        public string SmtpServer { get; set; }
+
+        [DisplayName("SMTP端口")]
+        public int SmtpPort{ get; set; }
+
+        [DisplayName("SMTP密码")]
+        public string Password { get; set; }
 
         [DisplayName("邮件发信帐号")]
         public string AccountName { get; set; }
@@ -67,16 +75,6 @@ namespace Emprise.Domain.Core.Models
         [DisplayName("出生房间Id")]
         public int BornRoomId { get; set; }
         
-
-        /// <summary>
-        /// 是否需要填写邮箱
-        /// </summary>
-        public bool IsNeedEmail { get; set; }
-
-        /// <summary>
-        /// 是否需要验证邮箱，开启后需要配置邮件服务
-        /// </summary>
-        public bool IsNeedVerifyEmail { get; set; }
 
         /// <summary>
         /// 是否开启远程api，开启后，后台管理操作将更新游戏缓存。当不需要使用后台时，建议关闭

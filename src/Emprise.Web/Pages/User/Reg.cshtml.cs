@@ -21,9 +21,6 @@ namespace Emprise.Web.Pages.User
 
         }
 
-        public bool IsNeedEmail { get; set; }
-
-        public bool IsNeedVerifyEmail { get; set; }
 
         public string Email { get; set; }
 
@@ -32,10 +29,6 @@ namespace Emprise.Web.Pages.User
         public async Task<IActionResult> OnGetAsync(string email, string code)
         {
 
-            IsNeedEmail = _appConfig.Site.IsNeedEmail;
-
-            IsNeedVerifyEmail = _appConfig.Site.IsNeedVerifyEmail;
-
             Email = email;
             Code = code;
             if (await HttpContext.HasLogin())
@@ -43,7 +36,7 @@ namespace Emprise.Web.Pages.User
                 return RedirectToPage("/User/Index");
             }
 
-            if (IsNeedVerifyEmail && string.IsNullOrEmpty(email) || string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(email))
             {
                 return RedirectToPage("/User/VerifyEmail");
             }

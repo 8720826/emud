@@ -26,7 +26,7 @@ namespace Emprise.Web.Controllers
             _accountContext = accountContext;
         }
 
-        /*
+        
         [Route("SendRegEmail")]
         [AllowAnonymous, HttpPost]
         public async Task<IActionResult> SendRegEmail(SendRegEmailDto dto)
@@ -82,7 +82,7 @@ namespace Emprise.Web.Controllers
 
             return MyResponse();
         }
-        */
+        
         
         /*
         [Route("sendVerifyEmail")]
