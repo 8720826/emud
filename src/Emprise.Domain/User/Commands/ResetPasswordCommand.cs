@@ -11,11 +11,14 @@ namespace Emprise.Domain.User.Commands
 
         public string Email { get; set; }
 
+        public string Password { get; set; }
 
-
-        public ResetPasswordCommand(string email)
+        public string Code { get; set; }
+        public ResetPasswordCommand(string email, string password, string code)
         {
             Email = email;
+            Password = password;
+            Code = code;
         }
 
     }

@@ -65,16 +65,16 @@ namespace Emprise.Application.User.Services
 
         public async Task ResetPassword(ResetPasswordDto dto)
         {
-            var command = new ResetPasswordCommand(dto.Email);
+            var command = new ResetPasswordCommand(dto.Email, dto.Password, dto.Code);
             await _bus.SendCommand(command);
         }
 
-        /*
-        public async Task SendVerifyEmail(int userId, SendVerifyEmailDto dto)
+        
+        public async Task SendResetEmail(SendResetEmailDto dto)
         {
-            var command = new SendVerifyEmailCommand(userId, dto.Email, dto.Password);
+            var command = new SendResetEmailCommand(dto.Email);
             await _bus.SendCommand(command);
-        }*/
+        }
 
         #endregion
 

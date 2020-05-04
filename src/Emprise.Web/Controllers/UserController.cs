@@ -82,8 +82,17 @@ namespace Emprise.Web.Controllers
 
             return MyResponse();
         }
+
+        [Route("sendresetemail")]
+        [AllowAnonymous, HttpPost]
+        public async Task<IActionResult> SendResetEmail(SendResetEmailDto dto)
+        {
+            await _userService.SendResetEmail(dto);
+
+            return MyResponse();
+        }
         
-        
+
         /*
         [Route("sendVerifyEmail")]
         [HttpPost]

@@ -36,7 +36,9 @@ namespace Emprise.Domain.User.CommandHandlers
         IRequestHandler<LogoutCommand, Unit>,
         IRequestHandler<ModifyPasswordCommand, Unit>,
         IRequestHandler<ResetPasswordCommand, Unit>,
-        IRequestHandler<SendRegEmailCommand, Unit>       
+        IRequestHandler<SendRegEmailCommand, Unit>,
+        IRequestHandler<SendResetEmailCommand, Unit>
+        
     {
         private readonly IMediatorHandler _bus;
         private readonly ILogger<UserCommandHandler> _logger;
@@ -95,15 +97,15 @@ namespace Emprise.Domain.User.CommandHandlers
             long ttl = await _redisDb.KeyTimeToLive(key);
             if (ttl < 0)
             {
-                await _bus.RaiseEvent(new DomainNotification($"注册链接已超时，请重试"));
+                await _bus.RaiseEvent(new DomainNotification($"注册验证码已超时，请重试"));
                 return Unit.Value;
             }
 
             string emailCode = await _redisDb.StringGet<string>(key);
 
-            if (emailCode != code)
+            if (string.Compare(emailCode, code, true) != 0)
             {
-                await _bus.RaiseEvent(new DomainNotification($"注册链接已失效，请重试"));
+                await _bus.RaiseEvent(new DomainNotification($"注册验证码已失效，请重试"));
                 return Unit.Value;
             }
 
@@ -235,6 +237,8 @@ namespace Emprise.Domain.User.CommandHandlers
         public async Task<Unit> Handle(ResetPasswordCommand command, CancellationToken cancellationToken)
         {
             var email = command.Email;
+            var code = command.Code;
+            var password = command.Password;
 
             var user = await _userDomainService.Get(p => p.Email == email && p.HasVerifiedEmail);
             if (user == null)
@@ -243,22 +247,26 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            int expiryMin = 60*24;
-
             string key = string.Format(RedisKey.ResetPassword, user.Id);// $"resetpassword_{user.Id}";
-            if (await _redisDb.KeyTimeToLive(key) > 0)
+            long ttl = await _redisDb.KeyTimeToLive(key);
+            if (ttl < 0)
             {
-                await _bus.RaiseEvent(new DomainNotification($"找回密码操作需要间隔24小时"));
+                await _bus.RaiseEvent(new DomainNotification($"找回密码验证码已超时，请重试"));
                 return Unit.Value;
             }
 
-            await _redisDb.StringSet(key, 1, DateTime.Now.AddMinutes(expiryMin));
+            string emailCode = await _redisDb.StringGet<string>(key);
 
-            string newPassword = GenerateRandom(10);
-            user.Password = newPassword.ToMd5();
+            if (string.Compare(emailCode ,code,true) != 0)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"找回密码验证码已失效，请重试"));
+                return Unit.Value;
+            }
 
+            await _redisDb.KeyDelete(key);
+
+            user.Password = password.ToMd5();
             await _userDomainService.Update(user);
-
 
             await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
 
@@ -281,7 +289,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
             string key = string.Format(RedisKey.RegEmail, email); //$"regemail_{email}";
 
-            if (await _redisDb.KeyTimeToLive(key) > 0 && email!= "27800734@qq.com")
+            if (await _redisDb.KeyTimeToLive(key) > 0)
             {
                 await _bus.RaiseEvent(new DomainNotification($"同一邮箱每{expiryMin}分钟只能发送一次，请稍后"));
                 return Unit.Value;
@@ -320,6 +328,54 @@ namespace Emprise.Domain.User.CommandHandlers
             return Unit.Value;
         }
 
+        public async Task<Unit> Handle(SendResetEmailCommand command, CancellationToken cancellationToken)
+        {
+            var email = command.Email;
+
+            var user = await _userDomainService.Get(p => p.Email == email && p.HasVerifiedEmail);
+            if (user == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification("输入信息有误，请确认邮箱是否无误"));
+                return Unit.Value;
+            }
+
+            int expiryMin = 30;
+
+            string key = string.Format(RedisKey.ResetPassword, user.Id);// $"resetpassword_{user.Id}";
+            if (await _redisDb.KeyTimeToLive(key) > 0)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"找回密码操作需要间隔24小时"));
+                return Unit.Value;
+            }
+
+
+            string code = GenerateRandom(4);
+
+            try
+            {
+                string url = $"{_appConfig.Site.Url}/user/resetpassword?email={email}&code={code}";
+                await _mail.Send(new MailModel
+                {
+                    Content = $"<p>您好，您正在使用找回密码功能，请在验证码输入框中输入此次验证码： {code}，验证码有效期{expiryMin}分钟。</p><p>您也可以<a href='{url}'>点击这里</a>或复制以下链接到浏览器打开</p><p>{url}</p>",
+                    Address = email,
+                    Subject = $"【{_appConfig.Site.Name}】找回密码"
+                });
+            }
+            catch (Exception ex)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"邮件发送失败，请稍后重试"));
+                return Unit.Value;
+            }
+
+            await _redisDb.StringSet(key, code, DateTime.Now.AddMinutes(expiryMin));
+
+            await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
+
+            return Unit.Value;
+        }
+
+
+        
         #region 生成随机密码
         private string GenerateRandom(int Length)
         {

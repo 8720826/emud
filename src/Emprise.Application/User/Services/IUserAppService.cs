@@ -24,7 +24,7 @@ namespace Emprise.Application.User.Services
 
         Task ResetPassword(ResetPasswordDto dto);
 
-        //Task SendVerifyEmail(int userId, SendVerifyEmailDto dto);
+        Task SendResetEmail(SendResetEmailDto dto);
 
         Task<UserModel> GetUser(int id);
     }

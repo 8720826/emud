@@ -548,7 +548,7 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
-            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == playerId && x.QuestId == quest.Id);
+            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == playerId && x.QuestId == questId);
             if (playerQuest != null)
             {
                 //已领取
