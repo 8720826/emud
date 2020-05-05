@@ -1,4 +1,4 @@
-# emud
+`gRVBC RE	W	ASQ	# emud
 ## 介绍
 * 全称EmpriseMud，基于netcore3.1开发的mud游戏框架。  
 * 仅供学习交流技术使用，未经本人同意，不可用于任何商业用途。  
@@ -7,7 +7,7 @@
 ## 演示
 * 演示地址 ： https://emprise.cn/
 #### 登录页面    ![登录页面](https://raw.githubusercontent.com/8720826/emud/master/doc/login.png)
-#### 登录页面    ![创建角色](https://raw.githubusercontent.com/8720826/emud/master/doc/player.png)
+#### 创建角色    ![创建角色](https://raw.githubusercontent.com/8720826/emud/master/doc/player.png)
 
 ## 技术栈
 * netcore3.1
