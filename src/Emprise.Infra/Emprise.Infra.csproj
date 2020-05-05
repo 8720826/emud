@@ -15,7 +15,7 @@
     <Compile Remove="Authorization\TokenValidatedContext.cs" />
     <Compile Remove="Providers\AliyunMail.cs" />
     <Compile Remove="Providers\JobProvider.cs" />
-    <Compile Remove="Providers\SmtpMail.cs" />
+    <Compile Remove="Providers\KitMail.cs" />
     <Compile Remove="Queue\DelayDispatcherQueue.cs" />
     <Compile Remove="Queue\IMessageQueue.cs" />
     <Compile Remove="Queue\MessageQueueDelay.cs" />

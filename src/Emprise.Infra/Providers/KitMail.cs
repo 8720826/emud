@@ -34,7 +34,7 @@ namespace Emprise.Infra.Providers
                 // For demo-purposes, accept all SSL certificates (in case the server supports STARTTLS)
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                client.Connect(_appConfig.Email.SmtpServer, _appConfig.Email.SmtpPort, false);
+                client.Connect(_appConfig.Email.SmtpServer);
 
 
                 // Note: only needed if the SMTP server requires authentication
