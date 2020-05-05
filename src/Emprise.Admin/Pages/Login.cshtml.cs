@@ -50,6 +50,7 @@ namespace EmpriseAdmin.Pages
             if (!ModelState.IsValid)
             {
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
+                HasSetAdmin = _db.Admins.Count() != 0;
                 return Page();
             }
 
@@ -70,12 +71,14 @@ namespace EmpriseAdmin.Pages
                 if (admin == null)
                 {
                     ErrorMessage = "账号或密码错误";
+                    HasSetAdmin = _db.Admins.Count() != 0;
                     return Page();
                 }
 
                 if (admin.Password != LoginInput.Password.ToMd5())
                 {
                     ErrorMessage = "账号或密码错误";
+                    HasSetAdmin = _db.Admins.Count() != 0;
                     return Page();
                 }
             }

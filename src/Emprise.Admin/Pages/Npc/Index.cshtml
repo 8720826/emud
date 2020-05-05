@@ -51,7 +51,6 @@
                         <th class="table-exits">性别</th>
                         <th class="table-desc">描述</th>
                         <th class="table-work">属性</th>
-                        <th class="table-work">对话</th>
                         <th class="table-work">脚本</th>
                         <th class="table-work">是否启用</th>
                         <th class="table-set">操作</th>
@@ -71,7 +70,6 @@
                                 @(npc.CanKill ? "杀死" : "")
                                 @(npc.CanMove ? "移动" : "")
                             </td>
-                            <td> @(Html.Raw(npc.InitWords.Replace("\r\n","<br/>")))</td>
                             <td>
                                 <ul>
                                     @foreach (var script in npc.NpcScripts)

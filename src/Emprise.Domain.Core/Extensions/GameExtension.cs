@@ -31,7 +31,7 @@ namespace Emprise.Domain.Core.Extensions
             }
             else
             {
-                return $"看起来约{(age / 12).NumberToChinese()}多岁。";
+                return $"看起来约{(age / 12).NumberToChinese()}岁。";
             }
         }
 
