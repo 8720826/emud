@@ -26,6 +26,8 @@ namespace Emprise.Domain.Core.Enum
 
     public enum WareTypeEnum
     {
+        无=0,
+
         刀 = 102001,
         剑 = 102002,
         枪 = 102003,

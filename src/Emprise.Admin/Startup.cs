@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Emprise.Admin.Api;
 using Emprise.Admin.Data;
+using Emprise.Admin.Helper;
 using Emprise.Admin.Mapper;
 using Emprise.Admin.Middlewares;
 using Emprise.Domain.Core.Configuration;
@@ -50,6 +51,13 @@ namespace Emprise.Admin
             {
                 options.Conventions.AuthorizePage("/Index");
                 options.Conventions.AuthorizeFolder("/Room");
+                options.Conventions.AuthorizeFolder("/Config");
+                options.Conventions.AuthorizeFolder("/Npc");
+                options.Conventions.AuthorizeFolder("/Script");
+                options.Conventions.AuthorizeFolder("/Ware");
+                options.Conventions.AuthorizeFolder("/Quest");
+                options.Conventions.AuthorizeFolder("/User");
+                options.Conventions.AuthorizeFolder("/Player");
                 options.Conventions.AllowAnonymousToPage("/Login");
                 options.Conventions.AllowAnonymousToPage("/Denied");
             });
@@ -61,6 +69,7 @@ namespace Emprise.Admin
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IOssHelper, OssHelper>();
 
             services.AddTransient<AuthorizationHandler>();
 
