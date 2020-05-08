@@ -74,7 +74,6 @@ namespace Emprise.Admin.Pages.Room
             var room = _mapper.Map<RoomEntity>(Room);
             await _db.Rooms.AddAsync(room);
 
-            await _db.SaveChangesAsync();
 
             if (id > 0)
             {

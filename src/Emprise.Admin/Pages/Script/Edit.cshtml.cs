@@ -84,7 +84,7 @@ namespace Emprise.Admin.Pages.NpcScript
 
             var script = await _db.Scripts.FindAsync(id);
             _mapper.Map(Script, script);
-            await _db.SaveChangesAsync();
+
 
 
             var npcScripts = _db.NpcScripts.Where(x => x.ScriptId == id);
@@ -99,7 +99,7 @@ namespace Emprise.Admin.Pages.NpcScript
                     NpcIds.Remove(npcScript.NpcId);
                 }
             }
-            await _db.SaveChangesAsync();
+
 
             foreach (var npcId in NpcIds)
             {

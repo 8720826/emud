@@ -84,7 +84,7 @@ namespace Emprise.Admin.Pages.Npc
                 npc.InitWords = "";
             }
 
-            await _db.SaveChangesAsync();
+
 
             var npcScripts = _db.NpcScripts.Where(x => x.NpcId == id);
             foreach(var npcScript in npcScripts)
@@ -98,7 +98,7 @@ namespace Emprise.Admin.Pages.Npc
                     ScriptIds.Remove(npcScript.ScriptId);
                 }
             }
-            await _db.SaveChangesAsync();
+
 
             foreach (var scriptId in ScriptIds)
             {
