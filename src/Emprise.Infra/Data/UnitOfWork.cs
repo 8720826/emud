@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,15 +16,20 @@ namespace Emprise.Infra.Data
             _context = context;
         }
 
-        public async Task<int> CommitAsync()
+
+        public async Task<int> Commit()
         {
             return await _context.SaveChangesAsync();
         }
 
-        /*
+        
         public void Dispose()
         {
-            _context.Dispose();
-        }*/
+            if (_context != null)
+            {
+                _context.Dispose();
+            }
+            GC.SuppressFinalize(this);
+        }
     }
 }

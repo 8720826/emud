@@ -1,8 +1,9 @@
 ﻿using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Commands;
+using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Notifications;
 using MediatR;
-
+using System.Threading.Tasks;
 
 namespace Emprise.Domain.Core.CommandHandlers
 {
@@ -13,7 +14,7 @@ namespace Emprise.Domain.Core.CommandHandlers
     public class CommandHandler
     {
         // 注入工作单元
-        //private readonly IUnitOfWork _uow;
+        private readonly IUnitOfWork _uow;
         // 注入中介处理接口
         private readonly IMediatorHandler _bus;
 
@@ -28,9 +29,9 @@ namespace Emprise.Domain.Core.CommandHandlers
         /// <param name="uow"></param>
         /// <param name="bus"></param>
         /// <param name="cache"></param>
-        public CommandHandler(/*IUnitOfWork uow, */IMediatorHandler bus, INotificationHandler<DomainNotification> notifications)
+        public CommandHandler(IUnitOfWork uow, IMediatorHandler bus, INotificationHandler<DomainNotification> notifications)
         {
-            //_uow = uow;
+            _uow = uow;
             _bus = bus;
             _notifications = (DomainNotificationHandler)notifications;
             //_uow.BeginTransaction();
@@ -47,5 +48,13 @@ namespace Emprise.Domain.Core.CommandHandlers
             }
         }
         */
+
+        //工作单元提交
+        //如果有错误，下一步会在这里添加领域通知
+        public async Task<bool> Commit()
+        {
+            var commit = await _uow.Commit();
+            return commit > 0;
+        }
     }
 }

@@ -5,6 +5,7 @@ using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Bus.Models;
 using Emprise.Domain.Core.CommandHandlers;
+using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
@@ -103,7 +104,8 @@ namespace Emprise.Domain.User.CommandHandlers
             IPlayerQuestDomainService playerQuestDomainService,
             IRedisDb redisDb,
             IMemoryCache cache,
-            INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
+            INotificationHandler<DomainNotification> notifications, 
+            IUnitOfWork uow) : base(uow, bus, notifications)
         {
 
             _cache = cache;
@@ -228,7 +230,11 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
 
-            await _bus.RaiseEvent(new CreatedEvent(player)).ConfigureAwait(false);
+            if(await Commit())
+            {
+                await _bus.RaiseEvent(new CreatedEvent(player)).ConfigureAwait(false);
+            }
+          
 
             return Unit.Value;
         }
@@ -268,7 +274,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
 
-            await _bus.RaiseEvent(new JoinedGameEvent(player)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new JoinedGameEvent(player)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -298,8 +307,12 @@ namespace Emprise.Domain.User.CommandHandlers
                 await _bus.RaiseEvent(new DomainNotification("场景不存在！"));
                 return Unit.Value;
             }
-            await _bus.RaiseEvent(new InitGameEvent(player)).ConfigureAwait(false);
-            await _bus.RaiseEvent(new PlayerInRoomEvent(player, room)).ConfigureAwait(false);
+
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new InitGameEvent(player)).ConfigureAwait(false);
+                await _bus.RaiseEvent(new PlayerInRoomEvent(player, room)).ConfigureAwait(false);
+            }
         
 
             return Unit.Value;
@@ -354,22 +367,13 @@ namespace Emprise.Domain.User.CommandHandlers
             player.RoomId = roomId;
             await _playerDomainService.Update(player);
 
-            /*
-            var jwtAccount = new JwtAccount
+
+
+            if (await Commit())
             {
-                UserId = _account.UserId,
-                Email = _account.Email,
-                PlayerId = _account.PlayerId,
-                PlayerName = _account.PlayerName
-            };
+                await _bus.RaiseEvent(new MovedEvent(player, newRoom, oldRoom));
+            }
 
-            await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
-            */
-
-            //await _bus.RaiseEvent(new MovedEvent(player)).ConfigureAwait(false);
-
-            await _bus.RaiseEvent(new MovedEvent(player, newRoom, oldRoom));
-            
 
             return Unit.Value;
         }
@@ -377,8 +381,13 @@ namespace Emprise.Domain.User.CommandHandlers
         public async Task<Unit> Handle(SearchCommand command, CancellationToken cancellationToken)
         {
             var playerId = command.PlayerId;
-            //await _bus.RaiseEvent(new DomainNotification("你什么也没发现"));
+
             await _mudProvider.ShowMessage(playerId, "你什么也没发现。。。");
+
+            if (await Commit())
+            {
+               
+            }
             return Unit.Value;
         }
 
@@ -411,7 +420,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _recurringQueue.Publish(playerId, new MeditateModel { }, 2,10);
 
-            await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -449,10 +461,11 @@ namespace Emprise.Domain.User.CommandHandlers
                     await _recurringQueue.Remove<MeditateModel>(playerId);
                     break;
             }
-          
 
-            await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
-
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            }
             return Unit.Value;
         }
 
@@ -485,8 +498,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _recurringQueue.Publish(playerId, new ExertModel {  }, 2, 10);
 
-            await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
-
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -523,7 +538,11 @@ namespace Emprise.Domain.User.CommandHandlers
                 await DoAction(player, npc, commandName);
             }
 
-         
+            if (await Commit())
+            {
+                //Do nothing
+            }
+
             return Unit.Value;
         }
 
@@ -644,9 +663,12 @@ namespace Emprise.Domain.User.CommandHandlers
             }
 
 
-          
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new DomainNotification($"领取任务 {quest.Name} ！"));
+            }
 
-            await _bus.RaiseEvent(new DomainNotification($"领取任务 {quest.Name} ！"));
+
 
             return Unit.Value;
         }
@@ -715,7 +737,12 @@ namespace Emprise.Domain.User.CommandHandlers
             await TakeQuestReward(player, quest.Reward);
             //TODO  领取奖励
 
-            await _mudProvider.ShowMessage(player.Id, quest.CompletedWords);
+          
+
+            if (await Commit())
+            {
+                await _mudProvider.ShowMessage(player.Id, quest.CompletedWords);
+            }
 
             return Unit.Value;
         }

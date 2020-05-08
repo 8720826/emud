@@ -2,6 +2,7 @@
 using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.CommandHandlers;
+using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
@@ -58,7 +59,8 @@ namespace Emprise.Domain.User.CommandHandlers
             IMail mail,
             IOptionsMonitor<AppConfig> appConfig,
             IRedisDb redisDb,
-            INotificationHandler<DomainNotification> notifications) : base(bus, notifications)
+            INotificationHandler<DomainNotification> notifications,
+            IUnitOfWork uow) : base(uow, bus, notifications)
         {
 
             _bus = bus;
@@ -74,8 +76,11 @@ namespace Emprise.Domain.User.CommandHandlers
         public async Task<Unit> Handle(VisitCommand command, CancellationToken cancellationToken)
         {
 
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new VisitedEvent());
+            }
 
-            await _bus.RaiseEvent(new VisitedEvent());
 
             return Unit.Value;
         }
@@ -138,7 +143,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _redisDb.KeyDelete(key);
 
-            await _bus.RaiseEvent(new SignUpEvent(user)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new SignUpEvent(user)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -181,8 +189,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
 
-
-            await _bus.RaiseEvent(new SignInEvent(user)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new SignInEvent(user)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -200,7 +210,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _httpAccessor.HttpContext.SignOut(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await _bus.RaiseEvent(new SignOutEvent(user)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new SignOutEvent(user)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -228,8 +241,10 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _userDomainService.Update(user);
 
-
-            await _bus.RaiseEvent(new ModifiedPasswordEvent(user)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new ModifiedPasswordEvent(user)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -268,7 +283,10 @@ namespace Emprise.Domain.User.CommandHandlers
             user.Password = password.ToMd5();
             await _userDomainService.Update(user);
 
-            await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
+            }
 
             return Unit.Value;
         }
@@ -317,14 +335,13 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _redisDb.StringSet(key, code, DateTime.Now.AddMinutes(expiryMin));
 
-            /*
-            user.Email = email;
 
-            await _userDomainService.Update(user);
-
-
-            await _bus.RaiseEvent(new ModifiedPasswordEvent(user)).ConfigureAwait(false);
-            */
+            if (await Commit())
+            {
+                //TODO
+            }
+            
+            
             return Unit.Value;
         }
 
@@ -369,7 +386,11 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await _redisDb.StringSet(key, code, DateTime.Now.AddMinutes(expiryMin));
 
-            await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
+            }
+
 
             return Unit.Value;
         }

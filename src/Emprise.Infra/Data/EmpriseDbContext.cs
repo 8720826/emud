@@ -39,20 +39,6 @@ namespace Emprise.Infra.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            /*
-             * 
-             * 
-            // get the configuration from the app settings
-            var config = new ConfigurationBuilder()
-                .SetBasePath(_env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{_env.EnvironmentName}.json", optional: true)
-                .Build();
-
-            // define the database to use
-            optionsBuilder.UseSqlServer(config.GetConnectionString("MsSql"));
-
-            */
 
             base.OnConfiguring(optionsBuilder);
         }

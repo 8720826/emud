@@ -19,7 +19,7 @@ namespace Emprise.Infra.Data
             _dbSet = _db.Set<TEntity>();
         }
 
-        public virtual async Task Add(TEntity entity, bool saveChanges = true)
+        public virtual async Task Add(TEntity entity, bool saveChanges = false)
         {
             await _dbSet.AddAsync(entity);
 
@@ -29,7 +29,7 @@ namespace Emprise.Infra.Data
             }
         }
 
-        public virtual async Task Add(IEnumerable<TEntity> entities, bool saveChanges = true)
+        public virtual async Task Add(IEnumerable<TEntity> entities, bool saveChanges = false)
         {
             foreach (var entity in entities)
             {
@@ -67,7 +67,7 @@ namespace Emprise.Infra.Data
             });
         }
 
-        public virtual async Task Update(TEntity obj, bool saveChanges = true)
+        public virtual async Task Update(TEntity obj, bool saveChanges = false)
         {
             await Task.Run(() => {
                 _dbSet.Update(obj);
@@ -80,7 +80,7 @@ namespace Emprise.Infra.Data
             }
         }
 
-        public virtual async Task Remove(int id, bool saveChanges = true)
+        public virtual async Task Remove(int id, bool saveChanges = false)
         {
             await Task.Run(() => {
                 _dbSet.Remove(_dbSet.Find(id));
@@ -93,7 +93,7 @@ namespace Emprise.Infra.Data
             }
         }
 
-        public virtual async Task Remove(TEntity obj, bool saveChanges = true)
+        public virtual async Task Remove(TEntity obj, bool saveChanges = false)
         {
             await Task.Run(() => {
                 _dbSet.Remove(obj);
@@ -111,10 +111,10 @@ namespace Emprise.Infra.Data
             return await _db.SaveChangesAsync();
         }
 
-        /*
+        
         public void Dispose()
         {
             GC.SuppressFinalize(this);
-        }*/
+        }
     }
 }
