@@ -1,5 +1,5 @@
 ﻿@page
-@model Emprise.Admin.Pages.Ware.AddModel
+@model Emprise.Admin.Pages.Ware.EditModel
 @{
     ViewData["Title"] = "物品管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
@@ -51,7 +51,7 @@
                             @foreach (var item in Enum.GetValues(typeof(WareCategoryEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category"  value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
                                 </label>
                             }
 
@@ -66,9 +66,21 @@
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(WareTypeEnum)))
                             {
-                                <label class="am-btn am-btn-default am-btn-xs" style="display:none">
-                                    <input asp-for="Ware.Type" type="radio" name="Ware.Type"  value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
-                                </label>
+                                var val = (int)item;
+
+                                if (val.ToString().Contains(((int)Model.Ware.Category).ToString()))
+                                {
+                                    <label class="am-btn am-btn-default am-btn-xs">
+                                        <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="am-btn am-btn-default am-btn-xs" style="display:none">
+                                        <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    </label>
+                                }
+
                             }
 
                         </div>
@@ -82,8 +94,8 @@
                         <div class="am-u-sm-10">
                             <div id="uploader" class="wu-example">
                                 <!--用来存放文件信息-->
-                                <input asp-for="Ware.Img" type="hidden" name="Ware.Img" /> 
-                                <div id="img"></div>
+                                <input asp-for="Ware.Img" type="hidden" name="Ware.Img" />
+                                <div id="img"><img src="@(Model.AliyunOssHost)@(Model.Ware.Img)"></div>
                                 <div class="btns">
                                     <div id="picker">选择文件</div>
                                 </div>
@@ -149,6 +161,8 @@
 @section Scripts {
 
     <script type="text/javascript">
+        var wareEffects = @Html.Raw(JsonConvert.SerializeObject(Model.WareEffects));
+
         var endpoint = "@(Model.Endpoint)";
         var filepath = "";
         var uploader = WebUploader.create({
@@ -263,6 +277,27 @@
                 }
 
             });
+
+
+            $.each(wareEffects, function (i, item) {
+                $("#effect").find(".effects").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.effect).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
         });
 
         var startsWith = function (prefix) {
@@ -284,7 +319,7 @@
 
         function check() {
             var hasEmptyValue = false;
-            var wareEffects = [];
+            wareEffects = [];
             $("#effect").find(".am-form-group").each(function () {
                 var effect = $(this).children(".effects").val();
                 if (effect == "") {

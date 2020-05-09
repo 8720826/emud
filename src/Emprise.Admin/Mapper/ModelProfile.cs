@@ -49,7 +49,7 @@ namespace Emprise.Admin.Mapper
             CreateMap<ScriptCommandInput, ScriptCommandEntity>();
 
             CreateMap<WareInput, WareEntity>();
-            
+            CreateMap<WareEntity, WareInput>();
         }
     }
 }

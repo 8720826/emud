@@ -53,6 +53,9 @@ namespace Emprise.Domain.Core.Models
         [DisplayName("阿里云AccessKeySecret")]
         public string AccessKeySecret { get; set; }
 
+        [DisplayName("阿里云OSS地址")]
+        public string AliyunOssHost { get; set; }
+
     }
 
     public class SiteConfig 

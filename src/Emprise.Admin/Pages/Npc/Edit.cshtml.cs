@@ -37,6 +37,8 @@ namespace Emprise.Admin.Pages.Npc
         [BindProperty]
         public string UrlReferer { get; set; }
 
+
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
