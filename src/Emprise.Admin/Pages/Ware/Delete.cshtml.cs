@@ -20,14 +20,13 @@ namespace Emprise.Admin.Pages.Ware
 
         public WareEntity Ware { get; set; }
 
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
         public string UrlReferer { get; set; }
 
 
-        public async Task<IActionResult> OnGetAsync(int id = 0)
+        public async  Task<IActionResult> OnGetAsync(int id = 0)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
@@ -37,7 +36,7 @@ namespace Emprise.Admin.Pages.Ware
 
             if (id > 0)
             {
-                Ware = _db.Wares.Find(id);
+                Ware = await _db.Wares.FindAsync(id);
                 return Page();
             }
             else
@@ -48,20 +47,23 @@ namespace Emprise.Admin.Pages.Ware
 
         public async Task<IActionResult> OnPostAsync(int id = 0)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var ware = _db.Wares.Find(id);
-            _db.Wares.Remove(ware);
-            await _db.SaveChangesAsync();
 
-            SueccessMessage = $"删除成功！";
-
-            //return RedirectToPage("Index");
+            try
+            {
+                var ware = await _db.Wares.FindAsync(id);
+                _db.Wares.Remove(ware);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
         }

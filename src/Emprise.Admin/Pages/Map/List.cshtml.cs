@@ -9,13 +9,13 @@ using Emprise.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Room
+namespace Emprise.Admin.Pages.Map
 {
-    public class IndexModel : PageModel
+    public class ListModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
 
-        public IndexModel(EmpriseDbContext db)
+        public ListModel(EmpriseDbContext db)
         {
             _db = db;
         }
@@ -24,29 +24,17 @@ namespace Emprise.Admin.Pages.Room
         [BindProperty(SupportsGet = true)]
         public string Keyword { get; set; }
 
-        public MapEntity Map { get; set; }
+        public Paging<MapEntity> Paging { get; set; }
 
-        public Paging<RoomEntity> Paging { get; set; }
-
-        public async Task OnGetAsync(int mapId, int pageIndex)
+        public void OnGet(int pageIndex)
         {
-            var query = _db.Rooms.AsQueryable();
-            if (mapId > 0)
-            {
-                query = query.Where(x => x.MapId == mapId);
-
-                Map = await _db.Maps.FindAsync(mapId);
-            }
+            var query = _db.Maps.OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
             {
-                query = query.Where(x => x.Name.Contains(Keyword));
+                query = _db.Maps.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
             }
-
-            query = query.OrderBy(x => x.Id);
 
             Paging = query.Paged(pageIndex, 10, query.Count());
         }
-
-
     }
 }

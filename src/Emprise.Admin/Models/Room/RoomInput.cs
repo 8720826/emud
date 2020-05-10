@@ -16,6 +16,7 @@ namespace Emprise.Admin.Models.Room
         [Required(ErrorMessage = "请输入房间名")]
         public string Name {  get; set; }
 
+
         /// <summary>
         /// 东
         /// </summary>
@@ -47,6 +48,8 @@ namespace Emprise.Admin.Models.Room
         /// <summary>
         /// 房间说明
         /// </summary>
+        [Display(Name = "描述")]
+        [Required(ErrorMessage = "请输入描述")]
         [StringLength(500)]
         public string Description {  get; set; }
 

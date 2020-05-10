@@ -82,9 +82,7 @@ namespace Emprise.Infra.Data
 
         public virtual async Task Remove(int id, bool saveChanges = false)
         {
-            await Task.Run(() => {
-                _dbSet.Remove(_dbSet.Find(id));
-            });
+            _dbSet.Remove(await _dbSet.FindAsync(id));
 
 
             if (saveChanges)

@@ -49,7 +49,7 @@ namespace Emprise.Admin.Pages.NpcScript
 
         public async Task<IActionResult> OnPostAsync([FromBody]EnableData enableData)
         {
-            var npcScript = _db.Scripts.Find(enableData.SId);
+            var npcScript = await _db.Scripts.FindAsync(enableData.SId);
             if (npcScript == null)
             {
                 return await Task.FromResult(new JsonResult(enableData));

@@ -1,34 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Models.Config;
-using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using StackExchange.Redis;
+using Microsoft.Extensions.Configuration;
 
 namespace Emprise.Admin.Pages.Config
 {
-    public class IndexModel : PageModel
+    public class EditModel : PageModel
     {
         private readonly IMapper _mapper;
-        private readonly AppConfig _appConfig;
         private readonly ILogger<IndexModel> _logger;
         private readonly IConfiguration _configuration;
         private IDatabase _db;
-        public IndexModel(IMapper mapper, IOptionsMonitor<AppConfig> appConfig, ILogger<IndexModel> logger, IConfiguration configuration)
+        public EditModel(IMapper mapper, ILogger<IndexModel> logger, IConfiguration configuration)
         {
             _mapper = mapper;
-            _appConfig = appConfig.CurrentValue;
             _logger = logger;
             _configuration = configuration;
 
@@ -60,21 +55,21 @@ namespace Emprise.Admin.Pages.Config
             Configs = configurations.ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
 
 
-            GetInfoPropertys(typeof(AppConfig));
+            GetValue(typeof(AppConfig));
 
         }
 
-        public void GetInfoPropertys(Type type , string parentName="")
+        public void GetValue(Type type, string parentName = "")
         {
 
 
             PropertyInfo[] props = type.GetProperties();
             foreach (PropertyInfo prop in props)
             {
-             
+
                 string name = prop.Name;
                 string key = string.IsNullOrEmpty(parentName) ? $"{name}" : $"{parentName}:{name}";
-               
+
                 if (prop.PropertyType.IsValueType || prop.PropertyType.Name.StartsWith("String"))
                 {
                     Configs.TryGetValue(key, out string value);
@@ -83,13 +78,13 @@ namespace Emprise.Admin.Pages.Config
                     {
                         Key = key,
                         Name = attribute?.DisplayName ?? name,
-                        Value = value, 
+                        Value = value,
                         Type = prop.PropertyType
                     });
                 }
                 else
                 {
-                    GetInfoPropertys(prop.PropertyType, key);
+                    GetValue(prop.PropertyType, key);
                 }
 
             }
@@ -105,7 +100,7 @@ namespace Emprise.Admin.Pages.Config
             }
             try
             {
-                SetValueFrom(typeof(AppConfig));
+                SetValue(typeof(AppConfig));
             }
             catch (Exception ex)
             {
@@ -118,13 +113,13 @@ namespace Emprise.Admin.Pages.Config
                 _db.HashSet("configurations", config.Key, config.Value);
             }
 
-       
+
 
             return Redirect(UrlReferer);
         }
 
 
-        public void SetValueFrom(Type type, string parentName = "")
+        public void SetValue(Type type, string parentName = "")
         {
             PropertyInfo[] props = type.GetProperties();
             foreach (PropertyInfo prop in props)
@@ -138,7 +133,7 @@ namespace Emprise.Admin.Pages.Config
                 }
                 else
                 {
-                    SetValueFrom(prop.PropertyType,key);
+                    SetValue(prop.PropertyType, key);
 
                 }
 

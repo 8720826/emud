@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.NpcScript
 
             if (id > 0)
             {
-                Script = _db.Scripts.Find(id);
+                Script = await _db.Scripts.FindAsync(id);
                 return Page();
             }
             else
@@ -55,7 +55,7 @@ namespace Emprise.Admin.Pages.NpcScript
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var npcScript = _db.Scripts.Find(id);
+            var npcScript = await _db.Scripts.FindAsync(id);
             _db.Scripts.Remove(npcScript);
             await _db.SaveChangesAsync();
 

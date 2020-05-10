@@ -26,7 +26,7 @@ namespace Emprise.Domain.Core.Enum
 
     public enum WareTypeEnum
     {
-        无=0,
+        丹药= 101001,
 
         刀 = 102001,
         剑 = 102002,
@@ -37,6 +37,11 @@ namespace Emprise.Domain.Core.Enum
         衣服 = 103001,
         帽 = 103002,
         鞋 = 103003,
+
+        宝物=105001,
+
+        木材=106001,
+
 
 
         秘籍残卷 =110001,
@@ -52,10 +57,10 @@ namespace Emprise.Domain.Core.Enum
 
     public enum WareEffectEnum
     {
-        攻击 = 1,
-        防御 = 2,
-        内力 = 3,
-        气血 = 4,
+        增加攻击 = 1,
+        增加防御 = 2,
+        增加内力 = 3,
+        增加气血 = 4,
 
     }
 }

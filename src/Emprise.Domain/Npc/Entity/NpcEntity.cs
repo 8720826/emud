@@ -75,14 +75,6 @@ namespace Emprise.Domain.Npc.Entity
 
 
 
-
-        /// <summary>
-        /// 默认对话
-        /// </summary>
-        [StringLength(4000)]
-        public string InitWords { set; get; }
-
-
         /// <summary>
         /// 是否启用
         /// </summary>

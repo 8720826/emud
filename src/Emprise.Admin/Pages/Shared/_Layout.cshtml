@@ -1,4 +1,5 @@
-﻿@{ 
+﻿
+@{ 
     var menuGroup = ViewData["MenuGroup"]?.ToString();
     if(!Enum.TryParse(menuGroup,out MenuGroupEnum menuGroupEnum))
     {
@@ -55,7 +56,8 @@
                     <a class="am-cf @(menuGroupEnum == MenuGroupEnum.System?"":"am-collapsed")" data-am-collapse="{target: '#collapse-nav1'}"><span class="am-icon-th"></span> 系统设置 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                     <ul class="am-list admin-sidebar-sub am-collapse @(menuGroupEnum == MenuGroupEnum.System?" am-in":"")" id="collapse-nav1">
                         <li><a asp-page="/Config/Index" class="am-cf"><span class="am-icon-table"></span> 配置管理</a></li>
-                        <li><a asp-page="/Room/Index" class="am-cf"><span class="am-icon-table"></span> 地图管理</a></li>
+                        <li><a asp-page="/Map/Index" class="am-cf"><span class="am-icon-table"></span> 地图管理</a></li>
+                        <li><a asp-page="/Room/Index" class="am-cf"><span class="am-icon-table"></span> 房间管理</a></li>
                         <li><a asp-page="/Npc/Index"><span class="am-icon-puzzle-piece"></span> NPC管理</a></li>
                         <li><a asp-page="/Script/Index"><span class="am-icon-puzzle-piece"></span> NPC脚本</a></li>
                         <li><a asp-page="/Ware/Index"><span class="am-icon-puzzle-piece"></span> 物品管理</a></li>
@@ -79,6 +81,13 @@
                 </div>
             </div>
 
+
+
+            <div class="am-panel am-panel-default admin-sidebar-panel">
+                <div class="am-panel-bd">
+                    <p class="am-padding-left">© @(DateTime.Now.Year) 版权所有. <a href="http://emprise.cn/" target="_blank">emprise.cn</a></p>
+                </div>
+            </div>
         </div>
         <!-- sidebar end -->
         <!-- content start -->
@@ -90,10 +99,7 @@
 
     </div>
 
-    <footer>
-        <hr>
-        <p class="am-padding-left">© @(DateTime.Now.Year) 版权所有. <a href="http://emprise.cn/" target="_blank">emprise.cn</a></p>
-    </footer>
+
 
     <!--[if lt IE 9]>
     <script src="~/js/jquery1.11.1.min.js"></script>

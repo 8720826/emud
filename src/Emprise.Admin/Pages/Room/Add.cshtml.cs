@@ -35,11 +35,9 @@ namespace Emprise.Admin.Pages.Room
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public async Task OnGetAsync(int id, string position)
+        public async Task OnGetAsync(int id, string position, int mapId)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
-
-
 
             if (id > 0)
             {
@@ -61,17 +59,16 @@ namespace Emprise.Admin.Pages.Room
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, string position)
+        public async Task<IActionResult> OnPostAsync(int id, string position, int mapId)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
             var room = _mapper.Map<RoomEntity>(Room);
+            room.MapId = mapId;
             await _db.Rooms.AddAsync(room);
 
 
@@ -130,10 +127,6 @@ namespace Emprise.Admin.Pages.Room
 
             await _db.SaveChangesAsync();
 
-
-            SueccessMessage = $"添加成功！";
-
-            //return RedirectToPage("Edit",new { id= room.Id });
 
             return Redirect(UrlReferer);
 

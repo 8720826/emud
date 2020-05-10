@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Emprise.Admin.Api;
@@ -14,10 +15,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace Emprise.Admin
@@ -60,6 +63,22 @@ namespace Emprise.Admin
                 options.Conventions.AuthorizeFolder("/Player");
                 options.Conventions.AllowAnonymousToPage("/Login");
                 options.Conventions.AllowAnonymousToPage("/Denied");
+
+
+            }).AddMvcOptions(options =>
+            {
+                options.MaxModelValidationErrors = 50;
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(x => "请输入内容");
+                options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(x => $"输入值'{x}'无效");
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x,y) => $"输入值'{x}'无效");
+                options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((x) => "只能输入数字");
+                options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => $"缺少属性 '{x}'");
+                options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => "请输入内容");
+                options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((x) => "输入值无效");
+                options.ModelBindingMessageProvider.SetMissingRequestBodyRequiredValueAccessor(() => "RequestBody 不能为空");
+                options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => "只能输入数字");
+                options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((x) => $"输入值'{x}'无效");
+                options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => "输入值无效");
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie("Cookies", options =>
@@ -87,6 +106,7 @@ namespace Emprise.Admin
 
             services.AddAutoMapper();
 
+  
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,6 +123,14 @@ namespace Emprise.Admin
                 app.UseHsts();
             }
 
+            RequestLocalizationOptions localizationOptions = new RequestLocalizationOptions
+            {
+                SupportedCultures = new List<CultureInfo> { new CultureInfo("zh-CN"), new CultureInfo("zh-CN") },
+                SupportedUICultures = new List<CultureInfo> { new CultureInfo("zh-CN"), new CultureInfo("zh-CN") },
+                DefaultRequestCulture = new RequestCulture("zh-CN")
+            };
+            app.UseRequestLocalization(localizationOptions);
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -113,7 +141,6 @@ namespace Emprise.Admin
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
-            app.MapWhen(context => context.Request.Path.ToString().EndsWith("/fileupload"), appBranch => appBranch.UseMiddleware<UploadMiddleware>());
 
 
             app.UseEndpoints(endpoints =>

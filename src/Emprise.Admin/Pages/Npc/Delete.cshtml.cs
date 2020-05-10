@@ -20,14 +20,13 @@ namespace Emprise.Admin.Pages.Npc
 
         public NpcEntity Npc { get; set; }
 
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
         public string UrlReferer { get; set; }
 
 
-        public async Task<IActionResult> OnGetAsync(int id = 0)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
@@ -37,7 +36,7 @@ namespace Emprise.Admin.Pages.Npc
 
             if (id > 0)
             {
-                Npc = _db.Npcs.Find(id);
+                Npc = await _db.Npcs.FindAsync(id);
                 return Page();
             }
             else
@@ -46,22 +45,25 @@ namespace Emprise.Admin.Pages.Npc
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id = 0)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var npc = _db.Npcs.Find(id);
-            _db.Npcs.Remove(npc);
-            await _db.SaveChangesAsync();
 
-            SueccessMessage = $"删除成功！";
-
-            //return RedirectToPage("Index");
+            try
+            {
+                var npc = await _db.Npcs.FindAsync(id);
+                _db.Npcs.Remove(npc);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
         }

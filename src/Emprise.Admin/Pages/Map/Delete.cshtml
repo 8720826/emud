@@ -1,16 +1,16 @@
 ﻿@page
-@model Emprise.Admin.Pages.Npc.DeleteModel
+@model Emprise.Admin.Pages.Map.DeleteModel
 @{
     ViewData["Title"] = "Npc管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
 }
 
 <div class="am-cf am-padding">
-    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Npc管理</strong> / <small>删除Npc</small></div>
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">地图管理</strong> / <small>删除地图</small></div>
 </div>
 
 <div class="am-tabs am-margin" data-am-tabs>
-    是否要删除Npc  "@(Model.Npc?.Name)(id=@(Model.Npc?.Id))" ?
+    是否要删除地图  "@(Model.Map?.Name)(id=@(Model.Map?.Id))" ?
 </div>
 
 <div class="am-margin">

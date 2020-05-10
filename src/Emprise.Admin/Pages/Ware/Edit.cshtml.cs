@@ -31,8 +31,6 @@ namespace Emprise.Admin.Pages.Ware
         [BindProperty]
         public WareInput Ware { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
@@ -79,29 +77,31 @@ namespace Emprise.Admin.Pages.Ware
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            SueccessMessage = "";
+
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-            var ware = await _db.Wares.FindAsync(id);
-            _mapper.Map(Ware, ware);
-
-            if (ware.Effect == null)
+            try
             {
-                ware.Effect = "";
+                var ware = await _db.Wares.FindAsync(id);
+                _mapper.Map(Ware, ware);
+
+                if (ware.Effect == null)
+                {
+                    ware.Effect = "";
+                }
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
             }
 
 
-
-            await _db.SaveChangesAsync();
-
-
-
-            SueccessMessage = $"添加成功！";
 
             return Redirect(UrlReferer);
         }

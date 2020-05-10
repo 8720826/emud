@@ -31,8 +31,6 @@ namespace Emprise.Admin.Pages.Ware
         [BindProperty]
         public WareInput Ware { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
@@ -43,7 +41,7 @@ namespace Emprise.Admin.Pages.Ware
 
         public string AliyunOssHost { get; set; }
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
@@ -53,32 +51,38 @@ namespace Emprise.Admin.Pages.Ware
 
             Endpoint = _appConfig.Aliyun.Endpoint;
             AliyunOssHost = _appConfig.Aliyun.AliyunOssHost;
+
+
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-            var ware = _mapper.Map<WareEntity>(Ware);
-
-            if (ware.Effect == null)
+            try
             {
-                ware.Effect = "";
+                var ware = _mapper.Map<WareEntity>(Ware);
+
+                if (ware.Effect == null)
+                {
+                    ware.Effect = "";
+                }
+
+                await _db.Wares.AddAsync(ware);
+
+                await _db.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
             }
 
-            await _db.Wares.AddAsync(ware);
 
-            await _db.SaveChangesAsync();
-
-
-
-            SueccessMessage = $"添加成功！";
 
             return Redirect(UrlReferer);
         }

@@ -13,3 +13,17 @@
 }
 .table-desc {
 }
+.text-danger{
+    color:#FF0000; font-size:12px;
+}
+
+.am-form{
+    margin-bottom:60px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    z-index: 9999;
+}

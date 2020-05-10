@@ -63,11 +63,9 @@ namespace Emprise.Admin.Pages.Room
         public async Task<IActionResult> OnPostAsync(int id)
         {
             Id = id;
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
@@ -208,14 +206,6 @@ namespace Emprise.Admin.Pages.Room
                 ErrorMessage += result.StatusCode;
             }
 
-
-
-
-            //SueccessMessage = $"修改成功！";
-
-            //Room = _mapper.Map<RoomInput>(room);
-
-            //return Page();
 
             return Redirect(UrlReferer);
         }

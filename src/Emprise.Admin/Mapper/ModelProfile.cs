@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using Emprise.Admin.Models.Ware;
 using Emprise.Admin.Entity;
+using Emprise.Admin.Models.Map;
 
 namespace Emprise.Admin.Mapper
 {
@@ -50,6 +51,9 @@ namespace Emprise.Admin.Mapper
 
             CreateMap<WareInput, WareEntity>();
             CreateMap<WareEntity, WareInput>();
+
+            CreateMap<MapInput, MapEntity>();
+            CreateMap<MapEntity, MapInput>();
         }
     }
 }

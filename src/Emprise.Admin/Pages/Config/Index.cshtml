@@ -20,13 +20,13 @@
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">配置管理</strong> / <small>Config</small></div>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">配置管理</strong> / <small>浏览配置</small></div>
     </div>
 
     <div class="am-margin">
         <form class="am-form" method="post">
             <div class="am-g">
-                <p style="color:#666;font-size:10px;">注意：修改后1分钟内生效</p>
+                <p style="color:#666;font-size:10px;">注意：修改后1分钟内生效，<a href="@(Url.Page("Edit"))">进入编辑模式</a></p>
                 <div class="am-fade  am-in am-active">
 
                     @foreach (var config in Model.ConfigDtos) 
@@ -36,49 +36,13 @@
                                 @(config.Name)
                             </div>
                             <div class="am-u-sm-4">
-                                @if (config.Type == typeof(bool))
-                                {
-                                <select id="@(config.Key)" name="@(config.Key)">
-                                    @if (config.Value == "True")
-                                    {
-                                        <option value="True" selected="selected">是</option>
-                                        <option value="False">否</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="True">是</option>
-                                        <option value="False" selected="selected">否</option>
-                                    }
-
-                                </select>
-                                }
-                                else
-                                {
-
-
-                                    <input type="text" tt="@(config.Type)" class="am-input-sm" name="@(config.Key)" value="@(config.Value)">
-                                }
+                                @(config.Value)
 
                             </div>
                             <div class="am-u-sm-6"></div>
                         </div>
                     }
 
-
-
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-
-                        </div>
-                        <div class="am-u-sm-10">
-                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
-                            <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
-                            <div class="am-inline-block am-padding-left">
-                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
-                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 

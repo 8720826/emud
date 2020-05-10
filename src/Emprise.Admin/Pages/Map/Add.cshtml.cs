@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Npc;
+using Emprise.Admin.Models.Map;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Npc
+namespace Emprise.Admin.Pages.Map
 {
     public class AddModel : PageModel
     {
@@ -23,7 +23,7 @@ namespace Emprise.Admin.Pages.Npc
         }
 
         [BindProperty]
-        public NpcInput Npc { get; set; }
+        public MapInput Map { get; set; }
 
         public string ErrorMessage { get; set; }
 
@@ -35,7 +35,7 @@ namespace Emprise.Admin.Pages.Npc
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Npc/Index");
+                UrlReferer = Url.Page("/Map/Index");
             }
         }
 
@@ -49,9 +49,9 @@ namespace Emprise.Admin.Pages.Npc
 
             try
             {
-                var npc = _mapper.Map<NpcEntity>(Npc);
+                var map = _mapper.Map<MapEntity>(Map);
 
-                await _db.Npcs.AddAsync(npc);
+                await _db.Maps.AddAsync(map);
 
                 await _db.SaveChangesAsync();
             }

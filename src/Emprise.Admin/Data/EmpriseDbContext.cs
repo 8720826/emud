@@ -16,7 +16,7 @@ namespace Emprise.Admin.Data
         {
             Database.EnsureCreated();
         }
-
+        public DbSet<MapEntity> Maps { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
 
         public DbSet<AdminEntity> Admins { get; set; }

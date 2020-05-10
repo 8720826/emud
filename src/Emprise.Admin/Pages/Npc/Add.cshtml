@@ -20,27 +20,29 @@
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Npc管理</strong> / <small>Npc</small></div>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Npc管理</strong> / <small>添加Npc</small></div>
     </div>
 
     <div class="am-margin">
         <form class="am-form" method="post">
             <div class="am-g">
-                <p>@(Model.Tips)</p>
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="am-fade  am-in am-active">
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            Npc名
+                            <label asp-for="Npc.Name" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Npc.Name">
+                            <span asp-validation-for="Npc.Name" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            类型
+                            <label asp-for="Npc.Type" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(NpcTypeEnum)))
@@ -49,14 +51,14 @@
                                     <input asp-for="Npc.Type" type="radio" name="Npc.Type" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
-
+                            <span asp-validation-for="Npc.Type" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            性别
+                            <label asp-for="Npc.Gender" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(GenderEnum)))
@@ -65,14 +67,14 @@
                                     <input asp-for="Npc.Gender" type="radio" name="Npc.Gender" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
-
+                            <span asp-validation-for="Npc.Gender" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            属性
+                            <label class="control-label" for="Npc_Exp">属性</label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group" data-am-button>
                             <label class="am-btn am-btn-default am-btn-xs">
@@ -90,51 +92,56 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            年龄
+                            <label asp-for="Npc.Age" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Npc.Age">
+                            <span asp-validation-for="Npc.Age" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            容貌
+                            <label asp-for="Npc.Per" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Npc.Per">
+                            <span asp-validation-for="Npc.Per" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            经验
+                            <label asp-for="Npc.Exp" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Npc.Exp">
+                            <span asp-validation-for="Npc.Exp" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            所在房间
+                            <label asp-for="Npc.RoomId" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" id="roomId" class="am-input-sm" asp-for="Npc.RoomId">
+                            <span asp-validation-for="Npc.RoomId" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            状态
+                            <label asp-for="Npc.IsEnable" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
                                 <input type="checkbox" asp-for="Npc.IsEnable" checked="checked"> 启用
+                                <span asp-validation-for="Npc.IsEnable" class="text-danger"></span>
                             </label>
 
                         </div>
@@ -144,15 +151,16 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            Npc描述
+                            <label asp-for="Npc.Description" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
                             <textarea rows="5" placeholder="" id="description" asp-for="Npc.Description"></textarea>
+                            <span asp-validation-for="Npc.Description" class="text-danger"></span>
                         </div>
                     </div>
 
 
-                    <div class="am-g am-margin-top-sm">
+                    <div class="footer am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
 
                         </div>
@@ -161,7 +169,6 @@
                             <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
-                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
                             </div>
                         </div>
                     </div>

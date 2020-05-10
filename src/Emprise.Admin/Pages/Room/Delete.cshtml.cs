@@ -38,7 +38,7 @@ namespace Emprise.Admin.Pages.Room
 
             if (id > 0)
             {
-                Room = _db.Rooms.Find(id);
+                Room = await _db.Rooms.FindAsync(id);
                 return Page();
             }
             else
@@ -57,7 +57,7 @@ namespace Emprise.Admin.Pages.Room
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var room = _db.Rooms.Find(id);
+            var room = await _db.Rooms.FindAsync(id);
             _db.Rooms.Remove(room);
             await _db.SaveChangesAsync();
 

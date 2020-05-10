@@ -30,44 +30,48 @@
 
     <div class="am-margin">
         <form class="am-form" method="post" onsubmit="return check()">
+
             <div class="am-g">
-                <p>@(Model.Tips)</p>
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                 <div class="am-fade  am-in am-active">
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            名称
+                            <label asp-for="Ware.Name" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Ware.Name">
+                            <span asp-validation-for="Ware.Name" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            大类
+                            <label asp-for="Ware.Category" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(WareCategoryEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs">
-                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category"  value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
                                 </label>
                             }
-
+                            <span asp-validation-for="Ware.Category" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            小类
+                            <label asp-for="Ware.Type" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(WareTypeEnum)))
                             {
                                 <label class="am-btn am-btn-default am-btn-xs" style="display:none">
-                                    <input asp-for="Ware.Type" type="radio" name="Ware.Type"  value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
                                 </label>
                             }
 
@@ -77,23 +81,23 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            图片
+                            <label asp-for="Ware.Img" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
                             <div id="uploader" class="wu-example">
-                                <!--用来存放文件信息-->
-                                <input asp-for="Ware.Img" type="hidden" name="Ware.Img" /> 
+                                <input asp-for="Ware.Img" type="hidden" name="Ware.Img" />
                                 <div id="img"></div>
                                 <div class="btns">
                                     <div id="picker">选择文件</div>
                                 </div>
                             </div>
+                            <span asp-validation-for="Ware.Img" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            属性
+                            <label asp-for="Ware.Effect" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="effect">
                             <input type="hidden" asp-for="Ware.Effect">
@@ -112,15 +116,16 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            描述
+                            <label asp-for="Ware.Description" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
                             <textarea rows="5" placeholder="" id="description" asp-for="Ware.Description"></textarea>
+                            <span asp-validation-for="Ware.Description" class="text-danger"></span>
                         </div>
                     </div>
 
 
-                    <div class="am-g am-margin-top-sm">
+                    <div class="footer am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
 
                         </div>
@@ -129,7 +134,6 @@
                             <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
-                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
                             </div>
                         </div>
                     </div>

@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.Quest
 
             if (id > 0)
             {
-                Quest = _db.Quests.Find(id);
+                Quest = await _db.Quests.FindAsync(id);
                 return Page();
             }
             else
@@ -55,7 +55,7 @@ namespace Emprise.Admin.Pages.Quest
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var quest = _db.Quests.Find(id);
+            var quest = await _db.Quests.FindAsync(id);
             _db.Quests.Remove(quest);
             await _db.SaveChangesAsync();
 

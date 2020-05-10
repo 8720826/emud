@@ -4,42 +4,57 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Npc;
+using Emprise.Admin.Models.Map;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Emprise.Admin.Pages.Npc
+namespace Emprise.Admin.Pages.Map
 {
-    public class AddModel : PageModel
+    public class EditModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
         private readonly IMapper _mapper;
 
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public EditModel(EmpriseDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
         }
 
         [BindProperty]
-        public NpcInput Npc { get; set; }
+        public MapInput Map { get; set; }
 
         public string ErrorMessage { get; set; }
+
 
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public void OnGet()
+
+
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Npc/Index");
+                UrlReferer = Url.Page("/Map/Index");
+            }
+
+            if (id > 0)
+            {
+                var map = await _db.Maps.FindAsync(id);
+
+                Map = _mapper.Map<MapInput>(map);
+
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Map/Index");
             }
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             ErrorMessage = "";
             if (!ModelState.IsValid)
@@ -49,9 +64,8 @@ namespace Emprise.Admin.Pages.Npc
 
             try
             {
-                var npc = _mapper.Map<NpcEntity>(Npc);
-
-                await _db.Npcs.AddAsync(npc);
+                var map = await _db.Maps.FindAsync(id);
+                _mapper.Map(Map, map);
 
                 await _db.SaveChangesAsync();
             }
@@ -60,8 +74,6 @@ namespace Emprise.Admin.Pages.Npc
                 ErrorMessage = ex.Message;
                 return Page();
             }
-
-
 
             return Redirect(UrlReferer);
         }

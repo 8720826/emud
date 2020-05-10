@@ -25,8 +25,6 @@ namespace Emprise.Admin.Pages.Npc
         [BindProperty]
         public NpcInput Npc { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
@@ -70,49 +68,42 @@ namespace Emprise.Admin.Pages.Npc
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-
-            var npc = await _db.Npcs.FindAsync(id);
-            _mapper.Map(Npc, npc);
-            if (npc.InitWords == null)
+            try
             {
-                npc.InitWords = "";
-            }
+                var npc = await _db.Npcs.FindAsync(id);
+                _mapper.Map(Npc, npc);
 
-
-
-            var npcScripts = _db.NpcScripts.Where(x => x.NpcId == id);
-            foreach(var npcScript in npcScripts)
-            {
-                if (!ScriptIds.Contains(npcScript.ScriptId))
+                var npcScripts = _db.NpcScripts.Where(x => x.NpcId == id);
+                foreach (var npcScript in npcScripts)
                 {
-                    _db.NpcScripts.Remove(npcScript);
+                    if (!ScriptIds.Contains(npcScript.ScriptId))
+                    {
+                        _db.NpcScripts.Remove(npcScript);
+                    }
+                    else
+                    {
+                        ScriptIds.Remove(npcScript.ScriptId);
+                    }
                 }
-                else
+
+
+                foreach (var scriptId in ScriptIds)
                 {
-                    ScriptIds.Remove(npcScript.ScriptId);
+                    _db.NpcScripts.Add(new NpcScriptEntity { NpcId = id, ScriptId = scriptId });
                 }
+                await _db.SaveChangesAsync();
             }
-
-
-            foreach (var scriptId in ScriptIds)
+            catch (Exception ex)
             {
-                _db.NpcScripts.Add(new NpcScriptEntity { NpcId = id, ScriptId = scriptId });
+                ErrorMessage = ex.Message;
+                return Page();
             }
-            await _db.SaveChangesAsync();
-
-
-
-            SueccessMessage = $"修改成功！";
-
-            //return RedirectToPage("Edit", new { id = npc.Id });
 
             return Redirect(UrlReferer);
         }

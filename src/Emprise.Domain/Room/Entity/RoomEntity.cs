@@ -11,14 +11,16 @@ namespace Emprise.Domain.Room.Entity
     public class RoomEntity : BaseEntity
     {
 
-
-
-
         /// <summary>
         /// 房间名
         /// </summary>
         [StringLength(32)]
         public string Name { set; get; }
+
+        /// <summary>
+        /// 地图Id
+        /// </summary>
+        public int MapId { get; set; }
 
         /// <summary>
         /// 东

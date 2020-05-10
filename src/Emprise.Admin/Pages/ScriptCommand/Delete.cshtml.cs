@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
             if (id > 0)
             {
-                ScriptCommand = _db.ScriptCommands.Find(id);
+                ScriptCommand = await _db.ScriptCommands.FindAsync(id);
                 return Page();
             }
             else
@@ -55,7 +55,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var scriptCommand = _db.ScriptCommands.Find(id);
+            var scriptCommand = await _db.ScriptCommands.FindAsync(id);
             _db.ScriptCommands.Remove(scriptCommand);
             await _db.SaveChangesAsync();
 
