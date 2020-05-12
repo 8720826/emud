@@ -99,7 +99,7 @@
             共 @(Model.Paging.Count) 条记录
             <div class="am-fr">
                 <ul class="am-pagination">
-                    <li><a asp-route-pageIndex="1"  asp-route-keyword="@(Model.Keyword)">«</a></li>
+                    <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)" asp-route-mapId="@(Model.MapId)"  asp-route-roomId="@(Model.RoomId)">«</a></li>
 
                     @for (var i = 0; i < Model.Paging.PageCount; i++)
                     {
@@ -109,11 +109,11 @@
                         }
                         else
                         {
-                            <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
+                            <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)" asp-route-mapId="@(Model.MapId)"  asp-route-roomId="@(Model.RoomId)">@(i + 1)</a></li>
                         }
                     }
 
-                    <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
+                    <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)" asp-route-mapId="@(Model.MapId)"  asp-route-roomId="@(Model.RoomId)">»</a></li>
                 </ul>
             </div>
         </div>

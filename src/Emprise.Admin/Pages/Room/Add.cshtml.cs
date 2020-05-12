@@ -67,6 +67,13 @@ namespace Emprise.Admin.Pages.Room
                 return Page();
             }
 
+            var map = await _db.Maps.FindAsync(mapId);
+            if (map == null)
+            {
+                return RedirectToPage("/Map/Index");
+            }
+
+
             var room = _mapper.Map<RoomEntity>(Room);
             room.MapId = mapId;
             await _db.Rooms.AddAsync(room);
@@ -75,53 +82,56 @@ namespace Emprise.Admin.Pages.Room
             if (id > 0)
             {
                 var oldRoom = await _db.Rooms.FindAsync(id);
-                switch (position)
+                if (oldRoom != null && oldRoom.MapId == mapId)
                 {
-                    case "west":
-                        if (oldRoom.East == 0)
-                        {
-                            oldRoom.East = room.Id;
-                            oldRoom.EastName = room.Name;
+                    switch (position)
+                    {
+                        case "west":
+                            if (oldRoom.East == 0)
+                            {
+                                oldRoom.East = room.Id;
+                                oldRoom.EastName = room.Name;
 
-                            room.West = oldRoom.Id;
-                            room.WestName = oldRoom.Name;
-                        }
-                        break;
+                                room.West = oldRoom.Id;
+                                room.WestName = oldRoom.Name;
+                            }
+                            break;
 
-                    case "east":
-                        if (oldRoom.West == 0)
-                        {
-                            oldRoom.West = room.Id;
-                            oldRoom.WestName = room.Name;
+                        case "east":
+                            if (oldRoom.West == 0)
+                            {
+                                oldRoom.West = room.Id;
+                                oldRoom.WestName = room.Name;
 
 
-                            room.East = oldRoom.Id;
-                            room.EastName = oldRoom.Name;
-                        }
-                        break;
+                                room.East = oldRoom.Id;
+                                room.EastName = oldRoom.Name;
+                            }
+                            break;
 
-                    case "south":
-                        if (oldRoom.South == 0)
-                        {
-                            oldRoom.South = room.Id;
-                            oldRoom.SouthName = room.Name;
+                        case "south":
+                            if (oldRoom.South == 0)
+                            {
+                                oldRoom.South = room.Id;
+                                oldRoom.SouthName = room.Name;
 
-                            room.North = oldRoom.Id;
-                            room.NorthName = oldRoom.Name;
-                        }
-                        break;
+                                room.North = oldRoom.Id;
+                                room.NorthName = oldRoom.Name;
+                            }
+                            break;
 
-                    case "north":
-                        if (oldRoom.North == 0)
-                        {
-                            oldRoom.North = room.Id;
-                            oldRoom.NorthName = room.Name;
+                        case "north":
+                            if (oldRoom.North == 0)
+                            {
+                                oldRoom.North = room.Id;
+                                oldRoom.NorthName = room.Name;
 
-                            room.South = oldRoom.Id;
-                            room.SouthName = oldRoom.Name;
-                        }
-                        break;
+                                room.South = oldRoom.Id;
+                                room.SouthName = oldRoom.Name;
+                            }
+                            break;
 
+                    }
                 }
             }
 

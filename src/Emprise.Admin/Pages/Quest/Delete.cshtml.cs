@@ -20,7 +20,6 @@ namespace Emprise.Admin.Pages.Quest
 
         public QuestEntity Quest { get; set; }
 
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
@@ -32,7 +31,7 @@ namespace Emprise.Admin.Pages.Quest
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Task/Index");
+                UrlReferer = Url.Page("/Quest/Index");
             }
 
             if (id > 0)
@@ -42,26 +41,30 @@ namespace Emprise.Admin.Pages.Quest
             }
             else
             {
-                return RedirectToPage("/Task/Index");
+                return RedirectToPage("/Quest/Index");
             }
         }
 
         public async Task<IActionResult> OnPostAsync(int id = 0)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var quest = await _db.Quests.FindAsync(id);
-            _db.Quests.Remove(quest);
-            await _db.SaveChangesAsync();
 
-            SueccessMessage = $"删除成功！";
+            try
+            {
+                var quest = await _db.Quests.FindAsync(id);
+                _db.Quests.Remove(quest);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
-            //return RedirectToPage("Index");
 
             return Redirect(UrlReferer);
         }

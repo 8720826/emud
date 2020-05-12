@@ -28,15 +28,16 @@ namespace Emprise.Admin.Pages.Room
 
         public Paging<RoomEntity> Paging { get; set; }
 
-        public async Task OnGetAsync(int mapId, int pageIndex)
+        public async Task<IActionResult> OnGetAsync(int mapId, int pageIndex)
         {
-            var query = _db.Rooms.AsQueryable();
-            if (mapId > 0)
+            Map = await _db.Maps.FindAsync(mapId);
+            if (Map == null)
             {
-                query = query.Where(x => x.MapId == mapId);
-
-                Map = await _db.Maps.FindAsync(mapId);
+                return RedirectToPage("/Map/Index");
             }
+
+
+            var query = _db.Rooms.Where(x => x.MapId == mapId);
             if (!string.IsNullOrEmpty(Keyword))
             {
                 query = query.Where(x => x.Name.Contains(Keyword));
@@ -45,6 +46,8 @@ namespace Emprise.Admin.Pages.Room
             query = query.OrderBy(x => x.Id);
 
             Paging = query.Paged(pageIndex, 10, query.Count());
+
+            return Page();
         }
 
 

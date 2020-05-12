@@ -218,7 +218,7 @@
                     type: 2,
                     title: "请选择要设置的出口",
                     area: ["800px", "1000px"],
-                    content: "@(Url.Page("List"))",
+                    content: "@(Url.Page("List", new { mapId = Model.MapId, roomId = Model.Id }))",
                     success: function (layero, index) {
 
                     },

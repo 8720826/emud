@@ -1,4 +1,4 @@
-﻿using Emprise.Domain.Core.Enum;
+﻿using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Core.Models.Chat;
 using System;

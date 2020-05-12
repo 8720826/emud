@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.NpcScript;
-using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Npc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

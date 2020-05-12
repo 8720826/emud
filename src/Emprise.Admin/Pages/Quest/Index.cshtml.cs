@@ -28,11 +28,13 @@ namespace Emprise.Admin.Pages.Quest
 
         public void OnGet(int pageIndex)
         {
-            var query = _db.Quests.OrderBy(x => x.Id);
+            var query = _db.Quests.AsQueryable();
             if (!string.IsNullOrEmpty(Keyword))
             {
-                query = _db.Quests.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
+                query = query.Where(x => x.Name.Contains(Keyword));
             }
+
+            query = query.OrderBy(x => x.Id);
 
             Paging = query.Paged(pageIndex, 10, query.Count());
         }

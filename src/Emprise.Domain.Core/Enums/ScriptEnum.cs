@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Emprise.Domain.Core.Enum
+namespace Emprise.Domain.Core.Enums
 {
     /// <summary>
     /// 条件类型

@@ -6,7 +6,7 @@ using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Quest;
-using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -28,8 +28,6 @@ namespace Emprise.Admin.Pages.Quest
         [BindProperty]
         public QuestInput Quest { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         public Array Conditions { get; set; }
@@ -37,41 +35,40 @@ namespace Emprise.Admin.Pages.Quest
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public async Task OnGetAsync(int id)
+        public void OnGet()
         {
             Conditions = Enum.GetNames(typeof(QuestTriggerConditionEnum));
 
-            if (id > 0)
-            {
-                var task = await _db.Quests.FindAsync(id);
-
-            }
 
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
             {
-                UrlReferer = Url.Page("/Task/Index");
+                UrlReferer = Url.Page("/Quest/Index");
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync()
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-            var task = _mapper.Map<QuestEntity>(Quest);
-            await _db.Quests.AddAsync(task);
 
-            await _db.SaveChangesAsync();
+            try
+            {
+                var task = _mapper.Map<QuestEntity>(Quest);
+                await _db.Quests.AddAsync(task);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
 
-
-            SueccessMessage = $"添加成功！";
 
             return Redirect(UrlReferer);
 

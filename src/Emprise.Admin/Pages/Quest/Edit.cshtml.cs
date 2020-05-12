@@ -28,8 +28,6 @@ namespace Emprise.Admin.Pages.Quest
         [BindProperty]
         public QuestInput Quest { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         public List<QuestTrigger> TakeConditions { get; set; } = new List<QuestTrigger>();
@@ -88,24 +86,24 @@ namespace Emprise.Admin.Pages.Quest
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-            var quest = await _db.Quests.FindAsync(id);
 
-            _mapper.Map(Quest, quest);
-
-
-            await _db.SaveChangesAsync();
-
-
-
-            SueccessMessage = $"修改成功！";
+            try
+            {
+                var quest = await _db.Quests.FindAsync(id);
+                _mapper.Map(Quest, quest);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
 

@@ -25,13 +25,30 @@ namespace Emprise.Admin.Pages.Room
         [BindProperty(SupportsGet = true)]
         public string Keyword { get; set; }
 
-        public void OnGet(int pageIndex)
+        public int MapId { get; set; }
+
+        public int RoomId { get; set; }
+
+        public void OnGet(int pageIndex,int mapId, int roomId)
         {
-            var query = _db.Rooms.OrderBy(x => x.Id);
+            MapId = mapId;
+            RoomId = roomId;
+            var query = _db.Rooms.AsQueryable();
+            if (mapId > 0)
+            {
+                query = query.Where(x => x.MapId == mapId);
+            }
+            if (roomId > 0)
+            {
+                query = query.Where(x => x.Id == roomId);
+            }
+
             if (!string.IsNullOrEmpty(Keyword))
             {
-                query = _db.Rooms.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
+                query = query.Where(x => x.Name.Contains(Keyword));
             }
+
+            query = query.OrderBy(x => x.Id);
 
             Paging = query.Paged(pageIndex, 10, query.Count());
         }

@@ -3,7 +3,7 @@ using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Data;
-using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;

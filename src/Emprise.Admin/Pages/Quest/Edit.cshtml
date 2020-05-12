@@ -34,37 +34,40 @@
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>Quest</small></div>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>修改任务</small></div>
     </div>
 
     <div class="am-margin">
         <form class="am-form" method="post" onsubmit="return check()">
             <div class="am-g">
-                <p>@(Model.Tips)</p>
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="am-fade  am-in am-active">
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            任务名
+                            <label asp-for="Quest.Name" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Quest.Name">
+                            <span asp-validation-for="Quest.Name" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            限时（分钟）
+                            <label asp-for="Quest.TimeLimit" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Quest.TimeLimit">
+                            <span asp-validation-for="Quest.TimeLimit" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6">0为不限制</div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            任务类型
+                            <label asp-for="Quest.Type" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(QuestTypeEnum)))
@@ -73,7 +76,7 @@
                                     <input asp-for="Quest.Type" type="radio" name="Quest.Type" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
-
+                            <span asp-validation-for="Quest.Type" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -81,7 +84,7 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            任务周期
+                            <label asp-for="Quest.Period" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10 am-btn-group">
                             @foreach (var item in Enum.GetValues(typeof(QuestPeriodEnum)))
@@ -90,19 +93,19 @@
                                     <input asp-for="Quest.Period" type="radio" name="Quest.Period" value="@(item.ToString())"> @(item.ToString())
                                 </label>
                             }
-
+                            <span asp-validation-for="Quest.Period" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            领取条件
+                            <label asp-for="Quest.TakeCondition" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="takeCondition">
                             <input type="hidden" asp-for="Quest.TakeCondition">
                             <div class="am-form-inline am-form-group">
-                                
+
                                 <select class="am-input-sm am-form-field takeConditions" style="width: 180px;">
                                     <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(QuestTakeConditionEnum)))
@@ -110,6 +113,7 @@
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Quest.TakeCondition" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -118,7 +122,7 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            完成条件
+                            <label asp-for="Quest.Target" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="taskTarget">
                             <input type="hidden" asp-for="Quest.Target">
@@ -130,6 +134,7 @@
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Quest.Target" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="am-u-sm-1"></div>
@@ -137,7 +142,7 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            任务消耗
+                            <label asp-for="Quest.Consume" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="taskConsume">
                             <input type="hidden" asp-for="Quest.Consume">
@@ -149,6 +154,7 @@
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Quest.Consume" class="text-danger"></span>
                             </div>
 
                         </div>
@@ -157,12 +163,12 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            任务奖励
+                            <label asp-for="Quest.Reward" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="taskReward">
                             <input type="hidden" asp-for="Quest.Reward">
                             <div class="am-form-inline am-form-group">
-                                
+
                                 <select class="am-input-sm am-form-field rewards" style="width: 180px;">
                                     <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(QuestRewardEnum)))
@@ -170,6 +176,7 @@
                                         <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
+                                <span asp-validation-for="Quest.Reward" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="am-u-sm-1"></div>
@@ -178,44 +185,37 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            领取前文本
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.BeforeCreate"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            领取后文本
+                            <label asp-for="Quest.CreatedWords" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
                             <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
+                            <span asp-validation-for="Quest.CreatedWords" class="text-danger"></span>
                         </div>
                     </div>
 
-
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            进行中文本
+                            <label asp-for="Quest.InProgressWords" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
                             <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
+                            <span asp-validation-for="Quest.InProgressWords" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            完成后文本
+                            <label asp-for="Quest.CompletedWords" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
                             <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
+                            <span asp-validation-for="Quest.CompletedWords" class="text-danger"></span>
                         </div>
                     </div>
 
 
 
-                    <div class="am-g am-margin-top-sm">
+                    <div class="footer am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
 
                         </div>
@@ -224,7 +224,6 @@
                             <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
-                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
                             </div>
                         </div>
                     </div>

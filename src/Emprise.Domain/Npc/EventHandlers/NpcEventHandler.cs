@@ -1,11 +1,8 @@
 ﻿using Emprise.Domain.Common.Modes;
-using Emprise.Domain.Core.Enum;
 using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Events;
-using Emprise.Domain.Player.Commands;
-using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Quest.Services;
 using MediatR;
 using Microsoft.Extensions.Logging;

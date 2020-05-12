@@ -50,9 +50,7 @@ namespace Emprise.Admin.Pages.Npc
             try
             {
                 var npc = _mapper.Map<NpcEntity>(Npc);
-
                 await _db.Npcs.AddAsync(npc);
-
                 await _db.SaveChangesAsync();
             }
             catch (Exception ex)

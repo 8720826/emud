@@ -1,8 +1,5 @@
-﻿using Emprise.Domain.Core.Enum;
-using Emprise.Domain.Core.Interfaces;
-using Emprise.Domain.Npc.Entity;
+﻿using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Quest.Entity;
-using Emprise.Domain.Quest.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;

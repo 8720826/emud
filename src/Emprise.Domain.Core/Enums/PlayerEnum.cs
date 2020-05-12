@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.Core.Enum
+namespace Emprise.Domain.Core.Enums
 {
     public enum PlayerStatusEnum
     {

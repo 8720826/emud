@@ -1,5 +1,4 @@
 ﻿using Emprise.Domain.Core.Commands;
-using Emprise.Domain.Core.Enum;
 using System;
 using System.Collections.Generic;
 using System.Text;
