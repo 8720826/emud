@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Core.Data
 {
-    public interface IUnitOfWork : ITransient,IDisposable
+    public interface IUnitOfWork : IScoped, IDisposable
     {
 
         Task<int> Commit();

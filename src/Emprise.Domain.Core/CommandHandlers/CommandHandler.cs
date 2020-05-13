@@ -18,8 +18,7 @@ namespace Emprise.Domain.Core.CommandHandlers
         // 注入中介处理接口
         private readonly IMediatorHandler _bus;
 
-        //private readonly IQueueHandler _msg;
-       
+
         //private IMemoryCache _cache;
         private readonly DomainNotificationHandler _notifications;
 
@@ -34,7 +33,6 @@ namespace Emprise.Domain.Core.CommandHandlers
             _uow = uow;
             _bus = bus;
             _notifications = (DomainNotificationHandler)notifications;
-            //_uow.BeginTransaction();
         }
 
         /*
@@ -53,8 +51,8 @@ namespace Emprise.Domain.Core.CommandHandlers
         //如果有错误，下一步会在这里添加领域通知
         public async Task<bool> Commit()
         {
-            var commit = await _uow.Commit();
-            return commit > 0;
+            await _uow.Commit();
+            return true;
         }
     }
 }
