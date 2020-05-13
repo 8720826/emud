@@ -25,14 +25,12 @@ namespace Emprise.Admin.Pages.NpcScript
         [BindProperty]
         public ScriptInput Script { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public async Task OnGetAsync()
+        public void OnGet()
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
@@ -41,27 +39,27 @@ namespace Emprise.Admin.Pages.NpcScript
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id, string position)
+        public async Task<IActionResult> OnPostAsync()
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-            var script = _mapper.Map<ScriptEntity>(Script);
-    
-            await _db.Scripts.AddAsync(script);
-
-            await _db.SaveChangesAsync();
 
 
-
-            SueccessMessage = $"添加成功！";
-
-            //return RedirectToPage("Edit", new { id = script.Id });
+            try
+            {
+                var script = _mapper.Map<ScriptEntity>(Script);
+                await _db.Scripts.AddAsync(script);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
         }

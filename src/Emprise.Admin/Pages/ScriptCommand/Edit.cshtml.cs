@@ -27,8 +27,6 @@ namespace Emprise.Admin.Pages.ScriptCommand
         [BindProperty]
         public ScriptCommandInput ScriptCommand { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         public Array Conditions { get; set; }
@@ -109,11 +107,9 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public async Task<IActionResult> OnPostAsync(int id)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
 
                 Conditions = Enum.GetNames(typeof(ConditionTypeEnum));
 
@@ -128,26 +124,30 @@ namespace Emprise.Admin.Pages.ScriptCommand
             }
 
 
-            var scriptCommand = await _db.ScriptCommands.FindAsync(id);
-            _mapper.Map(ScriptCommand, scriptCommand);
 
-            if (scriptCommand.IsEntry)
+
+            try
             {
-                var scriptCommands = _db.ScriptCommands.Where(x => x.ScriptId == scriptCommand.ScriptId).ToList();
+                var scriptCommand = await _db.ScriptCommands.FindAsync(id);
+                _mapper.Map(ScriptCommand, scriptCommand);
 
-                foreach (var command in scriptCommands.Where(x => x.Id != scriptCommand.Id))
+                if (scriptCommand.IsEntry)
                 {
-                    command.IsEntry = false;
+                    var scriptCommands = _db.ScriptCommands.Where(x => x.ScriptId == scriptCommand.ScriptId).ToList();
+
+                    foreach (var command in scriptCommands.Where(x => x.Id != scriptCommand.Id))
+                    {
+                        command.IsEntry = false;
+                    }
                 }
+
+                await _db.SaveChangesAsync();
             }
-
-            await _db.SaveChangesAsync();
-
-
-
-            SueccessMessage = $"修改成功！";
-
-            //return RedirectToPage("/ScriptCommand/Index", new { sId = scriptCommand.ScriptId });
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
         }

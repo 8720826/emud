@@ -14,6 +14,7 @@ namespace Emprise.Admin.Models.Room
         /// </summary>
         [Display(Name = "房间名")]
         [Required(ErrorMessage = "请输入房间名")]
+        [StringLength(50, ErrorMessage = "{0}最长不能超过{1}个字符")]
         public string Name {  get; set; }
 
 
@@ -50,7 +51,7 @@ namespace Emprise.Admin.Models.Room
         /// </summary>
         [Display(Name = "描述")]
         [Required(ErrorMessage = "请输入描述")]
-        [StringLength(500)]
+        [StringLength(500, ErrorMessage = "{0}最长不能超过{1}个字符")]
         public string Description {  get; set; }
 
         /// <summary>

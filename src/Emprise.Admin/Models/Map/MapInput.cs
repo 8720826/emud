@@ -12,8 +12,8 @@ namespace Emprise.Admin.Models.Map
         /// 地图名
         /// </summary>
         [Display(Name = "名称")]
-        [Required(ErrorMessage = "请输入地图名称")]
-        [StringLength(32,ErrorMessage ="长度最大为32字符")]
+        [Required(ErrorMessage = "请输入{0}")]
+        [StringLength(32,ErrorMessage ="{0}长度最大为{1}字符")]
 
         public string Name { set; get; }
 
@@ -22,7 +22,7 @@ namespace Emprise.Admin.Models.Map
         /// </summary>
         [Display(Name = "描述")]
         [Required(ErrorMessage = "描述")]
-        [StringLength(500, ErrorMessage = "长度最大为500字符")]
+        [StringLength(500, ErrorMessage = "{0}长度最大为{1}字符")]
         public string Description { set; get; }
     }
 }

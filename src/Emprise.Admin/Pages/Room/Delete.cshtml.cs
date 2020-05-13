@@ -20,7 +20,6 @@ namespace Emprise.Admin.Pages.Room
 
         public RoomEntity Room { get; set; }
 
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
 
@@ -50,18 +49,23 @@ namespace Emprise.Admin.Pages.Room
 
         public async Task<IActionResult> OnPostAsync(int id = 0)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var room = await _db.Rooms.FindAsync(id);
-            _db.Rooms.Remove(room);
-            await _db.SaveChangesAsync();
 
-            SueccessMessage = $"删除成功！";
+            try
+            {
+                var room = await _db.Rooms.FindAsync(id);
+                _db.Rooms.Remove(room);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
 

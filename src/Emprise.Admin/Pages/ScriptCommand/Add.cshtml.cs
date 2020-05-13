@@ -26,8 +26,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
         [BindProperty]
         public ScriptCommandInput ScriptCommand { get; set; }
 
-        public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
+
         public string ErrorMessage { get; set; }
 
         public Array Conditions { get; set; }
@@ -69,35 +68,37 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public async Task<IActionResult> OnPostAsync(int sId)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
 
-            var scriptCommand = _mapper.Map<ScriptCommandEntity>(ScriptCommand);
-            scriptCommand.ScriptId = sId;
-            await _db.ScriptCommands.AddAsync(scriptCommand);
 
-            if (scriptCommand.IsEntry)
+
+            try
             {
-                var scriptCommands = _db.ScriptCommands.Where(x => x.ScriptId == scriptCommand.ScriptId).ToList();
+                var scriptCommand = _mapper.Map<ScriptCommandEntity>(ScriptCommand);
+                scriptCommand.ScriptId = sId;
+                await _db.ScriptCommands.AddAsync(scriptCommand);
 
-                foreach (var command in scriptCommands.Where(x => x.Id != scriptCommand.Id))
+                if (scriptCommand.IsEntry)
                 {
-                    command.IsEntry = false;
+                    var scriptCommands = _db.ScriptCommands.Where(x => x.ScriptId == scriptCommand.ScriptId).ToList();
+
+                    foreach (var command in scriptCommands.Where(x => x.Id != scriptCommand.Id))
+                    {
+                        command.IsEntry = false;
+                    }
                 }
+
+                await _db.SaveChangesAsync();
             }
-
-            await _db.SaveChangesAsync();
-
-
-
-            SueccessMessage = $"添加成功！";
-
-            //return RedirectToPage("Edit", new { id = scriptCommand.Id });
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
         }

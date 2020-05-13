@@ -90,7 +90,7 @@ namespace Emprise.Admin.Pages.Config
             }
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             ErrorMessage = "";
             if (!ModelState.IsValid)

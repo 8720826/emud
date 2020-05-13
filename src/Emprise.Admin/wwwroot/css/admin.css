@@ -28,6 +28,7 @@ ul {
     min-height: 100%;
     float: left;
     border-right: 1px solid #cecece;
+    border-bottom: 1px solid #cecece;
 }
 
 .admin-sidebar-list {

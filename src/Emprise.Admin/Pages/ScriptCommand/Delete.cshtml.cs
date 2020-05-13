@@ -20,7 +20,6 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public ScriptCommandEntity ScriptCommand { get; set; }
 
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]
@@ -48,20 +47,23 @@ namespace Emprise.Admin.Pages.ScriptCommand
 
         public async Task<IActionResult> OnPostAsync(int id = 0)
         {
-            SueccessMessage = "";
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
-                ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
-            var scriptCommand = await _db.ScriptCommands.FindAsync(id);
-            _db.ScriptCommands.Remove(scriptCommand);
-            await _db.SaveChangesAsync();
 
-            SueccessMessage = $"删除成功！";
-
-            //return RedirectToPage("Index");
+            try
+            {
+                var scriptCommand = await _db.ScriptCommands.FindAsync(id);
+                _db.ScriptCommands.Remove(scriptCommand);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                return Page();
+            }
 
             return Redirect(UrlReferer);
         }

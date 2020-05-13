@@ -9,17 +9,20 @@ using Emprise.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Emprise.Admin.Pages.NpcScript
 {
 
     public class IndexModel : PageModel
     {
+        private readonly ILogger<IndexModel> _logger;
         protected readonly EmpriseDbContext _db;
 
-        public IndexModel(EmpriseDbContext db)
+        public IndexModel(EmpriseDbContext db, ILogger<IndexModel> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
 
@@ -49,14 +52,22 @@ namespace Emprise.Admin.Pages.NpcScript
 
         public async Task<IActionResult> OnPostAsync([FromBody]EnableData enableData)
         {
-            var npcScript = await _db.Scripts.FindAsync(enableData.SId);
-            if (npcScript == null)
+            try
             {
-                return await Task.FromResult(new JsonResult(enableData));
+                var npcScript = await _db.Scripts.FindAsync(enableData.SId);
+                if (npcScript == null)
+                {
+                    return await Task.FromResult(new JsonResult(enableData));
+                }
+
+                npcScript.IsEnable = enableData.IsEnable;
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "");
             }
 
-            npcScript.IsEnable = enableData.IsEnable;
-            await _db.SaveChangesAsync();
 
             return  await Task.FromResult(new JsonResult(enableData));
 

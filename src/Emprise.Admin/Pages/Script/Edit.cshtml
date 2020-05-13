@@ -20,30 +20,34 @@
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">脚本管理</strong> / <small>Script</small></div>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">脚本管理</strong> / <small>修改脚本</small></div>
     </div>
 
     <div class="am-margin">
         <form class="am-form" method="post">
             <div class="am-g">
-                <p>@(Model.Tips)</p>
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="am-fade  am-in am-active">
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            脚本名
+                            <label asp-for="Script.Name" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Script.Name">
+                            <span asp-validation-for="Script.Name" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
+
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            描述
+                            <label asp-for="Script.Description" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="Script.Description">
+                            <span asp-validation-for="Script.Description" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -51,7 +55,7 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            Npc
+                            <label class="control-label" for="Script_Npc">Npc</label>
                         </div>
                         <div class="am-u-sm-10">
                             <ul id="npcs">
@@ -74,21 +78,20 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            状态
+                            <label asp-for="Script.IsEnable" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
-                                <input type="checkbox" asp-for="Script.IsEnable"> 启用
+                                <input type="checkbox" asp-for="Script.IsEnable" checked="checked"> 启用
                             </label>
-
+                            <span asp-validation-for="Script.IsEnable" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
 
 
-
-                    <div class="am-g am-margin-top-sm">
+                    <div class="footor am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
 
                         </div>
@@ -97,7 +100,6 @@
                             <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
-                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
                             </div>
                         </div>
                     </div>

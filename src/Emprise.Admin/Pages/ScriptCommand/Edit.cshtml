@@ -27,36 +27,40 @@
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
-        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">分支管理</strong> / <small>Script</small></div>
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">分支管理</strong> / <small>修改分支</small></div>
     </div>
 
     <div class="am-margin">
         <form class="am-form" method="post" onsubmit="return check()">
             <div class="am-g">
-                <p>@(Model.Tips)</p>
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
                 <div class="am-fade  am-in am-active">
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            分支名
+                            <label asp-for="ScriptCommand.Name" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="ScriptCommand.Name">
+                            <span asp-validation-for="ScriptCommand.Name" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            描述
+                            <label asp-for="ScriptCommand.Description" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="ScriptCommand.Description">
+                            <span asp-validation-for="ScriptCommand.Description" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            是否入口
+                            <label asp-for="ScriptCommand.IsEntry" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-2">
                             <label class="am-btn am-btn-default am-btn-xs">
@@ -69,10 +73,11 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            排序
+                            <label asp-for="ScriptCommand.SortId" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
                             <input type="text" class="am-input-sm" asp-for="ScriptCommand.SortId" value="99">
+                            <span asp-validation-for="ScriptCommand.SortId" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
@@ -80,7 +85,7 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            分支-如果
+                            <label asp-for="ScriptCommand.CaseIf" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="caseIf">
                             <input type="hidden" asp-for="ScriptCommand.CaseIf">
@@ -99,7 +104,7 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            分支-那么
+                            <label asp-for="ScriptCommand.CaseThen" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="caseThen">
                             <input type="hidden" asp-for="ScriptCommand.CaseThen">
@@ -118,7 +123,7 @@
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            分支-否则
+                            <label asp-for="ScriptCommand.CaseElse" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10" id="caseElse">
                             <input type="hidden" asp-for="ScriptCommand.CaseElse">
@@ -136,7 +141,7 @@
                     </div>
 
 
-                    <div class="am-g am-margin-top-sm">
+                    <div class="footer am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
 
                         </div>
@@ -145,7 +150,6 @@
                             <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
-                                <p style="color:#5FB878">@(Model.SueccessMessage)</p>
                             </div>
                         </div>
                     </div>

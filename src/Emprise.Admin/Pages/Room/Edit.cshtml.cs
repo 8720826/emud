@@ -31,7 +31,6 @@ namespace Emprise.Admin.Pages.Room
 
         public int MapId { get; set; }
 
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
 

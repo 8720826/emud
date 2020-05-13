@@ -29,7 +29,6 @@ namespace Emprise.Admin.Pages.Room
         public RoomInput Room { get; set; }
 
         public string Tips { get; set; }
-        public string SueccessMessage { get; set; }
         public string ErrorMessage { get; set; }
 
         [BindProperty]

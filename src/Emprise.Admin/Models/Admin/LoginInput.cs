@@ -9,11 +9,11 @@ namespace Emprise.Admin.Models.Admin
     public class LoginInput
     {
         [Display(Name = "账号")]
-        [Required(ErrorMessage = "请输入账号名")]
+        [Required(ErrorMessage = "请输入{0}")]
         public string Name { get; set; }
 
         [Display(Name = "密码")]
-        [Required(ErrorMessage = "请输入密码")]
+        [Required(ErrorMessage = "请输入{0}")]
         public string Password { get; set; }
     }
 }
