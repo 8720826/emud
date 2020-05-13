@@ -1,5 +1,8 @@
-﻿using Emprise.Domain.Core.Entity;
+﻿using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Entity;
+using Emprise.Domain.Core.EventHandlers;
 using Emprise.Domain.Core.Events;
+using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.User.Entity;
 using Emprise.Domain.User.Events;
 using MediatR;
@@ -13,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.User.EventHandlers
 {
-    public class UserEventHandler :
+    public class UserEventHandler : MudEventHandler,
         INotificationHandler<EntityUpdatedEvent<UserEntity>>,
         INotificationHandler<EntityInsertedEvent<UserEntity>>,
         INotificationHandler<EntityDeletedEvent<UserEntity>>,
@@ -29,7 +32,8 @@ namespace Emprise.Domain.User.EventHandlers
 
 
 
-        public UserEventHandler()
+        public UserEventHandler(IMudProvider mudProvider,
+            IUnitOfWork uow) : base(uow, mudProvider)
         {
 
         }

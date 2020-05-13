@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.EventHandlers;
 using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
@@ -23,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.User.EventHandlers
 {
-    public class PlayerEventHandler :
+    public class PlayerEventHandler : MudEventHandler,
         INotificationHandler<EntityUpdatedEvent<PlayerEntity>>,
         INotificationHandler<EntityInsertedEvent<PlayerEntity>>,
         INotificationHandler<EntityDeletedEvent<PlayerEntity>>,
@@ -48,12 +50,21 @@ namespace Emprise.Domain.User.EventHandlers
         private readonly AppConfig _appConfig;
         private readonly IChatLogDomainService _chatLogDomainService;
 
-        public PlayerEventHandler(IRoomDomainService roomDomainService, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IMudProvider chatProvider, IMudOnlineProvider chatOnlineProvider, IMapper mapper, IOptionsMonitor<AppConfig> appConfig, IChatLogDomainService chatLogDomainService)
+        public PlayerEventHandler(IRoomDomainService roomDomainService, 
+            INpcDomainService npcDomainService, 
+            IPlayerDomainService playerDomainService, 
+            IMudProvider mudProvider, 
+            IMudOnlineProvider chatOnlineProvider, 
+            IMapper mapper, 
+            IOptionsMonitor<AppConfig> appConfig, 
+            IChatLogDomainService chatLogDomainService, 
+            IUnitOfWork uow) 
+            : base(uow, mudProvider)
         {
             _roomDomainService = roomDomainService;
             _npcDomainService = npcDomainService;
             _playerDomainService = playerDomainService;
-            _mudProvider = chatProvider;
+            _mudProvider = mudProvider;
             _chatOnlineProvider = chatOnlineProvider;
             _mapper = mapper;
             _appConfig = appConfig.CurrentValue;
@@ -209,6 +220,9 @@ namespace Emprise.Domain.User.EventHandlers
                 Content = content,
                 PostDate = DateTime.Now
             });
+
+
+            await Commit();
             // await _delayedQueue.Publish(new MessageModel { Content = receivedMessage.Content, PlayerId = _account.PlayerId }, 2, 10);
 
         }
