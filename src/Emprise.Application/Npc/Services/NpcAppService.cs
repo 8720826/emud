@@ -2,7 +2,7 @@
 using Emprise.Application.Npc.Models;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Notifications;

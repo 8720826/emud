@@ -1,4 +1,4 @@
-﻿using Emprise.Domain.Core.Enum;
+﻿using Emprise.Domain.Core.Enums;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;

@@ -1,6 +1,6 @@
 ﻿using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Bus.Models;
-using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;

@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Emprise.MudServer.Hubs.Models;
-using Emprise.Domain.Core.Enum;
+using Emprise.Domain.Core.Enums;
 
 namespace Emprise.MudServer.Hubs
 {
