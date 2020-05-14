@@ -32,6 +32,8 @@ namespace Emprise.Domain.Core.Enums
 
         System = 1,
 
-        Game = 2
+        Game = 2,
+
+        Log = 3
     }
 }

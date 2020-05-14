@@ -306,6 +306,10 @@ namespace Emprise.Domain.User.CommandHandlers
                 return Unit.Value;
             }
 
+            player.LastDate = DateTime.Now;
+            await _playerDomainService.Update(player);
+
+
             if (await Commit())
             {
                 await _bus.RaiseEvent(new InitGameEvent(player)).ConfigureAwait(false);

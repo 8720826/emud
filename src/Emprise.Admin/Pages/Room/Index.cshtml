@@ -15,23 +15,15 @@
             <div class="am-btn-toolbar am-fl">
                 <div class="am-btn-group am-btn-group-xs">
                     <a asp-page="Add" asp-route-mapId="@(Model.Map?.Id)" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+
+                    <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                 </div>
 
             </div>
         </div>
     </div>
     <div class="am-u-md-3 am-cf">
-        <form class="am-form">
-            <div class="am-fr">
-                <div class="am-input-group am-input-group-sm">
-                    <input type="text" class="am-form-field" asp-for="Keyword">
-                    <span class="am-input-group-btn">
-                        <button class="am-btn am-btn-default" type="submit">搜索</button>
-                    </span>
 
-                </div>
-            </div>
-        </form>
     </div>
 </div>
 
@@ -50,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var room in Model.Paging.Data)
+                    @foreach (var room in Model.Rooms)
                     {
                     <tr>
                         <td>@(room.Id)</td>
@@ -100,34 +92,14 @@
                     }
                 </tbody>
             </table>
-            <div class="am-cf">
-                共 @(Model.Paging.Count) 条记录
-                <div class="am-fr">
-                    <ul class="am-pagination">
-                        <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
 
-                        @for (var i = 0; i < Model.Paging.PageCount; i++)
-                        {
-                            if (Model.Paging.PageIndex == i + 1)
-                            {
-                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
-                            }
-                            else
-                            {
-                                <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
-                            }
-                        }
-
-                        <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
-                    </ul>
-                </div>
-            </div>
             <hr />
             <p>注：.....</p>
         </form>
     </div>
 
 </div>
+
 
 
 @section Scripts {

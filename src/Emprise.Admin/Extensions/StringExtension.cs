@@ -49,7 +49,7 @@ namespace Emprise.Admin.Extensions
             return string.IsNullOrEmpty(value) == false && reg.IsMatch(value);
         }
 
-        public static string ToMd5(this string str)
+        public static string ToMd51(this string str)
         {
             byte[] b = Encoding.UTF8.GetBytes(str);
             b = new MD5CryptoServiceProvider().ComputeHash(b);
@@ -110,12 +110,12 @@ namespace Emprise.Admin.Extensions
         }
 
 
-        public static string JoinString(this IEnumerable<string> values)
+        public static string JoinString1(this IEnumerable<string> values)
         {
-            return JoinString(values, ",");
+            return JoinString1(values, ",");
         }
 
-        public static string JoinString(this IEnumerable<string> values, string split)
+        public static string JoinString1(this IEnumerable<string> values, string split)
         {
             var result = values.Aggregate(string.Empty, (current, value) => current + (split + value));
             result = result.TrimStart(split.ToCharArray());

@@ -1,0 +1,112 @@
+﻿@page
+@model Emprise.Admin.Pages.User.PlayerModel
+@{
+    ViewData["Title"] = "玩家管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.Game;
+}
+
+@section CssJs {
+    <link rel="stylesheet" href="~/css/amazeui.switch.css" />
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">玩家管理</strong> / <small>玩家列表-@(Model.User.Email)(@(Model.User.Id))</small></div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+            <div class="am-btn-toolbar am-fl">
+                <div class="am-btn-group am-btn-group-xs">
+                    <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="am-g">
+    <div class="am-u-sm-12">
+        <form class="am-form">
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>创建时间</th>
+                        <th>最后登录时间</th>
+                        <th>性别</th>
+                        <th>等级</th>
+                        <th>状态</th>
+                        <th>房间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var player in Model.Players)
+                    {
+
+
+                        <tr>
+                            <td>@(player.Id)</td>
+                            <td><a asp-page="./Edit" asp-route-id="@player.Id">@(player.Name)</a></td>
+                            <td title="@(player.CreateDate)">@(player.CreateDate.ToFriendlyTime())</td>
+                            <td title="@(player.LastDate)">@(player.LastDate.ToFriendlyTime())</td>
+                            <td>@(player.Gender)</td>
+                            <td>@(player.Level)</td>
+                            <td>@(player.Status)</td>
+                            <td>@(player.RoomId)</td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+
+                                        <a asp-page="/Player/Edit" asp-route-id="@player.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <hr />
+            <p>注：.....</p>
+        </form>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+
+    <script src="~/js/amazeui.switch.min.js"></script>
+    <script src="~/js/axios.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('[type="checkbox"]').bootstrapSwitch();
+
+
+            $('[type="checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                                    var sId = $(this).attr("sId")*1;
+                                    axios.post('@(Url.Page("/Npc/Index"))', {
+                                        sId: sId,
+                    isEnable: state
+                                    },
+                    {
+                                        headers: {
+                                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                                        }
+                                    })
+                    .then(function (response) {
+                                        console.log(response);
+                                    })
+                    .catch(function (error) {
+                                        console.log(error);
+                                    });
+            });
+        });
+    </script>
+}

@@ -26,10 +26,19 @@ namespace Emprise.Admin.Pages.Room
 
         public MapEntity Map { get; set; }
 
-        public Paging<RoomEntity> Paging { get; set; }
+        public List<RoomEntity> Rooms { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int mapId, int pageIndex)
+        [BindProperty]
+        public string UrlReferer { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int mapId, int pageIndex,string @ref)
         {
+            UrlReferer = @ref;
+            if (string.IsNullOrEmpty(UrlReferer))
+            {
+                UrlReferer = Request.Headers["Referer"].ToString();
+            }
+
             Map = await _db.Maps.FindAsync(mapId);
             if (Map == null)
             {
@@ -45,7 +54,7 @@ namespace Emprise.Admin.Pages.Room
 
             query = query.OrderBy(x => x.Id);
 
-            Paging = query.Paged(pageIndex, 10, query.Count());
+            Rooms = query.ToList();
 
             return Page();
         }

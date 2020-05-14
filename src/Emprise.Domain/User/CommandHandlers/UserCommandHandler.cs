@@ -87,7 +87,7 @@ namespace Emprise.Domain.User.CommandHandlers
 
         public async Task<Unit> Handle(RegCommand command, CancellationToken cancellationToken)
         {
-            var email = command.Email;
+            var email = command.Email.Trim().ToLower();
             var password = command.Password;
             var code = command.Code;
 

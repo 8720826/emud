@@ -15,6 +15,7 @@
             <div class="am-btn-toolbar am-fl">
                 <div class="am-btn-group am-btn-group-xs">
                     <a asp-page="Add" asp-route-sid="@Model.SId" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+                    <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                 </div>
 
             </div>
@@ -73,11 +74,7 @@
 </div>
 
 
-<div class="am-margin">
-    <form class="am-form" method="post">
-        <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
-    </form>
-</div>
+
 
 @section Scripts {
     <script type="text/javascript">
