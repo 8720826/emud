@@ -2,34 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Emprise.Admin.Data;
-using Emprise.Admin.Models.Player;
+using Emprise.Admin.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Emprise.Admin.Pages.Player
 {
-    public class EditModel : PageModel
+    public class DeleteModel : PageModel
     {
         protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
 
-        public EditModel(EmpriseDbContext db, IMapper mapper)
+        public DeleteModel(EmpriseDbContext db)
         {
             _db = db;
-            _mapper = mapper;
         }
 
-        [BindProperty]
-        public PlayerInput Player { get; set; }
+        public PlayerEntity Player { get; set; }
 
         public string ErrorMessage { get; set; }
 
-
         [BindProperty]
         public string UrlReferer { get; set; }
-
 
 
         public async Task<IActionResult> OnGetAsync(int id)
@@ -42,10 +36,7 @@ namespace Emprise.Admin.Pages.Player
 
             if (id > 0)
             {
-                var player = await _db.Players.FindAsync(id);
-
-                Player = _mapper.Map<PlayerInput>(player);
-
+                Player = await _db.Players.FindAsync(id);
                 return Page();
             }
             else
@@ -65,8 +56,7 @@ namespace Emprise.Admin.Pages.Player
             try
             {
                 var player = await _db.Players.FindAsync(id);
-                _mapper.Map(Player, player);
-
+                _db.Players.Remove(player);
                 await _db.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -1,16 +1,16 @@
 ﻿@page
-@model Emprise.Admin.Pages.Quest.DeleteModel
+@model Emprise.Admin.Pages.Player.DeleteModel
 @{
-    ViewData["Title"] = "脚本管理";
+    ViewData["Title"] = "Npc管理";
     ViewData["MenuGroup"] = MenuGroupEnum.System;
 }
 
 <div class="am-cf am-padding">
-    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>删除任务</small></div>
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">玩家管理</strong> / <small>删除玩家</small></div>
 </div>
 
 <div class="am-tabs am-margin" data-am-tabs>
-    是否要删除任务  "@(Model.Quest?.Name)(id=@(Model.Quest?.Id))" ?
+    是否要删除玩家  "@(Model.Player?.Name)(id=@(Model.Player?.Id))" ?
 </div>
 
 <div class="am-margin">

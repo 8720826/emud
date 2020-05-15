@@ -12,6 +12,7 @@ using System.Text;
 using Emprise.Admin.Models.Ware;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Map;
+using Emprise.Admin.Models.Player;
 
 namespace Emprise.Admin.Mapper
 {
@@ -54,6 +55,9 @@ namespace Emprise.Admin.Mapper
 
             CreateMap<MapInput, MapEntity>();
             CreateMap<MapEntity, MapInput>();
+
+            CreateMap<PlayerInput, PlayerEntity>();
+            CreateMap<PlayerEntity, PlayerInput>();
         }
     }
 }

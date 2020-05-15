@@ -34,7 +34,7 @@ namespace Emprise.Domain.Core.Authorization
         string PlayerName { get;  }
 
         /// <summary>
-        /// 当前场景
+        /// 当前房间
         /// </summary>
          int RoomId { get; }
 

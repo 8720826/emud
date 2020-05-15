@@ -68,7 +68,7 @@ namespace Emprise.MudServer.Hubs
         
 
         /// <summary>
-        /// 系统发消息给该场景的所有人
+        /// 系统发消息给该房间的所有人
         /// </summary>
         /// <param name="roomId"></param>
         /// <param name="content"></param>
@@ -88,7 +88,7 @@ namespace Emprise.MudServer.Hubs
         }
 
         /// <summary>
-        /// 系统发送消息给该场景的其他人
+        /// 系统发送消息给该房间的其他人
         /// nickName与connectionId有一个有值
         /// </summary>
         /// <param name="roomId"></param>

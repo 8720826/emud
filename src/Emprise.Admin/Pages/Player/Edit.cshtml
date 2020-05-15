@@ -1,8 +1,491 @@
 ﻿@page
 @model Emprise.Admin.Pages.Player.EditModel
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "玩家管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
 }
+@section CssJs{
 
-<h1>Edit</h1>
+    <link rel="stylesheet" type="text/css" href="~/simditor/styles/simditor.css" />
 
+    <script type="text/javascript" src="~/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="~/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <style>
+        #scripts {
+            font-size: 1.4rem;
+        }
+    </style>
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">玩家管理</strong> / <small>修改玩家资料</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Name" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Name">
+                            <span asp-validation-for="Player.Name" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Age" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Age">
+                            <span asp-validation-for="Player.Age" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Exp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Exp">
+                            <span asp-validation-for="Player.Exp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Point" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Point">
+                            <span asp-validation-for="Player.Point" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Money" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Money">
+                            <span asp-validation-for="Player.Money" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.RoomId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" id="roomId" class="am-input-sm" asp-for="Player.RoomId">
+                            <span asp-validation-for="Player.RoomId" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.FactionId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" id="factionId" class="am-input-sm" asp-for="Player.FactionId">
+                            <span asp-validation-for="Player.FactionId" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Title" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Title">
+                            <span asp-validation-for="Player.Title" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Str" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Str">
+                            <span asp-validation-for="Player.Str" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.StrAdd" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.StrAdd">
+                            <span asp-validation-for="Player.StrAdd" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Con" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Con">
+                            <span asp-validation-for="Player.Con" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.ConAdd" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.ConAdd">
+                            <span asp-validation-for="Player.ConAdd" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Int" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Int">
+                            <span asp-validation-for="Player.Int" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.IntAdd" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.IntAdd">
+                            <span asp-validation-for="Player.IntAdd" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Dex" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Dex">
+                            <span asp-validation-for="Player.Dex" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.DexAdd" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.DexAdd">
+                            <span asp-validation-for="Player.DexAdd" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Cor" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Cor">
+                            <span asp-validation-for="Player.Cor" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Cps" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Cps">
+                            <span asp-validation-for="Player.Cps" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Per" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Per">
+                            <span asp-validation-for="Player.Per" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Kar" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Kar">
+                            <span asp-validation-for="Player.Kar" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Nrg" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Nrg">
+                            <span asp-validation-for="Player.Nrg" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Nrg" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Nrg">
+                            <span asp-validation-for="Player.Nrg" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Pot" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Pot">
+                            <span asp-validation-for="Player.Pot" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Hp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Hp">
+                            <span asp-validation-for="Player.Hp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.MaxHp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.MaxHp">
+                            <span asp-validation-for="Player.MaxHp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Mp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Mp">
+                            <span asp-validation-for="Player.Mp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.MaxMp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.MaxMp">
+                            <span asp-validation-for="Player.MaxMp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.LimitMp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.LimitMp">
+                            <span asp-validation-for="Player.LimitMp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Atk" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Atk">
+                            <span asp-validation-for="Player.Atk" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Def" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Def">
+                            <span asp-validation-for="Player.Def" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Hit" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Hit">
+                            <span asp-validation-for="Player.Hit" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Flee" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Flee">
+                            <span asp-validation-for="Player.Flee" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Player.Parry" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Player.Parry">
+                            <span asp-validation-for="Player.Parry" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="am-margin">
+                <input type="hidden" asp-for="UrlReferer">
+            </div>
+
+
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/layer/layer.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+
+
+            $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+
+
+            $("#addScript").on("click", function () {
+                var index = layer.open({
+                    type: 2,
+                    title: "请选择要设置的脚本",
+                    area: ["800px", "1000px"],
+                    content: "@(Url.Page("/Script/List"))",
+                    success: function (layero, index) {
+
+                    },
+                    end: function () {
+
+                    }
+                });
+                layer.full(index);
+            });
+
+            $("#roomId").on("click", function () {
+                var index = layer.open({
+                    type: 2,
+                    title: "请选择要设置的房间",
+                    area: ["800px", "1000px"],
+                    content: "@(Url.Page("/Room/List"))",
+                    success: function (layero, index) {
+
+                    },
+                    end: function () {
+
+                    }
+                });
+                layer.full(index);
+            });
+
+
+            $(document).on("click", ".removeScript", function () {
+                $(this).parent().remove();
+            });
+        });
+
+        function addScript(id, name) {
+            if ($("input[name='ScriptIds'][value=" + id+"]").length > 0) {
+                return;
+            }
+             $("#scripts").append("<li>" + name + "(" + id + ")         <a href='javascript:;' class='removeScript' id='" + id + "'>X</a><input type='hidden' name='ScriptIds' value='" + id + "'></li> ");
+        }
+
+
+        function selectRoom(id, name) {
+            $("#roomId").val(id);
+        }
+    </script>
+}

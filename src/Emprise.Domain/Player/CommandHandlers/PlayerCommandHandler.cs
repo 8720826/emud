@@ -302,7 +302,7 @@ namespace Emprise.Domain.User.CommandHandlers
             var room = await _roomDomainService.Get(player.RoomId);
             if (room == null)
             {
-                await _bus.RaiseEvent(new DomainNotification("场景不存在！"));
+                await _bus.RaiseEvent(new DomainNotification("房间不存在！"));
                 return Unit.Value;
             }
 
@@ -328,7 +328,7 @@ namespace Emprise.Domain.User.CommandHandlers
            
             if (roomId <= 0)
             {
-                await _bus.RaiseEvent(new DomainNotification($"场景不存在！"));
+                await _bus.RaiseEvent(new DomainNotification($"房间不存在！"));
                 return Unit.Value;
             }
 
@@ -354,7 +354,7 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 if (!new[] { oldRoom.West, oldRoom.East, oldRoom.North, oldRoom.South }.Contains(roomId))
                 {
-                    await _bus.RaiseEvent(new DomainNotification($"无法移动到该场景！"));
+                    await _bus.RaiseEvent(new DomainNotification($"无法移动到该房间！"));
                     return Unit.Value;
                 }
             }
@@ -362,7 +362,7 @@ namespace Emprise.Domain.User.CommandHandlers
             var newRoom = await _roomDomainService.Get(roomId);
             if (newRoom == null)
             {
-                await _bus.RaiseEvent(new DomainNotification("场景不存在！"));
+                await _bus.RaiseEvent(new DomainNotification("房间不存在！"));
                 return Unit.Value;
             }
 
