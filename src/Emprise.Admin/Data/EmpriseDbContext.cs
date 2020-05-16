@@ -44,8 +44,8 @@ namespace Emprise.Admin.Data
         public DbSet<ChatLogEntity> ChatLogs { get; set; }
         public DbSet<SystemLogEntity> SystemLogs { get; set; }
 
-
-
+        public DbSet<OperatorLogEntity> OperatorLogs { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NpcScriptEntity>()

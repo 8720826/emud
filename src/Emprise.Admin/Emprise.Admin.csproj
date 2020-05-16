@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Middlewares\UploadMiddleware.cs" />
     <Compile Remove="Models\AppConfig.cs" />
   </ItemGroup>
 
@@ -32,6 +33,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Emprise.Domain\Emprise.Domain.csproj" />
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
   </ItemGroup>
 
 </Project>

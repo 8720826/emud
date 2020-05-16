@@ -6,9 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Data;
 using Emprise.Admin.Models.Config;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -18,22 +20,15 @@ using StackExchange.Redis;
 
 namespace Emprise.Admin.Pages.Config
 {
-    public class IndexModel : PageModel
+    public class IndexModel : BasePageModel
     {
-        private readonly IMapper _mapper;
-        private readonly AppConfig _appConfig;
-        private readonly ILogger<IndexModel> _logger;
         private readonly IConfiguration _configuration;
-        private IDatabase _db;
-        public IndexModel(IMapper mapper, IOptionsMonitor<AppConfig> appConfig, ILogger<IndexModel> logger, IConfiguration configuration)
+        private IDatabase _redisDb;
+        public IndexModel(IMapper mapper,  ILogger<IndexModel> logger, IConfiguration configuration, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) : base(db, appConfig, httpAccessor, mapper, logger)
         {
-            _mapper = mapper;
-            _appConfig = appConfig.CurrentValue;
-            _logger = logger;
             _configuration = configuration;
-
             var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
-            _db = redis.GetDatabase();
+            _redisDb = redis.GetDatabase();
         }
 
         public string ErrorMessage { get; set; }
@@ -56,7 +51,7 @@ namespace Emprise.Admin.Pages.Config
 
             ConfigDtos = new List<ConfigDto>();
 
-            var configurations = _db.HashGetAll("configurations");
+            var configurations = _redisDb.HashGetAll("configurations");
             Configs = configurations.ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
 
 
@@ -115,7 +110,7 @@ namespace Emprise.Admin.Pages.Config
 
             foreach (var config in Configs)
             {
-                _db.HashSet("configurations", config.Key, config.Value);
+                _redisDb.HashSet("configurations", config.Key, config.Value);
             }
 
        

@@ -12,23 +12,22 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Microsoft.Extensions.Configuration;
+using Emprise.Admin.Data;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
+using Emprise.Domain.Core.Enums;
 
 namespace Emprise.Admin.Pages.Config
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<IndexModel> _logger;
         private readonly IConfiguration _configuration;
-        private IDatabase _db;
-        public EditModel(IMapper mapper, ILogger<IndexModel> logger, IConfiguration configuration)
+        private IDatabase _redisDb;
+        public EditModel(IMapper mapper, ILogger<IndexModel> logger, IConfiguration configuration, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) : base(db, appConfig, httpAccessor, mapper, logger)
         {
-            _mapper = mapper;
-            _logger = logger;
             _configuration = configuration;
-
             var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
-            _db = redis.GetDatabase();
+            _redisDb = redis.GetDatabase();
         }
 
         public string ErrorMessage { get; set; }
@@ -40,7 +39,7 @@ namespace Emprise.Admin.Pages.Config
 
         public Dictionary<string, string> Configs = new Dictionary<string, string>();
 
-
+        public Dictionary<string, string> NewConfigs = new Dictionary<string, string>();
         public async Task OnGetAsync()
         {
             UrlReferer = Request.Headers["Referer"].ToString();
@@ -51,7 +50,7 @@ namespace Emprise.Admin.Pages.Config
 
             ConfigDtos = new List<ConfigDto>();
 
-            var configurations = _db.HashGetAll("configurations");
+            var configurations = _redisDb.HashGetAll("configurations");
             Configs = configurations.ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
 
 
@@ -90,7 +89,7 @@ namespace Emprise.Admin.Pages.Config
             }
         }
 
-        public IActionResult OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             ErrorMessage = "";
             if (!ModelState.IsValid)
@@ -107,13 +106,31 @@ namespace Emprise.Admin.Pages.Config
                 _logger.LogError(ex, "");
             }
 
+            var configurations = _redisDb.HashGetAll("configurations");
+            Configs = configurations.ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
 
-            foreach (var config in Configs)
+            string content = "";
+            foreach (var config in NewConfigs)
             {
-                _db.HashSet("configurations", config.Key, config.Value);
+                if (!Configs.ContainsKey(config.Key))
+                {
+                    content += $"[{config.Key}]:''=>'{config.Value}';\r\n";
+                    _redisDb.HashSet("configurations", config.Key, config.Value);
+                }
+                else if (Configs[config.Key]!= config.Value)
+                {
+                    content += $"[{config.Key}]:'{Configs[config.Key]}'=>'{config.Value}';\r\n";
+                    _redisDb.HashSet("configurations", config.Key, config.Value);
+                }
             }
 
+            
 
+            await AddSuccess(new OperatorLog
+            {
+                Type = OperatorLogType.修改配置,
+                Content = content
+            });
 
             return Redirect(UrlReferer);
         }
@@ -129,7 +146,7 @@ namespace Emprise.Admin.Pages.Config
                 if (prop.PropertyType.IsValueType || prop.PropertyType.Name.StartsWith("String"))
                 {
                     var value = Request.Form[key];
-                    Configs.TryAdd(key, value);
+                    NewConfigs.TryAdd(key, value);
                 }
                 else
                 {

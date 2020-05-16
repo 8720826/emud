@@ -6,31 +6,27 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
 using Emprise.Admin.Models.Admin;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
-namespace EmpriseAdmin.Pages
+namespace Emprise.Admin.Pages
 {
     [AllowAnonymous]
-    public class LoginModel : PageModel
+    public class LoginModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly AppConfig _appConfig;
-        public LoginModel(EmpriseDbContext db, IMapper mapper, IOptionsMonitor<AppConfig> appConfig)
+        public LoginModel(EmpriseDbContext db, ILogger<LoginModel> logger, IMapper mapper, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
+            : base(db, appConfig, httpAccessor, mapper, logger)
         {
-            _db = db;
-            _mapper = mapper;
-            _appConfig = appConfig.CurrentValue;
+
         }
 
         public bool HasSetAdmin { get; set; }
@@ -65,6 +61,13 @@ namespace EmpriseAdmin.Pages
                 };
                 _db.Admins.Add(admin);
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.登录,
+                    Content = $"初始化帐号:{admin.Name}",
+                    Name = LoginInput.Name
+                });
             }
             else
             {
@@ -73,6 +76,13 @@ namespace EmpriseAdmin.Pages
                 {
                     ErrorMessage = "账号或密码错误";
                     HasSetAdmin = _db.Admins.Count() != 0;
+
+                    await AddError(new OperatorLog
+                    {
+                        Type = OperatorLogType.登录,
+                        Content = JsonConvert.SerializeObject(LoginInput),
+                        Name = LoginInput.Name
+                    });
                     return Page();
                 }
 
@@ -80,17 +90,36 @@ namespace EmpriseAdmin.Pages
                 {
                     ErrorMessage = "账号或密码错误";
                     HasSetAdmin = _db.Admins.Count() != 0;
+
+                    await AddError(new OperatorLog
+                    {
+                        Type = OperatorLogType.登录,
+                        Content = JsonConvert.SerializeObject(LoginInput),
+                        Name = LoginInput.Name
+                    });
                     return Page();
                 }
             }
 
-            var claims = new[] { new Claim("Name", admin.Name) };
+            var claims = new[] { 
+                new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()), 
+                new Claim(ClaimTypes.Name, admin.Name)
+            };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+
+            var claimsIdentity = new ClaimsIdentity(claims, "Default");
             ClaimsPrincipal user = new ClaimsPrincipal(claimsIdentity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, user, new AuthenticationProperties { AllowRefresh = true, ExpiresUtc = DateTimeOffset.Now.AddDays(30) });
+            await HttpContext.SignInAsync("admin", user, new AuthenticationProperties { AllowRefresh = true, ExpiresUtc = DateTimeOffset.Now.AddDays(30) });
+
+            await AddSuccess(new OperatorLog
+            {
+                Type = OperatorLogType.登录,
+                Content = "", 
+                Name = LoginInput.Name
+            });
+
 
             return RedirectToPage("Index");
         }

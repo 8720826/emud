@@ -27,3 +27,12 @@
     width: 100%;
     z-index: 9999;
 }
+table {
+    table-layout: fixed;
+    word-break: break-all;
+}
+td {
+    word-break: keep-all; /* for ie */
+    white-space: nowrap; /* for chrome */
+    overflow:hidden;
+}

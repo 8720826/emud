@@ -49,7 +49,7 @@ namespace Emprise.Admin.Pages
                 return Page();
             }
 
-            var admin = await _db.Admins.FirstOrDefaultAsync(x => x.Name == "admin");
+            var admin = await _db.Admins.FirstOrDefaultAsync(x => x.Name == this.User.Identity.Name);
             if (admin == null)
             {
                 ErrorMessage = "账号或密码错误";

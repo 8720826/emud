@@ -7,7 +7,6 @@ using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Helper;
 using Emprise.Admin.Mapper;
-using Emprise.Admin.Middlewares;
 using Emprise.Domain.Core.Configuration;
 using Emprise.Domain.Core.Models;
 using Emprise.Infra.Middleware;
@@ -81,7 +80,7 @@ namespace Emprise.Admin
                 options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => "输入值无效");
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie("Cookies", options =>
+            services.AddAuthentication("admin").AddCookie("admin", options =>
             {
                 options.AccessDeniedPath = "/Denied";
                 options.LoginPath = "/Login";

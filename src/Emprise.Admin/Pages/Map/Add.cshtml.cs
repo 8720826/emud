@@ -6,20 +6,24 @@ using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Map;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Map
 {
-    public class AddModel : PageModel
+    public class AddModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
 
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public AddModel(IMapper mapper, ILogger<AddModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
+            : base(db, appConfig, httpAccessor, mapper, logger)
         {
-            _db = db;
-            _mapper = mapper;
+
         }
 
         [BindProperty]
@@ -54,10 +58,22 @@ namespace Emprise.Admin.Pages.Map
                 await _db.Maps.AddAsync(map);
 
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.添加地图,
+                    Content = JsonConvert.SerializeObject(Map)
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.添加地图,
+                    Content = JsonConvert.SerializeObject(Map)
+                });
                 return Page();
             }
 

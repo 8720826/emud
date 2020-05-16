@@ -5,20 +5,22 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Map;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Emprise.Admin.Pages.Map
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-
-        public EditModel(EmpriseDbContext db, IMapper mapper)
+        public EditModel(IMapper mapper, ILogger<EditModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
+            : base(db, appConfig, httpAccessor, mapper, logger)
         {
-            _db = db;
-            _mapper = mapper;
+
         }
 
         [BindProperty]
@@ -65,13 +67,26 @@ namespace Emprise.Admin.Pages.Map
             try
             {
                 var map = await _db.Maps.FindAsync(id);
+                var content = DifferenceComparison(map, Map);
                 _mapper.Map(Map, map);
-
                 await _db.SaveChangesAsync();
+
+
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.修改地图,
+                    Content = content
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.修改地图,
+                    Content = $"id={id}，ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 
