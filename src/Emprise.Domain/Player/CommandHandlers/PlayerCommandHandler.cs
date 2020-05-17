@@ -192,7 +192,7 @@ namespace Emprise.Domain.User.CommandHandlers
                 RoomId = roomId,
                 Title = "",
                 StrAdd = 0,
-                Atk = str,
+                Atk = 0,
                 Str = str,
                 Con = con,
                 Int = @int,
