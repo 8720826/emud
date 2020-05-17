@@ -41,10 +41,10 @@
             <table class="am-table am-table-striped am-table-hover table-main">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>地图名</th>
+                        <th style="width:60px">ID</th>
+                        <th style="width:120px">地图名</th>
                         <th>描述</th>
-                        <th>操作</th>
+                        <th style="width:240px">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,11 +53,11 @@
                         <tr>
                             <td>@(map.Id)</td>
                             <td><a asp-page="./Edit" asp-route-id="@map.Id">@(map.Name)</a></td>
-                            <td>@(map.Description)</td>
+                            <td title="@(map.Description)">@(map.Description)</td>
                             <td>
                                 <div class="am-btn-toolbar">
                                     <div class="am-btn-group am-btn-group-xs">
-                                        <a asp-page="/Room/Index" asp-route-mapId="@map.Id"  asp-route-ref="@($"{Request.Path}{Request.QueryString}")" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 房间管理</a>
+                                        <a asp-page="/Room/Index" asp-route-mapId="@map.Id"  asp-route-ref="@($"{Request.Path}{Request.QueryString}")" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-list"></span> 房间管理</a>
                                         <a asp-page="./Edit" asp-route-id="@map.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
                                         <a asp-page="./Delete" asp-route-id="@map.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                     </div>

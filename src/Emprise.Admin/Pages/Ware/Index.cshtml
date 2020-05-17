@@ -41,14 +41,14 @@
             <table class="am-table am-table-striped am-table-hover table-main">
                 <thead>
                     <tr>
-                        <th class="table-id">ID</th>
-                        <th class="table-title">名称</th>
-                        <th class="table-exits">大类</th>
-                        <th class="table-desc">小类</th>
-                        <th class="table-desc">图片</th>
-                        <th class="table-work">描述</th>
-                        <th class="table-work">属性</th>
-                        <th class="table-set">操作</th>
+                        <th style="width:60px">ID</th>
+                        <th style="width:120px">名称</th>
+                        <th style="width:80px">大类</th>
+                        <th style="width:80px">小类</th>
+                        <th style="width:50px">图片</th>
+                        <th>描述</th>
+                        <th>属性</th>
+                        <th style="width:210px">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,8 +65,8 @@
                         <td>
                            <img src="https://img.emprise.cn/@(ware.Img)" />
                         </td>
-                        <td>@(ware.Description)</td>
-                        <td>
+                        <td title="@(ware.Description)">@(ware.Description)</td>
+                        <td title="@(ware.Effect)">
                             @(ware.Effect)
                         </td>
                         <td>

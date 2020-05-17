@@ -43,15 +43,21 @@
             <table class="am-table am-table-striped am-table-hover table-main">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>名称</th>
-                        <th>创建时间</th>
-                        <th>最后登录时间</th>
-                        <th>性别</th>
-                        <th>等级</th>
-                        <th>状态</th>
-                        <th>房间</th>
-                        <th>操作</th>
+                        <th style="width:60px">ID</th>
+                        <th style="width:150px">名称</th>
+                        <th style="width:120px">创建时间</th>
+                        <th style="width:120px">最后登录时间</th>
+                        <th style="width:60px">性别</th>
+                        <th style="width:60px">年龄</th>
+                        <th style="width:60px">等级</th>
+                        <th style="width:60px">状态</th>
+                        <th style="width:60px">房间</th>
+                        <th>属性</th>
+                        <th style="width:120px">气血</th>
+                        <th style="width:120px">内力</th>
+                        <th style="width:120px">攻防</th>
+                        <th style="width:120px">金钱</th>
+                        <th style="width:240px">操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,15 +71,22 @@
                         <td title="@(player.CreateDate)">@(player.CreateDate.ToFriendlyTime())</td>
                         <td title="@(player.LastDate)">@(player.LastDate.ToFriendlyTime())</td>
                         <td>@(player.Gender)</td>
+                        <td>@(player.Age/12)</td>
                         <td>@(player.Level)</td>
                         <td>@(player.Status)</td>
                         <td>@(player.RoomId)</td>
+                        <td>@(player.Str)+@(player.StrAdd)/@(player.Con)+@(player.ConAdd)/@(player.Int)+@(player.IntAdd)/@(player.Dex)+@(player.DexAdd)</td>
+                        <td>@(player.Hp)/@(player.MaxHp)</td>
+                        <td>@(player.Mp)/@(player.MaxMp)/@(player.LimitMp)</td>
+                        <td>@(player.Atk)/@(player.Def)</td>
+                        <td>@(player.Money)</td>
                         <td>
                             <div class="am-btn-toolbar">
                                 <div class="am-btn-group am-btn-group-xs">
                                     <a asp-page="./User" asp-route-id="@player.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 所属用户</a>
                                     <a asp-page="./Edit" asp-route-id="@player.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
-                                    <a asp-page="./Delete" asp-route-id="@player.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 删除</a>
+
+                                    <a asp-page="./Delete" asp-route-id="@player.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
                                 </div>
                             </div>
                         </td>

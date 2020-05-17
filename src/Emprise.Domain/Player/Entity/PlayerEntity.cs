@@ -239,11 +239,6 @@ namespace Emprise.Domain.Player.Entity
         [ConditionField(PlayerConditionFieldEnum.年龄)]
         public int Age { set; get; }
 
-        /// <summary>
-        /// 权限
-        /// 此处为管理权限，如建造房间
-        /// </summary>
-        public string Auths { set; get; }
 
         /// <summary>
         /// 可分配点数

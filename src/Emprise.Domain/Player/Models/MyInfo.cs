@@ -170,10 +170,6 @@ namespace Emprise.Domain.Player.Models
         /// </summary>
         public string Status { set; get; }
 
-        /// <summary>
-        /// 权限
-        /// </summary>
-        public List<string> Auths { set; get; }
 
         /// <summary>
         /// 可分配点数

@@ -74,7 +74,7 @@
                             <td>@(log.Level)</td>
                             <td title="@(log.Message)">@(log.Message)</td>
                             <td>
-                                @(log.Timestamp)
+                                @(log.Timestamp.ToFriendlyTime())
                             </td>
                         </tr>
                     }
