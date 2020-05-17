@@ -11,7 +11,7 @@ namespace Emprise.Domain.Log.Entity
     public class SystemLogEntity : BaseEntity
     {
 
-        [Timestamp]
+
         public DateTime Timestamp { set; get; }
 
 
@@ -22,7 +22,7 @@ namespace Emprise.Domain.Log.Entity
         public string Exception { set; get; }
         public string Properties { set; get; }
 
-        [Timestamp]
-        public DateTime _ts { set; get; }
+ 
+        public DateTime? _ts { set; get; }
     }
 }

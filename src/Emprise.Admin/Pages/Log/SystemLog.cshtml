@@ -1,0 +1,117 @@
+﻿@page
+@model Emprise.Admin.Pages.Log.SystemLogModel
+@{
+    ViewData["Title"] = "日志管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.Log;
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">日志管理</strong> / <small>操作记录</small></div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+            <form method="POST">
+                <div class="am-btn-toolbar am-fl">
+                    <div class="am-btn-group am-btn-group-xs">
+                        <button class="am-btn am-btn-default" type="submit" asp-page-handler="ClearLog" asp-route-type="1">
+                            <i class="am-icon-recycle"></i>
+                            清除1年前记录
+                        </button>
+                        <button class="am-btn am-btn-default" type="submit" asp-page-handler="ClearLog" asp-route-type="2">
+                            <i class="am-icon-recycle"></i>
+                            清除半年前记录
+                        </button>
+                        <button class="am-btn am-btn-default" type="submit" asp-page-handler="ClearLog" asp-route-type="3">
+                            <i class="am-icon-recycle"></i>
+                            清除3个月前记录
+                        </button>
+                        <button class="am-btn am-btn-default" type="submit" asp-page-handler="ClearLog" asp-route-type="4">
+                            <i class="am-icon-recycle"></i>
+                            清除1个月前记录
+                        </button>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-cf">
+        <form class="am-form">
+            <div class="am-fr">
+                <div class="am-input-group am-input-group-sm">
+                    <input type="text" class="am-form-field" asp-for="Keyword">
+                    <span class="am-input-group-btn">
+                        <button class="am-btn am-btn-default" type="submit">搜索</button>
+                    </span>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-sm-12">
+        <form class="am-form">
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th style="width:60px">ID</th>
+                        <th style="width:100px">级别</th>
+                        <th>内容</th>
+                        <th style="width:150px">时间</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.Paging.Data)
+                    {
+                        <tr>
+                            <td>@(log.Id)</td>
+                            <td>@(log.Level)</td>
+                            <td title="@(log.Message)">@(log.Message)</td>
+                            <td>
+                                @(log.Timestamp)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="am-cf">
+                共 @(Model.Paging.Count) 条记录
+                <div class="am-fr">
+                    <ul class="am-pagination">
+                        <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
+
+                        @for (var i = 0; i < Model.Paging.PageCount; i++)
+                        {
+                            if (Model.Paging.PageIndex == i + 1)
+                            {
+                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
+                            }
+                        }
+
+                        <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr />
+            <p>注：.....</p>
+        </form>
+    </div>
+
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}
