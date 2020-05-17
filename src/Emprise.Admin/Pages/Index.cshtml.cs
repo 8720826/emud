@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace EmpriseAdmin.Pages
+namespace Emprise.Admin.Pages
 {
     public class IndexModel : PageModel
     {

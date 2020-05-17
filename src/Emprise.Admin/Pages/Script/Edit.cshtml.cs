@@ -3,24 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Script;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.NpcScript
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-
-
-        public EditModel(EmpriseDbContext db, IMapper mapper)
+        public EditModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<EditModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
 
         }
 
@@ -81,6 +88,8 @@ namespace Emprise.Admin.Pages.NpcScript
             try
             {
                 var script = await _db.Scripts.FindAsync(id);
+                var content = DifferenceComparison(script, Script);
+
                 _mapper.Map(Script, script);
 
                 var npcScripts = _db.NpcScripts.Where(x => x.ScriptId == id);
@@ -102,10 +111,21 @@ namespace Emprise.Admin.Pages.NpcScript
                     _db.NpcScripts.Add(new NpcScriptEntity { NpcId = npcId, ScriptId = id });
                 }
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.修改脚本,
+                    Content = $"Id = {id},Data = {content}"
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.修改脚本,
+                    Content = $"Id = {id},Data={JsonConvert.SerializeObject(Script)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

@@ -3,26 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Room;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Room
 {
-    public class AddModel : PageModel
+    public class AddModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
 
 
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public AddModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<AddModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
-           
+
         }
 
         [BindProperty]
@@ -66,76 +74,98 @@ namespace Emprise.Admin.Pages.Room
                 return Page();
             }
 
-            var map = await _db.Maps.FindAsync(mapId);
-            if (map == null)
+
+
+
+            try
             {
-                return RedirectToPage("/Map/Index");
-            }
-
-
-            var room = _mapper.Map<RoomEntity>(Room);
-            room.MapId = mapId;
-            await _db.Rooms.AddAsync(room);
-
-
-            if (id > 0)
-            {
-                var oldRoom = await _db.Rooms.FindAsync(id);
-                if (oldRoom != null && oldRoom.MapId == mapId)
+                var map = await _db.Maps.FindAsync(mapId);
+                if (map == null)
                 {
-                    switch (position)
+                    return RedirectToPage("/Map/Index");
+                }
+
+
+                var room = _mapper.Map<RoomEntity>(Room);
+                room.MapId = mapId;
+                await _db.Rooms.AddAsync(room);
+
+
+                if (id > 0)
+                {
+                    var oldRoom = await _db.Rooms.FindAsync(id);
+                    if (oldRoom != null && oldRoom.MapId == mapId)
                     {
-                        case "west":
-                            if (oldRoom.East == 0)
-                            {
-                                oldRoom.East = room.Id;
-                                oldRoom.EastName = room.Name;
+                        switch (position)
+                        {
+                            case "west":
+                                if (oldRoom.East == 0)
+                                {
+                                    oldRoom.East = room.Id;
+                                    oldRoom.EastName = room.Name;
 
-                                room.West = oldRoom.Id;
-                                room.WestName = oldRoom.Name;
-                            }
-                            break;
+                                    room.West = oldRoom.Id;
+                                    room.WestName = oldRoom.Name;
+                                }
+                                break;
 
-                        case "east":
-                            if (oldRoom.West == 0)
-                            {
-                                oldRoom.West = room.Id;
-                                oldRoom.WestName = room.Name;
+                            case "east":
+                                if (oldRoom.West == 0)
+                                {
+                                    oldRoom.West = room.Id;
+                                    oldRoom.WestName = room.Name;
 
 
-                                room.East = oldRoom.Id;
-                                room.EastName = oldRoom.Name;
-                            }
-                            break;
+                                    room.East = oldRoom.Id;
+                                    room.EastName = oldRoom.Name;
+                                }
+                                break;
 
-                        case "south":
-                            if (oldRoom.South == 0)
-                            {
-                                oldRoom.South = room.Id;
-                                oldRoom.SouthName = room.Name;
+                            case "south":
+                                if (oldRoom.South == 0)
+                                {
+                                    oldRoom.South = room.Id;
+                                    oldRoom.SouthName = room.Name;
 
-                                room.North = oldRoom.Id;
-                                room.NorthName = oldRoom.Name;
-                            }
-                            break;
+                                    room.North = oldRoom.Id;
+                                    room.NorthName = oldRoom.Name;
+                                }
+                                break;
 
-                        case "north":
-                            if (oldRoom.North == 0)
-                            {
-                                oldRoom.North = room.Id;
-                                oldRoom.NorthName = room.Name;
+                            case "north":
+                                if (oldRoom.North == 0)
+                                {
+                                    oldRoom.North = room.Id;
+                                    oldRoom.NorthName = room.Name;
 
-                                room.South = oldRoom.Id;
-                                room.SouthName = oldRoom.Name;
-                            }
-                            break;
+                                    room.South = oldRoom.Id;
+                                    room.SouthName = oldRoom.Name;
+                                }
+                                break;
 
+                        }
                     }
                 }
+
+                await _db.SaveChangesAsync();
+
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.添加房间,
+                    Content = JsonConvert.SerializeObject(Room)
+                });
             }
-
-            await _db.SaveChangesAsync();
-
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.添加房间,
+                    Content = $"Data={JsonConvert.SerializeObject(Room)},ErrorMessage={ErrorMessage}"
+                });
+                return Page();
+            }
 
             return Redirect(UrlReferer);
 

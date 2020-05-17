@@ -3,29 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Ware;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Ware.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Ware
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly AppConfig _appConfig;
-        public EditModel(EmpriseDbContext db, IMapper mapper, IOptionsMonitor<AppConfig> appConfig)
+        public EditModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<EditModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
-            _appConfig = appConfig.CurrentValue;
-
-
+            Endpoint = _appConfig.Aliyun.Endpoint;
+            AliyunOssHost = _appConfig.Aliyun.AliyunOssHost;
         }
 
         [BindProperty]
@@ -54,8 +58,7 @@ namespace Emprise.Admin.Pages.Ware
 
             if (id > 0)
             {
-                Endpoint = _appConfig.Aliyun.Endpoint;
-                AliyunOssHost = _appConfig.Aliyun.AliyunOssHost;
+
 
 
                 var ware = await _db.Wares.FindAsync(id);
@@ -87,6 +90,12 @@ namespace Emprise.Admin.Pages.Ware
             try
             {
                 var ware = await _db.Wares.FindAsync(id);
+                if (ware == null)
+                {
+                    ErrorMessage = $"物品 {id} 不存在！";
+                    return Page();
+                }
+                var content = DifferenceComparison(ware, Ware);
                 _mapper.Map(Ware, ware);
 
                 if (ware.Effect == null)
@@ -94,10 +103,21 @@ namespace Emprise.Admin.Pages.Ware
                     ware.Effect = "";
                 }
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.修改物品,
+                    Content = $"Id = {id},Data = {content}"
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.修改物品,
+                    Content = $"Data={JsonConvert.SerializeObject(Ware)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

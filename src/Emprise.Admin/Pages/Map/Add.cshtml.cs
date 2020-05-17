@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Map;
@@ -20,8 +21,14 @@ namespace Emprise.Admin.Pages.Map
     public class AddModel : BasePageModel
     {
 
-        public AddModel(IMapper mapper, ILogger<AddModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
-            : base(db, appConfig, httpAccessor, mapper, logger)
+
+        public AddModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<AddModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
 
         }
@@ -72,7 +79,7 @@ namespace Emprise.Admin.Pages.Map
                 await AddError(new OperatorLog
                 {
                     Type = OperatorLogType.添加地图,
-                    Content = JsonConvert.SerializeObject(Map)
+                    Content = $"Data={JsonConvert.SerializeObject(Map)},ErrorMessage={ErrorMessage}"
                 });
                 return Page();
             }

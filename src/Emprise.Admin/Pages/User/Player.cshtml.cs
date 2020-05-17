@@ -3,23 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Emprise.Admin.Pages.User
 {
-    public class PlayerModel : PageModel
+    public class PlayerModel : BasePageModel
     {
-        private readonly IMapper _mapper;
 
-        protected readonly EmpriseDbContext _db;
-
-        public PlayerModel(EmpriseDbContext db, IMapper mapper)
+        public PlayerModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<PlayerModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
+
         }
 
         [BindProperty]

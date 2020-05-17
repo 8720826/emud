@@ -3,25 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Quest;
 using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Quest
 {
-    public class AddModel : PageModel
+    public class AddModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
 
-
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public AddModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<AddModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
 
         }
 
@@ -61,10 +68,21 @@ namespace Emprise.Admin.Pages.Quest
                 var task = _mapper.Map<QuestEntity>(Quest);
                 await _db.Quests.AddAsync(task);
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.添加任务,
+                    Content = JsonConvert.SerializeObject(Quest)
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.添加任务,
+                    Content = $"Data={JsonConvert.SerializeObject(Quest)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

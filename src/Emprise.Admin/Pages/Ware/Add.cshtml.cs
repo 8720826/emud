@@ -3,28 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Helper;
 using Emprise.Admin.Models;
 using Emprise.Admin.Models.Ware;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Ware
 {
-    public class AddModel : PageModel
+    public class AddModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly AppConfig _appConfig;
-        public AddModel(EmpriseDbContext db, IMapper mapper, IOptionsMonitor<AppConfig> appConfig)
+        public AddModel(IMudClient mudClient,
+             IMapper mapper,
+             ILogger<AddModel> logger,
+             EmpriseDbContext db,
+             IOptionsMonitor<AppConfig> appConfig,
+             IHttpContextAccessor httpAccessor)
+         : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
-            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -66,19 +71,27 @@ namespace Emprise.Admin.Pages.Ware
             try
             {
                 var ware = _mapper.Map<WareEntity>(Ware);
-
                 if (ware.Effect == null)
                 {
                     ware.Effect = "";
                 }
-
                 await _db.Wares.AddAsync(ware);
-
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.添加物品,
+                    Content = JsonConvert.SerializeObject(Ware)
+                });
             }
             catch(Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.添加物品,
+                    Content = $"Data={JsonConvert.SerializeObject(Ware)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

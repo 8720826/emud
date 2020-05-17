@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Map;
 using Emprise.Domain.Core.Enums;
@@ -12,13 +13,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Map
 {
     public class EditModel : BasePageModel
     {
-        public EditModel(IMapper mapper, ILogger<EditModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
-            : base(db, appConfig, httpAccessor, mapper, logger)
+        public EditModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<EditModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
 
         }
@@ -67,6 +74,11 @@ namespace Emprise.Admin.Pages.Map
             try
             {
                 var map = await _db.Maps.FindAsync(id);
+                if (map == null)
+                {
+                    ErrorMessage = $"地图 {id} 不存在！";
+                    return Page();
+                }
                 var content = DifferenceComparison(map, Map);
                 _mapper.Map(Map, map);
                 await _db.SaveChangesAsync();
@@ -76,7 +88,7 @@ namespace Emprise.Admin.Pages.Map
                 await AddSuccess(new OperatorLog
                 {
                     Type = OperatorLogType.修改地图,
-                    Content = content
+                    Content = $"Id = {id},Data = {content}"
                 });
             }
             catch (Exception ex)
@@ -85,7 +97,7 @@ namespace Emprise.Admin.Pages.Map
                 await AddError(new OperatorLog
                 {
                     Type = OperatorLogType.修改地图,
-                    Content = $"id={id}，ErrorMessage={ErrorMessage}"
+                    Content = $"Id = {id},Data={JsonConvert.SerializeObject(Map)},ErrorMessage={ErrorMessage}"
                 });
                 return Page();
             }

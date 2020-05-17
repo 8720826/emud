@@ -2,20 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Room
 {
-    public class DeleteModel : PageModel
+    public class DeleteModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
 
-        public DeleteModel(EmpriseDbContext db)
+        public DeleteModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<DeleteModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
+
         }
 
         public RoomEntity Room { get; set; }
@@ -58,12 +71,28 @@ namespace Emprise.Admin.Pages.Room
             try
             {
                 var room = await _db.Rooms.FindAsync(id);
+                if (room == null)
+                {
+                    ErrorMessage = $"房间 {id} 不存在！";
+                    return Page();
+                }
                 _db.Rooms.Remove(room);
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.删除房间,
+                    Content = JsonConvert.SerializeObject(room)
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.删除房间,
+                    Content = $"id={id}，ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

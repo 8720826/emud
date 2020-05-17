@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
@@ -21,9 +22,13 @@ namespace Emprise.Admin.Pages.Log
     public class OperatorLogModel : BasePageModel
     {
 
-
-        public OperatorLogModel(IMapper mapper, ILogger<OperatorLogModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
-            : base(db, appConfig, httpAccessor, mapper, logger)
+        public OperatorLogModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<OperatorLogModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
 
         }

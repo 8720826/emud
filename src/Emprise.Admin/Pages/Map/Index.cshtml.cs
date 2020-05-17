@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
@@ -18,8 +19,13 @@ namespace Emprise.Admin.Pages.Map
 {
     public class IndexModel : BasePageModel
     {
-        public IndexModel(IMapper mapper, ILogger<AddModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger)
+        public IndexModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<IndexModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
 
         }

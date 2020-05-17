@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Config;
 using Emprise.Domain.Core.Interfaces;
@@ -24,7 +25,15 @@ namespace Emprise.Admin.Pages.Config
     {
         private readonly IConfiguration _configuration;
         private IDatabase _redisDb;
-        public IndexModel(IMapper mapper,  ILogger<IndexModel> logger, IConfiguration configuration, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) : base(db, appConfig, httpAccessor, mapper, logger)
+
+        public IndexModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<IndexModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor,
+            IConfiguration configuration)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
             _configuration = configuration;
             var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));

@@ -2,24 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Emprise.Admin.Pages.Room
 {
-    public class ListModel : PageModel
+    public class ListModel : BasePageModel
     {
-
-        protected readonly EmpriseDbContext _db;
-
-        public ListModel(EmpriseDbContext db)
+        public ListModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<ListModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
+
         }
+
+
         public Paging<RoomEntity> Paging { get; set; }
 
         [BindProperty(SupportsGet = true)]

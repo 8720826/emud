@@ -2,20 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.NpcScript
 {
-    public class DeleteModel : PageModel
+    public class DeleteModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-
-        public DeleteModel(EmpriseDbContext db)
+        public DeleteModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<DeleteModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
+
         }
 
         public ScriptEntity Script { get; set; }
@@ -56,13 +68,24 @@ namespace Emprise.Admin.Pages.NpcScript
 
             try
             {
-                var npcScript = await _db.Scripts.FindAsync(id);
-                _db.Scripts.Remove(npcScript);
+                var script = await _db.Scripts.FindAsync(id);
+                _db.Scripts.Remove(script);
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.删除脚本,
+                    Content = JsonConvert.SerializeObject(script)
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.删除脚本,
+                    Content = $"id={id}，ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Admin;
@@ -23,8 +24,13 @@ namespace Emprise.Admin.Pages
     [AllowAnonymous]
     public class LoginModel : BasePageModel
     {
-        public LoginModel(EmpriseDbContext db, ILogger<LoginModel> logger, IMapper mapper, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
-            : base(db, appConfig, httpAccessor, mapper, logger)
+        public LoginModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<LoginModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
 
         }

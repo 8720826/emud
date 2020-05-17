@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Domain.Core.Enums;
@@ -19,10 +20,15 @@ namespace Emprise.Admin.Pages.Map
 {
     public class DeleteModel : BasePageModel
     {
-        public DeleteModel(IMapper mapper, ILogger<DeleteModel> logger, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) 
-            : base(db, appConfig, httpAccessor, mapper, logger)
+        public DeleteModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<DeleteModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
- 
+
         }
 
         public MapEntity Map { get; set; }
@@ -76,7 +82,12 @@ namespace Emprise.Admin.Pages.Map
                 }
 
 
-                var map = await _db.Maps.FindAsync(id);
+                var map = await _db.Maps.FindAsync(id); 
+                if (map == null)
+                {
+                    ErrorMessage = $"地图 {id} 不存在！";
+                    return Page();
+                }
                 _db.Maps.Remove(map);
                 await _db.SaveChangesAsync();
 

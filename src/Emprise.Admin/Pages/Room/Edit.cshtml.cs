@@ -6,22 +6,30 @@ using AutoMapper;
 using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.Room;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Room
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly IMudClient _mudClient;
-        public EditModel(EmpriseDbContext db, IMapper mapper, IMudClient mudClient)
+        public EditModel(IMudClient mudClient,
+            IMapper mapper, 
+            ILogger<AddModel> logger, 
+            EmpriseDbContext db, 
+            IOptionsMonitor<AppConfig> appConfig, 
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
-            _mudClient = mudClient;
+
         }
+
         public int Id { get; set; }
 
 
@@ -71,184 +79,205 @@ namespace Emprise.Admin.Pages.Room
             {
                 return Page();
             }
-
-            var room = await _db.Rooms.FindAsync(id);
-            if (room == null)
+            try
             {
-                ErrorMessage = $"房间 {id} 不存在！";
-                return Page();
-            }
 
-            int west = room.West;
-            int east = room.East;
-            int south = room.South;
-            int north = room.North;
 
-            _mapper.Map(Room, room);
-
-            List<int> changedIds = new List<int>();
-            changedIds.Add(room.Id);
-
-            //已修改
-            if (west != room.West)
-            {
-                //原来已设置
-                if (west > 0)
+                var room = await _db.Rooms.FindAsync(id);
+                if (room == null)
                 {
-                    var oldRoomWest = await _db.Rooms.FindAsync(west);
-                    if (oldRoomWest != null)
+                    ErrorMessage = $"房间 {id} 不存在！";
+                    return Page();
+                }
+
+                var content = DifferenceComparison(room, Room);
+
+                int west = room.West;
+                int east = room.East;
+                int south = room.South;
+                int north = room.North;
+
+                _mapper.Map(Room, room);
+
+                List<int> changedIds = new List<int>();
+                changedIds.Add(room.Id);
+
+                //已修改
+                if (west != room.West)
+                {
+                    //原来已设置
+                    if (west > 0)
                     {
-                        oldRoomWest.East = 0;
-                        oldRoomWest.EastName = "";
-                        changedIds.Add(oldRoomWest.Id);
+                        var oldRoomWest = await _db.Rooms.FindAsync(west);
+                        if (oldRoomWest != null)
+                        {
+                            oldRoomWest.East = 0;
+                            oldRoomWest.EastName = "";
+                            changedIds.Add(oldRoomWest.Id);
+                        }
                     }
                 }
-            }
 
-            //已设置
-            if (room.West > 0 && room.West != room.Id)
-            {
-                var roomWest = await _db.Rooms.FindAsync(room.West);
-                if (roomWest != null && roomWest.MapId == room.MapId)
+                //已设置
+                if (room.West > 0 && room.West != room.Id)
                 {
-                    roomWest.East = room.Id;
-                    roomWest.EastName = room.Name;
-                    room.WestName = roomWest.Name;
-                    changedIds.Add(roomWest.Id);
+                    var roomWest = await _db.Rooms.FindAsync(room.West);
+                    if (roomWest != null && roomWest.MapId == room.MapId)
+                    {
+                        roomWest.East = room.Id;
+                        roomWest.EastName = room.Name;
+                        room.WestName = roomWest.Name;
+                        changedIds.Add(roomWest.Id);
+                    }
+                    else
+                    {
+                        room.West = 0;
+                        room.WestName = "";
+                    }
                 }
                 else
                 {
                     room.West = 0;
                     room.WestName = "";
                 }
-            }
-            else
-            {
-                room.West = 0;
-                room.WestName = "";
-            }
 
 
-            if (east != room.East)
-            {
-                if (east > 0)
+                if (east != room.East)
                 {
-                    var oldRoomEast = await _db.Rooms.FindAsync(east);
-                    if (oldRoomEast != null)
+                    if (east > 0)
                     {
-                        oldRoomEast.West = 0;
-                        oldRoomEast.WestName = "";
-                        changedIds.Add(oldRoomEast.Id);
+                        var oldRoomEast = await _db.Rooms.FindAsync(east);
+                        if (oldRoomEast != null)
+                        {
+                            oldRoomEast.West = 0;
+                            oldRoomEast.WestName = "";
+                            changedIds.Add(oldRoomEast.Id);
+                        }
                     }
                 }
-            }
 
-            if (room.East > 0 && room.East != room.Id)
-            {
-                var roomEast = await _db.Rooms.FindAsync(room.East);
-                if (roomEast != null && roomEast.MapId == room.MapId)
+                if (room.East > 0 && room.East != room.Id)
                 {
-                    roomEast.West = room.Id;
-                    roomEast.WestName = room.Name;
-                    room.EastName = roomEast.Name;
-                    changedIds.Add(roomEast.Id);
+                    var roomEast = await _db.Rooms.FindAsync(room.East);
+                    if (roomEast != null && roomEast.MapId == room.MapId)
+                    {
+                        roomEast.West = room.Id;
+                        roomEast.WestName = room.Name;
+                        room.EastName = roomEast.Name;
+                        changedIds.Add(roomEast.Id);
+                    }
+                    else
+                    {
+                        room.East = 0;
+                        room.EastName = "";
+                    }
                 }
                 else
                 {
                     room.East = 0;
                     room.EastName = "";
                 }
-            }
-            else
-            {
-                room.East = 0;
-                room.EastName = "";
-            }
 
 
-            if (south != room.South)
-            {
-                if (south > 0)
+                if (south != room.South)
                 {
-                    var oldRoomSouth = await _db.Rooms.FindAsync(south);
-                    if (oldRoomSouth != null)
+                    if (south > 0)
                     {
-                        oldRoomSouth.North = 0;
-                        oldRoomSouth.NorthName = "";
-                        changedIds.Add(oldRoomSouth.Id);
+                        var oldRoomSouth = await _db.Rooms.FindAsync(south);
+                        if (oldRoomSouth != null)
+                        {
+                            oldRoomSouth.North = 0;
+                            oldRoomSouth.NorthName = "";
+                            changedIds.Add(oldRoomSouth.Id);
+                        }
                     }
                 }
-            }
 
-            if (room.South > 0 && room.South != room.Id)
-            {
-                var roomSouth = await _db.Rooms.FindAsync(room.South);
-                if (roomSouth != null && roomSouth.MapId == room.MapId)
+                if (room.South > 0 && room.South != room.Id)
                 {
-                    roomSouth.North = room.Id;
-                    roomSouth.NorthName = room.Name;
-                    room.SouthName = roomSouth.Name;
-                    changedIds.Add(roomSouth.Id);
+                    var roomSouth = await _db.Rooms.FindAsync(room.South);
+                    if (roomSouth != null && roomSouth.MapId == room.MapId)
+                    {
+                        roomSouth.North = room.Id;
+                        roomSouth.NorthName = room.Name;
+                        room.SouthName = roomSouth.Name;
+                        changedIds.Add(roomSouth.Id);
+                    }
+                    else
+                    {
+                        room.South = 0;
+                        room.SouthName = "";
+                    }
                 }
                 else
                 {
                     room.South = 0;
                     room.SouthName = "";
                 }
-            }
-            else
-            {
-                room.South = 0;
-                room.SouthName = "";
-            }
 
 
 
-            if (north != room.North)
-            {
-                if (north > 0)
+                if (north != room.North)
                 {
-                    var oldRoomNorth = await _db.Rooms.FindAsync(north);
-                    if (oldRoomNorth != null)
+                    if (north > 0)
                     {
-                        oldRoomNorth.South = 0;
-                        oldRoomNorth.SouthName = "";
-                        changedIds.Add(oldRoomNorth.Id);
+                        var oldRoomNorth = await _db.Rooms.FindAsync(north);
+                        if (oldRoomNorth != null)
+                        {
+                            oldRoomNorth.South = 0;
+                            oldRoomNorth.SouthName = "";
+                            changedIds.Add(oldRoomNorth.Id);
+                        }
                     }
                 }
-            }
 
-            if (room.North > 0 && room.North != room.Id)
-            {
-                var roomNorth = await _db.Rooms.FindAsync(room.North);
-                if (roomNorth != null && roomNorth.MapId == room.MapId)
+                if (room.North > 0 && room.North != room.Id)
                 {
-                    roomNorth.South = room.Id;
-                    roomNorth.SouthName = room.Name;
-                    room.NorthName = roomNorth.Name;
-                    changedIds.Add(roomNorth.Id);
+                    var roomNorth = await _db.Rooms.FindAsync(room.North);
+                    if (roomNorth != null && roomNorth.MapId == room.MapId)
+                    {
+                        roomNorth.South = room.Id;
+                        roomNorth.SouthName = room.Name;
+                        room.NorthName = roomNorth.Name;
+                        changedIds.Add(roomNorth.Id);
+                    }
+                    else
+                    {
+                        room.North = 0;
+                        room.NorthName = "";
+                    }
                 }
                 else
                 {
                     room.North = 0;
                     room.NorthName = "";
                 }
+
+
+                await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.修改房间,
+                    Content = $"Id = {id},Data = {content}"
+                });
+
+                foreach (var roomId in changedIds)
+                {
+                    var result = await _mudClient.EditRoom(roomId);
+                    ErrorMessage += result.StatusCode;
+                }
             }
-            else
+            catch(Exception ex)
             {
-                room.North = 0;
-                room.NorthName = "";
+                ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.修改房间,
+                    Content = $"Id = {id},Data={JsonConvert.SerializeObject(Room)},ErrorMessage={ErrorMessage}"
+                });
+                return Page();
             }
-
-
-            await _db.SaveChangesAsync();
-
-            foreach (var roomId in changedIds)
-            {
-                var result = await _mudClient.EditRoom(roomId);
-                ErrorMessage += result.StatusCode;
-            }
-
 
             return Redirect(UrlReferer);
         }

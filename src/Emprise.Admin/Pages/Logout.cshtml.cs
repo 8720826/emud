@@ -13,13 +13,19 @@ using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Enums;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Emprise.Admin.Api;
 
 namespace Emprise.Admin.Pages
 {
     public class LogoutModel : BasePageModel
     {
-        public LogoutModel(IMapper mapper, ILogger<LogoutModel> logger,EmpriseDbContext db,  IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger)
+        public LogoutModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<LogoutModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
 
         }

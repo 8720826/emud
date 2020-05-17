@@ -3,23 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Script;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.NpcScript
 {
-    public class AddModel : PageModel
+    public class AddModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-
-        public AddModel(EmpriseDbContext db, IMapper mapper)
+        public AddModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<AddModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
+
         }
 
         [BindProperty]
@@ -54,10 +63,21 @@ namespace Emprise.Admin.Pages.NpcScript
                 var script = _mapper.Map<ScriptEntity>(Script);
                 await _db.Scripts.AddAsync(script);
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.添加脚本,
+                    Content = JsonConvert.SerializeObject(Script)
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.添加脚本,
+                    Content = $"Data={JsonConvert.SerializeObject(Script)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

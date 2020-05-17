@@ -2,22 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Emprise.Admin.Pages.Quest
 {
-    public class IndexModel : PageModel
+    public class IndexModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
 
-        public IndexModel(EmpriseDbContext db)
+        public IndexModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<IndexModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
+
         }
 
 

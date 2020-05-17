@@ -16,6 +16,7 @@ using Emprise.Admin.Data;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Emprise.Domain.Core.Enums;
+using Emprise.Admin.Api;
 
 namespace Emprise.Admin.Pages.Config
 {
@@ -23,7 +24,14 @@ namespace Emprise.Admin.Pages.Config
     {
         private readonly IConfiguration _configuration;
         private IDatabase _redisDb;
-        public EditModel(IMapper mapper, ILogger<IndexModel> logger, IConfiguration configuration, EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor) : base(db, appConfig, httpAccessor, mapper, logger)
+        public EditModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<EditModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor,
+            IConfiguration configuration)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
             _configuration = configuration;
             var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));

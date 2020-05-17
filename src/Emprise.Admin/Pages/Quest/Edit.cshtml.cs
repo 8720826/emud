@@ -3,27 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
+using Emprise.Admin.Entity;
+using Emprise.Admin.Extensions;
+using Emprise.Admin.Models;
 using Emprise.Admin.Models.Quest;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
 using Emprise.Domain.Quest.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Quest
 {
-    public class EditModel : PageModel
+    public class EditModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
-
-
-        public EditModel(EmpriseDbContext db, IMapper mapper)
+        public EditModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<EditModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
 
         }
+
 
         [BindProperty]
         public QuestInput Quest { get; set; }
@@ -43,12 +53,16 @@ namespace Emprise.Admin.Pages.Quest
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public async Task OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id > 0)
             {
                 var quest = await _db.Quests.FindAsync(id);
-
+                if (quest == null)
+                {
+                    ErrorMessage = $"任务 {id} 不存在！";
+                    return Page();
+                }
                 Quest = _mapper.Map<QuestInput>(quest);
 
 
@@ -82,6 +96,7 @@ namespace Emprise.Admin.Pages.Quest
             {
                 UrlReferer = Url.Page("/Quest/Index");
             }
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int id)
@@ -96,12 +111,29 @@ namespace Emprise.Admin.Pages.Quest
             try
             {
                 var quest = await _db.Quests.FindAsync(id);
+                if (quest == null)
+                {
+                    ErrorMessage = $"任务 {id} 不存在！";
+                    return Page();
+                }
+                var content = DifferenceComparison(quest, Quest);
                 _mapper.Map(Quest, quest);
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.修改任务,
+                    Content = $"Id = {id},Data = {content}"
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.修改任务,
+                    Content = $"Id = {id},Data={JsonConvert.SerializeObject(Quest)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

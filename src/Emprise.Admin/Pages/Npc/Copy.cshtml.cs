@@ -3,23 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Npc;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.Npc
 {
-    public class CopyModel : PageModel
+    public class CopyModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly IMapper _mapper;
 
-        public CopyModel(EmpriseDbContext db, IMapper mapper)
+        public CopyModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<CopyModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _mapper = mapper;
+
         }
 
         [BindProperty]
@@ -30,7 +40,7 @@ namespace Emprise.Admin.Pages.Npc
         [BindProperty]
         public string UrlReferer { get; set; }
 
-        public async Task OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             UrlReferer = Request.Headers["Referer"].ToString();
             if (string.IsNullOrEmpty(UrlReferer))
@@ -41,11 +51,15 @@ namespace Emprise.Admin.Pages.Npc
             if (id > 0)
             {
                 var npc = await _db.Npcs.FindAsync(id);
-
+                if (npc == null)
+                {
+                    ErrorMessage = $"Npc {id} 不存在！";
+                    return Page();
+                }
                 Npc = _mapper.Map<NpcInput>(npc);
             }
 
-
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int id, string position)
@@ -59,14 +73,23 @@ namespace Emprise.Admin.Pages.Npc
             try
             {
                 var npc = _mapper.Map<NpcEntity>(Npc);
-
                 await _db.Npcs.AddAsync(npc);
-
                 await _db.SaveChangesAsync();
+
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.复制Npc,
+                    Content = JsonConvert.SerializeObject(Npc)
+                });
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.复制Npc,
+                    Content = $"Data={JsonConvert.SerializeObject(Npc)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

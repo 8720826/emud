@@ -2,26 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Models.User;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace Emprise.Admin.Pages.User
 {
-    public class PasswordModel : PageModel
+    public class PasswordModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
-        private readonly AppConfig _appConfig;
 
-        public PasswordModel(EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig)
+        public PasswordModel(IMudClient mudClient,
+            IMapper mapper,
+            ILogger<PasswordModel> logger,
+            EmpriseDbContext db,
+            IOptionsMonitor<AppConfig> appConfig,
+            IHttpContextAccessor httpAccessor)
+            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
-            _db = db;
-            _appConfig = appConfig.CurrentValue;
+
         }
 
         public string ErrorMessage { get; set; }
@@ -64,10 +73,21 @@ namespace Emprise.Admin.Pages.User
                 user.Password = ModifyPasswordInput.NewPassword.ToMd5();
                 await _db.SaveChangesAsync();
 
+                await AddSuccess(new OperatorLog
+                {
+                    Type = OperatorLogType.修改玩家,
+                    Content = $"id={id}，{JsonConvert.SerializeObject(ModifyPasswordInput)}"
+                });
+
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+                await AddError(new OperatorLog
+                {
+                    Type = OperatorLogType.修改玩家,
+                    Content = $"id={id}，Data={JsonConvert.SerializeObject(ModifyPasswordInput)},ErrorMessage={ErrorMessage}"
+                });
                 return Page();
             }
 

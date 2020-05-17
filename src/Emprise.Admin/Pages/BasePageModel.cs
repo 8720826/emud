@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Admin.Api;
 using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
 using Emprise.Domain.Core.Enums;
@@ -23,15 +24,17 @@ namespace Emprise.Admin.Pages
         protected readonly AppConfig _appConfig;
         protected readonly IMapper _mapper;
         protected readonly ILogger<BasePageModel> _logger;
-        private readonly IHttpContextAccessor _httpAccessor;
+        protected readonly IMudClient _mudClient;
+        protected readonly IHttpContextAccessor _httpAccessor;
 
-        public BasePageModel(EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor, IMapper mapper, ILogger<BasePageModel> logger)
+        public BasePageModel(EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig, IHttpContextAccessor httpAccessor, IMapper mapper, ILogger<BasePageModel> logger, IMudClient mudClient)
         {
             _appConfig = appConfig.CurrentValue;
             _db = db;
             _httpAccessor = httpAccessor;
             _mapper = mapper;
             _logger = logger;
+            _mudClient = mudClient;
         }
 
         protected async Task AddSuccess(OperatorLog operatorLog)
@@ -82,8 +85,8 @@ namespace Emprise.Admin.Pages
             {
                 string name = p.Name;
                 if (exclude.Contains(name)) { continue; }
-                var value1 = t1.GetProperty(name)?.GetValue(source, null);
-                var value2 = p.GetValue(current, null);
+                var value1 = t1.GetProperty(name)?.GetValue(source, null)?.ToString();
+                var value2 = p.GetValue(current, null)?.ToString();
                 if (value1 != value2)
                 {
                     diff += $"[{name}]:'{value1}'=>'{value2}';\r\n";
