@@ -21,7 +21,7 @@ namespace Emprise.Admin.Models.Map
         /// 地图说明
         /// </summary>
         [Display(Name = "描述")]
-        [Required(ErrorMessage = "描述")]
+        [Required(ErrorMessage = "请输入{0}")]
         [StringLength(500, ErrorMessage = "{0}长度最大为{1}字符")]
         public string Description { set; get; }
     }

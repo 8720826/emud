@@ -60,6 +60,9 @@ namespace Emprise.Admin
                 options.Conventions.AuthorizeFolder("/Quest");
                 options.Conventions.AuthorizeFolder("/User");
                 options.Conventions.AuthorizeFolder("/Player");
+                options.Conventions.AuthorizeFolder("/Log");
+
+
                 options.Conventions.AllowAnonymousToPage("/Login");
                 options.Conventions.AllowAnonymousToPage("/Denied");
 
