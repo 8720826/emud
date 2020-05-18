@@ -13,7 +13,7 @@
 ## 技术栈
 * netcore3.1
 * vue
-* mysql
+* mysql/sqlserver/sqlite 
 * redis
 * hangfire
 * efcore
@@ -29,7 +29,11 @@
 3.  配置文件  
     配置文件为appsettings.json，本地调试使用appsettings.Development.json  
     设置好游戏主程序和后台管理的数据库连接字符串等
-	
+    目前支持以下数据库：
+    Mysql
+    SqlServer
+    Sqlite
+    
 4.  发布  
     游戏主程序  ```Emprise.Web```  
 	游戏后台管理 ```Emprise.Admin```  
@@ -44,6 +48,12 @@
 ##  相关下载
 * Mysql   
 https://www.mysql.com/downloads/
+
+* SqlServer
+https://www.microsoft.com/zh-cn/sql-server/sql-server-2019
+
+* Sqlite
+https://www.sqlite.org/index.html
 
 * Redis  
 https://redis.io/download
