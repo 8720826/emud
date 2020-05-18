@@ -36,7 +36,7 @@ namespace Emprise.Admin.Pages.Config
             : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
         {
             _configuration = configuration;
-            var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
+            var redis = ConnectionMultiplexer.Connect(_configuration.GetValue<string>("Redis"));
             _redisDb = redis.GetDatabase();
         }
 

@@ -36,7 +36,7 @@ namespace Emprise.Admin
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 
-            .AddRedisConfiguration(configuration.GetConnectionString("Redis"), "configurations", 60);
+            .AddRedisConfiguration(configuration.GetValue<string>("Redis"), "configurations", 60);
 
             Configuration = builder.Build();
         }
@@ -98,13 +98,23 @@ namespace Emprise.Admin
               .AddHttpMessageHandler<AuthorizationHandler>()
              ;
 
-            services.AddDbContext<EmpriseDbContext>( // replace "YourDbContext" with the class name of your DbContext
-               options => options.UseMySql(Configuration.GetConnectionString("Mysql"), // replace with your Connection String
-                   mySqlOptions =>
-                   {
-                       mySqlOptions.ServerVersion(new Version("5.7.17"), ServerType.MySql); // replace with your Server Version and Type
-                               }
-            ));
+            var dataProvide = Configuration.GetValue<string>("DataProvider").ToLower();
+            switch (dataProvide)
+            {
+                case "mssql":
+                    services.AddDbContext<EmpriseDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("Mssql")));
+                    break;
+                case "mysql":
+                    services.AddDbContext<EmpriseDbContext>(options => options.UseMySql(Configuration.GetConnectionString("Mysql")));
+                    break;
+                case "sqlite":
+                    services.AddDbContext<EmpriseDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
+                    break;
+                default:
+                    throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
+            }
+
+         
 
             services.AddAutoMapper();
 

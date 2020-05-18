@@ -26,7 +26,7 @@ namespace Emprise.Infra.Providers
             _appConfig = appConfig.CurrentValue;
             _logger = logger;
             _configuration = configuration;
-            var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
+            var redis = ConnectionMultiplexer.Connect(_configuration.GetValue<string>("Redis"));
             db = redis.GetDatabase();
             sub = redis.GetSubscriber();
         }
