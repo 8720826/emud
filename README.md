@@ -6,6 +6,9 @@
 * 作者qq  8720826
 ## 演示
 * 演示地址 ： https://emprise.cn/
+*  交流QQ群 ： <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=d1a2ea0e22e7dd1bdf325d2ff69b36004cc8f8f7ef643ab10a5aac257ad9a613">711894778</a>
+
+
 ####  ![登录页面](https://raw.githubusercontent.com/8720826/emud/master/doc/login.png)
 ####  ![创建角色](https://raw.githubusercontent.com/8720826/emud/master/doc/player.png)
 ####  ![游戏界面](https://raw.githubusercontent.com/8720826/emud/master/doc/game.png)
