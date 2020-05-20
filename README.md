@@ -3,10 +3,13 @@
 * 全称EmpriseMud，基于netcore3.1开发的mud游戏框架。  
 * 仅供学习交流技术使用，未经本人同意，不可用于任何商业用途。  
 * 如果对你有帮助 请点右上角star，谢谢！  
-* 作者qq  8720826
+* 作者qq ：   8720826
+* 交流QQ群 ： <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=d1a2ea0e22e7dd1bdf325d2ff69b36004cc8f8f7ef643ab10a5aac257ad9a613">711894778</a>
+
+
 ## 演示
 * 演示地址 ： https://emprise.cn/
-*  交流QQ群 ： <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=d1a2ea0e22e7dd1bdf325d2ff69b36004cc8f8f7ef643ab10a5aac257ad9a613">711894778</a>
+
 
 
 ####  ![登录页面](https://raw.githubusercontent.com/8720826/emud/master/doc/login.png)
