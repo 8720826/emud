@@ -50,7 +50,8 @@ new Vue({
             confirmText: "确认",
             callback: null
         },
-        timer: null
+        timer: null,
+        dialog: null
     },
     computed: {
         getMenus() {
@@ -199,6 +200,11 @@ new Vue({
                 connection.stop();
                 connection = null;
                 location.replace("/game/offline");
+            });
+
+            connection.on("ShowQuest", result => {
+                console.log("ShowQuest:" + JSON.stringify(result));
+                that.dialog = result;
             });
         },
         move: function (roomId) {

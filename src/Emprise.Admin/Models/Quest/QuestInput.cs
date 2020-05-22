@@ -52,7 +52,10 @@ namespace Emprise.Admin.Models.Quest
         public int TimeLimit { set; get; }
 
 
-
+        [Display(Name = "描述")]
+        [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
+        public string Description { set; get; }
+        /*
         /// <summary>
         /// 创建任务前的提示文本
         /// </summary>
@@ -85,7 +88,7 @@ namespace Emprise.Admin.Models.Quest
         [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
         [Required(ErrorMessage = "请填写内容")]
         public string CompletedWords { set; get; }
-
+        */
 
         /// <summary>
         /// 任务目标 json格式，{QuestTargetEnum,TargetName,TargetNumber}

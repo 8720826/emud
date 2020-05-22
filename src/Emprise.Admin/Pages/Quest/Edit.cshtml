@@ -182,37 +182,57 @@
                         <div class="am-u-sm-1"></div>
                     </div>
 
-
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.CreatedWords" class="control-label"></label>
+                            <label asp-for="Quest.Description" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
-                            <span asp-validation-for="Quest.CreatedWords" class="text-danger"></span>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.Description"></textarea>
+                            <span asp-validation-for="Quest.Description" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.InProgressWords" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
-                            <span asp-validation-for="Quest.InProgressWords" class="text-danger"></span>
-                        </div>
-                    </div>
+                    @*
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.BeforeCreate" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.BeforeCreate"></textarea>
+                <span asp-validation-for="Quest.BeforeCreate" class="text-danger"></span>
+            </div>
+        </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.CompletedWords" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
-                            <span asp-validation-for="Quest.CompletedWords" class="text-danger"></span>
-                        </div>
-                    </div>
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.CreatedWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
+                <span asp-validation-for="Quest.CreatedWords" class="text-danger"></span>
+            </div>
+        </div>
 
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.InProgressWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
+                <span asp-validation-for="Quest.InProgressWords" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.CompletedWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
+                <span asp-validation-for="Quest.CompletedWords" class="text-danger"></span>
+            </div>
+        </div>
+                    *@
 
 
                     <div class="footer am-margin-top-sm">

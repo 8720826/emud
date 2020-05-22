@@ -115,6 +115,8 @@ namespace Emprise.Admin.Pages.Npc
                 }
                 await _db.SaveChangesAsync();
 
+                var result = await _mudClient.EditNpc(id);
+
                 await AddSuccess(new OperatorLog
                 {
                     Type = OperatorLogType.修改Npc,

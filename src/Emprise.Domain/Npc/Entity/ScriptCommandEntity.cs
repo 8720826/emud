@@ -29,11 +29,6 @@ namespace Emprise.Domain.Npc.Entity
         [StringLength(100)]
         public string Name { set; get; }
 
-        /// <summary>
-        /// 分支描述
-        /// </summary>
-        [StringLength(500)]
-        public string Description { set; get; }
 
 
         public string CaseIf { set; get; }

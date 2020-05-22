@@ -127,6 +127,7 @@ namespace Emprise.Admin.Pages.ScriptCommand
                 Events = Enum.GetNames(typeof(PlayerEventTypeEnum));
 
                 Commands = Enum.GetNames(typeof(CommandTypeEnum));
+
                 return Page();
             }
 

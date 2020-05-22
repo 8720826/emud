@@ -32,7 +32,6 @@
                     <tr>
                         <th class="table-id">ID</th>
                         <th class="table-title">分支名</th>
-                        <th class="table-title">描述</th>
                         <th class="table-exits">是否入口</th>
                         <th class="table-exits">排序</th>
                         <th class="table-exits">分支-如果</th>
@@ -47,7 +46,6 @@
                     <tr>
                         <td>@(script.Id)</td>
                         <td><a asp-page="./Edit" asp-route-id="@script.Id">@(script.Name)</a></td>
-                        <td>@(script.Description)</td>
                         <td>@(script.IsEntry?"是":"否")</td>
                         <td>@(script.SortId)</td>
                         <td>@(script.CaseIf)</td>

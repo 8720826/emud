@@ -2,26 +2,22 @@
 
 
 <script id="condition-@(ConditionTypeEnum.角色属性)" type="text/html">
-
     <select class="am-input-sm am-form-field fields attr" attr="Field">
         <option value="">  请选择  </option>
         {{each fields}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
-
     <select class="am-input-sm am-form-field relations attr" attr="Relation">
         <option value="">  请选择  </option>
         {{each relations}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
-
     <input type="text" placeholder="数值" class="am-input-sm am-form-field attr" attr="Value" style="display:inline-block; width:180px;">
-
 </script>
 
-<script id="condition-@(ConditionTypeEnum.拥有物品)" type="text/html">
+<script id="condition-@(ConditionTypeEnum.是否拥有物品)" type="text/html">
     <input type="text" placeholder="物品名" class="am-input-sm am-form-field attr" attr="WareName" style="display:inline-block; width:180px;">
     <select class="am-input-sm am-form-field relations attr" attr="Relation">
         <option value="">  请选择  </option>
@@ -29,68 +25,64 @@
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
-
     <input type="text" placeholder="数量" class="am-input-sm am-form-field attr" attr="Number" style="display:inline-block; width:180px;">
-
 </script>
 
-<script id="condition-@(ConditionTypeEnum.完成任务)" type="text/html">
+<script id="condition-@(ConditionTypeEnum.是否领取任务)" type="text/html">
+    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr" attr="QuestId" style="display:inline-block; width:180px;">
+</script>
 
-    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr" attr="TaskId" style="display:inline-block; width:180px;">
-
+<script id="condition-@(ConditionTypeEnum.是否完成任务)" type="text/html">
+    <input type="text" placeholder="任务Id" class="am-input-sm am-form-field attr" attr="QuestId" style="display:inline-block; width:180px;">
 </script>
 
 <script id="condition-@(ConditionTypeEnum.活动记录)" type="text/html">
-    
     <select class="am-input-sm am-form-field relations attr" attr="Activity" style="width:120px;">
         <option value="">  请选择  </option>
         {{each activities}}
         <option value="{{$value}}">{{$value}}</option>
         {{/each}}
     </select>
-
     <input type="text" placeholder="相关id/数量" class="am-input-sm am-form-field attr" attr="Value" style="display:inline-block; width:180px;">
-
 </script>
 
 <script id="condition-@(ConditionTypeEnum.检查输入)" type="text/html">
-
-    <input type="text" placeholder="正则表达式"  class="am-input-sm am-form-field attr" attr="RegExp" style="display:inline-block; width:180px;">
-
+    <input type="text" placeholder="正则表达式" class="am-input-sm am-form-field attr" attr="RegExp" style="display:inline-block; width:180px;">
 </script>
 
 
 <script id="command-@(CommandTypeEnum.播放对话)" type="text/html">
-
     <input type="text" placeholder="对话内容" class="am-input-sm am-form-field attr" attr="Message" style="display:inline-block; width:380px;">
-
 </script>
 
 <script id="command-@(CommandTypeEnum.对话选项)" type="text/html">
-
     <input type="text" placeholder="标题" class="am-input-sm am-form-field attr" attr="Title" style="display:inline-block; width:180px;">
-
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" attr="CommandId" style="display:inline-block; width:180px;">
-
 </script>
 
 <script id="command-@(CommandTypeEnum.输入选项)" type="text/html">
-
     <input type="text" placeholder="提示" class="am-input-sm am-form-field attr" attr="Tips" style="display:inline-block; width:180px;">
-
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" attr="CommandId" style="display:inline-block; width:180px;">
-
 </script>
 
 
 <script id="command-@(CommandTypeEnum.跳转到分支)" type="text/html">
-
     <input type="text" placeholder="分支id" class="am-input-sm am-form-field attr" attr="CommandId" style="display:inline-block; width:180px;">
-
 </script>
 
-<script id="command-@(CommandTypeEnum.触发任务)" type="text/html">
-
+<script id="command-@(CommandTypeEnum.完成任务)" type="text/html">
     <input type="text" placeholder="任务id" class="am-input-sm am-form-field attr" attr="QuestId" style="display:inline-block; width:180px;">
-
 </script>
+
+<script id="command-@(CommandTypeEnum.领取任务)" type="text/html">
+    <input type="text" placeholder="任务id" class="am-input-sm am-form-field attr" attr="QuestId" style="display:inline-block; width:180px;">
+</script>
+@*
+    <script id="command-@(CommandTypeEnum.提交任务)" type="text/html">
+        <input type="text" placeholder="任务id" class="am-input-sm am-form-field attr" attr="QuestId" style="display:inline-block; width:180px;">
+    </script>
+
+    <script id="command-@(CommandTypeEnum.完成任务)" type="text/html">
+        <input type="text" placeholder="任务id" class="am-input-sm am-form-field attr" attr="QuestId" style="display:inline-block; width:180px;">
+    </script>
+*@

@@ -41,6 +41,13 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public QuestTakeTypeEnum TakeType { set; get; }
 
+
+        /// <summary>
+        /// 地图说明
+        /// </summary>
+        public string Description { set; get; }
+
+        /*
         /// <summary>
         /// 创建任务前的提示文本
         /// </summary>
@@ -61,7 +68,7 @@ namespace Emprise.Domain.Quest.Entity
         /// 完成任务后的提示文本
         /// </summary>
         public string CompletedWords { set; get; }
-
+        */
 
         /// <summary>
         /// 任务消耗

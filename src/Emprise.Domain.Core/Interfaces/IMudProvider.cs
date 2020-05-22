@@ -48,5 +48,7 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task UpdatePlayerStatus(int playerId, object obj);
 
+        Task ShowQuest(int playerId, object obj);
+
     }
 }

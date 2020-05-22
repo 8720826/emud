@@ -78,7 +78,7 @@
                             }
                             <span asp-validation-for="Quest.Type" class="text-danger"></span>
                         </div>
-                        
+
                     </div>
 
 
@@ -109,10 +109,10 @@
                             <div class="am-form-inline am-form-group">
 
                                 <select class="am-input-sm am-form-field takeConditions" style="width: 180px;">
-                                    <option value="0">请选择</option>
+                                    <option value="">请选择</option>
                                     @foreach (var item in Enum.GetValues(typeof(QuestTakeConditionEnum)))
                                     {
-                                        <option value="@((int)item)">@(item.ToString())</option>
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
                                     }
                                 </select>
                                 <span asp-validation-for="Quest.TakeCondition" class="text-danger"></span>
@@ -185,47 +185,57 @@
                         </div>
                         <div class="am-u-sm-1"></div>
                     </div>
-
-
+                    
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.BeforeCreate" class="control-label"></label>
+                            <label asp-for="Quest.Description" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.BeforeCreate"></textarea>
-                            <span asp-validation-for="Quest.BeforeCreate" class="text-danger"></span>
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.Description"></textarea>
+                            <span asp-validation-for="Quest.Description" class="text-danger"></span>
                         </div>
                     </div>
+                    @*
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.BeforeCreate" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.BeforeCreate"></textarea>
+                <span asp-validation-for="Quest.BeforeCreate" class="text-danger"></span>
+            </div>
+        </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.CreatedWords" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
-                            <span asp-validation-for="Quest.CreatedWords" class="text-danger"></span>
-                        </div>
-                    </div>
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.CreatedWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
+                <span asp-validation-for="Quest.CreatedWords" class="text-danger"></span>
+            </div>
+        </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.InProgressWords" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
-                            <span asp-validation-for="Quest.InProgressWords" class="text-danger"></span>
-                        </div>
-                    </div>
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.InProgressWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
+                <span asp-validation-for="Quest.InProgressWords" class="text-danger"></span>
+            </div>
+        </div>
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="Quest.CompletedWords" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
-                            <span asp-validation-for="Quest.CompletedWords" class="text-danger"></span>
-                        </div>
-                    </div>
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.CompletedWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
+                <span asp-validation-for="Quest.CompletedWords" class="text-danger"></span>
+            </div>
+        </div>
+                    *@
 
                     <div class="footer am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
@@ -405,7 +415,7 @@
                 var editor = new Simditor({
                     textarea: obj,  //textarea的id
                     placeholder: '',
-                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul',  '|', 'link',  'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
                     pasteImage: true,//允许粘贴图片
                     defaultImage: ''//编辑器插入的默认图片，此处可以删除
                 });

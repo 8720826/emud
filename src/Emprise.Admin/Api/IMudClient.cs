@@ -12,5 +12,9 @@ namespace Emprise.Admin.Api
 
         [Post("/api/event/room/edit")]
         Task<HttpResponseMessage> EditRoom(int id);
+
+
+        [Post("/api/event/npc/edit")]
+        Task<HttpResponseMessage> EditNpc(int id);
     }
 }

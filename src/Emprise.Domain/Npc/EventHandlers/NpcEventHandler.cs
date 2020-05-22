@@ -5,6 +5,7 @@ using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Events;
 using Emprise.Domain.Quest.Services;
 using MediatR;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,13 @@ namespace Emprise.Domain.Npc.EventHandlers
         private readonly IMudProvider _mudProvider;
         private readonly ILogger<NpcEventHandler> _logger; 
         private readonly IRedisDb _redisDb;
+        private readonly IMemoryCache _cache;
 
         public NpcEventHandler(ILogger<NpcEventHandler> logger, 
             IMudProvider mudProvider, 
             IQuestDomainService questDomainService, 
-            IPlayerQuestDomainService playerQuestDomainService, 
+            IPlayerQuestDomainService playerQuestDomainService,
+            IMemoryCache cache,
             IRedisDb redisDb)
         {
             _logger = logger;
@@ -38,23 +41,34 @@ namespace Emprise.Domain.Npc.EventHandlers
             _questDomainService = questDomainService;
             _playerQuestDomainService = playerQuestDomainService;
             _redisDb = redisDb;
+            _cache = cache;
         }
 
         public async Task Handle(EntityUpdatedEvent<NpcEntity> message, CancellationToken cancellationToken)
         {
+            var key = string.Format(CacheKey.Npc, message.Entity.Id);
 
+            _logger.LogInformation($"{key}");
+
+            await Task.Run(() => {
+                _cache.Remove(key);
+            });
         }
 
         public async Task Handle(EntityInsertedEvent<NpcEntity> message, CancellationToken cancellationToken)
         {
+            var key = string.Format(CacheKey.Npc, message.Entity.Id);
             await Task.Run(() => {
-
+                _cache.Set(key, message.Entity);
             });
         }
 
         public async Task Handle(EntityDeletedEvent<NpcEntity> message, CancellationToken cancellationToken)
         {
-
+            var key = string.Format(CacheKey.Npc, message.Entity.Id);
+            await Task.Run(() => {
+                _cache.Remove(key);
+            });
         }
 
         public async Task Handle(ChatWithNpcEvent message, CancellationToken cancellationToken)

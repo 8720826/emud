@@ -19,5 +19,8 @@ namespace Emprise.Domain.Common.Modes
         public const string QuestList = "QuestList";
         public const string Quest = "Quest_{0}";
 
+
+        public const string Npc = "Npc_{0}";
+        public const string NpcList = "NpcList";
     }
 }

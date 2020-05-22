@@ -29,10 +29,6 @@ namespace Emprise.Admin.Models.NpcScript
         public string Name { set; get; }
 
 
-        [Display(Name = "描述")]
-        [Required(ErrorMessage = "请填写{0}")]
-        [StringLength(500, ErrorMessage = "{0}最长不能超过{1}个字符")]
-        public string Description { set; get; }
 
         [Display(Name = "分支-如果")]
         [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]

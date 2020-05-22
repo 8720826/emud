@@ -265,5 +265,9 @@ namespace Emprise.MudServer.Hubs
             await _context.Clients.User(playerId.ToString()).SendAsync("UpdatePlayerStatus", obj);
         }
 
+        public async Task ShowQuest(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowQuest", obj);
+        }
     }
 }

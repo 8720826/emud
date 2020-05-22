@@ -5,15 +5,10 @@ using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
-using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Events;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
-using Emprise.Domain.Quest.Models;
-using Emprise.Domain.Quest.Services;
-using Emprise.Infra.Extensions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -33,19 +28,19 @@ namespace Emprise.Application.User.Services
         private readonly INpcDomainService _npcDomainService;
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IAccountContext _account;
-        private readonly IScriptCommandDomainService _ScriptCommandDomainService;
+        private readonly IScriptDomainService _scriptDomainService;
         private readonly INpcScriptDomainService _npcScriptDomainService;
         private readonly IMudProvider _mudProvider;
         private readonly ILogger<NpcAppService> _logger;
 
-        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptCommandDomainService ScriptCommandDomainService, INpcScriptDomainService npcScriptDomainService,  IMudProvider mudProvider, ILogger<NpcAppService> logger)
+        public NpcAppService(IMediatorHandler bus, IMapper mapper, INpcDomainService npcDomainService, IPlayerDomainService playerDomainService, IAccountContext account, IScriptDomainService scriptDomainService, INpcScriptDomainService npcScriptDomainService,  IMudProvider mudProvider, ILogger<NpcAppService> logger)
         {
             _bus = bus;
             _mapper = mapper;
             _npcDomainService = npcDomainService;
             _playerDomainService = playerDomainService;
             _account = account;
-            _ScriptCommandDomainService = ScriptCommandDomainService;
+            _scriptDomainService = scriptDomainService;
             _npcScriptDomainService = npcScriptDomainService;
             _mudProvider = mudProvider;
             _logger = logger;
@@ -76,7 +71,7 @@ namespace Emprise.Application.User.Services
 
             if(npc.Type == NpcTypeEnum.人物)
             {
-                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.给予.ToString() });
+                //npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.给予.ToString() });
             }        
 
             if (npc.CanFight)
@@ -100,13 +95,17 @@ namespace Emprise.Application.User.Services
             var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
             foreach (var npcScript in npcScripts)
             {
+                var script = await _scriptDomainService.Get(npcScript.ScriptId);
+                /*
                 var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.ScriptId && x.IsEntry);
-
-                var actions = scriptCommands.Select(x => new NpcAction { Name = x.Name, ScriptId = x.ScriptId, CommandId = x.Id }).ToList();
-
-
-
+                var actions = scriptCommands.Select(x => new NpcAction { Name = npcScript.Name, ScriptId = x.ScriptId, CommandId = x.Id }).ToList();
                 npcInfo.Actions.AddRange(actions);
+                */
+                if (script != null)
+                {
+                    npcInfo.Actions.Add(new NpcAction { Name = script.Name, ScriptId = script.Id, CommandId = 0 });
+                }
+              
             }
 
             /*

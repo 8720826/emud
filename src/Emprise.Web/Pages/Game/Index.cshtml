@@ -161,7 +161,7 @@
                 <div class="npcinfo" v-if="myBox=='npc'">
                     <p>{{npc.name}}</p>
                     <hr />
-                    <p v-for="description,index in npc.descriptions">
+                    <p v-for="description,index in npc.descriptions"  v-html="description">
                         {{description}}
                     </p>
                     <div class="mt15">

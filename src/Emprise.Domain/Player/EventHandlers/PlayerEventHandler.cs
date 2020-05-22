@@ -12,10 +12,13 @@ using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Models;
 using Emprise.Domain.Room.Services;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +52,8 @@ namespace Emprise.Domain.User.EventHandlers
         private readonly IMapper  _mapper;
         private readonly AppConfig _appConfig;
         private readonly IChatLogDomainService _chatLogDomainService;
+        private readonly IQuestDomainService _questDomainService;
+        private readonly ILogger<PlayerEventHandler> _logger;
 
         public PlayerEventHandler(IRoomDomainService roomDomainService, 
             INpcDomainService npcDomainService, 
@@ -57,7 +62,9 @@ namespace Emprise.Domain.User.EventHandlers
             IMudOnlineProvider chatOnlineProvider, 
             IMapper mapper, 
             IOptionsMonitor<AppConfig> appConfig, 
-            IChatLogDomainService chatLogDomainService, 
+            IChatLogDomainService chatLogDomainService,
+            IQuestDomainService questDomainService,
+            ILogger<PlayerEventHandler> logger,
             IUnitOfWork uow) 
             : base(uow, mudProvider)
         {
@@ -69,6 +76,8 @@ namespace Emprise.Domain.User.EventHandlers
             _mapper = mapper;
             _appConfig = appConfig.CurrentValue;
             _chatLogDomainService = chatLogDomainService;
+            _questDomainService = questDomainService;
+            _logger = logger;
         }
 
         public async Task Handle(EntityUpdatedEvent<PlayerEntity> message, CancellationToken cancellationToken)
@@ -197,6 +206,17 @@ namespace Emprise.Domain.User.EventHandlers
                 await _mudProvider.ShowMessage(player.Id, _appConfig.Site.WelcomeWords.Replace("{name}", player.Name));
             }
 
+
+            var questId = _appConfig.Site.QuestId;
+            if (questId > 0)
+            {
+                var quest = await _questDomainService.Get(questId);
+                _logger.LogInformation($"quest={JsonConvert.SerializeObject(quest)}");
+                if (quest != null)
+                {
+                    await _mudProvider.ShowQuest(player.Id, new { quest.Id, quest.Description, quest.Name });
+                }
+            }
         }
 
         public async Task Handle(PlayerStatusChangedEvent message, CancellationToken cancellationToken)
