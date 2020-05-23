@@ -36,11 +36,6 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public int TimeLimit { set; get; }
 
-        /// <summary>
-        /// 领取方式
-        /// </summary>
-        public QuestTakeTypeEnum TakeType { set; get; }
-
 
         /// <summary>
         /// 地图说明
@@ -75,10 +70,6 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public string Consume { set; get; }
 
-        /// <summary>
-        /// 交付方式
-        /// </summary>
-        public QuestDeliverTypeEnum DeliverType { set; get; }
 
         /// <summary>
         /// 任务目标 json格式，{QuestTargetEnum,TargetName,TargetNumber}
@@ -89,6 +80,8 @@ namespace Emprise.Domain.Quest.Entity
         /// 任务奖励
         /// </summary>
         public string Reward { set; get; }
+
+        public int  SortId { set; get; }
 
     }
 }

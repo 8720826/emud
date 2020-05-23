@@ -6,6 +6,9 @@ namespace Emprise.Domain.Common.Modes
 {
     public class CacheKey
     {
+        public const int ExpireMinutes = 60;
+
+
         public const string RoomList = "RoomList";
         public const string Room = "Room_{0}";
         public const string MapRoomList = "RoomList_{0}";
@@ -22,5 +25,8 @@ namespace Emprise.Domain.Common.Modes
 
         public const string Npc = "Npc_{0}";
         public const string NpcList = "NpcList";
+
+
+        public const string PlayerQuestList = "PlayerQuestList_{0}";
     }
 }

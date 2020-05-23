@@ -79,9 +79,6 @@ namespace Emprise.Domain.Core.Models
         public int BornRoomId { get; set; }
 
 
-        [DisplayName("新手任务Id")]
-        public int QuestId { get; set; }
-
 
         /// <summary>
         /// 是否开启远程api，开启后，后台管理操作将更新游戏缓存。当不需要使用后台时，建议关闭

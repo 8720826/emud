@@ -51,7 +51,7 @@ new Vue({
             callback: null
         },
         timer: null,
-        dialog: null
+        mainQuest: {}
     },
     computed: {
         getMenus() {
@@ -123,6 +123,14 @@ new Vue({
                 that.modal.callback && that.modal.callback();
             }
             that.modal.isShowConfirm = false;
+        },
+        dialog: function (title, content, callback) {
+            var that = this;
+            that.modal.type = "dialog";
+            that.modal.isShowConfirm = 1;
+            that.modal.title = title;
+            that.modal.content = content;
+            that.modal.callback = callback;
         },
         ping: function () {
             this.timer = setInterval(() => {
@@ -204,7 +212,12 @@ new Vue({
 
             connection.on("ShowQuest", result => {
                 console.log("ShowQuest:" + JSON.stringify(result));
-                that.dialog = result;
+                that.mainQuest = result.mainQuest;
+                if (result.isFirst) {
+                    that.dialog(that.mainQuest.name, that.mainQuest.description, function () {
+
+                    });
+                } 
             });
         },
         move: function (roomId) {

@@ -49,11 +49,8 @@ namespace Emprise.Domain.Npc.Services
         {
             var key = string.Format(CacheKey.Npc, id);
             return await _cache.GetOrCreateAsync(key, async p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-                return await Task.Run(async () =>
-                {
-                    return await _npcRepository.Get(id);
-                });
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
+                return await _npcRepository.Get(id);
             });
         }
 

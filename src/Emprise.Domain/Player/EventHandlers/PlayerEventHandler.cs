@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.EventHandlers;
 using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Interfaces;
@@ -12,6 +13,7 @@ using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Models;
 using Emprise.Domain.Room.Services;
@@ -47,6 +49,7 @@ namespace Emprise.Domain.User.EventHandlers
         private readonly IRoomDomainService _roomDomainService;
         private readonly INpcDomainService _npcDomainService;
         private readonly IPlayerDomainService _playerDomainService;
+        private readonly IPlayerQuestDomainService _playerQuestDomainService;
         private readonly IMudProvider _mudProvider;
         private readonly IMudOnlineProvider _chatOnlineProvider;
         private readonly IMapper  _mapper;
@@ -65,6 +68,7 @@ namespace Emprise.Domain.User.EventHandlers
             IChatLogDomainService chatLogDomainService,
             IQuestDomainService questDomainService,
             ILogger<PlayerEventHandler> logger,
+            IPlayerQuestDomainService playerQuestDomainService,
             IUnitOfWork uow) 
             : base(uow, mudProvider)
         {
@@ -78,6 +82,7 @@ namespace Emprise.Domain.User.EventHandlers
             _chatLogDomainService = chatLogDomainService;
             _questDomainService = questDomainService;
             _logger = logger;
+            _playerQuestDomainService = playerQuestDomainService;
         }
 
         public async Task Handle(EntityUpdatedEvent<PlayerEntity> message, CancellationToken cancellationToken)
@@ -206,17 +211,59 @@ namespace Emprise.Domain.User.EventHandlers
                 await _mudProvider.ShowMessage(player.Id, _appConfig.Site.WelcomeWords.Replace("{name}", player.Name));
             }
 
-
-            var questId = _appConfig.Site.QuestId;
-            if (questId > 0)
+            //已经领取的所有任务
+            var myQuests = (await _playerQuestDomainService.GetPlayerQuests(player.Id));
+            //正在进行的任务
+            var myQuestsNotComplete = myQuests.Where(x => !x.IsComplete);
+            //所有主线任务
+            var mainQuests = (await _questDomainService.GetAll()).Where(x => x.Type == QuestTypeEnum.主线).OrderBy(x=>x.SortId);
+            //是否有正在进行的主线任务
+            var mainQuest = mainQuests.FirstOrDefault(x => myQuestsNotComplete.Select(y => y.QuestId).Contains(x.Id));
+            if (mainQuest == null)
             {
-                var quest = await _questDomainService.Get(questId);
-                _logger.LogInformation($"quest={JsonConvert.SerializeObject(quest)}");
-                if (quest != null)
+                //没有正在进行中的主线任务,找到第一个没有领取的主线任务
+                mainQuest = mainQuests.FirstOrDefault(x => !myQuests.Select(y => y.QuestId).Contains(x.Id));
+                if (mainQuest != null)
                 {
-                    await _mudProvider.ShowQuest(player.Id, new { quest.Id, quest.Description, quest.Name });
+                    //自动领取第一个主线任务
+                    var playerQuest = new PlayerQuestEntity
+                    {
+                        PlayerId = player.Id,
+                        QuestId = mainQuest.Id,
+                        IsComplete = false,
+                        TakeDate = DateTime.Now,
+                        CompleteDate = DateTime.Now,
+                        CreateDate = DateTime.Now,
+                        DayTimes = 1,
+                        HasTake = true,
+                        Target = mainQuest.Target,
+                        Times = 1,
+                        UpdateDate = DateTime.Now
+                    };
+                    await _playerQuestDomainService.Add(playerQuest);
+
+                    //判断是否第一个任务
+                    var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
+
+
+                    await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
                 }
+                else
+                {
+                    //所有主线任务都已完成
+                }
+
             }
+            else
+            {
+                //有正在进行的主线任务
+
+                //判断是否第一个任务
+                var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
+
+                await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
+            }
+
         }
 
         public async Task Handle(PlayerStatusChangedEvent message, CancellationToken cancellationToken)

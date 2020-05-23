@@ -44,11 +44,8 @@ namespace Emprise.Domain.Room.Services
         {
             var key = string.Format(CacheKey.Room, id);
             return await _cache.GetOrCreateAsync(key, async p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-                return await Task.Run(async () =>
-                {
-                    return await _roomRepository.Get(id);
-                });
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
+                return await _roomRepository.Get(id);
             });
         }
 

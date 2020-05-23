@@ -94,12 +94,13 @@
                     <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止</button>
 
                 </div>
-                <span class="mybag"  v-long="1111">背包</span>
+                <span class="mybag">背包</span>
             </div>
 
         </div>
 
         <div id="message" ref="message">
+            <span class="myQuest" v-if="mainQuest.id">{{mainQuest.name}}！</span>
             <ul>
                 <li v-for="message,index in messages" :class="index===messages.length-1&&message.type==1?'cur':''">
                     <template v-if="message.type==1">
@@ -217,7 +218,10 @@
                 <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
                     <div class="confirm-content-wrap" @@click.stop>
                         <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
-                        <p class="my-confirm-content">{{ modal.content }}</p>
+
+                        <p v-if="modal.type==='confirm'" class="my-confirm-content" v-html="modal.content">{{ modal.content }}</p>
+                        <p v-else class="my-confirm-content" v-html="modal.content" style="text-align:left;">{{ modal.content }}</p>
+
                         <div class="my-operation">
                             <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
                                 <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>

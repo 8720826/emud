@@ -11,6 +11,8 @@ namespace Emprise.Domain.Quest.Services
 
     public interface IPlayerQuestDomainService : IBaseService
     {
+        Task<List<PlayerQuestEntity>> GetPlayerQuests(int playerId);
+
         Task<PlayerQuestEntity> Get(Expression<Func<PlayerQuestEntity, bool>> where);
 
 

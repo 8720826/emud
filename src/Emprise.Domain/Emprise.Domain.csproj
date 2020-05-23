@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Quest\Events\" />
+  </ItemGroup>
+
 </Project>

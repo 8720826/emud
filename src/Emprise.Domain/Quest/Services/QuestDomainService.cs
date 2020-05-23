@@ -41,12 +41,9 @@ namespace Emprise.Domain.Quest.Services
            
             var key = CacheKey.QuestList;
             return await _cache.GetOrCreateAsync(key, async p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-                return await Task.Run(async () =>
-                {
-                    var query = await _questRepository.GetAll();
-                    return query.ToList();
-                });
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
+                var query = await _questRepository.GetAll();
+                return query.ToList();
             });
   
         }
@@ -55,23 +52,21 @@ namespace Emprise.Domain.Quest.Services
         {
             var key = string.Format(CacheKey.Quest, id);
             return await _cache.GetOrCreateAsync(key, async p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
-                return await Task.Run(async () =>
-                {
-                    return await _questRepository.Get(id);
-                });
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
+                return await _questRepository.Get(id);
             });
         }
 
-        public async Task Add(QuestEntity room)
+        public async Task Add(QuestEntity quest)
         {
-            await _questRepository.Add(room);
+            await _questRepository.Add(quest);
+            await _bus.RaiseEvent(new EntityInsertedEvent<QuestEntity>(quest)).ConfigureAwait(false);
         }
 
-        public async Task Update(QuestEntity room)
+        public async Task Update(QuestEntity quest)
         {
-            await _questRepository.Update(room);
-            await _bus.RaiseEvent(new EntityUpdatedEvent<QuestEntity>(room)).ConfigureAwait(false);
+            await _questRepository.Update(quest);
+            await _bus.RaiseEvent(new EntityUpdatedEvent<QuestEntity>(quest)).ConfigureAwait(false);
         }
 
 

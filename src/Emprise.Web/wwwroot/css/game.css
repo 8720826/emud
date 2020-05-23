@@ -269,6 +269,31 @@ header .mpLine {
     font-size: 1.1em
 }
 
+    #message .myQuest {
+        position: absolute;
+        right: 5px;
+        z-index: 999;
+        float: right;
+        display: inline-block;
+        padding: 1px 6px;
+        border: 1px solid #ae9455;
+        border-radius: 3px;
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+        border-bottom-left-radius: 3px;
+        border-top-left-radius: 3px;
+        background-color: #231d18;
+        background-clip: padding-box;
+        color: #ae9455;
+        text-align: center;
+        font-size: 9pt;
+        cursor: pointer;
+        transition: all;
+        transition-timing-function: linear;
+        transition-duration: .2s;
+        top: 10px;
+    }
+
 #message li {
     margin-left: 10px;
     list-style: none;
@@ -545,4 +570,169 @@ footer a span {
 
 .mt15 {
     margin-top: 15px
+}
+
+
+
+.loading {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.my-confirm {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    /* 这里防止当用户长按屏幕，出现的黑色背景色块，以及 iPhone 横平时字体的缩放问题 */
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* 进入和出去的动画 */
+.confirm-fade-enter-active {
+    animation: opacity 0.3s;
+}
+
+    .confirm-fade-enter-active .confirm-content-wrap {
+        animation: scale 0.3s;
+    }
+
+.confirm-fade-leave-active {
+    animation: outOpacity 0.2s;
+}
+
+/* 包裹层容器样式 */
+.confirm-content-wrap {
+    position: absolute;
+    top: 28%;
+    left: 0;
+    right: 0;
+    width: 280px;
+    margin: 0 auto;
+    background: #000;
+    border-radius: 5px;
+    z-index: 999;
+    user-select: none;
+    border: 1px solid #333;
+}
+
+/* 顶部标题部分 */
+.my-confirm-title {
+    padding-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* 中间内容部分 */
+.my-confirm-content {
+    padding: 0 15px;
+    padding-top: 20px;
+    margin-bottom: 32px;
+    text-align: center;
+    font-size: 16px;
+    color: #999;
+    line-height: 1.5;
+}
+
+/* 底部按钮样式 */
+.my-operation {
+    display: flex;
+    border-top: 1px solid #333;
+}
+
+    .my-operation .my-cancel-btn, .confirm-btn {
+        flex: 1;
+    }
+
+    .my-operation .confirm-btn {
+        color: #ffb000;
+    }
+
+    .my-operation .my-btn-text {
+        text-align: center;
+        font-size: 16px;
+        margin: 14px 0;
+        padding: 6px 0;
+    }
+
+/* 其他修饰样式 */
+.my-border-right {
+    border-right: 1px solid #333;
+}
+
+/* 进来的动画 */
+@keyframes opacity {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes scale {
+    0% {
+        transform: scale(0);
+    }
+
+    60% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 出去的动画 */
+@keyframes outOpacity {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.toast {
+    position: fixed;
+    z-index: 2000;
+    left: 50%;
+    top: 45%;
+    transition: all .5s;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -o-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    text-align: center;
+    border-radius: 5px;
+    color: #FFF;
+    background: rgba(17, 17, 17, 0.7);
+    height: 45px;
+    line-height: 45px;
+    padding: 0 15px;
+    max-width: 150px;
+}
+
+[v-cloak] {
+    display: none;
 }
