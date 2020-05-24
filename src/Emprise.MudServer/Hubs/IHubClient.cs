@@ -23,6 +23,8 @@ namespace Emprise.MudServer.Hubs
 
         Task ShowMyStatus(MyInfo myInfo);
 
+        Task ShowMyPack(MyPack myPack);
+
         Task Test(string msg);
     }
 }

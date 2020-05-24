@@ -751,6 +751,8 @@ namespace Emprise.Domain.User.CommandHandlers
             {
                 //await _mudProvider.ShowMessage(player.Id, quest.CompletedWords);
                 await _mudProvider.ShowMessage(player.Id, "领取奖励成功");
+
+                await _bus.RaiseEvent(new CompleteQuestEvent(player, quest)).ConfigureAwait(false);
             }
 
             return Unit.Value;
@@ -1006,7 +1008,7 @@ namespace Emprise.Domain.User.CommandHandlers
             switch (commandEnum)
             {
                 case CommandTypeEnum.播放对话:
-                    await _mudProvider.ShowMessage(player.Id, message);
+                    await _mudProvider.ShowMessage(player.Id, $"{npc.Name}：{message}", MessageTypeEnum.聊天);
                     break;
 
                 case CommandTypeEnum.对话选项:
@@ -1063,8 +1065,8 @@ namespace Emprise.Domain.User.CommandHandlers
 
             await TakeQuestReward(player, quest.Reward);
 
-            
-            //TODO  领取奖励
+            await _bus.RaiseEvent(new CompleteQuestEvent(player, quest)).ConfigureAwait(false);
+
         }
 
 

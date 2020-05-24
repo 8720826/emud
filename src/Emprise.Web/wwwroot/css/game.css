@@ -250,7 +250,7 @@ header .mpLine {
     position: relative;
     overflow: hidden;
     width: 100%;
-    height: 220px
+    height: 230px
 }
 
 #route {
@@ -269,30 +269,30 @@ header .mpLine {
     font-size: 1.1em
 }
 
-    #message .myQuest {
-        position: absolute;
-        right: 5px;
-        z-index: 999;
-        float: right;
-        display: inline-block;
-        padding: 1px 6px;
-        border: 1px solid #ae9455;
-        border-radius: 3px;
-        border-top-right-radius: 3px;
-        border-bottom-right-radius: 3px;
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
-        background-color: #231d18;
-        background-clip: padding-box;
-        color: #ae9455;
-        text-align: center;
-        font-size: 9pt;
-        cursor: pointer;
-        transition: all;
-        transition-timing-function: linear;
-        transition-duration: .2s;
-        top: 10px;
-    }
+.myQuest {
+    position: relative;
+    right: 5px;
+    z-index: 999;
+    float: right;
+    display: inline-block;
+    padding: 1px 6px;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+    background-color: #231d18;
+    background-clip: padding-box;
+    color: #ae9455;
+    text-align: center;
+    font-size: 9pt;
+    cursor: pointer;
+    transition: all;
+    transition-timing-function: linear;
+    transition-duration: .2s;
+    top: 10px;
+}
 
 #message li {
     margin-left: 10px;
@@ -389,7 +389,7 @@ footer a span {
     position: absolute;
     top: 0;
     overflow: auto;
-    height: 220px
+    height: 230px
 }
 
 #room .action button {
@@ -416,7 +416,7 @@ footer a span {
     line-height: 20px
 }
 
-#room .mybag {
+#room #mypack {
     position: absolute;
     right: 5px;
     z-index: 999;
@@ -438,7 +438,7 @@ footer a span {
     transition: all;
     transition-timing-function: linear;
     transition-duration: .2s;
-    bottom: 0px;
+    bottom: 10px;
 }
 
 #chatBox {
@@ -636,7 +636,7 @@ footer a span {
     text-align: center;
     font-size: 20px;
     font-weight: 500;
-    color: #333;
+    color: #999;
 }
 
 /* 中间内容部分 */
@@ -736,3 +736,33 @@ footer a span {
 [v-cloak] {
     display: none;
 }
+
+#message .chat {
+    color: #55FFFF;
+}
+
+
+.mypack {
+
+}
+
+.mypack li {
+    border-top: 1px solid #343434;
+    line-height:30px;
+}
+
+    .mypack button {
+        overflow: auto;
+        margin-top: 8px;
+        margin-left: 3px;
+        padding: 0 .714em;
+        width: auto;
+        height: 26px;
+        border: 1px solid hsla(0,100%,94%,.3);
+        border-radius: 3px;
+        background: rgba(0,0,0,.5);
+        color: #fff;
+        font-size: 10px;
+        float:unset;
+        display:inline-block;
+    }

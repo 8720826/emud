@@ -7,6 +7,8 @@ using Emprise.Domain.Player.Models;
 using Emprise.Domain.Room.Entity;
 using Emprise.Domain.Room.Models;
 using Emprise.Domain.User.Entity;
+using Emprise.Domain.Ware.Entity;
+using Emprise.Domain.Ware.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,9 @@ namespace Emprise.Infra.Mapper
                 .ForMember(x => x.Age, y => y.MapFrom(s => s.Age.ToAge()))
                 .ForMember(x => x.Money, y => y.MapFrom(s => s.Money.ToMoney()))
                 .ForMember(x => x._int, y => y.MapFrom(s => s.Int));
+
+
+            CreateMap<WareEntity, WareModel>();
         }
     }
 }

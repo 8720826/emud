@@ -14,7 +14,7 @@ namespace Emprise.Domain.Ware.Entity
 
         public int WareId { get; set; }
 
-        public int WareName { get; set; }
+        public string WareName { get; set; }
 
         public int Number { get; set; }
 

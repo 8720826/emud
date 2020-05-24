@@ -56,6 +56,17 @@
 
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.SortId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Quest.SortId">
+                            <span asp-validation-for="Quest.SortId" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6">从小到大排序</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
                             <label asp-for="Quest.TimeLimit" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
@@ -185,7 +196,7 @@
                         </div>
                         <div class="am-u-sm-1"></div>
                     </div>
-                    
+
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
                             <label asp-for="Quest.Description" class="control-label"></label>

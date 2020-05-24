@@ -9,6 +9,8 @@ using Emprise.Domain.Player.Commands;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Ware.Models;
+using Emprise.Domain.Ware.Services;
 using Emprise.Infra.Extensions;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,15 +28,25 @@ namespace Emprise.Application.Player.Services
         private readonly IMediatorHandler _bus;
         private readonly IMapper _mapper;
         private readonly IPlayerDomainService _playerDomainService;
+        private readonly IPlayerWareDomainService _playerWareDomainService;
+        private readonly IWareDomainService _wareDomainService;
         private readonly IAccountContext _account;
 
-        public PlayerAppService(IMediatorHandler bus, IMapper mapper, IPlayerDomainService playerDomainService, ILogger<PlayerAppService> logger, IAccountContext account)
+        public PlayerAppService(IMediatorHandler bus, 
+            IMapper mapper, 
+            IPlayerDomainService playerDomainService, 
+            ILogger<PlayerAppService> logger,
+            IPlayerWareDomainService playerWareDomainService,
+            IWareDomainService wareDomainService,
+            IAccountContext account)
         {
             _bus = bus;
             _mapper = mapper;
             _playerDomainService = playerDomainService;
             _logger = logger;
             _account = account;
+            _playerWareDomainService = playerWareDomainService;
+            _wareDomainService = wareDomainService;
         }
 
         #region command
@@ -175,7 +187,46 @@ namespace Emprise.Application.Player.Services
             return myInfo;
         }
 
-   
+        public async Task<MyPack> GetMyPack(int playerId)
+        {
+            var myPack = new MyPack()
+            {
+                Money = "", 
+                Wares = new List<WareModel>()
+
+            };
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return myPack;
+            }
+
+            myPack.Money = player.Money.ToMoney();
+
+            var playerWares = await _playerWareDomainService.GetAll(player.Id);
+            if (playerWares == null || playerWares.Count == 0)
+            {
+                return myPack;
+            }
+
+            var ids = playerWares.Select(x => x.WareId);
+
+            var wares = await _wareDomainService.GetAll(x => ids.Contains(x.Id));
+            foreach (var playerWare in playerWares)
+            {
+                var ware = wares.FirstOrDefault(x=>x.Id== playerWare.WareId);
+                if (ware != null)
+                {
+                    var wareModel = _mapper.Map<WareModel>(ware);
+                    wareModel.Number = playerWare.Number;
+                    wareModel.Status = playerWare.Status;
+                    myPack.Wares.Add(wareModel);
+                }
+
+            }
+
+            return myPack;
+        }
 
         public void Dispose()
         {

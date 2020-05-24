@@ -47,6 +47,6 @@ namespace Emprise.Application.Player.Services
 
         Task<MyInfo> GetMyInfo(int playerId);
 
-
+        Task<MyPack> GetMyPack(int playerId);
     }
 }

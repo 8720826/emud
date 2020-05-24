@@ -117,7 +117,7 @@ namespace Emprise.Admin.Pages
             var claimsIdentity = new ClaimsIdentity(claims, "Default");
             ClaimsPrincipal user = new ClaimsPrincipal(claimsIdentity);
 
-            await HttpContext.SignInAsync("admin", user, new AuthenticationProperties { AllowRefresh = true, ExpiresUtc = DateTimeOffset.Now.AddDays(30) });
+            await HttpContext.SignInAsync("admin", user, new AuthenticationProperties { IsPersistent = true, AllowRefresh = true, ExpiresUtc = DateTimeOffset.Now.AddDays(30) });
 
             await AddSuccess(new OperatorLog
             {

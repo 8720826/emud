@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.EventHandlers;
@@ -14,6 +15,7 @@ using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Quest.Entity;
+using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Models;
 using Emprise.Domain.Room.Services;
@@ -38,7 +40,9 @@ namespace Emprise.Domain.User.EventHandlers
         INotificationHandler<PlayerInRoomEvent>,
         INotificationHandler<InitGameEvent>,
         INotificationHandler<PlayerStatusChangedEvent>,
-        INotificationHandler<SendMessageEvent>
+        INotificationHandler<SendMessageEvent>,
+        INotificationHandler<CompleteQuestEvent>,
+        INotificationHandler<QuestTriggerEvent>
 
         
 
@@ -211,58 +215,7 @@ namespace Emprise.Domain.User.EventHandlers
                 await _mudProvider.ShowMessage(player.Id, _appConfig.Site.WelcomeWords.Replace("{name}", player.Name));
             }
 
-            //已经领取的所有任务
-            var myQuests = (await _playerQuestDomainService.GetPlayerQuests(player.Id));
-            //正在进行的任务
-            var myQuestsNotComplete = myQuests.Where(x => !x.IsComplete);
-            //所有主线任务
-            var mainQuests = (await _questDomainService.GetAll()).Where(x => x.Type == QuestTypeEnum.主线).OrderBy(x=>x.SortId);
-            //是否有正在进行的主线任务
-            var mainQuest = mainQuests.FirstOrDefault(x => myQuestsNotComplete.Select(y => y.QuestId).Contains(x.Id));
-            if (mainQuest == null)
-            {
-                //没有正在进行中的主线任务,找到第一个没有领取的主线任务
-                mainQuest = mainQuests.FirstOrDefault(x => !myQuests.Select(y => y.QuestId).Contains(x.Id));
-                if (mainQuest != null)
-                {
-                    //自动领取第一个主线任务
-                    var playerQuest = new PlayerQuestEntity
-                    {
-                        PlayerId = player.Id,
-                        QuestId = mainQuest.Id,
-                        IsComplete = false,
-                        TakeDate = DateTime.Now,
-                        CompleteDate = DateTime.Now,
-                        CreateDate = DateTime.Now,
-                        DayTimes = 1,
-                        HasTake = true,
-                        Target = mainQuest.Target,
-                        Times = 1,
-                        UpdateDate = DateTime.Now
-                    };
-                    await _playerQuestDomainService.Add(playerQuest);
-
-                    //判断是否第一个任务
-                    var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
-
-
-                    await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
-                }
-                else
-                {
-                    //所有主线任务都已完成
-                }
-
-            }
-            else
-            {
-                //有正在进行的主线任务
-
-                //判断是否第一个任务
-                var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
-
-                await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
-            }
+            await CheckPlayerMainQuest(player);
 
         }
 
@@ -293,6 +246,149 @@ namespace Emprise.Domain.User.EventHandlers
             // await _delayedQueue.Publish(new MessageModel { Content = receivedMessage.Content, PlayerId = _account.PlayerId }, 2, 10);
 
         }
-        
+
+
+        public async Task Handle(CompleteQuestEvent message, CancellationToken cancellationToken)
+        {
+            var player = message.Player;
+            var quest = message.Quest;
+
+            if(quest.Type== QuestTypeEnum.主线)
+            {
+                await CheckPlayerMainQuest(player);
+            }
+        }
+
+
+        public async Task Handle(QuestTriggerEvent message, CancellationToken cancellationToken)
+        {
+            var player = message.Player;
+            var questTriggerType = message.QuestTriggerType;
+
+            //已经领取的所有任务
+            var myQuests = (await _playerQuestDomainService.GetPlayerQuests(player.Id));
+            //正在进行的任务
+            var myQuestsNotComplete = myQuests.Where(x => !x.IsComplete);
+            //所有未完成任务
+            var quests = (await _questDomainService.GetAll()).Where(x => myQuestsNotComplete.Select(y => y.QuestId).Contains(x.Id));
+
+
+            foreach(var quest in quests)
+            {
+                List<QuestTarget> questTargets = new List<QuestTarget>();
+                try
+                {
+                    questTargets = JsonConvert.DeserializeObject<List<QuestTarget>>(quest.Target);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Convert QuestTarget:{ex}");
+                }
+
+                if (questTargets == null || questTargets.Count == 0)
+                {
+                    continue;
+                }
+
+                if (!questTargets.Exists(x => x.Target == questTriggerType.ToString()))
+                {
+                    continue;
+                }
+
+                foreach (var questTarget in questTargets)
+                {
+                    var npcId = questTarget.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
+                    var questId = questTarget.Attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val;
+                    int.TryParse(questTarget.Attrs.FirstOrDefault(x => x.Attr == "RoomId")?.Val, out int roomId);
+
+                    var targetEnum = (QuestTargetEnum)Enum.Parse(typeof(QuestTargetEnum), questTarget.Target, true);
+                    switch (targetEnum)
+                    {
+
+                        case QuestTargetEnum.与某个Npc对话:
+    
+                            break;
+
+                        case QuestTargetEnum.所在房间:
+                            if (player.RoomId != roomId)
+                            {
+                                continue;
+                            }
+
+
+                            break;
+
+                    }
+                }
+
+
+            }
+
+
+        }
+
+
+
+        /// <summary>
+        /// 检查并自动领取主线任务
+        /// </summary>
+        /// <returns></returns>
+        private async Task CheckPlayerMainQuest(PlayerEntity player)
+        {
+            //已经领取的所有任务
+            var myQuests = (await _playerQuestDomainService.GetPlayerQuests(player.Id));
+            //正在进行的任务
+            var myQuestsNotComplete = myQuests.Where(x => !x.IsComplete);
+            //所有主线任务
+            var mainQuests = (await _questDomainService.GetAll()).Where(x => x.Type == QuestTypeEnum.主线).OrderBy(x => x.SortId);
+            //是否有正在进行的主线任务
+            var mainQuest = mainQuests.FirstOrDefault(x => myQuestsNotComplete.Select(y => y.QuestId).Contains(x.Id));
+            if (mainQuest == null)
+            {
+                //没有正在进行中的主线任务,找到第一个没有领取的主线任务
+                mainQuest = mainQuests.FirstOrDefault(x => !myQuests.Select(y => y.QuestId).Contains(x.Id));
+                if (mainQuest != null)
+                {
+                    //自动领取第一个主线任务
+                    var playerQuest = new PlayerQuestEntity
+                    {
+                        PlayerId = player.Id,
+                        QuestId = mainQuest.Id,
+                        IsComplete = false,
+                        TakeDate = DateTime.Now,
+                        CompleteDate = DateTime.Now,
+                        CreateDate = DateTime.Now,
+                        DayTimes = 1,
+                        HasTake = true,
+                        Target = mainQuest.Target,
+                        Times = 1,
+                        UpdateDate = DateTime.Now
+                    };
+                    await _playerQuestDomainService.Add(playerQuest);
+
+                    await _mudProvider.ShowMessage(player.Id, $"已自动激活任务 [{mainQuest.Name}]。");
+
+                    //判断是否第一个任务
+                    var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
+
+
+                    await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
+                }
+                else
+                {
+                    //所有主线任务都已完成
+                }
+
+            }
+            else
+            {
+                //有正在进行的主线任务
+
+                //判断是否第一个任务
+                var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
+
+                await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
+            }
+        }
     }
 }

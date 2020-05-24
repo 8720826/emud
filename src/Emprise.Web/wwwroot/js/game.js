@@ -40,18 +40,19 @@ new Vue({
         newEmailCount:0,
         myBox: "",
         myBoxMenus: [],
-        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "pack", name: "背包", group: "player" }],
+        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }],
         modal: {
             isShowConfirm: 0,
             type: "confirm",
-            titleText: "",
+            title: "",
             content: "",
             cancelText: "取消",
             confirmText: "确认",
             callback: null
         },
         timer: null,
-        mainQuest: {}
+        mainQuest: {},
+        myPack: {}
     },
     computed: {
         getMenus() {
@@ -214,10 +215,14 @@ new Vue({
                 console.log("ShowQuest:" + JSON.stringify(result));
                 that.mainQuest = result.mainQuest;
                 if (result.isFirst) {
-                    that.dialog(that.mainQuest.name, that.mainQuest.description, function () {
-
-                    });
+                    that.showMainQuest();
                 } 
+            });
+
+            connection.on("ShowMyPack", result => {
+                console.log("ShowMyPack:" + JSON.stringify(result));
+                that.myBox = "mypack";
+                that.myPack = result;
             });
         },
         move: function (roomId) {
@@ -246,6 +251,9 @@ new Vue({
         showStatus: function () {
             connection.invoke("ShowMyStatus");
         },
+        showMyPack: function () {
+            connection.invoke("ShowMyPack");
+        },
         search: function () {
             connection.invoke("Search");
         },
@@ -265,6 +273,10 @@ new Vue({
                     break;
                 case "status":
                     this.showStatus();
+                    break;
+
+                case "mypack":
+                    this.showMyPack();
                     break;
             }
         },
@@ -303,6 +315,18 @@ new Vue({
                 console.log("TakeQuest=" + questId);
                 connection.invoke("CompleteQuest", { questId: questId });
             }
+        },
+        showMainQuest: function () {
+            var that = this;
+            that.dialog(that.mainQuest.name, that.mainQuest.description, function () {
+
+            });
+        },
+        showTips: function (title, content) {
+            var that = this;
+            that.dialog(title, content, function () {
+
+            });
         }
     },
     watch: {

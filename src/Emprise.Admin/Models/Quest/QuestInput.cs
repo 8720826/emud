@@ -51,6 +51,9 @@ namespace Emprise.Admin.Models.Quest
         [Display(Name = "限时（分钟）")]
         public int TimeLimit { set; get; }
 
+        
+        [Display(Name = "排序")]
+        public int SortId { set; get; }
 
         [Display(Name = "描述")]
         [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]

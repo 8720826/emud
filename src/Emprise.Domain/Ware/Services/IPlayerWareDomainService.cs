@@ -13,7 +13,7 @@ namespace Emprise.Domain.Ware.Services
     {
         Task<PlayerWareEntity> Get(Expression<Func<PlayerWareEntity, bool>> where);
 
-        Task<List<PlayerWareEntity>> GetAll(Expression<Func<PlayerWareEntity, bool>> where);
+        Task<List<PlayerWareEntity>> GetAll(int playerId);
 
         Task<PlayerWareEntity> Get(int id);
 

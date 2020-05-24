@@ -31,9 +31,9 @@ namespace Emprise.Domain.Ware.Services
             return await _scriptRepository.Get(where);
         }
 
-        public async Task<List<PlayerWareEntity>> GetAll(Expression<Func<PlayerWareEntity, bool>> where)
+        public async Task<List<PlayerWareEntity>> GetAll(int playerId)
         {
-            var query = await _scriptRepository.GetAll(where);
+            var query = await _scriptRepository.GetAll(x => x.PlayerId == playerId);
 
             return query.ToList();
         }

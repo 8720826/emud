@@ -1,5 +1,6 @@
 ﻿using Emprise.Application.Player.Services;
 using Emprise.Domain.Core.Authorization;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
@@ -118,7 +119,8 @@ namespace Emprise.MudServer.Hubs
         {
             var systemMessage = new SystemMessage()
             {
-                Content = content
+                Content = content, 
+                Type= MessageTypeEnum.提示
             };
 
             await Clients.Client(connectionId).ShowMessage(systemMessage);

@@ -161,7 +161,17 @@ namespace Emprise.MudServer.Hubs
                 await Clients.Client(Context.ConnectionId).ShowMyStatus(myInfo);
             });
         }
+
+        public async Task ShowMyPack()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+                var myInfo = await _playerAppService.GetMyPack(playerId);
+                await Clients.Client(Context.ConnectionId).ShowMyPack(myInfo);
+            });
+        }
         
+
         public async Task Search()
         {
             var result = await DoCommand(async () => {

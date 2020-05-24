@@ -94,28 +94,35 @@
                     <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止</button>
 
                 </div>
-                <span class="mybag">背包</span>
+                <span id="mypack" @@click="showMyPack">背包</span>
             </div>
 
         </div>
 
-        <div id="message" ref="message">
-            <span class="myQuest" v-if="mainQuest.id">{{mainQuest.name}}！</span>
-            <ul>
-                <li v-for="message,index in messages" :class="index===messages.length-1&&message.type==1?'cur':''">
-                    <template v-if="message.type==1">
-                        <p v-html="message.content">{{message.content}}</p>
-                    </template>
-                    <template v-else-if="message.type==2">
-                        <p v-html="message.content" style="margin:1px 0px;" @@click="clickCommand">{{message.content}}</p>
-                    </template>
-                    <template v-else>
-                        <p v-html="message.content">{{message.content}}</p>
-                        <em>({{message.postDate}})</em>
-                    </template>
+        <div>
+            <span class="myQuest" v-if="mainQuest.id" @@click="showMainQuest">{{mainQuest.name}}</span>
+            <div id="message" ref="message">
 
-                </li>
-            </ul>
+                <ul>
+                    <li v-for="message,index in messages">
+                        <template v-if="message.type==1">
+                            <p v-html="message.content">{{message.content}}</p>
+                        </template>
+                        <template v-else-if="message.type==2">
+                            <p v-html="message.content" style="margin:1px 0px;" @@click="clickCommand">{{message.content}}</p>
+                        </template>
+                        <template v-else-if="message.type==3">
+                            <p v-html="message.content" class="chat">{{message.content}}</p>
+                        </template>
+                        <template v-else>
+                            <p v-html="message.content">{{message.content}}</p>
+                            <em>({{message.postDate}})</em>
+                        </template>
+
+                    </li>
+                </ul>
+            </div>
+
         </div>
 
         <footer>
@@ -162,7 +169,7 @@
                 <div class="npcinfo" v-if="myBox=='npc'">
                     <p>{{npc.name}}</p>
                     <hr />
-                    <p v-for="description,index in npc.descriptions"  v-html="description">
+                    <p v-for="description,index in npc.descriptions" v-html="description">
                         {{description}}
                     </p>
                     <div class="mt15">
@@ -210,6 +217,23 @@
                     <p>状态</p>
 
                 </div>
+
+                <div class="mypack" v-if="myBox=='mypack'">
+
+                    <p v-if="myPack.money===''">你身无分文。</p>
+                    <p v-else>你有{{myPack.money}}</p>
+                    <p>身上共有{{myPack.wares.length}}件物品：</p>
+                    <ul class="mt15">
+                        <li v-for="myWare,index in myPack.wares">
+                            <span @@click="showTips(myWare.name,myWare.description)"> {{myWare.name}} </span>
+                            <em>({{myWare.number}}个)</em>
+                            <button v-if="myWare.category===102&&myWare.status===0">装备</button>
+                            <button v-if="myWare.category===102&&myWare.status===1">卸下</button>
+                            <button v-if="myWare.status===0">丢弃</button>
+                        </li>
+                    </ul>
+                </div>
+                
             </div>
         </div>
 
@@ -217,7 +241,7 @@
             <transition name="confirm-fade">
                 <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
                     <div class="confirm-content-wrap" @@click.stop>
-                        <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
+                        <h3 class="my-confirm-title">{{ modal.title }}</h3>
 
                         <p v-if="modal.type==='confirm'" class="my-confirm-content" v-html="modal.content">{{ modal.content }}</p>
                         <p v-else class="my-confirm-content" v-html="modal.content" style="text-align:left;">{{ modal.content }}</p>
