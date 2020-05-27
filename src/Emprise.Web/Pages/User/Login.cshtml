@@ -72,9 +72,13 @@
 
                     that.loading = 1;
 
-                    axios.post("/api/user/login", {
+                    axios.post("", {
                         email: that.email,
                         password: that.password
+                    }, {
+                        headers: {
+                            RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
+                        }
                     })
                     .then(function (response) {
                         var result = response.data;

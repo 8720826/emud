@@ -1,7 +1,4 @@
-﻿using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Data;
-using Emprise.Domain.Core.Entity;
-using Emprise.Domain.User.Commands;
+﻿using Emprise.Domain.Core.Data;
 using Emprise.Domain.User.Entity;
 using System;
 using System.Collections.Generic;

@@ -1,9 +1,10 @@
-﻿using Emprise.Application.Player.Services;
-using Emprise.Domain.Core.Authorization;
+﻿using Emprise.Domain.Core.Authorization;
+using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.MudServer.Commands;
 using Emprise.MudServer.Hubs.Models;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
@@ -23,17 +24,17 @@ namespace Emprise.MudServer.Hubs
         protected readonly DomainNotificationHandler _notifications;
         protected readonly IMudOnlineProvider _mudOnlineProvider;
         protected readonly AppConfig _appConfig;
-        protected readonly IPlayerAppService _playerAppService;
         public readonly ILogger<BaseHub> _logger;
+        private readonly IMediatorHandler _bus;
 
-        public BaseHub(IAccountContext account, INotificationHandler<DomainNotification> notifications, IMudOnlineProvider mudOnlineProvider, IOptionsMonitor<AppConfig> appConfig, IPlayerAppService playerAppService, ILogger<MudHub> logger)
+        public BaseHub(IAccountContext account, INotificationHandler<DomainNotification> notifications, IMudOnlineProvider mudOnlineProvider, IOptionsMonitor<AppConfig> appConfig,  ILogger<MudHub> logger, IMediatorHandler bus)
         {
             _account = account;
             _notifications = (DomainNotificationHandler)notifications;
             _mudOnlineProvider = mudOnlineProvider;
             _appConfig = appConfig.CurrentValue;
-            _playerAppService = playerAppService;
             _logger = logger;
+            _bus = bus;
         }
 
         #region 连接
@@ -76,8 +77,9 @@ namespace Emprise.MudServer.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, "faction_" + _account.FactionId);
 
         
-
-            await _playerAppService.InitGame(_account.PlayerId);
+            _logger.LogDebug($"InitGame:{_account.PlayerId}");
+            var command = new InitGameCommand(_account.PlayerId);
+            await _bus.SendCommand(command).ConfigureAwait(false); ;
         }
 
         private bool IsValidOperation()

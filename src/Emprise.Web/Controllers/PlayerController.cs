@@ -24,7 +24,7 @@ namespace Emprise.Web.Controllers
             _playerService = playerService;
             _accountContext = accountContext;
         }
-
+        /*
         
         [Route("create")]
         [HttpPost]
@@ -35,7 +35,8 @@ namespace Emprise.Web.Controllers
 
             return MyResponse();
         }
-
+        */
+        /*
         [Route("delete")]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
@@ -43,17 +44,8 @@ namespace Emprise.Web.Controllers
             await _playerService.Delete(id);
 
             return MyResponse();
-        }
+        }*/
 
-        [Route("joinGame")]
-        [HttpPost]
-        public async Task<IActionResult> JoinGame([FromForm]int playerId)
-        {
-            var userId = _accountContext.UserId;
-            await _playerService.JoinGame(userId, playerId);
-
-            return MyResponse();
-        }
         
 
         /*

@@ -1,6 +1,4 @@
-﻿
-using Emprise.Application.Npc.Models;
-using Emprise.Domain.Core.Interfaces;
+﻿using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
 using System;
 using System.Collections.Generic;
@@ -13,6 +11,6 @@ namespace Emprise.Application.User.Services
     {
 
         Task<NpcEntity> Get(int id);
-        Task<NpcInfo> GetNpc(int playerId, int id);
+        //Task<NpcInfo> GetNpc(int playerId, int id);
     }
 }

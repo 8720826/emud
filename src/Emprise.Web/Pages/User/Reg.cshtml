@@ -99,10 +99,14 @@
 
                     that.loading = 1;
 
-                    axios.post("/api/user/reg", {
+                    axios.post("", {
                         email: that.email,
                         password: that.password,
                         code:that.code
+                    }, {
+                        headers: {
+                            RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
+                        }
                     })
                     .then(function (response) {
                         var result = response.data;
@@ -124,81 +128,7 @@
                 }
             }
         });
-     @*
-    ({
-        reg: function () {
-            $("#msgTip").html("");
 
-            if (!$("input[name=email]").val()) {
-                return false;
-            }
-            if (!$("input[name=password]").val()) {
-                return false;
-            }
-            if (!$("input[name=password2]").val()) {
-                return false;
-            }
-
-            if ($("input[name=password]").val() != $("input[name=password2]").val()) {
-                $("#msgTip").html("两次密码必须一致");
-                return false;
-            }
-
-
-            var index = layer.load(2);
-
-            $.ajax({
-                type: "POST",
-                url: "/api/user/reg",
-                data: $("form").serialize(),
-                success: function (result) {
-                    if (result.status) {
-                        location.href = "@(Url.Page("/User/Index"))";
-                    } else {
-                        var error = result.errorMessage||"注册失败";
-                        if (result.data) {
-                            error += "<br>" + result.data;
-                        }
-                        $("#msgTip").html(error);
-                    }
-                    layer.close(index);
-                }, error: function () {
-                    layer.close(index);
-                }
-            });
-        },
-        init : function () {
-            var that = this;
-
-            $(function () {
-                layer.config({
-                    skin: 'layui-layer-hei'
-                });
-
-                $(document).on("click", "#formReg", function () {
-                    that.reg();
-                });
-
-                $(document).on("keyup", "input", function () {
-                    var obj = $(this);
-                    if (obj.val()) {
-                        obj.next("a").show();
-                    } else {
-                        obj.next("a").hide();
-                    }
-                });
-
-                $(document).on("click", ".form-text-clear", function () {
-                    var obj = $(this);
-                    obj.prev("input").val("");
-                    obj.hide();
-                });
-            });
-
-
-
-        }
-    }).init();*@
     </script>
 }
 

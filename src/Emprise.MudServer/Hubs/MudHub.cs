@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Emprise.Application.User.Services;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
@@ -18,22 +17,19 @@ using Emprise.MudServer.Hubs.Actions;
 using Emprise.Domain.Core.Notifications;
 using MediatR;
 using Emprise.Domain.Core.Models.Chat;
-using Emprise.Domain.Player.Events;
-using Emprise.Application.Player.Services;
-using Emprise.Domain.Player.Commands;
+using Emprise.MudServer.Commands;
+using Emprise.MudServer.Events;
 
 namespace Emprise.MudServer.Hubs
 {
     [Authorize]
     public class MudHub : BaseHub
     {
-        private readonly INpcAppService _npcAppService;
         private readonly IDelayedQueue  _delayedQueue;
         private readonly IRecurringQueue  _recurringQueue;
         private readonly IMediatorHandler _bus;
-        public MudHub(IAccountContext account, IMudOnlineProvider mudOnlineProvider, IOptionsMonitor<AppConfig> appConfig, IPlayerAppService playerAppService,  ILogger<MudHub> logger, INpcAppService npcAppService, IDelayedQueue delayedQueue, IRecurringQueue recurringQueue, INotificationHandler<DomainNotification> notifications, IMediatorHandler bus) : base(account,notifications, mudOnlineProvider, appConfig, playerAppService, logger)
+        public MudHub(IAccountContext account, IMudOnlineProvider mudOnlineProvider, IOptionsMonitor<AppConfig> appConfig,  ILogger<MudHub> logger,  IDelayedQueue delayedQueue, IRecurringQueue recurringQueue, INotificationHandler<DomainNotification> notifications, IMediatorHandler bus) : base(account,notifications, mudOnlineProvider, appConfig,  logger, bus)
         {
-            _npcAppService = npcAppService;
             _delayedQueue = delayedQueue;
             _recurringQueue = recurringQueue;
             _bus = bus;
@@ -44,36 +40,10 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
 
-                //更新玩家在线数据
-                var model = await _mudOnlineProvider.GetPlayerOnline(playerId);
-                if (model != null)
-                {
-                    await _mudOnlineProvider.SetPlayerOnline(new PlayerOnlineModel
-                    {
-                        IsOnline = true,
-                        LastDate = DateTime.Now,
-                        Level = model.Level,
-                        PlayerName = model.PlayerName,
-                        PlayerId = model.PlayerId,
-                        RoomId = model.RoomId,
-                        Gender = model.Gender,
-                        Title = model.Title
-                    });
-                    return;
-                }
+                var command = new PingCommand(playerId);
+                await _bus.SendCommand(command);
 
-                var player = await _playerAppService.GetPlayer(playerId);
-                await _mudOnlineProvider.SetPlayerOnline(new PlayerOnlineModel
-                {
-                    IsOnline = true,
-                    LastDate = DateTime.Now,
-                    Level = player.Level,
-                    PlayerName = player.Name,
-                    PlayerId = player.Id,
-                    RoomId = player.RoomId,
-                    Gender = player.Gender,
-                    Title = player.Title
-                });
+
             });
         }
 
@@ -88,33 +58,25 @@ namespace Emprise.MudServer.Hubs
                     Sender = _account.PlayerName,
                     PlayerId = _account.PlayerId
                 });
-                return;
+                return ;
             }
-            var result = await DoCommand(async ()=> {
-                var receivedMessage = new PlayerMessage()
-                {
-                    Channel = "闲聊",
-                    Content = WebUtility.HtmlEncode(sendAction.Content),
-                    Sender = _account.PlayerName,
-                    PlayerId = _account.PlayerId
-                };
 
-                await Clients.All.ShowMessage(receivedMessage);
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
 
+                var command = new SendMessageCommand(playerId, sendAction.Channel, sendAction.Content);
+                await _bus.SendCommand(command);
             });
-
-            if (result)
-            {
-                await _bus.RaiseEvent(new SendMessageEvent(_account.PlayerId, sendAction.Content)).ConfigureAwait(false);
-                //await _recurringQueue.Publish(new MessageModel { Content = receivedMessage.Content, PlayerId = _account.PlayerId }, 5, 3);
-            }
         }
 
         public async Task Move(MoveAction moveAction)
         {
+
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.Move(playerId, moveAction.RoomId);
+
+                var command = new MoveCommand(playerId, moveAction.RoomId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -122,8 +84,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                var npc = await _npcAppService.GetNpc(playerId,  showNpcAction.NpcId);
-                await Clients.Client(Context.ConnectionId).ShowNpc(npc);
+
+                var command = new ShowNpcCommand(playerId, showNpcAction.NpcId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -133,14 +96,13 @@ namespace Emprise.MudServer.Hubs
                 var playerId = _account.PlayerId;
                 if (playerId == showPlayerAction.PlayerId)
                 {
-                    var myInfo = await _playerAppService.GetMyInfo(playerId);
-                    await Clients.Client(Context.ConnectionId).ShowMe(myInfo);
+                    var command = new ShowMeCommand(playerId);
+                    await _bus.SendCommand(command);
                     return;
                 }
 
-                var player = await _playerAppService.GetPlayerInfo(showPlayerAction.PlayerId);
-                _logger.LogDebug($"player={showPlayerAction.PlayerId},{JsonConvert.SerializeObject(player)}");
-                await Clients.Client(Context.ConnectionId).ShowPlayer(player);
+                var commandShowPlayer = new ShowPlayerCommand(playerId, showPlayerAction.PlayerId);
+                await _bus.SendCommand(commandShowPlayer);
             });
         }
 
@@ -148,8 +110,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                var myInfo = await _playerAppService.GetMyInfo(playerId);
-                await Clients.Client(Context.ConnectionId).ShowMe(myInfo);
+
+                var command = new ShowMeCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -157,8 +120,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                var myInfo = await _playerAppService.GetMyInfo(playerId);
-                await Clients.Client(Context.ConnectionId).ShowMyStatus(myInfo);
+
+                var command = new ShowMyStatusCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -166,8 +130,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                var myInfo = await _playerAppService.GetMyPack(playerId);
-                await Clients.Client(Context.ConnectionId).ShowMyPack(myInfo);
+
+                var command = new ShowMyPackCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
         
@@ -176,7 +141,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.Search(playerId);
+
+                var command = new SearchCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -188,7 +155,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.Meditate(playerId);
+
+                var command = new MeditateCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -197,7 +166,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.StopAction(playerId);
+
+                var command = new StopActionCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -209,7 +180,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.Exert(playerId);
+
+                var command = new ExertCommand(playerId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -218,7 +191,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.NpcAction(playerId, commandAction.NpcId, commandAction.Action);
+
+                var command = new NpcActionCommand(playerId, commandAction.NpcId, commandAction.Action.ScriptId, commandAction.Action.CommandId, commandAction.Action.Name, commandAction.Action.Message);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -227,7 +202,9 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.TakeQuest(playerId, questAction.QuestId);
+
+                var command = new QuestCommand(playerId, questAction.QuestId);
+                await _bus.SendCommand(command);
             });
         }
 
@@ -235,9 +212,30 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
-                await _playerAppService.CompleteQuest(playerId, questAction.QuestId);
+
+                var command = new CompleteQuestCommand(playerId, questAction.QuestId);
+                await _bus.SendCommand(command);
             });
         }
-        
+
+        public async Task Load(WareAction wareAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new LoadWareCommand(playerId, wareAction.WareId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task UnLoad(WareAction wareAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+ 
+                var command = new UnLoadWareCommand(playerId, wareAction.WareId);
+                await _bus.SendCommand(command);
+            });
+        }
     }
 }

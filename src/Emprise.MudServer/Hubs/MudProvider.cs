@@ -269,5 +269,38 @@ namespace Emprise.MudServer.Hubs
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowQuest", obj);
         }
+
+        public async Task ShowNpc(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowNpc", obj);
+        }
+
+        public async Task ShowPlayer(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowPlayer", obj);
+        }
+
+        public async Task ShowMe(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowMe", obj);
+        }
+
+        public async Task ShowMyStatus(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowMyStatus", obj);
+        }
+
+
+        public async Task ShowMyPack(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowMyPack", obj);
+        }
+
+        public async Task ShowChat(object obj)
+        {
+            await _context.Clients.All.SendAsync("ShowMessage", obj);
+           // await Clients.All.ShowMessage(receivedMessage);
+        }
+      
     }
 }

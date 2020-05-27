@@ -86,8 +86,12 @@
 
                     that.loading = 1;
 
-                    axios.post("/api/user/SendRegEmail", {
+                    axios.post("", {
                         email: that.email
+                    }, {
+                        headers: {
+                            RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
+                        }
                     })
                     .then(function (response) {
                         var result = response.data;

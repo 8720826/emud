@@ -2,8 +2,8 @@
 using Emprise.Domain.Core.Bus.Models;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces;
-using Emprise.Domain.Player.Events;
 using Emprise.Domain.Player.Services;
+using Emprise.MudServer.Events;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

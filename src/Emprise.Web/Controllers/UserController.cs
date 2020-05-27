@@ -25,7 +25,7 @@ namespace Emprise.Web.Controllers
             _userService = userService;
             _accountContext = accountContext;
         }
-
+        /*
         
         [Route("SendRegEmail")]
         [AllowAnonymous, HttpPost]
@@ -91,7 +91,7 @@ namespace Emprise.Web.Controllers
 
             return MyResponse();
         }
-        
+        */
 
         /*
         [Route("sendVerifyEmail")]

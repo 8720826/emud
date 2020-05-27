@@ -227,8 +227,8 @@
                         <li v-for="myWare,index in myPack.wares">
                             <span @@click="showTips(myWare.name,myWare.description)"> {{myWare.name}} </span>
                             <em>({{myWare.number}}个)</em>
-                            <button v-if="myWare.category===102&&myWare.status===0">装备</button>
-                            <button v-if="myWare.category===102&&myWare.status===1">卸下</button>
+                            <button v-if="myWare.category===102&&myWare.status===0" @@click="load(myWare.id)">装备</button>
+                            <button v-if="myWare.category===102&&myWare.status===1" @@click="unload(myWare.id)">卸下</button>
                             <button v-if="myWare.status===0">丢弃</button>
                         </li>
                     </ul>

@@ -116,7 +116,11 @@
                 logout: function () {
                     var that = this;
                     that.confirm("要退出吗？", function () {
-                        axios.post("/api/user/logout", {})
+                        axios.post("", {}, {
+                            headers: {
+                                RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
+                            }
+                        })
                         .then(function (response) {
                             var result = response.data;
                             if (result.status) {
@@ -213,94 +217,6 @@
                 this.createAttr();
             }
         });
-        @*
-    ({
-        logout: function () {
-            layer.confirm('要退出吗？', { icon: 3, title: '提示' }, function (index) {
-                $.ajax({
-                    type: "POST",
-                    url: "/api/user/logout",
-                    data: {},
-                    success: function (result) {
-                        if (result.status) {
-                            location.href = "@(Url.Page("/User/Login"))";
-                        }
-                    }, error: function () {
-                    }
-                });
-            });
-        },
-        createAttr: function () {
-            var count = 4;
-            var addValue = 20;
-            var minValue = 15;
-            var maxValue = 30;
-            while (count > 1) {
-                var rnd = Math.floor(Math.random() * Math.min(maxValue - minValue, addValue));
-                $(".attr").find("input").eq(count-1).val(minValue+rnd);
-                addValue -= rnd;
-                count--;
-            }
-            $(".attr").find("input").eq(count-1).val(minValue+addValue);
-        },
-        createPlayer: function () {
-            $("#msgTip").html("");
 
-            if (!$("input[name=name]").val()) {
-                $("#msgTip").html("请输入角色名");
-                return false;
-            }
-            if (!$("input[name=gender]:checked").val()) {
-                $("#msgTip").html("请选择性别");
-                return false;
-            }
-            var index = layer.load(2);
-
-            $.ajax({
-                type: "POST",
-                url: "/api/player/create",
-                data: $("form").serialize(),
-                success: function (result) {
-                    if (result.status) {
-                        location.href = "@(Url.Page("/Game/Index"))";
-                    } else {
-                        var error = result.errorMessage||"创建失败";
-                        if (result.data) {
-                            error += "<br>" + result.data;
-                        }
-                        $("#msgTip").html(error);
-                    }
-                    layer.close(index);
-                }, error: function () {
-                    layer.close(index);
-                }
-            });
-        },
-        init : function () {
-            var that = this;
-
-            $(function () {
-                layer.config({
-                    skin: 'layui-layer-hei'
-                });
-
-                that.createAttr();
-
-                $(document).on("click", "#create", function () {
-                    that.createPlayer();
-                });
-
-                $(document).on("click", "#logout", function () {
-                    that.logout();
-                });
-
-                $(document).on("click", "#createAttr", function () {
-                    that.createAttr();
-                });
-
-            });
-
-        }
-    }).init();*@
     </script>
 }

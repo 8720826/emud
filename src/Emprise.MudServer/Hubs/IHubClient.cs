@@ -1,11 +1,10 @@
-﻿using Emprise.Application.Npc.Models;
-using Emprise.Application.Player.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Emprise.MudServer.Hubs.Models;
 using Emprise.Domain.Player.Models;
+using Emprise.MudServer.Models;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -15,16 +14,5 @@ namespace Emprise.MudServer.Hubs
 
         Task Offline();
 
-        Task ShowPlayer(PlayerInfo playerInfo);
-
-        Task ShowNpc(NpcInfo npcInfo);
-
-        Task ShowMe(MyInfo myInfo);
-
-        Task ShowMyStatus(MyInfo myInfo);
-
-        Task ShowMyPack(MyPack myPack);
-
-        Task Test(string msg);
     }
 }

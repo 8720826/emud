@@ -50,5 +50,17 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task ShowQuest(int playerId, object obj);
 
+        Task ShowNpc(int playerId, object obj);
+
+        Task ShowPlayer(int playerId, object obj);
+
+        Task ShowMe(int playerId, object obj);
+
+        Task ShowMyStatus(int playerId, object obj);
+
+        Task ShowMyPack(int playerId, object obj);
+
+        Task ShowChat(object obj);
+
     }
 }

@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using Emprise.Application.Npc.Models;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Enums;
-using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Npc.Entity;
-using Emprise.Domain.Npc.Events;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
 using Microsoft.Extensions.Logging;
@@ -51,6 +47,8 @@ namespace Emprise.Application.User.Services
             return await _npcDomainService.Get(id);
         }
 
+
+        /*
         public async Task<NpcInfo> GetNpc(int playerId,int id)
         {
             var npcInfo = new NpcInfo()
@@ -96,11 +94,7 @@ namespace Emprise.Application.User.Services
             foreach (var npcScript in npcScripts)
             {
                 var script = await _scriptDomainService.Get(npcScript.ScriptId);
-                /*
-                var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == npcScript.ScriptId && x.IsEntry);
-                var actions = scriptCommands.Select(x => new NpcAction { Name = npcScript.Name, ScriptId = x.ScriptId, CommandId = x.Id }).ToList();
-                npcInfo.Actions.AddRange(actions);
-                */
+
                 if (script != null)
                 {
                     npcInfo.Actions.Add(new NpcAction { Name = script.Name, ScriptId = script.Id, CommandId = 0 });
@@ -108,26 +102,11 @@ namespace Emprise.Application.User.Services
               
             }
 
-            /*
-            if (!string.IsNullOrEmpty(npc.InitWords))
-            {
-                var initWords = npc.InitWords.Split('\r').Where(x => !string.IsNullOrEmpty(x)).ToList();
-                Random r = new Random();
-                int n = r.Next(0, initWords.Count);
-                var initWord = initWords[n];
-                if (!string.IsNullOrEmpty(initWord))
-                {
-                    await _mudProvider.ShowMessage(playerId, initWord);
-                }
-            }
-            */
-            //await CheckQuest(playerId, npc);
-
 
             await _bus.RaiseEvent(new ChatWithNpcEvent(playerId, npc.Id)).ConfigureAwait(false);
 
             return npcInfo;
-        }
+        }*/
         
          
 

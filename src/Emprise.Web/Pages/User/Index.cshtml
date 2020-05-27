@@ -77,6 +77,9 @@
         </transition>
     </template>
 </div>
+
+
+
 @section Scripts {
     <script type="text/javascript">
         var vm = new Vue({
@@ -99,7 +102,10 @@
                 logout: function () {
                     var that = this;
                     that.confirm("要退出吗？", function () {
-                        axios.post("/api/user/logout", {})
+                        axios.post("", {}, {
+                            headers: {
+                                RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
+                            }})
                         .then(function (response) {
                             var result = response.data;
                             if (result.status) {
@@ -132,101 +138,7 @@
                 }
             }
         });
-@*
-    ({
-        logout: function () {
-            layer.confirm('要退出吗？', { icon: 3, title: '提示' }, function (index) {
-                $.ajax({
-                    type: "POST",
-                    url: "/api/user/logout",
-                    data: {},
-                    success: function (result) {
-                        if (result.status) {
-                            location.href = "@(Url.Page("/User/Login"))";
-                        } else {
-                            var error = result.errorMessage||"进入游戏失败";
-                            if (result.data) {
-                                error += "<br>" + result.data;
-                            }
-                            $("#msgTip").html(error);
-                        }
-                    }, error: function () {
-                    }
-                });
-            });
-        },
-        joinGame: function (playerId) {
-            var h = $(window).height();
-            var w = $(window).width();
-            window.open('@(Url.Page("/Game/Index"))', 'newwindow', 'height=' + h + ', width=' + w + ', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no');
 
-
-            var that = this;
-            $.ajax({
-                type: "post",
-                url: "/api/player/joingame",
-                dataType: "json",
-                data: {playerId:playerId}
-            }).done(function (result) {
-                if (result.status) {
-                    that.join();
-                } else {
-                        var error = result.errorMessage||"进入游戏失败";
-                        if (result.data) {
-                            error += "<br>" + result.data;
-                        }
-                    }
-            }).fail(function (err) {
-
-            }).always(function () {
-
-            });
-        },
-        createPlayer: function () {
-            var index = layer.load(2);
-            $.ajax({
-                type: "POST",
-                url: "/api/player/create",
-                data: {},
-                success: function (result) {
-                    if (result.status) {
-                        location.reload();
-                    } else {
-                        var error = result.errorMessage||"创建失败";
-                        if (result.data) {
-                            error += "<br>" + result.data;
-                        }
-                        $("#msgTip").html(error);
-                    }
-                    layer.close(index);
-                }, error: function () {
-                    layer.close(index);
-                }
-            });
-        },
-        join: function () {
-            var h = $(window).height();
-            var w = $(window).width();
-            window.open('@(Url.Page("/Game/Index"))', 'newwindow', 'height=' + h + ', width=' + w + ', top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=n o, status=no');
-        },
-        init: function () {
-
-
-            var that = this;
-
-            $(function () {
-                layer.config({
-                    skin: 'layui-layer-hei'
-                });
-
-                $(document).on("click", "#logout", function () {
-                    that.logout();
-                });
-
-
-            });
-        }
-    }).init();*@
     </script>
 }
 

@@ -1,4 +1,4 @@
-﻿using Emprise.Application.Npc.Models;
+﻿using Emprise.MudServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

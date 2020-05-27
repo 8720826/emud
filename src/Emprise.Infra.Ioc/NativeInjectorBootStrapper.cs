@@ -22,7 +22,7 @@ namespace Emprise.Infra.IoC
         {
 
 
-            var assembly = AppDomain.CurrentDomain.Load("Emprise.Domain");
+            var assembly = AppDomain.CurrentDomain.Load("Emprise.MudServer");
             services.AddMediatR(assembly);
 
             services.AddHttpClient();

@@ -5,9 +5,45 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Npc\EventHandlers\**" />
+    <Compile Remove="Npc\Events\**" />
+    <Compile Remove="Player\CommandHandlers\**" />
+    <Compile Remove="Player\Commands\**" />
+    <Compile Remove="Player\EventHandlers\**" />
+    <Compile Remove="Player\Events\**" />
+    <Compile Remove="Quest\EventHandlers\**" />
+    <Compile Remove="Quest\Events\**" />
     <Compile Remove="Room\Cache\**" />
+    <Compile Remove="Room\EventHandlers\**" />
+    <Compile Remove="User\CommandHandlers\**" />
+    <Compile Remove="User\Commands\**" />
+    <Compile Remove="User\EventHandlers\**" />
+    <EmbeddedResource Remove="Npc\EventHandlers\**" />
+    <EmbeddedResource Remove="Npc\Events\**" />
+    <EmbeddedResource Remove="Player\CommandHandlers\**" />
+    <EmbeddedResource Remove="Player\Commands\**" />
+    <EmbeddedResource Remove="Player\EventHandlers\**" />
+    <EmbeddedResource Remove="Player\Events\**" />
+    <EmbeddedResource Remove="Quest\EventHandlers\**" />
+    <EmbeddedResource Remove="Quest\Events\**" />
     <EmbeddedResource Remove="Room\Cache\**" />
+    <EmbeddedResource Remove="Room\EventHandlers\**" />
+    <EmbeddedResource Remove="User\CommandHandlers\**" />
+    <EmbeddedResource Remove="User\Commands\**" />
+    <EmbeddedResource Remove="User\EventHandlers\**" />
+    <None Remove="Npc\EventHandlers\**" />
+    <None Remove="Npc\Events\**" />
+    <None Remove="Player\CommandHandlers\**" />
+    <None Remove="Player\Commands\**" />
+    <None Remove="Player\EventHandlers\**" />
+    <None Remove="Player\Events\**" />
+    <None Remove="Quest\EventHandlers\**" />
+    <None Remove="Quest\Events\**" />
     <None Remove="Room\Cache\**" />
+    <None Remove="Room\EventHandlers\**" />
+    <None Remove="User\CommandHandlers\**" />
+    <None Remove="User\Commands\**" />
+    <None Remove="User\EventHandlers\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,10 +62,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Emprise.Domain.Core\Emprise.Domain.Core.csproj" />
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Quest\Events\" />
   </ItemGroup>
 
 </Project>

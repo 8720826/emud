@@ -53,8 +53,9 @@ namespace Emprise.Domain.User.CommandHandlers
         IRequestHandler<ExertCommand, Unit>,
         IRequestHandler<NpcActionCommand, Unit>,
         IRequestHandler<QuestCommand, Unit>,
-        IRequestHandler<CompleteQuestCommand, Unit>
-
+        IRequestHandler<CompleteQuestCommand, Unit>,
+        IRequestHandler<LoadWareCommand, Unit>,
+        IRequestHandler<UnLoadWareCommand, Unit>
         
 
     {
@@ -760,7 +761,33 @@ namespace Emprise.Domain.User.CommandHandlers
 
 
 
-        
+        public async Task<Unit> Handle(LoadWareCommand command, CancellationToken cancellationToken)
+        {
+            var wareId = command.WareId;
+            var playerId = command.PlayerId;
+
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            var quest = await _wareDomainService.Get(wareId);
+            if (quest == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"任务不存在！"));
+                return Unit.Value;
+            }
+
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(UnLoadWareCommand command, CancellationToken cancellationToken)
+        {
+            return Unit.Value;
+        }
         #region 私有方法
 
 

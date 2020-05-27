@@ -40,7 +40,7 @@ new Vue({
         newEmailCount:0,
         myBox: "",
         myBoxMenus: [],
-        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }],
+        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "武器", group: "player" }],
         modal: {
             isShowConfirm: 0,
             type: "confirm",
@@ -327,6 +327,10 @@ new Vue({
             that.dialog(title, content, function () {
 
             });
+        }, load: function (id) {
+            connection.invoke("Load", { wareId: id });
+        }, unload: function (id) {
+            connection.invoke("UnLoad", { wareId: id });
         }
     },
     watch: {

@@ -10,21 +10,6 @@ namespace Emprise.Application.User.Services
 {
     public interface IUserAppService : IBaseService
     {
-        Task Visit();
-
-        Task Reg(UserRegDto dto);
-
-        Task SendRegEmail(string email);
-
-        Task Login(UserLoginDto dto);
-
-        Task Logout(int id);
-
-        Task ModifyPassword(int userId, ModifyPasswordDto dto);
-
-        Task ResetPassword(ResetPasswordDto dto);
-
-        Task SendResetEmail(SendResetEmailDto dto);
 
         Task<UserModel> GetUser(int id);
     }
