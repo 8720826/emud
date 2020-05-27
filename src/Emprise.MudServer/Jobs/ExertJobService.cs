@@ -38,7 +38,7 @@ namespace Emprise.MudServer.Jobs
             using (var scope = _services.CreateScope())
             {
                 var queue = scope.ServiceProvider.GetRequiredService<IRecurringQueue>();
-                var handle = scope.ServiceProvider.GetRequiredService<IExertHandle>();
+                var handle = scope.ServiceProvider.GetRequiredService<IExertHandler>();
 
                 var msgs = await queue.Subscribe<ExertModel>();
                 if (msgs == null || msgs.Count == 0)

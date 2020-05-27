@@ -58,7 +58,7 @@ namespace Emprise.MudServer.Jobs
             using (var scope = _services.CreateScope())
             {
                 var queue = scope.ServiceProvider.GetRequiredService<IRecurringQueue>();
-                var handle = scope.ServiceProvider.GetRequiredService<IMeditateHandle>();
+                var handle = scope.ServiceProvider.GetRequiredService<IMeditateHandler>();
                 var logger = scope.ServiceProvider.GetRequiredService<ILogger<MeditateJobService>>();
                 var msgs = await queue.Subscribe<MeditateModel>();
                 if (msgs == null || msgs.Count == 0)

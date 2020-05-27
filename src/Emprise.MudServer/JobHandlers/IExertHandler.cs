@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.MudServer.Handles
 {
-    public interface IMeditateHandle : IScoped
+    public interface IExertHandler : IScoped
     {
-        Task Execute(int playerId, MeditateModel model);
+        Task Execute(int playerId, ExertModel model);
     }
 }

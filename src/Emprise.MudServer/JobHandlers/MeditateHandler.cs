@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace Emprise.MudServer.Handles
 {
-    public class ExertHandle : IExertHandle
+    public class MeditateHandler : IMeditateHandler
     {
         private readonly IMudProvider _mudProvider;
         private readonly IPlayerDomainService _playerDomainService;
-        private readonly ILogger<MeditateHandle> _logger;
+        private readonly ILogger<MeditateHandler> _logger;
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMediatorHandler _bus;
 
-        public ExertHandle(IMudProvider mudProvider, IPlayerDomainService playerDomainService, ILogger<MeditateHandle> logger, IRecurringQueue recurringQueue, IMediatorHandler bus)
+        public MeditateHandler(IMudProvider mudProvider, IPlayerDomainService playerDomainService, ILogger<MeditateHandler> logger, IRecurringQueue recurringQueue, IMediatorHandler bus)
         {
             _mudProvider = mudProvider;
             _playerDomainService = playerDomainService;
@@ -28,7 +28,7 @@ namespace Emprise.MudServer.Handles
             _recurringQueue = recurringQueue;
             _bus = bus;
         }
-        public async Task Execute(int playerId, ExertModel model)
+        public async Task Execute(int playerId, MeditateModel model)
         {
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
@@ -37,21 +37,21 @@ namespace Emprise.MudServer.Handles
                 return;
             }
 
-            if(player.Status!= PlayerStatusEnum.疗伤)
+            if(player.Status!= PlayerStatusEnum.打坐)
             {
-                await _recurringQueue.Remove<ExertModel>(playerId);
+                _logger.LogDebug($"player.Status={player.Status}");
                 return;
             }
 
             Random rnd = new Random();
             if (rnd.Next(1, 100) > 30)
             {
-                await _mudProvider.ShowMessage(playerId, "你正在疗伤。。。");
+                await _mudProvider.ShowMessage(playerId, "你正在打坐。。。");
             }
             else
             {
-                await _recurringQueue.Remove<ExertModel>(playerId);
-                await _mudProvider.ShowMessage(playerId, "疗伤完成");
+                await _recurringQueue.Remove<MeditateModel>(playerId);
+                await _mudProvider.ShowMessage(playerId, "打坐完成");
                 player.Status = PlayerStatusEnum.空闲;
                 await _playerDomainService.Update(player);
 
