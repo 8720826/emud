@@ -4,7 +4,7 @@ using Emprise.Domain.Core.EventHandlers;
 using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.User.Entity;
-using Emprise.Domain.User.Events;
+using Emprise.MudServer.Events.UserEvents;
 using MediatR;
 
 using System;
@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Emprise.Domain.User.EventHandlers
+namespace Emprise.MudServer.EventHandlers
 {
     public class UserEventHandler : MudEventHandler,
         INotificationHandler<EntityUpdatedEvent<UserEntity>>,

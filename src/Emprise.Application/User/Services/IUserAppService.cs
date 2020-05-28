@@ -1,5 +1,4 @@
-﻿using Emprise.Application.User.Dtos;
-using Emprise.Application.User.Models;
+﻿using Emprise.Application.User.Models;
 using Emprise.Domain.Core.Interfaces;
 using System;
 using System.Collections.Generic;

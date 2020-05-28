@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Attributes;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;

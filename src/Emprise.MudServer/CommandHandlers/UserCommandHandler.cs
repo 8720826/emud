@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Data;
@@ -10,7 +9,6 @@ using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
 using Emprise.MudServer.Commands;
 using Emprise.Domain.User.Entity;
-using Emprise.Domain.User.Events;
 using Emprise.Domain.User.Services;
 using Emprise.Infra.Authorization;
 using Emprise.Infra.Extensions;
@@ -26,6 +24,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Emprise.MudServer.Events.UserEvents;
 
 namespace Emprise.MudServer.CommandHandlers
 {

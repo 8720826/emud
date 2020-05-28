@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Emprise.Domain.Common.Modes;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.EventHandlers;

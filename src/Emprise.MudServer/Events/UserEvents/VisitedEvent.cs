@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.User.Events
+namespace Emprise.MudServer.Events.UserEvents
 {
     public class VisitedEvent : Event
     {

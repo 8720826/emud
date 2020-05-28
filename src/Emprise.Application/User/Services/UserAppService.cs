@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
-using Emprise.Application.User.Dtos;
 using Emprise.Application.User.Models;
-using Emprise.Domain.Core.Bus;
 using Emprise.Domain.User.Services;
 using System;
 using System.Collections.Generic;

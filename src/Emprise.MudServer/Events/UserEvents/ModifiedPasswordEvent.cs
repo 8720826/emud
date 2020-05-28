@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.User.Events
+namespace Emprise.MudServer.Events.UserEvents
 {
-    public class ResetPasswordEvent : Event
+    public class ModifiedPasswordEvent : Event
     {
         public UserEntity User { get; set; }
 
 
-        public ResetPasswordEvent(UserEntity user)
+        public ModifiedPasswordEvent(UserEntity user)
         {
             User = user;
         }

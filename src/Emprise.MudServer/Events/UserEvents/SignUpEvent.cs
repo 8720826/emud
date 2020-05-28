@@ -1,22 +1,21 @@
 ﻿using Emprise.Domain.Core.Entity;
 using Emprise.Domain.Core.Events;
+using Emprise.Domain.User.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.Room.Events
+namespace Emprise.MudServer.Events.UserEvents
 {
-    public class UserOutRoomEvent : Event
+    public class SignUpEvent : Event
     {
-        public RoomEntity Room { get; set; }
-
         public UserEntity User { get; set; }
 
-        public UserOutRoomEvent(UserEntity user, RoomEntity room)
+
+        public SignUpEvent(UserEntity user)
         {
             User = user;
-            Room = room;
         }
-
+      
     }
 }

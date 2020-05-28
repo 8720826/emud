@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Emprise.Application.User.Dtos
+namespace Emprise.Domain.User.Models
 {
     public class UserRegDto
     {

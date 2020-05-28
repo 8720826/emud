@@ -48,69 +48,6 @@ namespace Emprise.Application.User.Services
         }
 
 
-        /*
-        public async Task<NpcInfo> GetNpc(int playerId,int id)
-        {
-            var npcInfo = new NpcInfo()
-            {
-                Descriptions = new List<string>(),
-                Actions = new List<NpcAction>()
-            };
-            var npc = await _npcDomainService.Get(id);
-            if (npc == null)
-            {
-                return npcInfo;
-            }
-
-
-            npcInfo.Id = id;
-            npcInfo.Name = npc.Name;
-            string genderStr = npc.Gender.ToGender();
-
-            if(npc.Type == NpcTypeEnum.人物)
-            {
-                //npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.给予.ToString() });
-            }        
-
-            if (npc.CanFight)
-            {
-                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.切磋.ToString() });
-            }
-
-            if (npc.CanKill)
-            {
-                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.杀死.ToString() });
-            }
-
-            var player = await _playerDomainService.Get(_account.PlayerId);
-
-            npcInfo.Descriptions.Add(npc.Description??"");
-            npcInfo.Descriptions.Add($"{genderStr}{npc.Age.ToAge()}");
-            npcInfo.Descriptions.Add($"{genderStr}{npc.Per.ToPer(npc.Age, npc.Gender)}");
-            npcInfo.Descriptions.Add($"{genderStr}{npc.Exp.ToKunFuLevel(player.Exp)}");
-
-
-            var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
-            foreach (var npcScript in npcScripts)
-            {
-                var script = await _scriptDomainService.Get(npcScript.ScriptId);
-
-                if (script != null)
-                {
-                    npcInfo.Actions.Add(new NpcAction { Name = script.Name, ScriptId = script.Id, CommandId = 0 });
-                }
-              
-            }
-
-
-            await _bus.RaiseEvent(new ChatWithNpcEvent(playerId, npc.Id)).ConfigureAwait(false);
-
-            return npcInfo;
-        }*/
-        
-         
-
-
         public void Dispose()
         {
             GC.SuppressFinalize(this);

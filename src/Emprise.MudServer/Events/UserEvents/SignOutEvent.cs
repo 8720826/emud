@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.User.Events
+namespace Emprise.MudServer.Events.UserEvents
 {
-    public class SignUpEvent : Event
+    public class SignOutEvent : Event
     {
         public UserEntity User { get; set; }
 
 
-        public SignUpEvent(UserEntity user)
+        public SignOutEvent(UserEntity user)
         {
             User = user;
         }

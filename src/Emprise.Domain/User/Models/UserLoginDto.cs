@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Application.User.Dtos
+namespace Emprise.Domain.User.Models
 {
-    public class SendVerifyEmailDto
+    public class UserLoginDto
     {
         public string Email { get; set; }
 

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Emprise.Application.Player.Dtos
+namespace Emprise.Domain.Player.Models
 {
     public class PlayerCreateDto
     {

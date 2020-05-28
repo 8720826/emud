@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Npc\Models\" />
     <Folder Include="Player\Models\" />
+    <Folder Include="User\Dtos\" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.Domain.Common.Modes
+namespace Emprise.Domain.Core.Models
 {
     public class RedisKey
     {

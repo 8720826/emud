@@ -58,40 +58,7 @@ namespace Emprise.Admin.Models.Quest
         [Display(Name = "描述")]
         [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
         public string Description { set; get; }
-        /*
-        /// <summary>
-        /// 创建任务前的提示文本
-        /// </summary>
-        [Display(Name = "创建前提示")]
-        [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
-        [Required(ErrorMessage = "请填写内容")]
-        public string BeforeCreate { set; get; }
 
-        /// <summary>
-        /// 创建任务后的提示文本
-        /// </summary>
-        [Display(Name = "创建后提示")]
-        [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
-        [Required(ErrorMessage = "请填写内容")]
-        public string CreatedWords { set; get; }
-
-        /// <summary>
-        /// 任务进行中的提示文本
-        /// </summary>
-        [Display(Name = "进行中提示")]
-        [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
-        [Required(ErrorMessage = "请填写内容")]
-        public string InProgressWords { set; get; }
-
-
-        /// <summary>
-        /// 完成任务后的提示文本
-        /// </summary>
-        [Display(Name = "完成后提示")]
-        [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
-        [Required(ErrorMessage = "请填写内容")]
-        public string CompletedWords { set; get; }
-        */
 
         /// <summary>
         /// 任务目标 json格式，{QuestTargetEnum,TargetName,TargetNumber}

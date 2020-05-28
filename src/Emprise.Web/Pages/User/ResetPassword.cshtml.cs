@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Emprise.Application.User.Dtos;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.User.Models;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands;
 using MediatR;

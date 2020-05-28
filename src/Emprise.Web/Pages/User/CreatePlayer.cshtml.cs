@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Emprise.Application.Player.Dtos;
 using Emprise.Application.Player.Services;
 using Emprise.Application.User.Models;
 using Emprise.Application.User.Services;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Entity;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Player.Entity;
+using Emprise.Domain.Player.Models;
 using Emprise.MudServer.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;

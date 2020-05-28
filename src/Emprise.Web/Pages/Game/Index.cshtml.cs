@@ -25,17 +25,9 @@ namespace Emprise.Web.Pages.Game
         {
             if (_account.PlayerId == 0)
             {
-                return Content("请重新进入游戏");// RedirectToPage("/User/CreatePlayer");
+                return Content("请重新进入游戏");
             }
-            /*
-            await _playerAppService.JoinGame(_account.UserId, playerId);
 
-            if (_notifications.HasNotifications())
-            {
-                var errorMessage = string.Join("；", _notifications.GetNotifications().GroupBy(x => x.Key).Select(n => $"{n.Key}：{string.Join("、", n.ToList().Select(x => x.Value))  }"));
-                return Content(errorMessage);
-            }
-            */
             Title = _appConfig.Site.Name;
 
 

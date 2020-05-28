@@ -47,11 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="User\Events\UserInRoomEvent.cs" />
-    <Compile Remove="User\Events\UserOutRoomEvent.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="MediatR" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
