@@ -13,12 +13,13 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Emprise.Infra.Mapper;
+using Microsoft.Extensions.Configuration;
 
 namespace Emprise.Infra.IoC
 {
     public class NativeInjectorBootStrapper
     {
-        public static void RegisterServices(IServiceCollection services)
+        public static void RegisterServices(IServiceCollection services,string dataProvide, IConfiguration configuration)
         {
 
 

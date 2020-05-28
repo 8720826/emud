@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.EventHandlers;
@@ -18,6 +19,7 @@ using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Models;
 using Emprise.Domain.Room.Services;
 using Emprise.MudServer.Events;
+using Emprise.MudServer.Queues;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -60,6 +62,7 @@ namespace Emprise.MudServer.EventHandlers
         private readonly IChatLogDomainService _chatLogDomainService;
         private readonly IQuestDomainService _questDomainService;
         private readonly ILogger<PlayerEventHandler> _logger;
+        private readonly IQueueHandler _queueHandler;
 
         public PlayerEventHandler(IRoomDomainService roomDomainService, 
             INpcDomainService npcDomainService, 
@@ -72,6 +75,7 @@ namespace Emprise.MudServer.EventHandlers
             IQuestDomainService questDomainService,
             ILogger<PlayerEventHandler> logger,
             IPlayerQuestDomainService playerQuestDomainService,
+            IQueueHandler queueHandler,
             IUnitOfWork uow) 
             : base(uow, mudProvider)
         {
@@ -86,6 +90,7 @@ namespace Emprise.MudServer.EventHandlers
             _questDomainService = questDomainService;
             _logger = logger;
             _playerQuestDomainService = playerQuestDomainService;
+            _queueHandler = queueHandler;
         }
 
         public async Task Handle(EntityUpdatedEvent<PlayerEntity> message, CancellationToken cancellationToken)
@@ -230,9 +235,11 @@ namespace Emprise.MudServer.EventHandlers
         {
             var playerId = message.PlayerId;
             var content = message.Content;
-
+      
+            await _queueHandler.SendQueueMessage(new SendMessageQueue(playerId, content));
             //await _mudProvider.ShowMessage(playerId, $"你说：{content}");
 
+            /*
             await _chatLogDomainService.Add(new ChatLogEntity
             {
                 PlayerId = playerId,
@@ -242,6 +249,7 @@ namespace Emprise.MudServer.EventHandlers
 
 
             await Commit();
+            */
             // await _delayedQueue.Publish(new MessageModel { Content = receivedMessage.Content, PlayerId = _account.PlayerId }, 2, 10);
 
         }

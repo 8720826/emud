@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Configuration;
 using Emprise.Domain.Core.Models;
 using Emprise.Infra.Authorization;
+using Emprise.Infra.Bus;
 using Emprise.Infra.Data;
 using Emprise.Infra.Ioc;
 using Emprise.Infra.IoC;
 using Emprise.Infra.Middleware;
+using Emprise.MudServer.Consumers;
 using Emprise.MudServer.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -19,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Savorboard.CAP.InMemoryMessageQueue;
 
 namespace Emprise.Web
 {
@@ -105,13 +109,30 @@ namespace Emprise.Web
 
             #endregion
 
+            services.AddScoped<IQueueHandler, QueueCapBus>();
+            services.AddTransient<ICAPConsumer, CAPConsumer>();
+
+            services.AddCap(x =>
+            {
+                //如果你使用的 EF 进行数据操作，你需要添加如下配置：
+                x.UseEntityFramework<EmpriseDbContext>(option=> option.TableNamePrefix="");  //可选项，你不需要再次配置 x.UseSqlServer 了
+
+                x.Version = "v1";
+                x.SucceedMessageExpiredAfter = 24 * 3600;
+                x.ConsumerThreadCount = 5;
+                x.FailedRetryCount = 10;
+                x.FailedRetryInterval = 30;
+                x.UseInMemoryMessageQueue();
+            });
+
+
 
             //自动注入
             services.AutoRegister();
 
 
             //手动注入，无法自动注入的
-            NativeInjectorBootStrapper.RegisterServices(services);
+            NativeInjectorBootStrapper.RegisterServices(services, dataProvide, Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

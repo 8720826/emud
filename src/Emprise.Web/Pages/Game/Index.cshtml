@@ -222,7 +222,9 @@
 
                     <p v-if="myPack.money===''">你身无分文。</p>
                     <p v-else>你有{{myPack.money}}</p>
-                    <p>身上共有{{myPack.wares.length}}件物品：</p>
+
+                    <p v-if="myPack.wares.length===0">身上没有携带任何物品。</p>
+                    <p v-else>身上共有{{myPack.wares.length}}件物品：</p>
                     <ul class="mt15">
                         <li v-for="myWare,index in myPack.wares">
                             <span @@click="showTips(myWare.name,myWare.description)"> {{myWare.name}} </span>

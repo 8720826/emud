@@ -13,6 +13,7 @@ using Emprise.Admin.Models.Ware;
 using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Map;
 using Emprise.Admin.Models.Player;
+using Emprise.Admin.Models.Email;
 
 namespace Emprise.Admin.Mapper
 {
@@ -58,6 +59,9 @@ namespace Emprise.Admin.Mapper
 
             CreateMap<PlayerInput, PlayerEntity>();
             CreateMap<PlayerEntity, PlayerInput>();
+
+            CreateMap<EmailInput, EmailEntity>();
+            CreateMap<EmailEntity, EmailInput>();
         }
     }
 }

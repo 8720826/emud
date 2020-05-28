@@ -54,5 +54,9 @@ namespace Emprise.Domain.Core.Enums
         清除半年前日志,
         清除3个月前日志,
         清除1个月前日志,
+
+        发送邮件,
+        修改邮件,
+        删除邮件
     }
 }
