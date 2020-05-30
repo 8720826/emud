@@ -40,7 +40,7 @@ namespace Emprise.Admin.Pages.Npc
 
         public Paging<NpcEntity> Paging { get; set; }
 
-        public void OnGet(int pageIndex)
+        public async Task OnGetAsync(int pageIndex)
         {
             var query = _db.Npcs.Include(x => x.NpcScripts).ThenInclude(y => y.Script).OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
@@ -48,7 +48,7 @@ namespace Emprise.Admin.Pages.Npc
                 query = _db.Npcs.Include(x => x.NpcScripts).ThenInclude(y => y.Script).Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
             }
 
-            Paging = query.Paged(pageIndex, 10, query.Count());
+            Paging = await query.Paged(pageIndex);
         }
 
     }

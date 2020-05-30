@@ -54,7 +54,7 @@ new Vue({
         mainQuest: {},
         myPack: {},
         unreadEmailCount: 0,
-        myEmails: null
+        myEmail: null
 
     },
     computed: {
@@ -233,9 +233,10 @@ new Vue({
                 that.unreadEmailCount = result;
             });
 
-            connection.on("ShowEmail", (result, hasMore) => {
-                console.log("ShowEmail:" + JSON.stringify(result) + ", hasMore:" + hasMore);
-                that.myEmails = result;
+            connection.on("ShowEmail", result => {
+                console.log("ShowEmail:" + JSON.stringify(result));
+                that.myBox = "email";
+                that.myEmail = result;
             });
             
             //

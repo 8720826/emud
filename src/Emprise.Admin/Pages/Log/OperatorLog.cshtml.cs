@@ -40,7 +40,7 @@ namespace Emprise.Admin.Pages.Log
 
         public Paging<OperatorLogEntity> Paging { get; set; }
 
-        public void OnGet(int pageIndex)
+        public async Task OnGetAsync(int pageIndex)
         {
             var query = _db.OperatorLogs.AsQueryable();
             if (!string.IsNullOrEmpty(Keyword))
@@ -50,7 +50,7 @@ namespace Emprise.Admin.Pages.Log
 
             query = query.OrderByDescending(x => x.Id);
 
-            Paging = query.Paged(pageIndex, 10, query.Count());
+            Paging = await query.Paged(pageIndex);
         }
 
         public async Task<IActionResult> OnPostClearLogAsync(int type)

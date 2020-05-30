@@ -41,7 +41,7 @@ namespace Emprise.Admin.Pages.Room
 
         public int RoomId { get; set; }
 
-        public void OnGet(int pageIndex,int mapId, int roomId)
+        public async Task OnGetAsync(int pageIndex,int mapId, int roomId)
         {
             MapId = mapId;
             RoomId = roomId;
@@ -62,7 +62,7 @@ namespace Emprise.Admin.Pages.Room
 
             query = query.OrderBy(x => x.Id);
 
-            Paging = query.Paged(pageIndex, 10, query.Count());
+            Paging = await query.Paged(pageIndex);
         }
     }
 }

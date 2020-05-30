@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.Email
 
         public Paging<EmailEntity> Paging { get; set; }
 
-        public void OnGet(int pageIndex)
+        public async Task OnGetAsync(int pageIndex)
         {
             var query = _db.Emails.OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
@@ -45,7 +45,7 @@ namespace Emprise.Admin.Pages.Email
                 query = _db.Emails.Where(x => x.Title.Contains(Keyword)|| x.Content.Contains(Keyword)).OrderBy(x => x.Id);
             }
 
-            Paging = query.Paged(pageIndex, 10, query.Count());
+            Paging = await query.Paged(pageIndex);
 
 
         }

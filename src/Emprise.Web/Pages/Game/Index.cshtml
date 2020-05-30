@@ -218,6 +218,17 @@
 
                 </div>
 
+                <div class="email" v-if="myBox=='email'">
+                    <p v-if="myEmail&&myEmail.data&&myEmail.data.length>0">共有{{myEmail.data.length}}封邮件：</p>
+                    <p v-else>收件箱没有任何邮件</p>
+                    <ul class="mt15">
+                        <li v-for="email,index in myEmail.data">
+                            <span> {{email.title}} </span>
+                        </li>
+                    </ul>
+                </div>
+                
+
                 <div class="mypack" v-if="myBox=='mypack'">
 
                     <p v-if="myPack.money===''">你身无分文。</p>
@@ -235,7 +246,7 @@
                         </li>
                     </ul>
                 </div>
-                
+
             </div>
         </div>
 

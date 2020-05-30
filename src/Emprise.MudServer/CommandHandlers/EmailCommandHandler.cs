@@ -91,15 +91,12 @@ namespace Emprise.MudServer.CommandHandlers
                         select new PlayerEmailModel { Id = playerEmail.Id, PlayerId = playerEmail.PlayerId, Status = playerEmail.Status, CreateDate = playerEmail.CreateDate, EmailId = playerEmail.EmailId, ExpiryDate = playerEmail.ExpiryDate, Title = email.Title, Content = email.Content };
 
 
-            var count = await query.CountAsync();
 
-            bool hasMore = (count - pageIndex * 10 > 0);
+            Paging<PlayerEmailModel> paging = await query.Paged(pageIndex);
 
-            var list = query.Skip(pageIndex - 1).Take(10).ToList();
+            _logger.LogDebug($"Handle ShowEmailCommand Result:{JsonConvert.SerializeObject(paging)},{JsonConvert.SerializeObject(paging.Data)},{paging.Count},{paging.PageCount},{paging.PageIndex}");
 
-            _logger.LogDebug($"Handle ShowEmailCommand Result:{JsonConvert.SerializeObject(list)}");
-
-            await  _mudProvider.ShowEmail(playerId, list, hasMore);
+            await  _mudProvider.ShowEmail(playerId, new { paging.Data, paging.HasNextPage});
 
             return Unit.Value;
         }

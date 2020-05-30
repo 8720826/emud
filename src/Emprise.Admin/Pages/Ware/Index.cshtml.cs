@@ -37,7 +37,7 @@ namespace Emprise.Admin.Pages.Ware
 
         public Paging<WareEntity> Paging { get; set; }
 
-        public void OnGet(int pageIndex)
+        public async Task OnGetAsync(int pageIndex)
         {
             var query = _db.Wares.OrderBy(x => x.Id);
             if (!string.IsNullOrEmpty(Keyword))
@@ -45,7 +45,7 @@ namespace Emprise.Admin.Pages.Ware
                 query = _db.Wares.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
             }
 
-            Paging = query.Paged(pageIndex, 10, query.Count());
+            Paging = await query.Paged(pageIndex);
         }
     }
 }
