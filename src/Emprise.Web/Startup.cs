@@ -109,7 +109,6 @@ namespace Emprise.Web
             #endregion
 
             services.AddScoped<IQueueHandler, QueueCapBus>();
-            services.AddTransient<ICAPConsumer, CAPConsumer>();
 
             services.AddCap(x =>
             {

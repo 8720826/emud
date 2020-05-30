@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Emprise.MudServer.Queues
 {
-    public class SendMessageQueue : QueueEvent
+    public class SaveChatLogQueue : QueueEvent
     {
-        public SendMessageQueue(int playerId,string content)
+        public SaveChatLogQueue(int playerId,string content)
         {
             PlayerId = playerId;
             Content = content;

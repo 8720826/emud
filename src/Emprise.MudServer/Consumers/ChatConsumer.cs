@@ -1,5 +1,6 @@
 ﻿using DotNetCore.CAP;
 using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Log.Entity;
 using Emprise.Domain.Log.Services;
 using Emprise.MudServer.Queues;
@@ -12,27 +13,27 @@ using System.Threading.Tasks;
 
 namespace Emprise.MudServer.Consumers
 {
-    public interface ICAPConsumer
+    public interface IChatConsumer:ITransient
     {
-        Task<bool> TestQueueConsumer(SendMessageQueue message);
+        Task<bool> SaveChatLogQueueConsumer(SaveChatLogQueue message);
 
     }
 
-    public class CAPConsumer : BaseConsumer, ICAPConsumer, ICapSubscribe
+    public class ChatConsumer : BaseConsumer, IChatConsumer, ICapSubscribe
     {
-        private readonly ILogger<CAPConsumer> _logger;
+        private readonly ILogger<ChatConsumer> _logger;
         private readonly IChatLogDomainService _chatLogDomainService;
 
-        public CAPConsumer(
+        public ChatConsumer(
             IChatLogDomainService chatLogDomainService,
-            ILogger<CAPConsumer> logger, IUnitOfWork uow) :base(uow)
+            ILogger<ChatConsumer> logger, IUnitOfWork uow) :base(uow)
         {
             _logger = logger;
             _chatLogDomainService = chatLogDomainService;
         }
 
-        [CapSubscribe("SendMessageQueue")]
-        public async Task<bool> TestQueueConsumer(SendMessageQueue message)
+        [CapSubscribe("SaveChatLogQueue")]
+        public async Task<bool> SaveChatLogQueueConsumer(SaveChatLogQueue message)
         {
             _logger.LogDebug($"Consumer Get Queue {JsonConvert.SerializeObject(message)} ready");
 

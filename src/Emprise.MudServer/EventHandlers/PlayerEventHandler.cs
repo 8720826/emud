@@ -219,7 +219,9 @@ namespace Emprise.MudServer.EventHandlers
                 await _mudProvider.ShowMessage(player.Id, _appConfig.Site.WelcomeWords.Replace("{name}", player.Name));
             }
 
-            await CheckPlayerMainQuest(player);
+            //await CheckPlayerMainQuest(player);
+
+            await _queueHandler.SendQueueMessage(new CheckPlayerMainQuestQueue(player.Id));
 
         }
 
@@ -236,7 +238,7 @@ namespace Emprise.MudServer.EventHandlers
             var playerId = message.PlayerId;
             var content = message.Content;
       
-            await _queueHandler.SendQueueMessage(new SendMessageQueue(playerId, content));
+            await _queueHandler.SendQueueMessage(new SaveChatLogQueue(playerId, content));
             //await _mudProvider.ShowMessage(playerId, $"你说：{content}");
 
             /*
@@ -262,7 +264,8 @@ namespace Emprise.MudServer.EventHandlers
 
             if(quest.Type== QuestTypeEnum.主线)
             {
-                await CheckPlayerMainQuest(player);
+                //await CheckPlayerMainQuest(player);
+                await _queueHandler.SendQueueMessage(new CheckPlayerMainQuestQueue(player.Id));
             }
         }
 
@@ -335,7 +338,7 @@ namespace Emprise.MudServer.EventHandlers
         }
 
 
-
+        /*
         /// <summary>
         /// 检查并自动领取主线任务
         /// </summary>
@@ -397,5 +400,6 @@ namespace Emprise.MudServer.EventHandlers
                 await _mudProvider.ShowQuest(player.Id, new { mainQuest, isFirst });
             }
         }
+        */
     }
 }

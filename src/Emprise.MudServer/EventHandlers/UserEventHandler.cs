@@ -20,13 +20,12 @@ namespace Emprise.MudServer.EventHandlers
         INotificationHandler<EntityUpdatedEvent<UserEntity>>,
         INotificationHandler<EntityInsertedEvent<UserEntity>>,
         INotificationHandler<EntityDeletedEvent<UserEntity>>,
-        INotificationHandler<VisitedEvent>
-    /*
-    INotificationHandler<SignInEvent>,
-    INotificationHandler<SignOutEvent>,
-    INotificationHandler<SignUpEvent>,
-    INotificationHandler<UserInRoomEvent>,
-    INotificationHandler<UserOutRoomEvent>*/
+        INotificationHandler<VisitedEvent>,
+        INotificationHandler<SignInEvent>,
+        INotificationHandler<SignOutEvent>,
+        INotificationHandler<SignUpEvent>
+
+
     {
         public const string User = "User_{0}";
 
@@ -45,8 +44,9 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(EntityInsertedEvent<UserEntity> message, CancellationToken cancellationToken)
         {
-            await Task.Run(() => {
-               
+            await Task.Run(() =>
+            {
+
             });
         }
 
@@ -57,10 +57,11 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(VisitedEvent message, CancellationToken cancellationToken)
         {
-            //System.IO.File.AppendAllText("d:/1.txt", $"{DateTime.Now}\n");
+
         }
 
-        /*
+
+
         public async Task Handle(SignInEvent message, CancellationToken cancellationToken)
         {
 
@@ -78,16 +79,5 @@ namespace Emprise.MudServer.EventHandlers
 
         }
 
-
-        public async Task Handle(UserInRoomEvent message, CancellationToken cancellationToken)
-        {
-
-
-        }
-
-        public async Task Handle(UserOutRoomEvent message, CancellationToken cancellationToken)
-        {
-
-        }*/
     }
 }
