@@ -23,15 +23,12 @@ namespace Emprise.Web
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-            .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+                .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
                 .ReadFrom.Configuration(hostingContext.Configuration)
                 .Enrich.FromLogContext()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
-                //.WriteTo.File(Path.Combine("logs", @"log.txt"), rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: LogEventLevel.Information)
-                .WriteTo.MySQL(hostingContext.Configuration.GetSection("ConnectionStrings:MySql").Value,"SystemLog", LogEventLevel.Debug)
-               
-               
+                .WriteTo.RollingFile(Path.Combine("logs", @"log.txt"), restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.Console()
             );
     }

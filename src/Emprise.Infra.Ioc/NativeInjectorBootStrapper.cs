@@ -19,7 +19,7 @@ namespace Emprise.Infra.IoC
 {
     public class NativeInjectorBootStrapper
     {
-        public static void RegisterServices(IServiceCollection services,string dataProvide, IConfiguration configuration)
+        public static void RegisterServices(IServiceCollection services)
         {
 
 
@@ -28,7 +28,6 @@ namespace Emprise.Infra.IoC
 
             services.AddHttpClient();
 
-            services.AddSignalR();
 
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

@@ -21,7 +21,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Savorboard.CAP.InMemoryMessageQueue;
 
 namespace Emprise.Web
@@ -132,7 +131,9 @@ namespace Emprise.Web
 
 
             //手动注入，无法自动注入的
-            NativeInjectorBootStrapper.RegisterServices(services, dataProvide, Configuration);
+            NativeInjectorBootStrapper.RegisterServices(services);
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
