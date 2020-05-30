@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Emprise.MudServer.Consumers
     {
         // 注入工作单元
         private readonly IUnitOfWork _uow;
-
+        protected readonly IRedisDb _redisDb;
 
 
         /// <summary>
@@ -19,9 +20,10 @@ namespace Emprise.MudServer.Consumers
         /// <param name="uow"></param>
         /// <param name="bus"></param>
         /// <param name="cache"></param>
-        public BaseConsumer(IUnitOfWork uow)
+        public BaseConsumer(IUnitOfWork uow, IRedisDb redisDb)
         {
             _uow = uow;
+            _redisDb = redisDb;
         }
 
         //工作单元提交

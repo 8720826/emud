@@ -5,8 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Extensions\PagerExtensions.cs" />
     <Compile Remove="Middlewares\UploadMiddleware.cs" />
     <Compile Remove="Models\AppConfig.cs" />
+    <Compile Remove="Models\Paging.cs" />
   </ItemGroup>
 
   <ItemGroup>

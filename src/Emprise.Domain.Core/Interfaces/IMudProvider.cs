@@ -62,5 +62,9 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task ShowChat(object obj);
 
+        Task UpdateUnreadEmailCount(int playerId, int count);
+
+        Task ShowEmail(int playerId, object obj, bool hasMore);
+
     }
 }

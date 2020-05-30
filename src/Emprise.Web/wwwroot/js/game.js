@@ -37,10 +37,10 @@ new Vue({
         chats: [],
         showchat: false,
         msg: "",
-        newEmailCount:0,
         myBox: "",
         myBoxMenus: [],
-        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "武器", group: "player" }],
+        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "武器", group: "player" },
+            { id: "email", name: "邮箱", group: "email" }],
         modal: {
             isShowConfirm: 0,
             type: "confirm",
@@ -52,7 +52,10 @@ new Vue({
         },
         timer: null,
         mainQuest: {},
-        myPack: {}
+        myPack: {},
+        unreadEmailCount: 0,
+        myEmails: null
+
     },
     computed: {
         getMenus() {
@@ -224,6 +227,18 @@ new Vue({
                 that.myBox = "mypack";
                 that.myPack = result;
             });
+
+            connection.on("UpdateUnreadEmailCount", result => {
+                console.log("UpdateUnreadEmailCount:" + result);
+                that.unreadEmailCount = result;
+            });
+
+            connection.on("ShowEmail", (result, hasMore) => {
+                console.log("ShowEmail:" + JSON.stringify(result) + ", hasMore:" + hasMore);
+                that.myEmails = result;
+            });
+            
+            //
         },
         move: function (roomId) {
             if (roomId > 0) {
@@ -254,6 +269,9 @@ new Vue({
         showMyPack: function () {
             connection.invoke("ShowMyPack");
         },
+        showEmail: function (pageIndex) {
+            connection.invoke("ShowEmail", { pageIndex: pageIndex||1 });
+        },
         search: function () {
             connection.invoke("Search");
         },
@@ -278,6 +296,10 @@ new Vue({
                 case "mypack":
                     this.showMyPack();
                     break;
+                case "email":
+                    this.showEmail(1);
+                    break;
+                    
             }
         },
         setRoom: function (direction) {

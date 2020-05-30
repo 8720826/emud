@@ -23,7 +23,7 @@
                     <div class="mpLine" v-bind:style="{width:mpLength+'px'}"></div>
                 </div>
             </div>
-            <span class="email">✉<em v-if="newEmailCount>0">({{newEmailCount>99?"99+":newEmailCount}})</em></span>
+            <span class="email" @@click="showEmail(1)">✉<em v-if="unreadEmailCount>0">({{unreadEmailCount>99?"99+":unreadEmailCount}})</em></span>
             <span class="setting" v-show="myBox!=''" @@click="myBox=''">╳</span>
         </header>
         <div class="exp" id="exp">

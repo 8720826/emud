@@ -1,15 +1,14 @@
-﻿using Emprise.Domain.Core.Entity;
-using Emprise.Domain.Core.Enums;
+﻿using Emprise.Domain.Core.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Emprise.Domain.Email.Entity
+namespace Emprise.Domain.Email.Models
 {
-    [Table("PlayerEmail")]
-    public class PlayerEmailEntity : BaseEntity
+    public class PlayerEmailModel
     {
+        public int Id { set; get; }
+
         /// <summary>
         /// 玩家id
         /// </summary>
@@ -19,6 +18,16 @@ namespace Emprise.Domain.Email.Entity
         /// 邮件id
         /// </summary>
         public int EmailId { set; get; }
+
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public string Title { set; get; }
+
+        /// <summary>
+        /// 内容
+        /// </summary>
+        public string Content { set; get; }
 
         /// <summary>
         /// 状态

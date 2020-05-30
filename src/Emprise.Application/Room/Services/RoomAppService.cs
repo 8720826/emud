@@ -36,6 +36,7 @@ namespace Emprise.Application.User.Services
 
             var roomModel = _mapper.Map<RoomModel>(room);
 
+
             return roomModel;
         }
 

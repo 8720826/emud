@@ -30,7 +30,10 @@ namespace Emprise.Domain.Core.Models
         /// resetPassword_{userId}
         /// </summary>
         public const string ResetPassword = "resetPassword_{0}";
-        
 
+        /// <summary>
+        /// UnreadEmailCount_{playerId}
+        /// </summary>
+        public const string UnreadEmailCount = "unreadEmailCount_{0}";
     }
 }

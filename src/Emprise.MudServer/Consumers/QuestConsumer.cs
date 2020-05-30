@@ -34,7 +34,7 @@ namespace Emprise.MudServer.Consumers
             IPlayerQuestDomainService playerQuestDomainService,
             IQuestDomainService questDomainService,
             IMudProvider mudProvider,
-            ILogger<ChatConsumer> logger, IUnitOfWork uow) : base(uow)
+            ILogger<ChatConsumer> logger, IUnitOfWork uow, IRedisDb redisDb) : base(uow, redisDb)
         {
             _logger = logger;
             _playerQuestDomainService = playerQuestDomainService;

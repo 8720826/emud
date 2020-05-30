@@ -1,5 +1,6 @@
 ﻿using DotNetCore.CAP;
 using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Log.Entity;
 using Emprise.Domain.Log.Services;
@@ -26,7 +27,7 @@ namespace Emprise.MudServer.Consumers
 
         public ChatConsumer(
             IChatLogDomainService chatLogDomainService,
-            ILogger<ChatConsumer> logger, IUnitOfWork uow) :base(uow)
+            ILogger<ChatConsumer> logger, IUnitOfWork uow, IRedisDb redisDb) :base(uow, redisDb)
         {
             _logger = logger;
             _chatLogDomainService = chatLogDomainService;

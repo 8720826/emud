@@ -9,6 +9,7 @@ using Emprise.Admin.Entity;
 using Emprise.Admin.Extensions;
 using Emprise.Admin.Models;
 using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

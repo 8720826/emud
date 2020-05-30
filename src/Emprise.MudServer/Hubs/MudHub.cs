@@ -19,6 +19,7 @@ using MediatR;
 using Emprise.Domain.Core.Models.Chat;
 using Emprise.MudServer.Commands;
 using Emprise.MudServer.Events;
+using Emprise.MudServer.Commands.EmailCommands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -135,6 +136,16 @@ namespace Emprise.MudServer.Hubs
                 await _bus.SendCommand(command);
             });
         }
+
+        public async Task ShowEmail(ShowEmailAction showEmailAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowEmailCommand(playerId, showEmailAction.PageIndex);
+                await _bus.SendCommand(command);
+            });
+        }
         
 
         public async Task Search()
@@ -237,5 +248,8 @@ namespace Emprise.MudServer.Hubs
                 await _bus.SendCommand(command);
             });
         }
+
+
+        
     }
 }

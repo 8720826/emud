@@ -28,6 +28,7 @@ using Emprise.MudServer.Commands;
 using Emprise.MudServer.Events;
 using Emprise.MudServer.Hubs.Models;
 using Emprise.MudServer.Models;
+using Emprise.MudServer.Queues;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -94,6 +95,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IRedisDb _redisDb;
         private readonly IMemoryCache _cache;
         private readonly IMudOnlineProvider _mudOnlineProvider;
+        private readonly IQueueHandler _queueHandler;
 
         public PlayerCommandHandler(
             IMediatorHandler bus,
@@ -119,6 +121,7 @@ namespace Emprise.MudServer.CommandHandlers
             IMemoryCache cache,
             INotificationHandler<DomainNotification> notifications,
             IMudOnlineProvider mudOnlineProvider,
+            IQueueHandler queueHandler,
             IUnitOfWork uow) : base(uow, bus, notifications)
         {
 
@@ -144,6 +147,7 @@ namespace Emprise.MudServer.CommandHandlers
             _playerQuestDomainService = playerQuestDomainService;
             _redisDb = redisDb;
             _mudOnlineProvider = mudOnlineProvider;
+            _queueHandler = queueHandler;
         }
 
         public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)
@@ -961,6 +965,8 @@ namespace Emprise.MudServer.CommandHandlers
         {
             var playerId = command.PlayerId;
 
+            await _queueHandler.SendQueueMessage(new ReceiveEmailQueue(playerId));
+
             //更新玩家在线数据
             var model = await _mudOnlineProvider.GetPlayerOnline(playerId);
             if (model != null)
@@ -991,6 +997,10 @@ namespace Emprise.MudServer.CommandHandlers
                 Gender = player.Gender,
                 Title = player.Title
             });
+
+
+          
+
             return Unit.Value;
         }
 

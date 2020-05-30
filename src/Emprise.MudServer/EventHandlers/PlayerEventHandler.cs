@@ -207,6 +207,8 @@ namespace Emprise.MudServer.EventHandlers
         {
             var player = message.Player;
 
+            await _queueHandler.SendQueueMessage(new ReceiveEmailQueue(player.Id));
+
             var model = await _chatOnlineProvider.GetPlayerOnline(player.Id);
             var isOnline = model != null;
 

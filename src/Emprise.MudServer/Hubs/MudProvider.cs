@@ -301,6 +301,16 @@ namespace Emprise.MudServer.Hubs
             await _context.Clients.All.SendAsync("ShowMessage", obj);
            // await Clients.All.ShowMessage(receivedMessage);
         }
-      
+
+        public async Task UpdateUnreadEmailCount(int playerId, int count)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("UpdateUnreadEmailCount", count);
+        }
+
+        public async Task ShowEmail(int playerId, object obj, bool hasMore)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowEmail", obj, hasMore);
+        }
+        
     }
 }
