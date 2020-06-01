@@ -35,14 +35,14 @@
             <span class="showchat" @@click.stop="showchat=true;">&nbsp;聊&nbsp;</span>
 
             <ul>
-                <li  v-for="chat,index in chats"><a href="javascript:;" class="player" @@click="showPlayer(chat.playerId)">{{chat.sender}}</a>：{{chat.content}}<em>({{chat.postDate}})</em></li>
+                <li v-for="chat,index in chats"><a href="javascript:;" class="player" @@click="showPlayer(chat.playerId)">{{chat.sender}}</a>：{{chat.content}}<em>({{chat.postDate}})</em></li>
             </ul>
         </div>
 
         <div id="map">
             <div id="title">
                 <marquee class="marquee" scrollamount="5">
-                    <span class="roomDescription"  v-html="room.description">{{room.description}}</span>
+                    <span class="roomDescription" v-html="room.description">{{room.description}}</span>
                 </marquee>
             </div>
 
@@ -219,15 +219,29 @@
                 </div>
 
                 <div class="email" v-if="myBox=='email'">
-                    <p v-if="myEmail&&myEmail.data&&myEmail.data.length>0">共有{{myEmail.data.length}}封邮件：</p>
+                    <p v-if="myEmail&&myEmail.data&&myEmail.data.length>0">共有{{myEmail.data.length}}封邮件(点击标题展开)：</p>
                     <p v-else>收件箱没有任何邮件</p>
                     <ul class="mt15">
                         <li v-for="email,index in myEmail.data">
-                            <span> {{email.title}} </span>
+
+                            <a href="javascript:;" v-show="!email.isShow" v-if="email.status===0" @@click="email.isShow=!email.isShow;readEmail(email.id,email.status);email.status=1;"> <font class="red">[未读]</font> <b>{{email.title}}</b> <span>({{email.createDate}})</span> </a>
+                            <a href="javascript:;" v-show="!email.isShow" v-else @@click="email.isShow=!email.isShow;"> {{email.title}} <span>({{email.createDate}})</span> </a>
+
+                            <div class="line" v-show="email.isShow" @@click="email.isShow=!email.isShow">
+                                <h5>{{email.title}}</h5>
+                                <div v-html="email.content">
+                                    {{email.content}}
+                                </div>
+                                <p>
+                                    发送于：<span>{{email.createDate}}</span>
+                                    <button style="float:none" type="button" @@click.stop="deleteEmail(email.id,email.title)">删除</button>
+                                </p>
+
+                            </div>
                         </li>
                     </ul>
                 </div>
-                
+
 
                 <div class="mypack" v-if="myBox=='mypack'">
 

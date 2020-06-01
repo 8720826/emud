@@ -238,8 +238,18 @@ new Vue({
                 that.myBox = "email";
                 that.myEmail = result;
             });
-            
-            //
+
+            connection.on("RemoveEmail", result => {
+                console.log("RemoveEmail:" + result);
+
+                that.myEmail = that.myEmail.filter(item => {
+                    if (result !== item.id) {
+                        return true
+                    }
+                });
+
+            });
+            //RemoveEmail
         },
         move: function (roomId) {
             if (roomId > 0) {
@@ -354,7 +364,21 @@ new Vue({
             connection.invoke("Load", { wareId: id });
         }, unload: function (id) {
             connection.invoke("UnLoad", { wareId: id });
+        }, deleteEmail: function (id, title) {
+            console.log("deleteEmail=" + id);
+            var that = this;
+            that.confirm("要删除邮件[" + title + "]吗？", function () {
+                connection.invoke("DeleteEmail", { playerEmailId: id });
+            }); 
+        }, readEmail: function (id, status) {
+            console.log("readEmail=" + id + "," + status);
+
+            if (status === 0) {
+                connection.invoke("ReadEmail", { playerEmailId: id });
+            };
         }
+
+        
     },
     watch: {
         myBox(val) {

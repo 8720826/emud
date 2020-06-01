@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Emprise.MudServer.Events.EmailEvents
 {
-
-    public class EmailStatusChangedEvent : Event
+    public class DeletedEmailEvent : Event
     {
         public int PlayerId { get; set; }
 
         public int PlayerEmailId { get; set; }
-        public EmailStatusChangedEvent(int playerId,int playerEmailId)
+        public DeletedEmailEvent(int playerId, int playerEmailId)
         {
             PlayerId = playerId;
             PlayerEmailId = playerEmailId;
         }
+
 
     }
 }

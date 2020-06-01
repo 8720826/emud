@@ -42,6 +42,16 @@ namespace Emprise.Domain.Email.Services
             return query.Count();
         }
 
+        public async Task<PlayerEmailEntity> Get(int id)
+        {
+            return await _playerEmailRepository.Get(id);
+        }
+
+        public async Task Update(PlayerEmailEntity item)
+        {
+            await _playerEmailRepository.Update(item);
+        }
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);

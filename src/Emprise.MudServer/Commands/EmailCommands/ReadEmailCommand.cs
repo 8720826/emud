@@ -1,21 +1,19 @@
-﻿using Emprise.Domain.Core.Events;
+﻿using Emprise.Domain.Core.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Emprise.MudServer.Events.EmailEvents
+namespace Emprise.MudServer.Commands.EmailCommands
 {
-
-    public class EmailStatusChangedEvent : Event
+    public class ReadEmailCommand : Command
     {
         public int PlayerId { get; set; }
-
         public int PlayerEmailId { get; set; }
-        public EmailStatusChangedEvent(int playerId,int playerEmailId)
+
+        public ReadEmailCommand(int playerId, int playerEmailId)
         {
             PlayerId = playerId;
             PlayerEmailId = playerEmailId;
         }
-
     }
 }

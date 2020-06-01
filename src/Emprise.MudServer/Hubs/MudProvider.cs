@@ -311,6 +311,12 @@ namespace Emprise.MudServer.Hubs
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowEmail", obj);
         }
+
+        public async Task RemoveEmail(int playerId, int playerEmailId)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("RemoveEmail", playerEmailId);
+        }
         
+
     }
 }

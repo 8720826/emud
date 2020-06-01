@@ -19,10 +19,11 @@ namespace Emprise.MudServer.EventHandlers
         INotificationHandler<EntityInsertedEvent<EmailEntity>>,
         INotificationHandler<EntityDeletedEvent<EmailEntity>>,
         INotificationHandler<ReceivedEmailEvent>,
-        INotificationHandler<EmailStatusChangedEvent>
+        INotificationHandler<EmailStatusChangedEvent>,
+        INotificationHandler<DeletedEmailEvent>
+
 
         
-
 
     {
         private readonly IMemoryCache _cache;
@@ -71,6 +72,19 @@ namespace Emprise.MudServer.EventHandlers
         }
 
         public async Task Handle(EmailStatusChangedEvent message, CancellationToken cancellationToken)
+        {
+            var playerId = message.PlayerId;
+
+            var count = await _playerEmailDomainService.GetUnreadCount(playerId);
+
+            await _mudProvider.UpdateUnreadEmailCount(playerId, count);
+
+            string key = string.Format(RedisKey.UnreadEmailCount, playerId);
+            await _redisDb.StringSet(key, count, DateTime.Now.AddMinutes(60));
+
+        }
+
+        public async Task Handle(DeletedEmailEvent message, CancellationToken cancellationToken)
         {
             var playerId = message.PlayerId;
 

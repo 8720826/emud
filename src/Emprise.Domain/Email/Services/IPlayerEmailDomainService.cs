@@ -18,5 +18,9 @@ namespace Emprise.Domain.Email.Services
 
         Task<int> GetUnreadCount(int playerId);
 
+        Task<PlayerEmailEntity> Get(int id);
+
+        Task Update(PlayerEmailEntity item);
+
     }
 }

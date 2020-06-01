@@ -78,7 +78,7 @@
     </template>
 </div>
 
-
+@Html.AntiForgeryToken()
 
 @section Scripts {
     <script type="text/javascript">
@@ -102,10 +102,11 @@
                 logout: function () {
                     var that = this;
                     that.confirm("要退出吗？", function () {
-                        axios.post("", {}, {
+                        axios.post("", null, {
                             headers: {
                                 RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
-                            }})
+                            }
+                        })
                         .then(function (response) {
                             var result = response.data;
                             if (result.status) {

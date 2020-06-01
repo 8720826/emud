@@ -37,11 +37,13 @@ namespace Emprise.Domain.Email.Models
         /// <summary>
         /// 接收时间
         /// </summary>
-        public DateTime CreateDate { set; get; }
+        public string CreateDate { set; get; }
 
         /// <summary>
         /// 过期时间
         /// </summary>
         public DateTime ExpiryDate { set; get; }
+
+        public bool IsShow { set; get; }
     }
 }
