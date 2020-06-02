@@ -60,17 +60,17 @@
                     </div>
                     <div id="route" style="position:relative">
                         <div class="ditection">
-                            <div class="line">
+                            <div class="row">
                                 <div class="item"></div>
                                 <div class="item exit" @@click="move(room.north)" @@dblclick="setRoom('north')">{{room.northName}}</div>
                                 <div class="item"></div>
                             </div>
-                            <div class="line">
+                            <div class="row">
                                 <div class="item exit" @@click="move(room.west)" @@dblclick="setRoom('west')">{{room.westName}}</div>
                                 <div class="item cur">{{room.name}}</div>
                                 <div class="item exit" @@click="move(room.east)" @@dblclick="setRoom('east')">{{room.eastName}}</div>
                             </div>
-                            <div class="line">
+                            <div class="row">
                                 <div class="item"></div>
                                 <div class="item exit" @@click="move(room.south)" @@dblclick="setRoom('south')">{{room.southName}}</div>
                                 <div class="item"></div>
@@ -240,6 +240,11 @@
                             </div>
                         </li>
                     </ul>
+                    <p class="mt15 paging">
+                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex-1)">上一页</a>
+                        
+                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)">下一页</a>
+                    </p>
                 </div>
 
 

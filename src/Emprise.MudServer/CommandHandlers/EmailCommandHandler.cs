@@ -81,12 +81,11 @@ namespace Emprise.MudServer.CommandHandlers
                         select new PlayerEmailModel { Id = playerEmail.Id, PlayerId = playerEmail.PlayerId, Status = playerEmail.Status, CreateDate = playerEmail.CreateDate.ToFriendlyTime(), EmailId = playerEmail.EmailId, ExpiryDate = playerEmail.ExpiryDate, Title = email.Title, Content = email.Content};
 
 
-
             Paging<PlayerEmailModel> paging = await query.Paged(pageIndex);
 
             _logger.LogDebug($"Handle ShowEmailCommand Result:{JsonConvert.SerializeObject(paging)},{JsonConvert.SerializeObject(paging.Data)},{paging.Count},{paging.PageCount},{paging.PageIndex}");
 
-            await  _mudProvider.ShowEmail(playerId, new { paging.Data, paging.HasNextPage});
+            await  _mudProvider.ShowEmail(playerId, paging);
 
             return Unit.Value;
         }

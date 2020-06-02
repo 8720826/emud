@@ -30,6 +30,12 @@ namespace Emprise.Domain.Core.Extensions
             {
                 pageSize = 10;
             }
+
+            if (page * pageSize > count)
+            {
+                page = 1;
+            }
+
             return new Paging<T>()
             {
                 PageIndex = page,

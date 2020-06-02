@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Emprise.Domain.Core.Models
 {
-    public class Paging<T> : List<T>
+    public class Paging<T>
     {
         public int PageIndex { get; set; }
 
-        public new int Count { get; set; }
+        public int Count { get; set; }
 
         public int PageCount { get; set; }
 

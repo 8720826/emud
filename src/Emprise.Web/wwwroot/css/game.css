@@ -804,6 +804,11 @@ footer a span {
         display:inline-block;
     }
 
+.email .paging a {
+    margin: 0px 10px;
+}
+
+
 .line {
     border-bottom: 1px solid #343434;
 }
