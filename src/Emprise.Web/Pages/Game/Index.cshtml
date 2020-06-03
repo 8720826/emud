@@ -86,11 +86,11 @@
                     <button @@click="search">探索</button>
                     <button @@click="meditate">打坐</button>
                     <button @@click="exert" v-show="myinfo.hp<myinfo.maxHp">疗伤</button>
-                    <button @@click="" v-show="room.canFish">钓鱼</button>
-                    <button @@click="" v-show="room.canDig">挖矿</button>
-                    <button @@click="" v-show="room.canCollect">采药</button>
-                    <button @@click="" v-show="room.canCut">伐木</button>
-                    <button @@click="" v-show="room.canHunt">打猎</button>
+                    <button @@click="fish" v-show="room.canFish">钓鱼</button>
+                    <button @@click="dig" v-show="room.canDig">挖矿</button>
+                    <button @@click="collect" v-show="room.canCollect">采药</button>
+                    <button @@click="cut" v-show="room.canCut">伐木</button>
+                    <button @@click="hunt" v-show="room.canHunt">打猎</button>
                     <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止</button>
 
                 </div>
@@ -241,9 +241,9 @@
                         </li>
                     </ul>
                     <p class="mt15 paging">
-                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex-1)">上一页</a>
+                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex-1)" v-if="myEmail.pageIndex>1">上一页</a>
                         
-                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)">下一页</a>
+                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)" v-if="myEmail.pageIndex>myEmail.pageCount">下一页</a>
                     </p>
                 </div>
 

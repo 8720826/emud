@@ -1,7 +1,7 @@
-﻿using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Bus.Models;
-using Emprise.Domain.Core.Interfaces;
-using Emprise.MudServer.Handles;
+﻿
+using Emprise.Domain.Core.Bus;
+using Emprise.Domain.Core.Queue.Models;
+using Emprise.MudServer.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 namespace Emprise.MudServer.Jobs
 {
     /// <summary>
-    /// 打坐
+    /// 疗伤
     /// </summary>
-    public class ExertJobService : BackgroundService
+    public class PlayerStatusJobService : BackgroundService
     {
         private IServiceProvider _services;
-        public ExertJobService(IServiceProvider services)
+        public PlayerStatusJobService(IServiceProvider services)
         {
             _services = services;
         }
@@ -29,7 +29,7 @@ namespace Emprise.MudServer.Jobs
             while (!stoppingToken.IsCancellationRequested)
             {
                 await DoWork();
-                await Task.Delay(50000, stoppingToken);
+                await Task.Delay(100, stoppingToken);
             }      
         }
 
@@ -38,17 +38,18 @@ namespace Emprise.MudServer.Jobs
             using (var scope = _services.CreateScope())
             {
                 var queue = scope.ServiceProvider.GetRequiredService<IRecurringQueue>();
-                var handle = scope.ServiceProvider.GetRequiredService<IExertHandler>();
+                var handle = scope.ServiceProvider.GetRequiredService<IQueueHandler>();
 
-                var msgs = await queue.Subscribe<ExertModel>();
+                var msgs = await queue.Subscribe<PlayerStatusModel>();
                 if (msgs == null || msgs.Count == 0)
                 {
                     return;
                 }
 
+                //发布到队列
                 foreach (var msg in msgs)
                 {
-                   await  handle.Execute(msg.Key, msg.Value).ConfigureAwait(false);
+                    await handle.SendQueueMessage(new PlayerStatusQueue(msg.Value));
                 }
 
             }

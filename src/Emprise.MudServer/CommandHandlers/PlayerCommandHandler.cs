@@ -2,7 +2,6 @@
 using Emprise.Domain.Core.Attributes;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
-using Emprise.Domain.Core.Bus.Models;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
@@ -11,6 +10,7 @@ using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Models.Chat;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Core.Queue.Models;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Models;
 using Emprise.Domain.Npc.Services;
@@ -21,7 +21,6 @@ using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Services;
-using Emprise.Domain.Ware.Models;
 using Emprise.Domain.Ware.Services;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands;
@@ -57,13 +56,19 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<MeditateCommand, Unit>,
         IRequestHandler<StopActionCommand, Unit>,
         IRequestHandler<ExertCommand, Unit>,
+        IRequestHandler<ShowPlayerCommand, Unit>,
+        IRequestHandler<FishCommand, Unit>,
+        IRequestHandler<DigCommand, Unit>,
+        IRequestHandler<CollectCommand, Unit>,
+        IRequestHandler<CutCommand, Unit>,
+        IRequestHandler<HuntCommand, Unit>,
+        IRequestHandler<WorkCommand, Unit>,
         IRequestHandler<NpcActionCommand, Unit>,
         IRequestHandler<CompleteQuestCommand, Unit>,
         IRequestHandler<ShowMeCommand, Unit>,
         IRequestHandler<ShowMyStatusCommand, Unit>,
         IRequestHandler<PingCommand, Unit>,
-        IRequestHandler<SendMessageCommand, Unit>,
-        IRequestHandler<ShowPlayerCommand, Unit>
+        IRequestHandler<SendMessageCommand, Unit>
 
         
 
@@ -410,41 +415,122 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
+
+
+
+        public async Task<Unit> Handle(WorkCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.工作);
+            return Unit.Value;
+        }
+
         public async Task<Unit> Handle(MeditateCommand command, CancellationToken cancellationToken)
         {
-            //await _bus.RaiseEvent(new DomainNotification("功能暂时未实现"));
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打坐);
+            return Unit.Value;
+        }
 
-            var playerId = command.PlayerId;
+        public async Task<Unit> Handle(ExertCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.疗伤);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(FishCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.钓鱼);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(DigCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.挖矿);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(CollectCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.采药);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(CutCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.伐木);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(HuntCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打猎);
+            return Unit.Value;
+        }
+
+        private async Task BeginChangeStatus(int playerId, PlayerStatusEnum newStatus)
+        {
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
             {
                 await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return Unit.Value;
+                return;
             }
-
-            if (player.Status == PlayerStatusEnum.打坐)
+            var status = player.Status;
+            if (status == newStatus)
             {
-                return Unit.Value;
+                return;
             }
 
             if (player.Status != PlayerStatusEnum.空闲)
             {
                 await _bus.RaiseEvent(new DomainNotification($"你正在{player.Status}中，请先停下！"));
-                return Unit.Value;
+                return;
             }
 
-            await _mudProvider.ShowMessage(playerId, "开始打坐。。。");
-            player.Status = PlayerStatusEnum.打坐;
+            switch (newStatus)
+            {
+                case PlayerStatusEnum.打猎:
+                    await _mudProvider.ShowMessage(playerId, "你开始在丛林中寻找猎物的踪影。");
+                    break;
+
+                case PlayerStatusEnum.伐木:
+                    await _mudProvider.ShowMessage(playerId, "你拿起斧头，对着一棵大树嘿呦嘿呦得砍了起来。");
+                    break;
+
+                case PlayerStatusEnum.采药:
+                    await _mudProvider.ShowMessage(playerId, "你开始在草丛中搜寻草药的踪影。");
+                    break;
+
+                case PlayerStatusEnum.挖矿:
+                    await _mudProvider.ShowMessage(playerId, "你挥动铁锹，开始挖矿。");
+                    break;
+
+                case PlayerStatusEnum.钓鱼:
+                    await _mudProvider.ShowMessage(playerId, "你把鱼竿一甩，开始等待鱼儿上钩。");
+                    break;
+
+                case PlayerStatusEnum.疗伤:
+                    await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始运功疗伤。");
+                    break;
+
+                case PlayerStatusEnum.打坐:
+                    await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始打坐。");
+                    break;
+
+                default:
+                    await _mudProvider.ShowMessage(playerId, $"你开始{newStatus}。。。");
+                    break;
+            }
+
+          
+            player.Status = newStatus;
             await _playerDomainService.Update(player);
 
-            await _recurringQueue.Publish(playerId, new MeditateModel { }, 2,10);
+            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 2, 10);
 
             if (await Commit())
             {
                 await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
             }
-
-            return Unit.Value;
         }
 
         public async Task<Unit> Handle(StopActionCommand command, CancellationToken cancellationToken)
@@ -472,15 +558,44 @@ namespace Emprise.MudServer.CommandHandlers
             {
                 case PlayerStatusEnum.打坐:
                     await _mudProvider.ShowMessage(playerId, "你停止了打坐。。。");
-                    await _recurringQueue.Remove<MeditateModel>(playerId);
+                  
                     break;
 
                 case PlayerStatusEnum.工作:
                     await _mudProvider.ShowMessage(playerId, "你停止了工作。。。");
-                    await _recurringQueue.Remove<MeditateModel>(playerId);
+                    break;
+
+                case PlayerStatusEnum.伐木:
+                    await _mudProvider.ShowMessage(playerId, "你停止了伐木。。。");
+                    break;
+
+                case PlayerStatusEnum.打猎:
+                    await _mudProvider.ShowMessage(playerId, "你停止了打猎。。。");
+                    break;
+
+                case PlayerStatusEnum.挖矿:
+                    await _mudProvider.ShowMessage(playerId, "你停止了挖矿。。。");
+                    break;
+
+                case PlayerStatusEnum.疗伤:
+                    await _mudProvider.ShowMessage(playerId, "你停止了疗伤。。。");
+                    break;
+
+                case PlayerStatusEnum.采药:
+                    await _mudProvider.ShowMessage(playerId, "你停止了采药。。。");
+                    break;
+
+                case PlayerStatusEnum.钓鱼:
+                    await _mudProvider.ShowMessage(playerId, "你停止了钓鱼。。。");
+                    break;
+
+                default:
+                    await _mudProvider.ShowMessage(playerId, $"你停止了{status}。。。");
                     break;
             }
 
+            await _recurringQueue.Remove<PlayerStatusModel>(playerId);
+
             if (await Commit())
             {
                 await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
@@ -488,42 +603,6 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(ExertCommand command, CancellationToken cancellationToken)
-        {
-            //await _bus.RaiseEvent(new DomainNotification("功能暂时未实现"));
-
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return Unit.Value;
-            }
-            var status = player.Status;
-            if (status == PlayerStatusEnum.疗伤)
-            {
-                return Unit.Value;
-            }
-
-            if (player.Status != PlayerStatusEnum.空闲)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"你正在{player.Status}中，请先停下！"));
-                return Unit.Value;
-            }
-
-            await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始运功疗伤。");
-            player.Status = PlayerStatusEnum.疗伤;
-            await _playerDomainService.Update(player);
-
-            await _recurringQueue.Publish(playerId, new ExertModel {  }, 2, 10);
-
-            if (await Commit())
-            {
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
-            }
-
-            return Unit.Value;
-        }
 
         public async Task<Unit> Handle(NpcActionCommand command, CancellationToken cancellationToken)
         {
@@ -775,6 +854,7 @@ namespace Emprise.MudServer.CommandHandlers
         }
         
         #region 私有方法
+
 
 
 

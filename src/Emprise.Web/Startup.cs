@@ -10,6 +10,7 @@ using Emprise.Infra.Data;
 using Emprise.Infra.Ioc;
 using Emprise.Infra.IoC;
 using Emprise.Infra.Middleware;
+using Emprise.MudServer;
 using Emprise.MudServer.Consumers;
 using Emprise.MudServer.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;

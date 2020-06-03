@@ -294,7 +294,22 @@ new Vue({
         },
         exert: function () {
             connection.invoke("Exert");
-        }, 
+        },
+        fish: function () {
+            connection.invoke("Fish");
+        },
+        dig: function () {
+            connection.invoke("Dig");
+        },
+        collect: function () {
+            connection.invoke("Collect");
+        },
+        cut: function () {
+            connection.invoke("Cut");
+        },
+        hunt: function () {
+            connection.invoke("Hunt");
+        },
         clickMenu: function (id) {
             switch (id) {
                 case "me":

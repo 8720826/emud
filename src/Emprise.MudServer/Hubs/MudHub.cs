@@ -191,7 +191,6 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
-
         public async Task StopAction()
         {
             var result = await DoCommand(async () => {
@@ -212,6 +211,56 @@ namespace Emprise.MudServer.Hubs
                 var playerId = _account.PlayerId;
 
                 var command = new ExertCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task Fish()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new FishCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task Dig()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new DigCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task Collect()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new CollectCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task Cut()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new CutCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task Hunt()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new HuntCommand(playerId);
                 await _bus.SendCommand(command);
             });
         }
