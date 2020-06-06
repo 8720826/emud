@@ -19,7 +19,7 @@
 ## 技术栈
 * netcore3.1
 * vue
-* mysql/sqlserver/sqlite 
+* mysql/sqlserver/PostgreSql
 * redis
 * hangfire
 * efcore
@@ -38,7 +38,7 @@
     目前支持以下数据库：
     Mysql
     SqlServer
-    Sqlite
+    PostgreSql
     
 4.  发布  
     游戏主程序  ```Emprise.Web```  
@@ -58,8 +58,8 @@ https://www.mysql.com/downloads/
 * SqlServer
 https://www.microsoft.com/zh-cn/sql-server/sql-server-2019
 
-* Sqlite
-https://www.sqlite.org/index.html
+* PostgreSql
+https://www.postgresql.org/
 
 * Redis  
 https://redis.io/download
