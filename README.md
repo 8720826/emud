@@ -33,7 +33,7 @@
     使用vs2019或者vscode（需要安装C#插件）
 	
 3.  配置文件  
-    配置文件为appsettings.json，本地调试使用appsettings.Development.json  
+    配置文件为appsettings.json  
     设置好游戏主程序和后台管理的数据库连接字符串等
     目前支持以下数据库：
     Mysql
