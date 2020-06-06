@@ -23,14 +23,22 @@ namespace Emprise.MudServer.Handles
         private readonly ILogger<PlayerStatusHandler> _logger;
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMediatorHandler _bus;
+        private readonly IMudOnlineProvider _mudOnlineProvider;
 
-        public PlayerStatusHandler(IMudProvider mudProvider, IPlayerDomainService playerDomainService, ILogger<PlayerStatusHandler> logger, IRecurringQueue recurringQueue, IMediatorHandler bus)
+        public PlayerStatusHandler(
+            IMudProvider mudProvider, 
+            IPlayerDomainService playerDomainService, 
+            ILogger<PlayerStatusHandler> logger, 
+            IRecurringQueue recurringQueue,
+            IMudOnlineProvider mudOnlineProvider,
+            IMediatorHandler bus)
         {
             _mudProvider = mudProvider;
             _playerDomainService = playerDomainService;
             _logger = logger;
             _recurringQueue = recurringQueue;
             _bus = bus;
+            _mudOnlineProvider = mudOnlineProvider;
         }
         public async Task Execute(PlayerStatusModel model)
         {
@@ -42,7 +50,14 @@ namespace Emprise.MudServer.Handles
                 return;
             }
 
-            if(player.Status!= model.Status)
+            var online = await _mudOnlineProvider.GetPlayerOnline(playerId);
+            if (online == null)
+            {
+                await _recurringQueue.Remove<PlayerStatusModel>(playerId);
+                return;
+            }
+
+            if (player.Status!= model.Status)
             {
                 await _recurringQueue.Remove<PlayerStatusModel>(playerId);
                 return;

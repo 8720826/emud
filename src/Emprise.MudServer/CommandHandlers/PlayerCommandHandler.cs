@@ -1092,7 +1092,11 @@ namespace Emprise.MudServer.CommandHandlers
 
             var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
             var commandIds = await _redisDb.StringGet<List<int>>(key) ?? new List<int>();
-            commandIds.Add(commandId);
+            if (commandId > 0 && !commandIds.Contains(commandId))
+            {
+                commandIds.Add(commandId);
+            }
+
             await _redisDb.StringSet(key, commandIds);
 
             var commandEnum = (CommandTypeEnum)Enum.Parse(typeof(CommandTypeEnum), command, true);

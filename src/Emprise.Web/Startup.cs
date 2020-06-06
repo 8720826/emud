@@ -117,9 +117,9 @@ namespace Emprise.Web
                 x.UseEntityFramework<EmpriseDbContext>(option=> option.TableNamePrefix="");  //可选项，你不需要再次配置 x.UseSqlServer 了
 
                 x.Version = "v1";
-                x.SucceedMessageExpiredAfter = 24 * 3600;
+                x.SucceedMessageExpiredAfter = 1 * 3600;
                 x.ConsumerThreadCount = 5;
-                x.FailedRetryCount = 10;
+                x.FailedRetryCount = 3;
                 x.FailedRetryInterval = 30;
                 x.UseInMemoryMessageQueue();
             });

@@ -31,7 +31,7 @@ namespace Emprise.MudServer.Consumers
         private readonly ILogger<ChatConsumer> _logger;
         private readonly IPlayerStatusHandler _playerStatusHandler;
         private readonly IMudProvider _mudProvider;
-
+      
         public PlayerStatusConsumer(
             IPlayerStatusHandler playerStatusHandler,
             ILogger<ChatConsumer> logger, 
