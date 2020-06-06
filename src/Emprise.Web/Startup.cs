@@ -10,8 +10,6 @@ using Emprise.Infra.Data;
 using Emprise.Infra.Ioc;
 using Emprise.Infra.IoC;
 using Emprise.Infra.Middleware;
-using Emprise.MudServer;
-using Emprise.MudServer.Consumers;
 using Emprise.MudServer.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -36,7 +34,6 @@ namespace Emprise.Web
 
             var builder = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-               .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
 
             .AddRedisConfiguration(configuration.GetValue<string>("Redis"), "configurations", 60);
             Configuration = builder.Build();
@@ -92,29 +89,44 @@ namespace Emprise.Web
 
 
             var dataProvide = Configuration.GetValue<string>("DataProvider").ToLower();
-            switch (dataProvide)
-            {
-                case "mssql":
-                    services.AddDbContext<EmpriseDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("Mssql")));
-                    break;
-                case "mysql":
-                    services.AddDbContext<EmpriseDbContext>(options => options.UseMySql(Configuration.GetConnectionString("Mysql")));
-                    break;
-                case "sqlite":
-                    services.AddDbContext<EmpriseDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
-                    break;
-                default:
-                    throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
-            }
 
             #endregion
 
             services.AddScoped<IQueueHandler, QueueCapBus>();
 
+            services.AddDbContext<EmpriseDbContext>(x=> {
+                switch (dataProvide)
+                {
+                    case "mssql":
+                        x.UseSqlServer(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    case "mysql":
+                        x.UseMySql(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    case "postgresql":
+                        x.UseNpgsql(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    default:
+                        throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
+                }
+            });
+
             services.AddCap(x =>
             {
-                //如果你使用的 EF 进行数据操作，你需要添加如下配置：
-                x.UseEntityFramework<EmpriseDbContext>(option=> option.TableNamePrefix="");  //可选项，你不需要再次配置 x.UseSqlServer 了
+                switch (dataProvide)
+                {
+                    case "mssql":
+                        x.UseSqlServer(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    case "mysql":
+                        x.UseMySql(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    case "postgresql":
+                        x.UsePostgreSql(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    default:
+                        throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
+                }
 
                 x.Version = "v1";
                 x.SucceedMessageExpiredAfter = 1 * 3600;
@@ -123,8 +135,6 @@ namespace Emprise.Web
                 x.FailedRetryInterval = 30;
                 x.UseInMemoryMessageQueue();
             });
-
-
 
             //自动注入
             services.AutoRegister();

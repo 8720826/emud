@@ -98,23 +98,26 @@ namespace Emprise.Admin
               .AddHttpMessageHandler<AuthorizationHandler>()
              ;
 
-            var dataProvide = Configuration.GetValue<string>("DataProvider").ToLower();
-            switch (dataProvide)
-            {
-                case "mssql":
-                    services.AddDbContext<EmpriseDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("Mssql")));
-                    break;
-                case "mysql":
-                    services.AddDbContext<EmpriseDbContext>(options => options.UseMySql(Configuration.GetConnectionString("Mysql")));
-                    break;
-                case "sqlite":
-                    services.AddDbContext<EmpriseDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
-                    break;
-                default:
-                    throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
-            }
 
-         
+            var dataProvide = Configuration.GetValue<string>("DataProvider").ToLower();
+            services.AddDbContext<EmpriseDbContext>(x => {
+                switch (dataProvide)
+                {
+                    case "mssql":
+                        x.UseSqlServer(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    case "mysql":
+                        x.UseMySql(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    case "postgresql":
+                        x.UseNpgsql(Configuration.GetConnectionString(dataProvide));
+                        break;
+                    default:
+                        throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
+                }
+            });
+
+
 
             services.AddAutoMapper();
 

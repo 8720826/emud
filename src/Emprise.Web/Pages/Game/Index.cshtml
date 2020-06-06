@@ -243,7 +243,7 @@
                     <p class="mt15 paging">
                         <a href="javascript:;" @@click="showEmail(myEmail.pageIndex-1)" v-if="myEmail.pageIndex>1">上一页</a>
                         
-                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)" v-if="myEmail.pageIndex>myEmail.pageCount">下一页</a>
+                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)" v-if="myEmail.pageIndex>myEmail.pageCount&&myEmail.pageCount>0">下一页</a>
                     </p>
                 </div>
 
