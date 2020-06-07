@@ -4,6 +4,7 @@ using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Core.Queue.Models;
 using Emprise.Domain.Player.Services;
+using Emprise.MudServer.Events;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,15 @@ namespace Emprise.MudServer.Handles
             var online = await _mudOnlineProvider.GetPlayerOnline(playerId);
             if (online == null)
             {
+                //玩家离线后，从队列删除，并且修改状态为空闲
                 await _recurringQueue.Remove<PlayerStatusModel>(playerId);
+                if (player.Status!= PlayerStatusEnum.空闲)
+                {
+                    player.Status = PlayerStatusEnum.空闲;
+                    await _playerDomainService.Update(player);
+
+                    await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+                }
                 return;
             }
 
