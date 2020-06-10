@@ -6,86 +6,89 @@
 @{
     Layout = "_Layout";
 }
-    <div class="big_bg" id="app">
-        <div class="nav">
-            <h2 class="nav-title">创建角色</h2>
-            <div style="position: absolute; top: 10px; right: 10px;"><a style="font-size:12px;padding:0 5px;" href="javascript:;" v-on:click="logout" class="btn btn-small-tawny">退出</a></div>
-        </div>
+<div class="big_bg" id="app">
+    <div class="nav">
+        <h2 class="nav-title">创建角色</h2>
+        <div style="position: absolute; top: 10px; right: 10px;"><a style="font-size:12px;padding:0 5px;" href="javascript:;" v-on:click="logout" class="btn btn-small-tawny">退出</a></div>
+    </div>
 
-        <div class="main">
+    <div class="main">
 
-            <div class="section account">
-                <div class="blist">
-                    <span class="bname">
-                        <b class="gy">
-                            账号
-                        </b>：@(Model.UserModel.Email)
-                    </span>
+        <div class="section account">
+            <div class="blist">
+                <span class="bname">
+                    <b class="gy">
+                        账号
+                    </b>：@(Model.UserModel.Email)
+                </span>
+            </div>
+
+            <div class="join mt15" style="text-align:center">
+
+                <div class="playerinfo">
+                    <input type="text" class="form-text playername" v-model="name" placeholder="角色名,2到4个中文" />
                 </div>
 
-                <div class="join mt15" style="text-align:center">
+                <div class="playerinfo">
+                    选择性别：
+                    <label>
+                        <input type="radio" v-model="gender" value=1>
+                        男
+                    </label>
 
-                    <div class="playerinfo">
-                        <input type="text" class="form-text playername" v-model="name" placeholder="角色名,2到4个中文" />
-                    </div>
-
-                    <div class="playerinfo">
-                        选择性别：
-                        <label>
-                            <input type="radio" v-model="gender" value=1>
-                            男
-                        </label>
-
-                        <label>
-                            <input type="radio" v-model="gender" value=2>
-                            女
-                        </label>
-                    </div>
-
-                    <div class="attr playerinfo">
-                        你的先天属性：<a href="javascript:;" @@click="createAttr">随机</a>
-                        <ul>
-                            <li><label>臂力</label><input v-model="mystr" type="text" /></li>
-                            <li><label>根骨</label><input v-model="mycon" type="text" /></li>
-                            <li><label>身法</label><input v-model="mydex" type="text" /></li>
-                            <li><label>悟性</label><input v-model="myint" type="text" /></li>
-                        </ul>
-                    </div>
-
-
-
-                    <div class="join  mt15" style="text-align:center">
-                        <a class="btn" href="javascript:;" @@click="createPlayer">创建角色</a>
-                    </div>
-                    <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
-
+                    <label>
+                        <input type="radio" v-model="gender" value=2>
+                        女
+                    </label>
                 </div>
 
+                <div class="attr playerinfo">
+                    你的先天属性：<a href="javascript:;" @@click="createAttr">随机</a>
+                    <ul>
+                        <li><label>臂力</label><input v-model="mystr" type="text" /></li>
+                        <li><label>根骨</label><input v-model="mycon" type="text" /></li>
+                        <li><label>身法</label><input v-model="mydex" type="text" /></li>
+                        <li><label>悟性</label><input v-model="myint" type="text" /></li>
+                    </ul>
+                </div>
+
+
+
+                <div class="join  mt15" style="text-align:center">
+                    <a class="btn" href="javascript:;" @@click="createPlayer">创建角色</a>
+                </div>
+                <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
 
             </div>
 
+
         </div>
 
+    </div>
 
-        <template>
-            <transition name="confirm-fade">
-                <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
-                    <div class="confirm-content-wrap" @@click.stop>
-                        <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
-                        <p class="my-confirm-content">{{ modal.content }}</p>
-                        <div class="my-operation">
-                            <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
-                                <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>
-                            </div>
-                            <div class="confirm-btn" @@click="confirmEvent('ok')">
-                                <p class="my-btn-text">{{ modal.confirmText }}</p>
-                            </div>
+
+    <template>
+        <transition name="confirm-fade">
+            <div v-if="modal.isShowConfirm" class="my-confirm" @@click.stop="confirmEvent('cancel')">
+                <div class="confirm-content-wrap" @@click.stop>
+                    <h3 class="my-confirm-title">{{ modal.titleText }}</h3>
+                    <p class="my-confirm-content">{{ modal.content }}</p>
+                    <div class="my-operation">
+                        <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
+                            <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>
+                        </div>
+                        <div class="confirm-btn" @@click="confirmEvent('ok')">
+                            <p class="my-btn-text">{{ modal.confirmText }}</p>
                         </div>
                     </div>
                 </div>
-            </transition>
-        </template>
-    </div>
+            </div>
+        </transition>
+    </template>
+</div>
+
+@Html.AntiForgeryToken()
+
 @section Scripts {
     <script type="text/javascript">
         var vm = new Vue({
@@ -178,7 +181,7 @@
                         that.tips = "请输入角色名";
                         return false;
                     }
-  
+
                     if (!that.gender) {
                         that.tips = "请选择性别";
                         return false;
