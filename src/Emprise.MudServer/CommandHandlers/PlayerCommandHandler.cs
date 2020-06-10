@@ -420,7 +420,7 @@ namespace Emprise.MudServer.CommandHandlers
 
         public async Task<Unit> Handle(WorkCommand command, CancellationToken cancellationToken)
         {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.工作);
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打工);
             return Unit.Value;
         }
 
@@ -561,8 +561,8 @@ namespace Emprise.MudServer.CommandHandlers
                   
                     break;
 
-                case PlayerStatusEnum.工作:
-                    await _mudProvider.ShowMessage(playerId, "你停止了工作。。。");
+                case PlayerStatusEnum.打工:
+                    await _mudProvider.ShowMessage(playerId, "你停止了打工。。。");
                     break;
 
                 case PlayerStatusEnum.伐木:

@@ -57,6 +57,11 @@ namespace Emprise.Domain.Core.Enums
 
         发送邮件,
         修改邮件,
-        删除邮件
+        删除邮件,
+
+
+        添加掉落,
+        修改掉落,
+        删除掉落
     }
 }

@@ -1,0 +1,95 @@
+﻿@page
+@model Emprise.Admin.Pages.ItemDrop.AddModel
+@{
+    ViewData["Title"] = "掉落管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="~/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="~/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="~/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">掉落管理</strong> / <small>添加掉落</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDrop.Name" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="ItemDrop.Name">
+                            <span asp-validation-for="ItemDrop.Name" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDrop.Description" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="ItemDrop.Description"></textarea>
+                            <span asp-validation-for="ItemDrop.Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="am-margin">
+                <input type="hidden" asp-for="UrlReferer">
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+            $(function () {
+                Simditor.locale = 'zh-CN';//设置中文
+                var editor = new Simditor({
+                    textarea: $("#description"),  //textarea的id
+                    placeholder: '请输入描述',
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    pasteImage: true,//允许粘贴图片
+                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
+                });
+
+                $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+            });
+    </script>
+}

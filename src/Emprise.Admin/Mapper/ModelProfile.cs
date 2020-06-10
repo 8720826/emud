@@ -14,6 +14,8 @@ using Emprise.Admin.Entity;
 using Emprise.Admin.Models.Map;
 using Emprise.Admin.Models.Player;
 using Emprise.Admin.Models.Email;
+using Emprise.Admin.Models.ItemDrop;
+using Emprise.Domain.ItemDrop.Entity;
 
 namespace Emprise.Admin.Mapper
 {
@@ -62,6 +64,10 @@ namespace Emprise.Admin.Mapper
 
             CreateMap<EmailInput, EmailEntity>();
             CreateMap<EmailEntity, EmailInput>();
+
+            CreateMap<ItemDropInput, ItemDropEntity>();
+            CreateMap<ItemDropEntity, ItemDropInput>();
+            
         }
     }
 }

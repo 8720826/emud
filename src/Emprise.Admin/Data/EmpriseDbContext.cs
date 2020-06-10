@@ -1,5 +1,6 @@
 ﻿
 using Emprise.Admin.Entity;
+using Emprise.Domain.ItemDrop.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,9 @@ namespace Emprise.Admin.Data
         public DbSet<EmailEntity> Emails { get; set; }
 
         public DbSet<PlayerEmailEntity> PlayerEmails { get; set; }
-        
+
+        public DbSet<ItemDropEntity> ItemDrops { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
