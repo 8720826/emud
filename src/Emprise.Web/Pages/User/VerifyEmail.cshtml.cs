@@ -6,6 +6,7 @@ using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.User.Models;
 using Emprise.MudServer.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -47,11 +48,11 @@ namespace Emprise.Web.Pages.User
             }
         }
 
-        public async Task<IActionResult> OnPostAsync([FromBody]string email)
+        public async Task<IActionResult> OnPostAsync([FromBody]SendRegEmailDto dto)
         {
             var userId = _accountContext.UserId;
 
-            var command = new SendRegEmailCommand(email);
+            var command = new SendRegEmailCommand(dto.Email);
             await _bus.SendCommand(command);
 
             if (_notifications.HasNotifications())
