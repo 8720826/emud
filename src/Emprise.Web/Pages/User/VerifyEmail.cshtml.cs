@@ -47,7 +47,7 @@ namespace Emprise.Web.Pages.User
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(string email)
+        public async Task<IActionResult> OnPostAsync([FromBody]string email)
         {
             var userId = _accountContext.UserId;
 
