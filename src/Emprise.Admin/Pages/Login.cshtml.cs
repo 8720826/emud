@@ -4,16 +4,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Admin;
-using Emprise.Domain.Core.Enums;
-using Emprise.Domain.Core.Extensions;
+using Emprise.Application.Admin.Dtos;
+using Emprise.Application.Admin.Services;
 using Emprise.Domain.Core.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,14 +18,19 @@ namespace Emprise.Admin.Pages
     [AllowAnonymous]
     public class LoginModel : BasePageModel
     {
-        public LoginModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IAdminAppService _adminAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public LoginModel(
             ILogger<LoginModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IAdminAppService adminAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _adminAppService = adminAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -42,9 +41,10 @@ namespace Emprise.Admin.Pages
         [BindProperty]
         public LoginInput LoginInput { get; set; }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            HasSetAdmin = _db.Admins.Count() != 0;
+            var adminCount = await _adminAppService.GetCount();
+            HasSetAdmin = adminCount > 0;
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -53,10 +53,25 @@ namespace Emprise.Admin.Pages
             if (!ModelState.IsValid)
             {
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
-                HasSetAdmin = _db.Admins.Count() != 0;
+                var adminCount = await _adminAppService.GetCount();
+                HasSetAdmin = adminCount > 0;
                 return Page();
             }
 
+            var result = await _adminAppService.Login(LoginInput);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                var adminCount = await _adminAppService.GetCount();
+                HasSetAdmin = adminCount > 0;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("Index");
+            }
+
+            /*
             AdminEntity admin = null;
             if (_db.Admins.Count() == 0)
             {
@@ -128,6 +143,7 @@ namespace Emprise.Admin.Pages
 
 
             return RedirectToPage("Index");
+            */
         }
     }
 }

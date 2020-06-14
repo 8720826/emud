@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,11 @@ namespace Emprise.Infra.Authorization
     public class AccountContext : IAccountContext
     {
         private readonly IHttpContextAccessor _accessor;
-
         public AccountContext(IHttpContextAccessor accessor)
         {
             _accessor = accessor;
+
+           // _accessor.HttpContext.AuthenticateAsync("user");
         }
 
 
@@ -52,6 +54,8 @@ namespace Emprise.Infra.Authorization
         {
             get
             {
+                
+
                 int.TryParse(_accessor.HttpContext.User?.FindFirst($"_PlayerId")?.Value, out int id);
                 return id;
             }

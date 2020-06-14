@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Domain.Core.Enums;
+using Emprise.Application.Ware.Services;
 using Emprise.Domain.Core.Models;
-using Microsoft.AspNetCore.Http;
+using Emprise.Domain.Ware.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -19,14 +16,19 @@ namespace Emprise.Admin.Pages.Ware
 {
     public class DeleteModel : BasePageModel
     {
-        public DeleteModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IWareAppService _wareAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public DeleteModel(
             ILogger<DeleteModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IWareAppService wareAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _wareAppService = wareAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -34,26 +36,22 @@ namespace Emprise.Admin.Pages.Ware
 
         public string ErrorMessage { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
-
 
         public async  Task<IActionResult> OnGetAsync(int id = 0)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Npc/Index");
-            }
 
             if (id > 0)
             {
-                Ware = await _db.Wares.FindAsync(id);
+                Ware = await _wareAppService.Get(id);
+                if (Ware == null)
+                {
+                    return RedirectToPage("/Ware/Index");
+                }
                 return Page();
             }
             else
             {
-                return RedirectToPage("/Npc/Index");
+                return RedirectToPage("/Ware/Index");
             }
         }
 
@@ -65,6 +63,19 @@ namespace Emprise.Admin.Pages.Ware
                 return Page();
             }
 
+
+            var result = await _wareAppService.Delete(id);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Ware/Index");
+            }
+
+            /*
             try
             {
                 var ware = await _db.Wares.FindAsync(id);
@@ -94,6 +105,7 @@ namespace Emprise.Admin.Pages.Ware
             }
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

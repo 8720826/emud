@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Configuration;
 using Emprise.Domain.Core.Models;
@@ -15,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -46,53 +49,45 @@ namespace Emprise.Web
             #region 基本注入
             services.Configure<AppConfig>(Configuration);
 
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
-             AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
+            services.AddAuthentication("user").AddCookie("user", options =>
              {
-                 o.LoginPath = new PathString("/user/login");
+                 options.LoginPath = new PathString("/user/login");
+                 options.Events = new CookieAuthenticationEvents
+                 {
+                     OnValidatePrincipal = context => {
+                         context.HttpContext.User = context.Principal;
+                         return Task.CompletedTask;
+                     }
+                 };
              });
-
-            if (Configuration.GetValue<bool>("Site:IsApiEnable"))
+         
+            services.AddAuthentication("admin").AddCookie("admin", options =>
             {
-                services.AddAuthentication().AddJwtBearerAuth(Configuration.GetValue<string>("Site:ApiKey"));
-            }
-            else
-            {
-                services.AddAuthentication().AddJwtBearerAuth();
-            }
-
-
-            services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = actionContext =>
-                {
-                    var error = actionContext.ModelState
-                        .Where(e => e.Value.Errors.Count > 0)
-                        .Select(e => new
-                        {
-                            status = false,
-                            errorMessage = e.Value.Errors.First().ErrorMessage
-                        }).First();
-
-
-                    return new OkObjectResult(error);
-                };
+                options.AccessDeniedPath = "/Admin/Denied";
+                options.LoginPath = "/Admin/Login";
             });
 
             services.AddRazorPages(options => {
                 options.Conventions.AddPageRoute("/User/Login", "");
-            });
-
-
+            }).AddMvcOptions(options =>
+            {
+                options.MaxModelValidationErrors = 50;
+                options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor(x => "请输入内容");
+                options.ModelBindingMessageProvider.SetValueIsInvalidAccessor(x => $"输入值'{x}'无效");
+                options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"输入值'{x}'无效");
+                options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((x) => "只能输入数字");
+                options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => $"缺少属性 '{x}'");
+                options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => "请输入内容");
+                options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((x) => "输入值无效");
+                options.ModelBindingMessageProvider.SetMissingRequestBodyRequiredValueAccessor(() => "RequestBody 不能为空");
+                options.ModelBindingMessageProvider.SetNonPropertyValueMustBeANumberAccessor(() => "只能输入数字");
+                options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((x) => $"输入值'{x}'无效");
+                options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => "输入值无效");
+            }); ;
 
             var dataProvide = Configuration.GetValue<string>("DataProvider").ToLower();
 
             #endregion
-
-            services.AddScoped<IQueueHandler, QueueCapBus>();
 
             services.AddDbContext<EmpriseDbContext>(x=> {
                 switch (dataProvide)
@@ -139,11 +134,9 @@ namespace Emprise.Web
             //自动注入
             services.AutoRegister();
 
-
             //手动注入，无法自动注入的
             NativeInjectorBootStrapper.RegisterServices(services);
-
-           
+          
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -153,35 +146,26 @@ namespace Emprise.Web
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            RequestLocalizationOptions localizationOptions = new RequestLocalizationOptions
+            {
+                SupportedCultures = new List<CultureInfo> { new CultureInfo("zh-CN"), new CultureInfo("zh-CN") },
+                SupportedUICultures = new List<CultureInfo> { new CultureInfo("zh-CN"), new CultureInfo("zh-CN") },
+                DefaultRequestCulture = new RequestCulture("zh-CN")
+            };
+            app.UseRequestLocalization(localizationOptions);
+
+            app.UseStaticFiles();
             app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-
-            app.UseStaticFiles();
-
-            /*
-            app.UseHangfireServer(
-               new BackgroundJobServerOptions
-               {
-                   SchedulePollingInterval = TimeSpan.FromSeconds(1),
-               });
-            
-            app.UseHangfireDashboard();
-            */
             app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<MudHub>("/hub");
-
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                endpoints.MapAreaControllerRoute(
-                    name: "areas", "areas",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
                 endpoints.MapRazorPages();
             });

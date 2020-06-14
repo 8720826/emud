@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
+using Emprise.Application.Map.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Map.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,14 +19,19 @@ namespace Emprise.Admin.Pages.Map
 {
     public class DeleteModel : BasePageModel
     {
-        public DeleteModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IMapAppService _mapAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public DeleteModel(
             ILogger<DeleteModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IMapAppService mapAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _mapAppService = mapAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -35,21 +39,12 @@ namespace Emprise.Admin.Pages.Map
 
         public string ErrorMessage { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
-
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Npc/Index");
-            }
-
             if (id > 0)
             {
-                Map = await _db.Maps.FindAsync(id);
+                Map = await _mapAppService.Get(id);
                 return Page();
             }
             else
@@ -66,6 +61,17 @@ namespace Emprise.Admin.Pages.Map
                 return Page();
             }
 
+            var result = await _mapAppService.Delete(id);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Map/Index");
+            }
+            /*
             try
             {
                 var roomCount = await _db.Rooms.CountAsync(x => x.MapId == id);
@@ -110,6 +116,7 @@ namespace Emprise.Admin.Pages.Map
             }
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

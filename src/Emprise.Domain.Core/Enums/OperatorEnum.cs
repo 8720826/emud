@@ -8,6 +8,7 @@ namespace Emprise.Domain.Core.Enums
     {
         登录,
         退出登录,
+        修改密码,
 
         修改配置,
 
@@ -26,8 +27,12 @@ namespace Emprise.Domain.Core.Enums
         复制Npc,
 
         修改用户,
+        禁用用户,
+        启用用户,
+        修改用户密码,
         修改玩家,
         删除玩家,
+        
 
         添加任务,
         修改任务,

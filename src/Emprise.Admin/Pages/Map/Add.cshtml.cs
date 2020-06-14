@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Map;
-using Emprise.Domain.Core.Enums;
+using Emprise.Application.Map.Dtos;
+using Emprise.Application.Map.Services;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,16 +17,19 @@ namespace Emprise.Admin.Pages.Map
 {
     public class AddModel : BasePageModel
     {
-
-
-        public AddModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IMapAppService _mapAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public AddModel(
             ILogger<AddModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IMapAppService mapAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _mapAppService = mapAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -38,16 +38,10 @@ namespace Emprise.Admin.Pages.Map
 
         public string ErrorMessage { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
 
         public void OnGet()
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Map/Index");
-            }
+
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -58,6 +52,18 @@ namespace Emprise.Admin.Pages.Map
                 return Page();
             }
 
+            var result = await _mapAppService.Add(Map);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Ware/Index");
+            }
+
+            /*
             try
             {
                 var map = _mapper.Map<MapEntity>(Map);
@@ -87,6 +93,7 @@ namespace Emprise.Admin.Pages.Map
 
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

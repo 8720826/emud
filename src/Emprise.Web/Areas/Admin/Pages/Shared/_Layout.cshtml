@@ -1,0 +1,146 @@
+﻿
+@{ 
+    var menuGroup = ViewData["MenuGroup"]?.ToString();
+    if(!Enum.TryParse(menuGroup,out MenuGroupEnum menuGroupEnum))
+    {
+        menuGroupEnum = MenuGroupEnum.Index;
+    }
+}
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewData["Title"] - EMUD后台管理系统 - emprise.cn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="~/admin/css/amazeui.min.css" />
+    <link rel="stylesheet" href="~/admin/css/admin.css">
+    <link rel="stylesheet" href="~/admin/css/app.css">
+    @RenderSection("CssJs", false)
+</head>
+<body>
+    <!--[if lte IE 9]>
+    <p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+      以获得更好的体验！</p>
+    <![endif]-->
+
+    <header class="am-topbar admin-header">
+        <div class="am-topbar-brand">
+            <strong>EMUD</strong> <small>后台管理</small>
+        </div>
+
+
+        <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
+
+            <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
+                <li class="am-dropdown" data-am-dropdown>
+                    <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                        <span class="am-icon-users"></span> 管理员 <span class="am-icon-caret-down"></span>
+                    </a>
+                    <ul class="am-dropdown-content">
+                        <li><a asp-page="/ModifyPassword"><span class="am-icon-user"></span> 修改密码</a></li>
+                        <li><a asp-page="/Logout"><span class="am-icon-power-off"></span> 退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="am-cf admin-main">
+        <!-- sidebar start -->
+        <div class="admin-sidebar">
+            <ul class="am-list admin-sidebar-list">
+                <li><a asp-page="/Index"><span class="am-icon-home"></span> 首页</a></li>
+                <li class="admin-parent" id="system">
+                    <a class="am-cf @(menuGroupEnum == MenuGroupEnum.System?"":"am-collapsed")" data-am-collapse="{target: '#collapse-nav1'}"><span class="am-icon-th"></span> 系统设置 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list admin-sidebar-sub am-collapse @(menuGroupEnum == MenuGroupEnum.System?" am-in":"")" id="collapse-nav1">
+                        <li><a asp-page="/Config/Index" class="am-cf"><span class="am-icon-cog am-icon-fw"></span> 配置管理</a></li>
+                        <li><a asp-page="/Map/Index" class="am-cf"><span class="am-icon-map-o am-icon-fw"></span> 地图管理</a></li>
+                        <li><a asp-page="/Npc/Index"><span class="am-icon-street-view am-icon-fw"></span> NPC管理</a></li>
+                        <li><a asp-page="/Script/Index"><span class="am-icon-code am-icon-fw"></span> NPC脚本</a></li>
+                        <li><a asp-page="/Ware/Index"><span class="am-icon-cubes am-icon-fw"></span> 物品管理</a></li>
+                        <li><a asp-page="/Quest/Index"><span class="am-icon-tasks am-icon-fw"></span> 任务管理</a></li>
+                        <li><a asp-page="/ItemDrop/Index"><span class="am-icon-tasks am-icon-fw"></span> 掉落管理</a></li>
+                    </ul>
+                </li>
+                <li class="admin-parent" id="game">
+                    <a class="am-cf @(menuGroupEnum == MenuGroupEnum.Game?"":"am-collapsed")" data-am-collapse="{target: '#collapse-nav2'}"><span class="am-icon-th"></span> 游戏管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list admin-sidebar-sub am-collapse @(menuGroupEnum == MenuGroupEnum.Game?"am-in":"")" id="collapse-nav2">
+                        <li><a asp-page="/Email/Index" class="am-cf"><span class="am-icon-envelope-o"></span> 站内信</a></li>
+                        <li><a asp-page="/User/Index" class="am-cf"><span class="am-icon-user"></span> 用户管理</a></li>
+                        <li><a asp-page="/Player/Index" class="am-cf"><span class="am-icon-users"></span> 玩家管理</a></li>
+                    </ul>
+                </li>
+
+                <li class="admin-parent" id="log">
+                    <a class="am-cf @(menuGroupEnum == MenuGroupEnum.Log?"":"am-collapsed")" data-am-collapse="{target: '#collapse-nav3'}"><span class="am-icon-th"></span> 日志管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                    <ul class="am-list admin-sidebar-sub am-collapse @(menuGroupEnum == MenuGroupEnum.Log?"am-in":"")" id="collapse-nav3">
+                        <li><a asp-page="/Log/OperatorLog" class="am-cf"><span class="am-icon-list-alt"></span> 操作记录</a></li>
+                        <li><a asp-page="/Log/SystemLog" class="am-cf"><span class="am-icon-list-alt"></span> 异常日志</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="am-panel am-panel-default admin-sidebar-panel">
+                <div class="am-panel-bd">
+                    <p><span class="am-icon-bookmark"></span> 公告</p>
+                    <p style="word-wrap : break-word ;">github地址：<a href="https://github.com/8720826/emud" target="_blank">https://github.com/8720826/emud</a></p>
+                    <p style="word-wrap : break-word ;">作者qq：8720826</p>
+                </div>
+            </div>
+
+
+
+            <div class="am-panel am-panel-default admin-sidebar-panel">
+                <div class="am-panel-bd">
+                    <p class="am-padding-left">© @(DateTime.Now.Year) 版权所有. <a href="http://emprise.cn/" target="_blank">emprise.cn</a></p>
+                </div>
+            </div>
+        </div>
+        <!-- sidebar end -->
+        <!-- content start -->
+        <div class="admin-content">
+
+            @RenderBody()
+        </div>
+        <!-- content end -->
+
+    </div>
+
+
+
+    <!--[if lt IE 9]>
+    <script src="~/admin/js/jquery1.11.1.min.js"></script>
+    <script src="~/admin/js/modernizr.js"></script>
+    <script src="~/admin/js/polyfill/rem.min.js"></script>
+    <script src="~/admin/js/polyfill/respond.min.js"></script>
+    <script src="~/admin/js/amazeui.legacy.js"></script>
+    <![endif]-->
+    <!--[if (gte IE 9)|!(IE)]><!-->
+    <script src="~/admin/js/jquery.min.js"></script>
+    <script src="~/admin/js/amazeui.min.js"></script>
+    <!--<![endif]-->
+    <script src="~/admin/js/app.js"></script>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

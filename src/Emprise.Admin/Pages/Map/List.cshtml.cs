@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
+using Emprise.Application.Map.Services;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Map.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -21,14 +18,19 @@ namespace Emprise.Admin.Pages.Map
     public class ListModel : BasePageModel
     {
 
-        public ListModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IMapAppService _mapAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public ListModel(
             ILogger<ListModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IMapAppService mapAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _mapAppService = mapAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -40,13 +42,7 @@ namespace Emprise.Admin.Pages.Map
 
         public async Task OnGetAsync(int pageIndex)
         {
-            var query = _db.Maps.OrderBy(x => x.Id);
-            if (!string.IsNullOrEmpty(Keyword))
-            {
-                query = _db.Maps.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
-            }
-
-            Paging = await query.Paged(pageIndex);
+            Paging = await _mapAppService.GetPaging(Keyword, pageIndex);
         }
     }
 }

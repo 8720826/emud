@@ -1,0 +1,27 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Map.DeleteModel
+@{
+    ViewData["Title"] = "地图管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">地图管理</strong> / <small>删除地图</small></div>
+</div>
+
+<div class="am-tabs am-margin" data-am-tabs>
+    是否要删除地图  "@(Model.Map?.Name)(id=@(Model.Map?.Id))" ?
+</div>
+
+<div class="am-margin">
+    <form class="am-form" method="post">
+        <button type="submit" class="am-btn am-btn-primary am-btn-xs">确认删除</button>
+        <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}

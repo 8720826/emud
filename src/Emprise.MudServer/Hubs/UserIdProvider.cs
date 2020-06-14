@@ -13,6 +13,7 @@ namespace Emprise.MudServer.Hubs
         public string GetUserId(HubConnectionContext context)
         {
             var userId = context.User?.FindFirst($"_PlayerId")?.Value;
+
             if (string.IsNullOrEmpty(userId))
             {
                 return null;

@@ -138,7 +138,7 @@ namespace Emprise.MudServer.CommandHandlers
                 Email = user.Email
             };
 
-            await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
+            await _httpAccessor.HttpContext.SignIn("user", jwtAccount);
 
             await _redisDb.KeyDelete(key);
 
@@ -186,7 +186,7 @@ namespace Emprise.MudServer.CommandHandlers
                 Email = user.Email
             };
 
-            await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
+            await _httpAccessor.HttpContext.SignIn("user", jwtAccount);
 
             if (await Commit())
             {
@@ -207,7 +207,7 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            await _httpAccessor.HttpContext.SignOut(CookieAuthenticationDefaults.AuthenticationScheme);
+            await _httpAccessor.HttpContext.SignOut("user");
 
             if (await Commit())
             {

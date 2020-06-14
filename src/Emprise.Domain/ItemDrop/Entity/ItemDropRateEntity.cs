@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Emprise.Domain.Room.Entity
+namespace Emprise.Domain.ItemDrop.Entity
 {
     [Table("ItemDropRate")]
     public class ItemDropRateEntity : BaseEntity

@@ -143,6 +143,7 @@ new Vue({
         },
         joinGame: function () {
             var that = this;
+
             connection = that.connection;
             connection = new signalR.HubConnectionBuilder().withUrl("/hub")
                 .withAutomaticReconnect([0, 3000, 5000, 10000, 15000, 30000, 300000])

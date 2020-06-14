@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Api;
-using Emprise.Admin.Data;
+using Emprise.Application.ItemDrop.Services;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.ItemDrop.Entity;
@@ -18,14 +18,20 @@ namespace Emprise.Admin.Pages.ItemDrop
 {
     public class IndexModel : BasePageModel
     {
-        public IndexModel(IMudClient mudClient,
-            IMapper mapper,
+
+        private readonly IItemDropAppService _itemDropAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public IndexModel(
             ILogger<IndexModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IItemDropAppService itemDropAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _itemDropAppService = itemDropAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -37,13 +43,7 @@ namespace Emprise.Admin.Pages.ItemDrop
 
         public async Task OnGetAsync(int pageIndex)
         {
-            var query = _db.ItemDrops.OrderBy(x => x.Id);
-            if (!string.IsNullOrEmpty(Keyword))
-            {
-                query = _db.ItemDrops.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
-            }
-
-            Paging = await query.Paged(pageIndex);
+            Paging = await _itemDropAppService.GetPaging(Keyword, pageIndex);
         }
     }
 }

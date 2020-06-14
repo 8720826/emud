@@ -3,16 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
-using Emprise.Domain.Core.Extensions;
+using Emprise.Application.Player.Services;
 using Emprise.Domain.Core.Models;
-using Microsoft.AspNetCore.Http;
+using Emprise.Domain.Player.Entity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -20,14 +14,19 @@ namespace Emprise.Admin.Pages.Player
 {
     public class IndexModel : BasePageModel
     {
-        public IndexModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IPlayerAppService _playerAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public IndexModel(
             ILogger<IndexModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IPlayerAppService playerAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _playerAppService = playerAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -39,15 +38,7 @@ namespace Emprise.Admin.Pages.Player
 
         public async Task OnGetAsync(int pageIndex)
         {
-            var query = _db.Players.OrderBy(x => x.Id);
-            if (!string.IsNullOrEmpty(Keyword))
-            {
-                query = _db.Players.Where(x => x.Name.Contains(Keyword)).OrderBy(x => x.Id);
-            }
-
-            Paging = await query.Paged(pageIndex);
-
-
+            Paging = await _playerAppService.GetPaging(Keyword,pageIndex);
         }
     }
 }

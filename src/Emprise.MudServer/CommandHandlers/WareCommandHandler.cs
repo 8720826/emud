@@ -94,7 +94,7 @@ namespace Emprise.MudServer.CommandHandlers
 
             var ids = playerWares.Select(x => x.WareId);
 
-            var wares = await _wareDomainService.GetAll(x => ids.Contains(x.Id));
+            var wares = (await _wareDomainService.GetAll()).Where(x => ids.Contains(x.Id));
             foreach (var playerWare in playerWares)
             {
                 var ware = wares.FirstOrDefault(x => x.Id == playerWare.WareId);

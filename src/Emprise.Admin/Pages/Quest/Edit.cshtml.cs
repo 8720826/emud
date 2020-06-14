@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
-using Emprise.Admin.Models.Quest;
+using Emprise.Application.Quest.Dtos;
+using Emprise.Application.Quest.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Quest.Models;
@@ -23,15 +19,19 @@ namespace Emprise.Admin.Pages.Quest
 {
     public class EditModel : BasePageModel
     {
-        public EditModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IQuestAppService _questAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public EditModel(
             ILogger<EditModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IQuestAppService questAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
-
+            _mapper = mapper;
+            _questAppService = questAppService;
+            _appConfig = appConfig.CurrentValue;
         }
 
 
@@ -50,14 +50,12 @@ namespace Emprise.Admin.Pages.Quest
         public List<QuestReward> TaskRewards { get; set; } = new List<QuestReward>();
 
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id > 0)
             {
-                var quest = await _db.Quests.FindAsync(id);
+                var quest = await _questAppService.Get(id);
                 if (quest == null)
                 {
                     ErrorMessage = $"任务 {id} 不存在！";
@@ -91,11 +89,6 @@ namespace Emprise.Admin.Pages.Quest
 
             }
 
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Quest/Index");
-            }
             return Page();
         }
 
@@ -107,7 +100,17 @@ namespace Emprise.Admin.Pages.Quest
                 return Page();
             }
 
-
+            var result = await _questAppService.Update(id, Quest);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Quest/Index");
+            }
+            /*
             try
             {
                 var quest = await _db.Quests.FindAsync(id);
@@ -138,7 +141,7 @@ namespace Emprise.Admin.Pages.Quest
             }
 
             return Redirect(UrlReferer);
-
+            */
 
         }
     }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Api;
-using Emprise.Admin.Data;
 using Emprise.Admin.Models.Room;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;

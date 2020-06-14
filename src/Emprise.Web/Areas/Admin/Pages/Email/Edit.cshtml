@@ -1,0 +1,132 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Email.EditModel
+@{
+    ViewData["Title"] = "站内信";
+    ViewData["MenuGroup"] = MenuGroupEnum.Game;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="~/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="~/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="~/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">站内信</strong> / <small>编辑站内信</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Email.Title" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Email.Title">
+                            <span asp-validation-for="Email.Title" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Email.Type" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(EmailTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="Email.Type" type="radio" name="Email.Type" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+                            <span asp-validation-for="Email.Type" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Email.TypeId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            <input type="text" class="am-input-sm" asp-for="Email.TypeId">
+                            <span asp-validation-for="Email.TypeId" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Email.ExpiryDate" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="date" class="am-input-sm" asp-for="Email.ExpiryDate">
+                            <span asp-validation-for="Email.ExpiryDate" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Email.Content" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Email.Content"></textarea>
+                            <span asp-validation-for="Email.Content" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+            $(function () {
+                Simditor.locale = 'zh-CN';//设置中文
+                var editor = new Simditor({
+                    textarea: $("#description"),  //textarea的id
+                    placeholder: '请输入邮件内容',
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    pasteImage: true,//允许粘贴图片
+                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
+                });
+
+                $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+            });
+    </script>
+}

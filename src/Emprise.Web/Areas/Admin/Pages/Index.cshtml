@@ -1,0 +1,40 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.IndexModel
+@{
+    ViewData["Title"] = "首页";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+<div class="am-cf am-padding am-padding-bottom-0">
+    <div class="am-fl am-cf">
+        <strong class="am-text-primary am-text-lg">@(Model.SiteName)首页</strong> /
+        <small>Defaut Page</small>
+    </div>
+</div>
+
+<hr />
+
+<div class="am-g">
+    <div class="am-u-sm-12 am-u-sm-centered">
+        <h2>EMUD</h2>
+        <p>欢迎使用EMUD后台管理系统。</p>
+        <hr />
+    </div>
+
+    <div class="am-u-sm-12 am-u-md-8 am-u-md-pull-4">
+        <h3>快捷入口</h3>
+        <p></p>
+        <ol>
+            <li><a href="">地图管理</a></li>
+            <li><a href="">NPC管理</a></li>
+        </ol>
+
+
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var menuGroup = "";
+    </script>
+}

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Api;
-using Emprise.Admin.Data;
 using Emprise.Admin.Entity;
+using Emprise.Application.Admin.Log.Services;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +20,10 @@ namespace Emprise.Admin.Pages.ScriptCommand
         public IndexModel(IMudClient mudClient,
             IMapper mapper,
             ILogger<IndexModel> logger,
-            EmpriseDbContext db,
+            IOperatorLogAppService operatorLogAppService,
             IOptionsMonitor<AppConfig> appConfig,
             IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            : base(appConfig, httpAccessor, mapper, logger, operatorLogAppService, mudClient)
         {
 
         }

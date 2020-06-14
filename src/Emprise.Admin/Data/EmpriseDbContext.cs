@@ -1,6 +1,6 @@
 ﻿
 using Emprise.Admin.Entity;
-using Emprise.Domain.ItemDrop.Entity;
+using Emprise.Admin.Models.ItemDrop;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -53,7 +53,8 @@ namespace Emprise.Admin.Data
 
         public DbSet<ItemDropEntity> ItemDrops { get; set; }
 
-
+        public DbSet<ItemDropRateEntity> ItemDropRates { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NpcScriptEntity>()

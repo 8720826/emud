@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Models.Email;
+using Emprise.Application.Email.Dtos;
+using Emprise.Application.Email.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
@@ -20,14 +19,19 @@ namespace Emprise.Admin.Pages.Email
     public class EditModel : BasePageModel
     {
 
-        public EditModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IEmailAppService _emailAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public EditModel(
             ILogger<EditModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IEmailAppService emailAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _emailAppService = emailAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -37,22 +41,14 @@ namespace Emprise.Admin.Pages.Email
         public string ErrorMessage { get; set; }
 
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
-
 
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Email/Index");
-            }
 
             if (id > 0)
             {
-                var email = await _db.Emails.FindAsync(id);
+                var email = await _emailAppService.Get(id);
 
                 Email = _mapper.Map<EmailInput>(email);
 
@@ -72,6 +68,18 @@ namespace Emprise.Admin.Pages.Email
                 return Page();
             }
 
+            var result = await _emailAppService.Update(id, Email);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Email/Index");
+            }
+
+            /*
             try
             {
                 var email = await _db.Emails.FindAsync(id);
@@ -105,6 +113,7 @@ namespace Emprise.Admin.Pages.Email
             }
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

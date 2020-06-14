@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
+using Emprise.Application.Player.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Player.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,14 +19,19 @@ namespace Emprise.Admin.Pages.Player
     public class DeleteModel : BasePageModel
     {
 
-        public DeleteModel(IMudClient mudClient,
+        private readonly IPlayerAppService _playerAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public DeleteModel(
+            ILogger<IndexModel> logger,
+            IPlayerAppService playerAppService,
             IMapper mapper,
-            ILogger<DeleteModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _playerAppService = playerAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -35,21 +39,12 @@ namespace Emprise.Admin.Pages.Player
 
         public string ErrorMessage { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
-
-
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Player/Index");
-            }
 
             if (id > 0)
             {
-                Player = await _db.Players.FindAsync(id);
+                Player = await _playerAppService.Get(id);
                 if (Player == null)
                 {
                     ErrorMessage = $"玩家 {id} 不存在！";
@@ -71,30 +66,17 @@ namespace Emprise.Admin.Pages.Player
                 return Page();
             }
 
-            try
+            var result = await _playerAppService.Delete(id);
+            if (!result.IsSuccess)
             {
-                var player = await _db.Players.FindAsync(id);
-                _db.Players.Remove(player);
-                await _db.SaveChangesAsync();
-
-                await AddSuccess(new OperatorLog
-                {
-                    Type = OperatorLogType.删除玩家,
-                    Content = JsonConvert.SerializeObject(player)
-                });
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-                await AddError(new OperatorLog
-                {
-                    Type = OperatorLogType.删除玩家,
-                    Content = $"id={id}，ErrorMessage={ErrorMessage}"
-                });
+                ErrorMessage = result.Message;
                 return Page();
             }
+            else
+            {
+                return RedirectToPage("/Player/Index");
+            }
 
-            return Redirect(UrlReferer);
         }
     }
 }

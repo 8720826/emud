@@ -19,6 +19,10 @@ namespace Emprise.Domain.User.Services
             _userRepository = userRepository;
         }
 
+        public async Task<IQueryable<UserEntity>> GetAll()
+        {
+            return await _userRepository.GetAll();
+        }
 
         public async Task<UserEntity> Get(Expression<Func<UserEntity, bool>> where)
         {
@@ -39,6 +43,7 @@ namespace Emprise.Domain.User.Services
         {
              await _userRepository.Update(user);
         }
+
 
         public void Dispose()
         {

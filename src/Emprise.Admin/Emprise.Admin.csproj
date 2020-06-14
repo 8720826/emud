@@ -6,6 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entity\**" />
+    <Content Remove="Entity\**" />
+    <EmbeddedResource Remove="Entity\**" />
+    <None Remove="Entity\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\EmpriseDbContext.cs" />
     <Compile Remove="Extensions\PagerExtensions.cs" />
     <Compile Remove="Middlewares\UploadMiddleware.cs" />
     <Compile Remove="Models\AppConfig.cs" />
@@ -35,12 +43,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Emprise.Application\Emprise.Application.csproj" />
     <ProjectReference Include="..\Emprise.Domain\Emprise.Domain.csproj" />
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Data\" />
     <Folder Include="Middlewares\" />
+    <Folder Include="Models\Admin\" />
+    <Folder Include="Models\Config\" />
+    <Folder Include="Models\Email\" />
+    <Folder Include="Models\ItemDrop\" />
+    <Folder Include="Models\Map\" />
+    <Folder Include="Models\Player\" />
+    <Folder Include="Models\Quest\" />
+    <Folder Include="Models\User\" />
+    <Folder Include="Models\Ware\" />
   </ItemGroup>
 
 </Project>

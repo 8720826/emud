@@ -50,6 +50,7 @@ namespace Emprise.Infra.Middleware
                 errors
             });
 
+
             await context.Response.WriteAsync(result);
         }
     }

@@ -29,6 +29,7 @@ using Emprise.MudServer.Hubs.Models;
 using Emprise.MudServer.Models;
 using Emprise.MudServer.Queues;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -247,7 +248,7 @@ namespace Emprise.MudServer.CommandHandlers
                 PlayerName = player.Name
             };
 
-            await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
+            await _httpAccessor.HttpContext.SignIn("user", jwtAccount);
 
             if(await Commit())
             {
@@ -291,7 +292,7 @@ namespace Emprise.MudServer.CommandHandlers
                 PlayerName = player.Name
             };
 
-            await _httpAccessor.HttpContext.SignIn(CookieAuthenticationDefaults.AuthenticationScheme, jwtAccount);
+            await _httpAccessor.HttpContext.SignIn("user", jwtAccount);
 
             if (await Commit())
             {

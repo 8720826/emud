@@ -1,0 +1,144 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Email.IndexModel
+@{
+    ViewData["Title"] = "站内信";
+    ViewData["MenuGroup"] = MenuGroupEnum.Game;
+}
+
+@section CssJs {
+    <link rel="stylesheet" href="~/css/amazeui.switch.css" />
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">站内信管理</strong> / <small>站内信列表</small></div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+            <div class="am-btn-toolbar am-fl">
+                <div class="am-btn-group am-btn-group-xs">
+                    <a asp-page="Add" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-cf">
+        <form class="am-form">
+            <div class="am-fr">
+                <div class="am-input-group am-input-group-sm">
+                    <input type="text" class="am-form-field" asp-for="Keyword">
+                    <span class="am-input-group-btn">
+                        <button class="am-btn am-btn-default" type="submit">搜索</button>
+                    </span>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-sm-12">
+        <form class="am-form">
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>标题</th>
+                        <th>内容</th>
+                        <th>发送时间</th>
+                        <th>过期时间</th>
+                        <th>类型</th>
+                        <th>相关Id</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Paging.Data)
+                    {
+
+
+                        <tr>
+                            <td>@(item.Id)</td>
+                            <td><a asp-page="./Edit" asp-route-id="@item.Id">@(item.Title)</a></td>
+                            <td title="@(item.Content)">@(item.Content)</td>
+                            <td>@(item.SendDate)</td>
+                            <td>@(item.ExpiryDate)</td>
+                            <td>@(item.Type)</td>
+                            <td>@(item.TypeId)</td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+
+                                        <a asp-page="./Edit" asp-route-id="@item.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="am-cf">
+                共 @(Model.Paging.Count) 条记录
+                <div class="am-fr">
+                    <ul class="am-pagination">
+                        <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
+
+                        @for (var i = 0; i < Model.Paging.PageCount; i++)
+                        {
+                            if (Model.Paging.PageIndex == i + 1)
+                            {
+                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
+                            }
+                        }
+
+                        <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr />
+            <p>注：.....</p>
+        </form>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+
+    <script src="~/js/amazeui.switch.min.js"></script>
+    <script src="~/js/axios.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('[type="checkbox"]').bootstrapSwitch();
+
+
+            $('[type="checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                                    var sId = $(this).attr("sId")*1;
+                                    axios.post('@(Url.Page("/Npc/Index"))', {
+                                        sId: sId,
+                    isEnable: state
+                                    },
+                    {
+                                        headers: {
+                                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                                        }
+                                    })
+                    .then(function (response) {
+                                        console.log(response);
+                                    })
+                    .catch(function (error) {
+                                        console.log(error);
+                                    });
+            });
+        });
+    </script>
+}

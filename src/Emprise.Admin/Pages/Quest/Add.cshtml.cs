@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Quest;
+using Emprise.Application.Quest.Dtos;
+using Emprise.Application.Quest.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
@@ -20,16 +18,19 @@ namespace Emprise.Admin.Pages.Quest
 {
     public class AddModel : BasePageModel
     {
-
-        public AddModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IQuestAppService _questAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public AddModel(
             ILogger<AddModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IQuestAppService questAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
-
+            _mapper = mapper;
+            _questAppService = questAppService;
+            _appConfig = appConfig.CurrentValue;
         }
 
         [BindProperty]
@@ -39,19 +40,11 @@ namespace Emprise.Admin.Pages.Quest
 
         public Array Conditions { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
 
         public void OnGet()
         {
             Conditions = Enum.GetNames(typeof(QuestTriggerConditionEnum));
 
-
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Quest/Index");
-            }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -59,10 +52,23 @@ namespace Emprise.Admin.Pages.Quest
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
+                Conditions = Enum.GetNames(typeof(QuestTriggerConditionEnum));
                 return Page();
             }
 
+            var result = await _questAppService.Add( Quest);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Quest/Index");
+            }
 
+
+            /*
             try
             {
                 var task = _mapper.Map<QuestEntity>(Quest);
@@ -89,7 +95,7 @@ namespace Emprise.Admin.Pages.Quest
 
 
             return Redirect(UrlReferer);
-
+            */
 
         }
     }

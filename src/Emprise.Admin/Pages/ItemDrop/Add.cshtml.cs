@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Models.ItemDrop;
+using Emprise.Application.ItemDrop.Dtos;
+using Emprise.Application.ItemDrop.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
-using Emprise.Domain.ItemDrop.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -21,15 +19,19 @@ namespace Emprise.Admin.Pages.ItemDrop
     public class AddModel : BasePageModel
     {
 
-
-        public AddModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IItemDropAppService _itemDropAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public AddModel(
             ILogger<AddModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IItemDropAppService itemDropAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _itemDropAppService = itemDropAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -38,16 +40,11 @@ namespace Emprise.Admin.Pages.ItemDrop
 
         public string ErrorMessage { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
+
 
         public void OnGet()
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Map/Index");
-            }
+
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -58,6 +55,18 @@ namespace Emprise.Admin.Pages.ItemDrop
                 return Page();
             }
 
+            var result = await _itemDropAppService.Add(ItemDrop);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Ware/Index");
+            }
+
+            /*
             try
             {
                 var itemDrop = _mapper.Map<ItemDropEntity>(ItemDrop);
@@ -87,6 +96,7 @@ namespace Emprise.Admin.Pages.ItemDrop
 
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

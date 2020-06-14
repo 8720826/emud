@@ -29,7 +29,7 @@
                 <p style="color:#666;font-size:10px;">注意：修改后1分钟内生效，<a href="@(Url.Page("Index"))">返回浏览模式</a></p>
                 <div class="am-fade  am-in am-active">
 
-                    @foreach (var config in Model.ConfigDtos)
+                    @foreach (var config in Model.Configs)
                     {
                         <div class="am-g am-margin-top">
                             <div class="am-u-sm-2 am-text-right">
@@ -72,7 +72,7 @@
                         </div>
                         <div class="am-u-sm-10">
                             <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
-                            <a href="@(Model.UrlReferer)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
                             </div>
@@ -81,9 +81,6 @@
                 </div>
             </div>
 
-            <div class="am-margin">
-                <input type="hidden" asp-for="UrlReferer">
-            </div>
         </form>
     </div>
 </div>

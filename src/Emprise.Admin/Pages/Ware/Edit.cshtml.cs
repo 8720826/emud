@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Models.Ware;
-using Emprise.Domain.Core.Enums;
+using Emprise.Application.Ware.Dtos;
+using Emprise.Application.Ware.Services;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Ware.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -20,14 +16,20 @@ namespace Emprise.Admin.Pages.Ware
 {
     public class EditModel : BasePageModel
     {
-        public EditModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IWareAppService _wareAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public EditModel(
             ILogger<EditModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IWareAppService wareAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _wareAppService = wareAppService;
+            _appConfig = appConfig.CurrentValue;
+
             Endpoint = _appConfig.Aliyun.Endpoint;
             AliyunOssHost = _appConfig.Aliyun.AliyunOssHost;
         }
@@ -36,9 +38,6 @@ namespace Emprise.Admin.Pages.Ware
         public WareInput Ware { get; set; }
 
         public string ErrorMessage { get; set; }
-
-        [BindProperty]
-        public string UrlReferer { get; set; }
 
 
         public string Endpoint { get; set; }
@@ -49,20 +48,15 @@ namespace Emprise.Admin.Pages.Ware
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Ware/Index");
-            }
-
 
             if (id > 0)
             {
 
-
-
-                var ware = await _db.Wares.FindAsync(id);
-
+                var ware = await _wareAppService.Get(id);
+                if (ware == null)
+                {
+                    return RedirectToPage("/Ware/Index");
+                }
                 Ware = _mapper.Map<WareInput>(ware);
 
                 if (!string.IsNullOrEmpty(ware.Effect))
@@ -87,15 +81,27 @@ namespace Emprise.Admin.Pages.Ware
                 return Page();
             }
 
+            var result = await _wareAppService.Update(id, Ware);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Ware/Index");
+            }
+            /*
             try
             {
-                var ware = await _db.Wares.FindAsync(id);
+                
+                var ware = await _wareAppService.Get(id);
                 if (ware == null)
                 {
                     ErrorMessage = $"物品 {id} 不存在！";
                     return Page();
                 }
-                var content = DifferenceComparison(ware, Ware);
+                var content = ware.ComparisonTo(Ware);
                 _mapper.Map(Ware, ware);
 
                 if (ware.Effect == null)
@@ -103,7 +109,9 @@ namespace Emprise.Admin.Pages.Ware
                     ware.Effect = "";
                 }
                 await _db.SaveChangesAsync();
+                
 
+              
                 await AddSuccess(new OperatorLog
                 {
                     Type = OperatorLogType.修改物品,
@@ -124,6 +132,7 @@ namespace Emprise.Admin.Pages.Ware
 
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

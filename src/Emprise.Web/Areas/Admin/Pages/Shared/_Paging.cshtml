@@ -1,0 +1,24 @@
+﻿
+@model Paging<RoomEntity>
+
+
+                共 @(Model.Count) 条记录
+                <div class="am-fr">
+                    <ul class="am-pagination">
+                        <li><a asp-route-pageIndex="1">«</a></li>
+
+                        @for (var i = 0; i < Model.PageCount; i++)
+                        {
+                            if (Model.PageIndex == i + 1)
+                            {
+                                <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-route-pageIndex="@(i+1)">@(i + 1)</a></li>
+                            }
+                        }
+ 
+                        <li><a asp-route-pageIndex="@(Model.PageCount)">»</a></li>
+                    </ul>
+                </div>

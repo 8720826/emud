@@ -20,10 +20,11 @@ using Emprise.Domain.Core.Models.Chat;
 using Emprise.MudServer.Commands;
 using Emprise.MudServer.Events;
 using Emprise.MudServer.Commands.EmailCommands;
+using Emprise.Infra.Authorization;
 
 namespace Emprise.MudServer.Hubs
 {
-    [Authorize]
+    [UserAuthorize]
     public class MudHub : BaseHub
     {
         private readonly IDelayedQueue  _delayedQueue;

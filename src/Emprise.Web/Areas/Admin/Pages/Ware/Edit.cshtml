@@ -1,0 +1,363 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Ware.EditModel
+@{
+    ViewData["Title"] = "物品管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="~/admin/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="~/admin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="~/admin/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="~/admin/webuploader/webuploader.css">
+
+    <script type="text/javascript" src="~/admin/js/template-web.js"></script>
+    <script type="text/javascript" src="~/admin/webuploader/webuploader.html5only.js"></script>
+
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">物品管理</strong> / <small>修改物品</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post" onsubmit="return check()">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="am-g">
+                <p></p>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Ware.Name" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Ware.Name">
+                            <span asp-validation-for="Ware.Name" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Ware.Category" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(WareCategoryEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="Ware.Category" type="radio" name="Ware.Category" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                </label>
+                            }
+                            <span asp-validation-for="Ware.Category" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Ware.Type" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(WareTypeEnum)))
+                            {
+                                var val = (int)item;
+
+                                if (val.ToString().Contains(((int)Model.Ware.Category).ToString()))
+                                {
+                                    <label class="am-btn am-btn-default am-btn-xs">
+                                        <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    </label>
+                                }
+                                else
+                                {
+                                    <label class="am-btn am-btn-default am-btn-xs" style="display:none">
+                                        <input asp-for="Ware.Type" type="radio" name="Ware.Type" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                    </label>
+                                }
+
+                            }
+                            <span asp-validation-for="Ware.Type" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Ware.Img" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <div id="uploader" class="wu-example">
+                                <input asp-for="Ware.Img" type="hidden" name="Ware.Img" />
+                                <div id="img"><img src="@(Model.AliyunOssHost)@(Model.Ware.Img)"></div>
+                                <div class="btns">
+                                    <div id="picker">选择文件</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Ware.Effect" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10" id="effect">
+                            <input type="hidden" asp-for="Ware.Effect">
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field effects" style="width: 100px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(WareEffectEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                            </div>
+                            <span asp-validation-for="Ware.Img" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-4"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Ware.Description" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Ware.Description"></textarea>
+                            <span asp-validation-for="Ware.Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+<partial name="_EffectTemplate.cshtml" />
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+        var wareEffects = @Html.Raw(JsonConvert.SerializeObject(Model.WareEffects));
+
+        var endpoint = "@(Model.Endpoint)";
+        var filepath = "";
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // 文件接收服务端。
+            server: endpoint,
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#picker',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+
+        uploader.on('uploadBeforeSend', function (obj, data) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "/oss/token",
+                dataType: "json"
+            }).done(function (result, status, xhr) {
+                //传入表单参数
+                var suffix = get_suffix(data.name);
+                filepath = result.key + suffix
+                data = $.extend(data, {
+                    "key": filepath,
+                    "policy": result.policy,
+                    "ossAccessKeyId": result.ossAccessKeyId,
+                    "success_action_status": 200,
+                    "signature": result.signature
+                });
+
+            });
+
+            if (!data.signature) {
+                return false;
+            }
+        });
+
+        //当文件上传成功时触发
+        uploader.on('uploadSuccess', function (file) {
+            var host = "@(Model.AliyunOssHost)";
+            $("#img").empty().append("<img src='" + host + filepath + "'>");
+            $("#Ware_Img").val(filepath);
+        });
+
+
+
+        $(function () {
+
+            Simditor.locale = 'zh-CN';//设置中文
+            var editor = new Simditor({
+                textarea: $("#description"),  //textarea的id
+                placeholder: '请输入物品描述',
+                toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                pasteImage: true,//允许粘贴图片
+                defaultImage: ''//编辑器插入的默认图片，此处可以删除
+            });
+
+            $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+
+
+
+            $(document).on("change", "#Ware_Category", function () {
+                var cate = $(this).attr("val");
+                $("input[name='Ware.Type']").each(function () {
+                    $(this).attr("checked", false).parent().show();
+                    var type = $(this).attr("val");
+                    if (!type.startsWith(cate)) {
+                        $(this).parent().hide();
+                    }
+                });
+            });
+
+
+
+            $(document).on("change", ".effects", function () {
+                var effect = $(this).val();
+                console.log("effect=" + effect);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (effect == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#effect-" + effect).length > 0) {
+                    $(this).after(template("effect-" + effect, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".effects").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var effectDiv = $(".effects").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(effectDiv);
+
+                    $(this).parent().parent().find(".effects:last").parent().after($(div));
+                }
+
+            });
+
+
+            $.each(wareEffects, function (i, item) {
+                $("#effect").find(".effects").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.effect).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
+        });
+
+        var startsWith = function (prefix) {
+            return this.slice(0, prefix.length) === prefix;
+        };
+
+
+        var get_suffix = function (filename) {
+            if (!filename) {
+                return "";
+            }
+            var pos = filename.lastIndexOf('.')
+            var suffix = "";
+            if (pos != -1) {
+                suffix = filename.substring(pos)
+            }
+            return suffix;
+        }
+
+        function check() {
+            var hasEmptyValue = false;
+            wareEffects = [];
+            $("#effect").find(".am-form-group").each(function () {
+                var effect = $(this).children(".effects").val();
+                if (effect == "") {
+                    return true;
+                }
+                console.log("effect=" + effect);
+
+                var wareEffect = {
+                    effect: effect,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    wareEffect.attrs.push({ attr: attr, val: val });
+                });
+
+                wareEffects.push(wareEffect);
+
+                console.log("wareEffect=" + JSON.stringify(wareEffect));
+            });
+            var wareEffectData = JSON.stringify(wareEffects);
+            $("#Ware_Effect").val(wareEffectData);
+
+
+            if (hasEmptyValue) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+}

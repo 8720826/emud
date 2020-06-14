@@ -3,42 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Emprise.Admin.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Emprise.Domain.Core.Models;
-using Emprise.Domain.Core.Enums;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Emprise.Admin.Api;
+using Emprise.Application.Admin.Services;
 
 namespace Emprise.Admin.Pages
 {
     public class LogoutModel : BasePageModel
     {
-        public LogoutModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IAdminAppService _adminAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public LogoutModel(
             ILogger<LogoutModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IAdminAppService adminAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _adminAppService = adminAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
         public async Task<IActionResult> OnGetAsync()
         {
-            await HttpContext.SignOutAsync("admin");
-
-            await AddSuccess(new OperatorLog
+            var result = await _adminAppService.Logout();
+            if (!result.IsSuccess)
             {
-                Type = OperatorLogType.退出登录,
-                Content = ""
-            });
-            return RedirectToPage("Login");
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("Login");
+            }
         }
     }
 }

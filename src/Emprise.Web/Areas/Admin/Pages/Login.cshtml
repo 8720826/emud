@@ -1,0 +1,66 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.LoginModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>EMUD后台管理系统登录 - emprise.cn</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="~/admin/css/amazeui.min.css" />
+    <style>
+        .header {
+            text-align: center;
+        }
+
+            .header h1 {
+                font-size: 200%;
+                color: #333;
+                margin-top: 30px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <hr />
+    </div>
+    <div class="am-g">
+        <div class="am-u-lg-6 am-u-md-8 am-u-sm-centered">
+            <h3>登录</h3>
+            <hr>
+            @if (!Model.HasSetAdmin)
+            {
+        <p style="color:#FFB800">还未设置管理账号，输入账号密码将登录并自动创建为管理员</p>
+            }
+            <br /><br />
+
+            <form method="post" class="am-form">
+                <label asp-for="LoginInput.Name">账号:</label>
+                <input type="text" asp-for="LoginInput.Name">
+                <br />
+                <label asp-for="LoginInput.Password">密码:</label>
+                <input type="password" asp-for="LoginInput.Password">
+                <br />
+                
+                <div class="am-cf">
+                    <input type="submit" name="" value="登 录" class="am-btn am-btn-primary am-btn-sm am-fl">
+                </div>
+
+                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+            </form>
+            <hr>
+            <p>© @(DateTime.Now.Year) 版权所有.  <a href="http://emprise.cn/" target="_blank">emprise.cn</a></p>
+        </div>
+    </div>
+</body>
+</html>

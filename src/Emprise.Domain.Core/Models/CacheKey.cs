@@ -8,6 +8,8 @@ namespace Emprise.Domain.Core.Models
     {
         public const int ExpireMinutes = 60;
 
+        public const string MapList = "MapList";
+        public const string Map = "Map_{0}";
 
         public const string RoomList = "RoomList";
         public const string Room = "Room_{0}";
@@ -28,5 +30,7 @@ namespace Emprise.Domain.Core.Models
 
 
         public const string PlayerQuestList = "PlayerQuestList_{0}";
+
+        public const string Email = "Email_{0}";
     }
 }

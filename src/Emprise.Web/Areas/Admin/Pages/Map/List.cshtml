@@ -1,0 +1,119 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Map.ListModel
+@{
+    Layout = null;
+}
+
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewData["Title"] - EMUD后台管理系统 - emprise.cn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="~/css/amazeui.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css">
+    <link rel="stylesheet" href="~/css/app.css">
+</head>
+<body style="height:100%">
+    <div style="height:100%">
+
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">地图管理</strong> / <small>地图列表</small></div>
+        </div>
+
+        <div class="am-g">
+            <div class="am-u-md-3 am-cf">
+                <form class="am-form">
+                    <div class="am-fr">
+                        <div class="am-input-group am-input-group-sm">
+                            <input type="text" class="am-form-field" asp-for="Keyword">
+                            <span class="am-input-group-btn">
+                                <button class="am-btn am-btn-default" type="submit">搜索</button>
+                            </span>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="am-g">
+            <div class="am-u-sm-12">
+                <form class="am-form">
+                    <table class="am-table am-table-striped am-table-hover table-main">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>地图名</th>
+                                <th>描述</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var map in Model.Paging.Data)
+                            {
+                                <tr>
+                                    <td>@(map.Id)</td>
+                                    <td><a asp-page="./Edit" asp-route-id="@map.Id">@(map.Name)</a></td>
+                                    <td>@(map.Description)</td>
+                                    <td>
+                                        <div class="am-btn-toolbar">
+                                            <div class="am-btn-group am-btn-group-xs">
+                                                <a id="@(map.Id)" name="@(map.Name)" href="javascript: ;" class="am-btn am-btn-default am-btn-xs am-text-secondary selectMap"><span class="am-icon-dot-circle-o"></span> 选中</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="am-cf">
+                        共 @(Model.Paging.Count) 条记录
+                        <div class="am-fr">
+                            <ul class="am-pagination">
+                                <li><a asp-route-pageIndex="1" asp-route-keyword="@(Model.Keyword)">«</a></li>
+
+                                @for (var i = 0; i < Model.Paging.PageCount; i++)
+                                {
+                                    if (Model.Paging.PageIndex == i + 1)
+                                    {
+                                        <li class="am-active"><a href="javascript:;">@(i + 1)</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a asp-route-pageIndex="@(i+1)" asp-route-keyword="@(Model.Keyword)">@(i + 1)</a></li>
+                                    }
+                                }
+
+                                <li><a asp-route-pageIndex="@(Model.Paging.PageCount)" asp-route-keyword="@(Model.Keyword)">»</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr />
+                    <p>注：.....</p>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+        @section Scripts {
+            <script src="~/js/jquery.min.js"></script>
+            <script src="~/js/amazeui.min.js"></script>
+            <script>
+                $(function () {
+                    $(".selectMap").on("click", function () {
+                        var id = $(this).attr("id");
+                        var name = $(this).attr("name");
+                        parent.selectMap(id, name);
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    })
+                });
+            </script>
+        }
+
+</body>
+</html>

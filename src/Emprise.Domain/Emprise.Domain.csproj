@@ -59,4 +59,8 @@
     <ProjectReference Include="..\Emprise.Infra\Emprise.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="OperatorLog\" />
+  </ItemGroup>
+
 </Project>

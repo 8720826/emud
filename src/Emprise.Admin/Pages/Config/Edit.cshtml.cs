@@ -5,67 +5,57 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Models.Config;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using Microsoft.Extensions.Configuration;
-using Emprise.Admin.Data;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Emprise.Domain.Core.Enums;
 using Emprise.Admin.Api;
+using Emprise.Application.Config.Services;
+using Emprise.Application.Config.Dtos;
+using Emprise.Domain.Config.Models;
 
 namespace Emprise.Admin.Pages.Config
 {
     public class EditModel : BasePageModel
     {
-        private readonly IConfiguration _configuration;
-        private IDatabase _redisDb;
-        public EditModel(IMudClient mudClient,
-            IMapper mapper,
+
+        private readonly IConfigAppService _configAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public EditModel(
             ILogger<EditModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor,
-            IConfiguration configuration)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IConfigAppService configAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
-            _configuration = configuration;
-            var redis = ConnectionMultiplexer.Connect(_configuration.GetValue<string>("Redis"));
-            _redisDb = redis.GetDatabase();
+            _mapper = mapper;
+            _configAppService = configAppService;
+            _appConfig = appConfig.CurrentValue;
+
         }
 
         public string ErrorMessage { get; set; }
 
-        public List<ConfigDto> ConfigDtos { get; set; }
+        public List<ConfigModel> Configs { get; set; }
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
 
-        public Dictionary<string, string> Configs = new Dictionary<string, string>();
+
+        //public Dictionary<string, string> Configs = new Dictionary<string, string>();
 
         public Dictionary<string, string> NewConfigs = new Dictionary<string, string>();
         public async Task OnGetAsync()
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Config/Index");
-            }
-
-            ConfigDtos = new List<ConfigDto>();
-
-            var configurations = _redisDb.HashGetAll("configurations");
-            Configs = configurations.ToDictionary(x => x.Name.ToString(), x => x.Value.ToString());
-
-
-            GetValue(typeof(AppConfig));
+            Configs = await _configAppService.GetConfigs();
 
         }
 
+        /*
         public void GetValue(Type type, string parentName = "")
         {
 
@@ -96,7 +86,7 @@ namespace Emprise.Admin.Pages.Config
 
             }
         }
-
+        */
         public async Task<IActionResult> OnPostAsync()
         {
             ErrorMessage = "";
@@ -105,6 +95,20 @@ namespace Emprise.Admin.Pages.Config
                 ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First();
                 return Page();
             }
+
+            var dic = Request.Form.Distinct().ToDictionary(x => x.Key, x => x.Value.ToString());
+            var result = await _configAppService.UpdateConfigs(dic); ;
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("./Index");
+            }
+
+            /*
             try
             {
                 SetValue(typeof(AppConfig));
@@ -141,6 +145,7 @@ namespace Emprise.Admin.Pages.Config
             });
 
             return Redirect(UrlReferer);
+            */
         }
 
 

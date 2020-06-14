@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Email;
+using Emprise.Application.Email.Dtos;
+using Emprise.Application.Email.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
@@ -21,14 +19,19 @@ namespace Emprise.Admin.Pages.Email
     public class AddModel : BasePageModel
     {
 
-        public AddModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IEmailAppService _emailAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public AddModel(
             ILogger<AddModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IEmailAppService emailAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _emailAppService = emailAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -42,11 +45,7 @@ namespace Emprise.Admin.Pages.Email
 
         public void OnGet()
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Npc/Index");
-            }
+
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -57,6 +56,18 @@ namespace Emprise.Admin.Pages.Email
                 return Page();
             }
 
+            var result = await _emailAppService.Add(Email);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Email/Index");
+            }
+
+            /*
             try
             {
                 var email = _mapper.Map<EmailEntity>(Email);
@@ -84,6 +95,7 @@ namespace Emprise.Admin.Pages.Email
 
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

@@ -1,0 +1,694 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Quest.EditModel
+@{
+    ViewData["Title"] = "任务管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="~/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="~/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/simditor/scripts/simditor-html.js"></script>
+
+    <script type="text/javascript" src="~/js/template-web.js"></script>
+
+    <link rel="stylesheet" href="~/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <style>
+        .simditor {
+            max-width: 1000px !important;
+        }
+
+            .simditor .simditor-body {
+                /*开启滚动条*/
+                overflow-y: auto;
+                /*设置高度*/
+                max-height: 120px !important;
+            }
+    </style>
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">任务管理</strong> / <small>修改任务</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post" onsubmit="return check()">
+            <div class="am-g">
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Name" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Quest.Name">
+                            <span asp-validation-for="Quest.Name" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.SortId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Quest.SortId">
+                            <span asp-validation-for="Quest.SortId" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6">从小到大排序</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.TimeLimit" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Quest.TimeLimit">
+                            <span asp-validation-for="Quest.TimeLimit" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6">0为不限制</div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Type" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(QuestTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="Quest.Type" type="radio" name="Quest.Type" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+                            <span asp-validation-for="Quest.Type" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Period" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(QuestPeriodEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="Quest.Period" type="radio" name="Quest.Period" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+                            <span asp-validation-for="Quest.Period" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.TakeCondition" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10" id="takeCondition">
+                            <input type="hidden" asp-for="Quest.TakeCondition">
+                            <div class="am-form-inline am-form-group">
+
+                                <select class="am-input-sm am-form-field takeConditions" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(QuestTakeConditionEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Quest.TakeCondition" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Target" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10" id="taskTarget">
+                            <input type="hidden" asp-for="Quest.Target">
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field targets" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(QuestTargetEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Quest.Target" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Consume" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10" id="taskConsume">
+                            <input type="hidden" asp-for="Quest.Consume">
+                            <div class="am-form-inline am-form-group">
+                                <select class="am-input-sm am-form-field consumes" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(QuestConsumeEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Quest.Consume" class="text-danger"></span>
+                            </div>
+
+                        </div>
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Reward" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10" id="taskReward">
+                            <input type="hidden" asp-for="Quest.Reward">
+                            <div class="am-form-inline am-form-group">
+
+                                <select class="am-input-sm am-form-field rewards" style="width: 180px;">
+                                    <option value="">请选择</option>
+                                    @foreach (var item in Enum.GetValues(typeof(QuestRewardEnum)))
+                                    {
+                                        <option value="@(item.ToString())">@(item.ToString())</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="Quest.Reward" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="am-u-sm-1"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.Description" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Quest.Description"></textarea>
+                            <span asp-validation-for="Quest.Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @*
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.BeforeCreate" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.BeforeCreate"></textarea>
+                <span asp-validation-for="Quest.BeforeCreate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.CreatedWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.CreatedWords"></textarea>
+                <span asp-validation-for="Quest.CreatedWords" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.InProgressWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.InProgressWords"></textarea>
+                <span asp-validation-for="Quest.InProgressWords" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="am-g am-margin-top-sm">
+            <div class="am-u-sm-2 am-text-right">
+                <label asp-for="Quest.CompletedWords" class="control-label"></label>
+            </div>
+            <div class="am-u-sm-10">
+                <textarea rows="5" placeholder="" id="description" asp-for="Quest.CompletedWords"></textarea>
+                <span asp-validation-for="Quest.CompletedWords" class="text-danger"></span>
+            </div>
+        </div>
+                    *@
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<partial name="_ScriptTemplate.cshtml" />
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+         var takeConditions = @Html.Raw(JsonConvert.SerializeObject(Model.TakeConditions));
+        
+
+        var taskTargets = @Html.Raw(JsonConvert.SerializeObject(Model.TaskTargets));
+        var taskConsumes = @Html.Raw(JsonConvert.SerializeObject(Model.TaskConsumes));
+        var taskRewards = @Html.Raw(JsonConvert.SerializeObject(Model.TaskRewards));
+
+
+        $(function () {
+
+
+
+
+
+            $(document).on("change", ".takeConditions", function () {
+                var takeCondition = $(this).val();
+                console.log("takeCondition=" + takeCondition);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (takeCondition == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#condition-" + takeCondition).length > 0) {
+                    $(this).after(template("condition-" + takeCondition, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".takeConditions").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var takeConditionDiv = $(".takeConditions").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(takeConditionDiv);
+
+                    $(this).parent().parent().find(".takeConditions:last").parent().after($(div));
+                }
+
+            });
+
+
+            $(document).on("change", ".targets", function () {
+                var target = $(this).val();
+                console.log("target=" + target);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (target == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#target-" + target).length > 0) {
+                    $(this).after(template("target-" + target, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".targets").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var targetDiv = $(".targets").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(targetDiv);
+
+                    $(this).parent().parent().find(".targets:last").parent().after($(div));
+                }
+            });
+
+
+            $(document).on("change", ".consumes", function () {
+                var consume = $(this).val();
+                console.log("consume=" + consume);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (consume == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#consume-" + consume).length > 0) {
+                    $(this).after(template("consume-" + consume, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".consumes").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var consumeDiv = $(".consumes").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(consumeDiv);
+
+                    $(this).parent().parent().find(".consumes:last").parent().after($(div));
+                }
+            });
+
+            $(document).on("change", ".rewards", function () {
+                var reward = $(this).val();
+                console.log("reward=" + reward);
+                $(this).nextAll("select").remove();
+                $(this).nextAll("input").remove();
+
+                if (reward == "") {
+                    return;
+                }
+
+                var data = {};
+
+                if ($("#reward-" + reward).length > 0) {
+                    $(this).after(template("reward-" + reward, data));
+                }
+
+                var hasValue = true;
+                $(this).parent().parent().find(".rewards").each(function () { if ($(this).val() == "") { hasValue = false; return; } });
+
+                if (hasValue) {
+                    var rewardDiv = $(".rewards").eq(0).clone();
+                    var div = $("<div class='am-form-inline am-form-group'></div>");
+                    $(div).append(rewardDiv);
+
+                    $(this).parent().parent().find(".rewards:last").parent().after($(div));
+                }
+            });
+
+
+            Simditor.locale = 'zh-CN';//设置中文
+
+            $("textarea").each(function () {
+                var obj = $(this);
+                var editor = new Simditor({
+                    textarea: obj,  //textarea的id
+                    placeholder: '',
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    pasteImage: true,//允许粘贴图片
+                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
+                });
+            });
+
+
+
+            $("input[type=radio]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+
+
+
+            $.each(takeConditions, function (i, item) {
+                $("#takeCondition").find(".takeConditions").each(function () {
+                    if ($(this).val() == "") {
+
+                        $(this).val(item.condition).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
+
+            $.each(taskTargets, function (i, item) {
+                $("#taskTarget").find(".targets").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.target).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
+
+            $.each(taskConsumes, function (i, item) {
+                $("#taskConsume").find(".consumes").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.consume).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
+
+            $.each(taskRewards, function (i, item) {
+                $("#taskReward").find(".rewards").each(function () {
+                    if ($(this).val() == "") {
+                        $(this).val(item.reward).trigger("change");
+                        $(this).parent().children(".attr").each(function () {
+                            var $this = $(this);
+                            var attr = $(this).attr("attr");
+
+                            $.each(item.attrs, function (j, data) {
+                                console.log("data.attr=" + data.attr);
+                                if (data.attr == attr) {
+                                    $this.val(data.val);
+                                }
+                            });
+                        });
+                        return false;
+                    }
+                });
+            });
+        });
+
+
+
+        function check() {
+            var hasEmptyValue = false;
+            var triggers = [];
+            $("#taskTrigger").find(".am-form-group").each(function () {
+                var condition = $(this).children(".triggerConditions").val();
+                if (condition == "") {
+                    return true;
+                }
+                console.log("condition=" + condition);
+
+                var taskTrigger = {
+                    condition: condition,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    taskTrigger.attrs.push({ attr: attr, val: val });
+                });
+
+                triggers.push(taskTrigger);
+
+                //console.log("triggers=" + JSON.stringify(triggers));
+            });
+            var triggerData = JSON.stringify(triggers);
+            $("#Task_TriggerCondition").val(triggerData);
+
+            var takes = [];
+            $("#takeCondition").find(".am-form-group").each(function () {
+                var condition = $(this).children(".takeConditions").val();
+                if (condition == "") {
+                    return true;
+                }
+                console.log("condition=" + condition);
+
+                var takeCondition = {
+                    condition: condition,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    takeCondition.attrs.push({ attr: attr, val: val });
+                });
+
+                takes.push(takeCondition);
+
+                //console.log("triggers=" + JSON.stringify(triggers));
+            });
+
+            var takeData = JSON.stringify(takes);
+            $("#Quest_TakeCondition").val(takeData);
+
+            var targets = [];
+            $("#taskTarget").find(".am-form-group").each(function () {
+                var target = $(this).children(".targets").val();
+                if (target == "") {
+                    return true;
+                }
+                console.log("target=" + target);
+
+                var taskTarget = {
+                    target: target,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    taskTarget.attrs.push({ attr: attr, val: val });
+                });
+
+                targets.push(taskTarget);
+
+                //console.log("targets=" + JSON.stringify(targets));
+
+            });
+            var targetData = JSON.stringify(targets);
+            $("#Quest_Target").val(targetData);
+
+
+            var consumes = [];
+            $("#taskConsume").find(".am-form-group").each(function () {
+                var consume = $(this).children(".consumes").val();
+                if (consume == "") {
+                    return true;
+                }
+                console.log("consume=" + consume);
+
+                var taskConsume = {
+                    consume: consume,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    taskConsume.attrs.push({ attr: attr, val: val });
+                });
+
+                consumes.push(taskConsume);
+
+                //console.log("consumes=" + JSON.stringify(consumes));
+
+
+            });
+            var consumeData = JSON.stringify(consumes);
+            $("#Quest_Consume").val(consumeData);
+
+
+            var rewards = [];
+            $("#taskReward").find(".am-form-group").each(function () {
+                var reward = $(this).children(".rewards").val();
+                if (reward == "") {
+                    return true;
+                }
+                console.log("reward=" + reward);
+
+                var taskReward = {
+                    reward: reward,
+                    attrs: []
+                };
+                $(this).children(".attr").each(function () {
+                    var val = $(this).val();
+                    var attr = $(this).attr("attr");
+
+                    if (val == "") {
+                        $(this).css("border", "1px solid red");;
+                        hasEmptyValue = true;
+                    } else {
+                        $(this).css("border", "1px solid #ccc");;
+                    }
+
+                    taskReward.attrs.push({ attr: attr, val: val });
+                });
+
+                rewards.push(taskReward);
+
+                //console.log("consumes=" + JSON.stringify(consumes));
+
+
+            });
+            var rewardData = JSON.stringify(rewards);
+            $("#Quest_Reward").val(rewardData);
+
+
+            if (hasEmptyValue) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+}

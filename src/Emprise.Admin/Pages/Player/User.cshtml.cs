@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
+using Emprise.Application.Player.Services;
+using Emprise.Application.User.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.User.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -19,14 +20,22 @@ namespace Emprise.Admin.Pages.Player
     public class UserModel : BasePageModel
     {
 
-        public UserModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IPlayerAppService _playerAppService;
+        private readonly IUserAppService _userAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public UserModel(
             ILogger<UserModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IPlayerAppService playerAppService,
+            IUserAppService userAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _playerAppService = playerAppService;
+            _userAppService = userAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -38,29 +47,14 @@ namespace Emprise.Admin.Pages.Player
 
         public async Task OnGetAsync(int id)
         {
-            User = await _db.Users.FindAsync(id);
+            User = await _playerAppService.GetUser(id);
 
         }
 
 
         public async Task<IActionResult> OnPostAsync([FromBody]EnableData enableData)
         {
-            try
-            {
-                var user = await _db.Users.FindAsync(enableData.SId);
-                if (user == null)
-                {
-                    return await Task.FromResult(new JsonResult(enableData));
-                }
-
-                user.Status = enableData.IsEnable ? UserStatusEnum.正常 : UserStatusEnum.封禁;
-                await _db.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                //_logger.LogError(ex, "");
-            }
-
+            await _userAppService.SetEnabled(enableData.SId, enableData.IsEnable);
 
             return await Task.FromResult(new JsonResult(enableData));
 

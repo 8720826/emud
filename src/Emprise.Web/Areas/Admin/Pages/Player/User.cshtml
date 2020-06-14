@@ -1,0 +1,121 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Player.UserModel
+@{
+    ViewData["Title"] = "玩家管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.Game;
+}
+
+@section CssJs {
+    <link rel="stylesheet" href="~/admin/css/amazeui.switch.css" />
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">玩家管理</strong> / <small>用户列表</small></div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+            <div class="am-btn-toolbar am-fl">
+
+
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-cf">
+        <form class="am-form">
+            <div class="am-fr">
+                <div class="am-input-group am-input-group-sm">
+                    <input type="text" class="am-form-field" asp-for="Keyword">
+                    <span class="am-input-group-btn">
+                        <button class="am-btn am-btn-default" type="submit">搜索</button>
+                    </span>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-sm-12">
+        <form class="am-form">
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>注册时间</th>
+                        <th>注册IP</th>
+                        <th>最后登录时间</th>
+                        <th>最后登录IP</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                        <tr>
+                            <td>@(Model.User.Id)</td>
+                            <td>@(Model.User.Email)</td>
+                            <td title="@(Model.User.RegDate)">@(Model.User.RegDate.ToFriendlyTime())</td>
+                            <td>@(Model.User.RegIp)</td>
+                            <td title="@(Model.User.LastDate)">@(Model.User.LastDate.ToFriendlyTime())</td>
+                            <td>@(Model.User.LastIp)</td>
+                            <td>
+                                <input type="checkbox" data-size="xs" sId="@Model.User.Id" checked="@(Model.User.Status== UserStatusEnum.正常)" data-off-text="封禁" data-on-text="正常" data-am-switch />
+                            </td>
+                            <td>
+                                <div class="am-btn-toolbar">
+                                    <div class="am-btn-group am-btn-group-xs">
+                                        <a asp-page="/User/Player" asp-route-userId="@Model.User.Id" asp-route-ref="@($"{Request.Path}{Request.QueryString}")" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 玩家管理</a>
+                                        <a asp-page="/User/Password" asp-route-id="@Model.User.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 重置密码</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    
+                </tbody>
+            </table>
+
+            <hr />
+            <p>注：.....</p>
+        </form>
+    </div>
+
+</div>
+
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+
+    <script src="~/admin/js/amazeui.switch.min.js"></script>
+    <script src="~/admin/js/axios.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('[type="checkbox"]').bootstrapSwitch();
+
+
+            $('[type="checkbox"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                                    var sId = $(this).attr("sId")*1;
+                                    axios.post('@(Url.Page("/User/Index"))', {
+                                        sId: sId,
+                    isEnable: state
+                                    },
+                    {
+                                        headers: {
+                                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                                        }
+                                    })
+                    .then(function (response) {
+                                        console.log(response);
+                                    })
+                    .catch(function (error) {
+                                        console.log(error);
+                                    });
+            });
+        });
+    </script>
+}

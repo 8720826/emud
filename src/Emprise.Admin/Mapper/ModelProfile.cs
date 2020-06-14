@@ -3,19 +3,25 @@ using Emprise.Admin.Models.Npc;
 using Emprise.Admin.Models.NpcScript;
 using Emprise.Admin.Models.Room;
 using Emprise.Admin.Models.Script;
-using Emprise.Admin.Models.Quest;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Emprise.Admin.Models.Ware;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Map;
-using Emprise.Admin.Models.Player;
-using Emprise.Admin.Models.Email;
-using Emprise.Admin.Models.ItemDrop;
 using Emprise.Domain.ItemDrop.Entity;
+using Emprise.Domain.Room.Entity;
+using Emprise.Domain.Quest.Entity;
+using Emprise.Domain.Npc.Entity;
+using Emprise.Domain.Ware.Entity;
+using Emprise.Domain.Map.Entity;
+using Emprise.Domain.Email.Entity;
+using Emprise.Domain.Player.Entity;
+using Emprise.Application.Ware.Dtos;
+using Emprise.Application.Player.Dtos;
+using Emprise.Application.Quest.Dtos;
+using Emprise.Application.Map.Dtos;
+using Emprise.Application.Email.Dtos;
+using Emprise.Application.ItemDrop.Dtos;
 
 namespace Emprise.Admin.Mapper
 {

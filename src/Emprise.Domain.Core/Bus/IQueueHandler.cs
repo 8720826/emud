@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Events;
+using Emprise.Domain.Core.Interfaces.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Core.Bus
 {
-    public interface IQueueHandler
+    public interface IQueueHandler: IScoped
     {
         /// <summary>
         /// 入队列

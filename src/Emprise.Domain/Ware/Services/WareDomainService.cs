@@ -16,13 +16,13 @@ namespace Emprise.Domain.Ware.Services
 
     public class WareDomainService : IWareDomainService
     {
-        private readonly IRepository<WareEntity> _scriptRepository;
+        private readonly IRepository<WareEntity> _wareRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediatorHandler _bus;
 
-        public WareDomainService(IRepository<WareEntity> scriptRepository, IMemoryCache cache, IMediatorHandler bus)
+        public WareDomainService(IRepository<WareEntity> wareRepository, IMemoryCache cache, IMediatorHandler bus)
         {
-            _scriptRepository = scriptRepository;
+            _wareRepository = wareRepository;
             _cache = cache;
             _bus = bus;
         }
@@ -30,35 +30,41 @@ namespace Emprise.Domain.Ware.Services
 
         public async Task<WareEntity> Get(Expression<Func<WareEntity, bool>> where)
         {
-            return await _scriptRepository.Get(where);
+            return await _wareRepository.Get(where);
         }
 
-        public async Task<List<WareEntity>> GetAll(Expression<Func<WareEntity, bool>> where)
-        {
-            var query = await _scriptRepository.GetAll(where);
-
-            return query.ToList();
-        }
 
         public async Task<WareEntity> Get(int id)
         {
             var key = string.Format(CacheKey.Ware, id);
             return await _cache.GetOrCreateAsync(key, async p => {
                 p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
-                return await _scriptRepository.Get(id);
+                return await _wareRepository.Get(id);
             });
         }
 
         public async Task Add(WareEntity entity)
         {
-            await _scriptRepository.Add(entity);
+            await _wareRepository.Add(entity);
+        }
+
+        public async Task<IQueryable<WareEntity>> GetAll()
+        {
+            return await _wareRepository.GetAll();
         }
 
         public async Task Update(WareEntity entity)
         {
-            await _scriptRepository.Update(entity);
+            await _wareRepository.Update(entity);
             await _bus.RaiseEvent(new EntityUpdatedEvent<WareEntity>(entity)).ConfigureAwait(false);
         }
+
+        public async Task Delete(WareEntity entity)
+        {
+            await _wareRepository.Remove(entity);
+            await _bus.RaiseEvent(new EntityDeletedEvent<WareEntity>(entity)).ConfigureAwait(false);
+        }
+        
 
         public void Dispose()
         {

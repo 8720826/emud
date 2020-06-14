@@ -22,9 +22,6 @@
   <ItemGroup>
     <Folder Include="Npc\Models\" />
     <Folder Include="Player\Models\" />
-    <Folder Include="User\Dtos\" />
-    <Folder Include="Log\" />
-    <Folder Include="Email\" />
   </ItemGroup>
 
 </Project>

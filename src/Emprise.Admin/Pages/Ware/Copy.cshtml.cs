@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Models.Ware;
-using Emprise.Domain.Core.Enums;
+using Emprise.Application.Ware.Dtos;
+using Emprise.Application.Ware.Services;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Ware.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -21,15 +17,22 @@ namespace Emprise.Admin.Pages.Ware
 {
     public class CopyModel : BasePageModel
     {
-        public CopyModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IWareAppService _wareAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public CopyModel(
             ILogger<CopyModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IWareAppService wareAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _wareAppService = wareAppService;
+            _appConfig = appConfig.CurrentValue;
 
+            Endpoint = _appConfig.Aliyun.Endpoint;
+            AliyunOssHost = _appConfig.Aliyun.AliyunOssHost;
         }
 
         [BindProperty]
@@ -37,10 +40,6 @@ namespace Emprise.Admin.Pages.Ware
 
 
         public string ErrorMessage { get; set; }
-
-        [BindProperty]
-        public string UrlReferer { get; set; }
-
 
         public string Endpoint { get; set; }
 
@@ -50,24 +49,12 @@ namespace Emprise.Admin.Pages.Ware
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Ware/Index");
-            }
-
-
             if (id > 0)
             {
-                Endpoint = _appConfig.Aliyun.Endpoint;
-                AliyunOssHost = _appConfig.Aliyun.AliyunOssHost;
-
-
-                var ware = await _db.Wares.FindAsync(id);
+                var ware = await _wareAppService.Get(id);
                 if (ware == null)
                 {
-                    ErrorMessage = $"物品 {id} 不存在！";
-                    return Page();
+                    return RedirectToPage("/Ware/Index");
                 }
                 Ware = _mapper.Map<WareInput>(ware);
 
@@ -84,7 +71,7 @@ namespace Emprise.Admin.Pages.Ware
             }
         }
 
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync()
         {
             ErrorMessage = "";
             if (!ModelState.IsValid)
@@ -92,6 +79,17 @@ namespace Emprise.Admin.Pages.Ware
                 return Page();
             }
 
+            var result = await _wareAppService.Add(Ware);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Ware/Index");
+            }
+            /*
             try
             {
                 var ware = _mapper.Map<WareEntity>(Ware);
@@ -123,6 +121,7 @@ namespace Emprise.Admin.Pages.Ware
 
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

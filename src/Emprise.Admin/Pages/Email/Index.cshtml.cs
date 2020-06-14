@@ -4,12 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
+using Emprise.Application.Email.Services;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Email.Entity;
+using Emprise.Infra.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,14 +19,19 @@ namespace Emprise.Admin.Pages.Email
 {
     public class IndexModel : BasePageModel
     {
-        public IndexModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IEmailAppService _emailAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public IndexModel(
             ILogger<IndexModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IEmailAppService emailAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _emailAppService = emailAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -39,15 +43,7 @@ namespace Emprise.Admin.Pages.Email
 
         public async Task OnGetAsync(int pageIndex)
         {
-            var query = _db.Emails.OrderBy(x => x.Id);
-            if (!string.IsNullOrEmpty(Keyword))
-            {
-                query = _db.Emails.Where(x => x.Title.Contains(Keyword)|| x.Content.Contains(Keyword)).OrderBy(x => x.Id);
-            }
-
-            Paging = await query.Paged(pageIndex);
-
-
+            Paging = await _emailAppService.GetPaging(Keyword, pageIndex);
         }
 
 

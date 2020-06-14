@@ -32,7 +32,9 @@ namespace Emprise.Infra.IoC
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddSignalR();
+            services.AddSignalR(x => {
+                x.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+            });
 
             services.AddSingleton(HtmlEncoder.Create(UnicodeRanges.All));
 

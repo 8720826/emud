@@ -2,28 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Emprise.Admin.Data;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
-using Emprise.Admin.Models.Admin;
+using AutoMapper;
+using Emprise.Application.Admin.Dtos;
+using Emprise.Application.Admin.Services;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Emprise.Admin.Pages
 {
-    public class ModifyPasswordModel : PageModel
+    public class ModifyPasswordModel : BasePageModel
     {
-        protected readonly EmpriseDbContext _db;
+        private readonly IAdminAppService _adminAppService;
         private readonly AppConfig _appConfig;
-
-        public ModifyPasswordModel(EmpriseDbContext db, IOptionsMonitor<AppConfig> appConfig)
+        private readonly IMapper _mapper;
+        public ModifyPasswordModel(
+            ILogger<ModifyPasswordModel> logger,
+            IAdminAppService adminAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
-            _db = db;
+            _mapper = mapper;
+            _adminAppService = adminAppService;
             _appConfig = appConfig.CurrentValue;
+
         }
 
         public string SueccessMessage { get; set; }
@@ -49,6 +56,19 @@ namespace Emprise.Admin.Pages
                 return Page();
             }
 
+            var result = await _adminAppService.ModifyPassword(this.User.Identity.Name, ModifyPasswordInput);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("Index");
+            }
+
+            /*
             var admin = await _db.Admins.FirstOrDefaultAsync(x => x.Name == this.User.Identity.Name);
             if (admin == null)
             {
@@ -75,7 +95,7 @@ namespace Emprise.Admin.Pages
 
             SueccessMessage = "修改成功！";
 
-            return Page();
+            return Page();*/
         }
     }
 }

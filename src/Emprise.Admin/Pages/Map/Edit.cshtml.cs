@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Models.Map;
+using Emprise.Application.Map.Dtos;
+using Emprise.Application.Map.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Microsoft.AspNetCore.Http;
@@ -19,14 +18,19 @@ namespace Emprise.Admin.Pages.Map
 {
     public class EditModel : BasePageModel
     {
-        public EditModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IMapAppService _mapAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public EditModel(
             ILogger<EditModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IMapAppService mapAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
+            _mapper = mapper;
+            _mapAppService = mapAppService;
+            _appConfig = appConfig.CurrentValue;
 
         }
 
@@ -36,22 +40,14 @@ namespace Emprise.Admin.Pages.Map
         public string ErrorMessage { get; set; }
 
 
-        [BindProperty]
-        public string UrlReferer { get; set; }
 
 
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            UrlReferer = Request.Headers["Referer"].ToString();
-            if (string.IsNullOrEmpty(UrlReferer))
-            {
-                UrlReferer = Url.Page("/Map/Index");
-            }
-
             if (id > 0)
             {
-                var map = await _db.Maps.FindAsync(id);
+                var map = await _mapAppService.Get(id);
 
                 Map = _mapper.Map<MapInput>(map);
 
@@ -71,6 +67,18 @@ namespace Emprise.Admin.Pages.Map
                 return Page();
             }
 
+            var result = await _mapAppService.Update(id, Map);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/Ware/Index");
+            }
+
+            /*
             try
             {
                 var map = await _db.Maps.FindAsync(id);
@@ -103,6 +111,7 @@ namespace Emprise.Admin.Pages.Map
             }
 
             return Redirect(UrlReferer);
+            */
         }
     }
 }

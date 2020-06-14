@@ -27,10 +27,10 @@ namespace Emprise.Infra.Authorization
                 }
                
             }
-
+         
             var claimsIdentity = new ClaimsIdentity(authenticationScheme);
             claimsIdentity.AddClaims(claims);
-
+           
             await content.SignInAsync(authenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 new AuthenticationProperties()

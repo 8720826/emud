@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Admin.Api;
-using Emprise.Admin.Data;
-using Emprise.Admin.Entity;
-using Emprise.Admin.Extensions;
-using Emprise.Admin.Models;
+using Emprise.Application.Quest.Services;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Quest.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,16 +17,19 @@ namespace Emprise.Admin.Pages.Quest
 {
     public class IndexModel : BasePageModel
     {
-
-        public IndexModel(IMudClient mudClient,
-            IMapper mapper,
+        private readonly IQuestAppService _questAppService;
+        private readonly AppConfig _appConfig;
+        private readonly IMapper _mapper;
+        public IndexModel(
             ILogger<IndexModel> logger,
-            EmpriseDbContext db,
-            IOptionsMonitor<AppConfig> appConfig,
-            IHttpContextAccessor httpAccessor)
-            : base(db, appConfig, httpAccessor, mapper, logger, mudClient)
+            IQuestAppService questAppService,
+            IMapper mapper,
+            IOptionsMonitor<AppConfig> appConfig)
+            : base(logger)
         {
-
+            _mapper = mapper;
+            _questAppService = questAppService;
+            _appConfig = appConfig.CurrentValue;
         }
 
 
@@ -40,15 +40,7 @@ namespace Emprise.Admin.Pages.Quest
 
         public async Task OnGetAsync(int pageIndex)
         {
-            var query = _db.Quests.AsQueryable();
-            if (!string.IsNullOrEmpty(Keyword))
-            {
-                query = query.Where(x => x.Name.Contains(Keyword));
-            }
-
-            query = query.OrderBy(x => x.Id);
-
-            Paging = await query.Paged(pageIndex);
+            Paging = await _questAppService.GetPaging(Keyword, pageIndex);
         }
     }
 }

@@ -19,10 +19,9 @@ namespace Emprise.Domain.Player.Services
             _playerRepository = playerRepository;
         }
 
-        public async Task<List<PlayerEntity>> Query(Expression<Func<PlayerEntity, bool>> where)
+        public async Task<IQueryable<PlayerEntity>> GetAll()
         {
-            var query = await _playerRepository.GetAll(where);
-            return query.ToList();
+            return await _playerRepository.GetAll();
         }
 
         public async Task<PlayerEntity> Get(Expression<Func<PlayerEntity, bool>> where)
@@ -35,20 +34,26 @@ namespace Emprise.Domain.Player.Services
             return await _playerRepository.Get(id);
         }
 
-        public async Task Add(PlayerEntity user)
+        public async Task Add(PlayerEntity player)
         {
-            await _playerRepository.Add(user);
+            await _playerRepository.Add(player);
         }
 
-        public async Task Update(PlayerEntity user)
+        public async Task Update(PlayerEntity player)
         {
-             await _playerRepository.Update(user);
+             await _playerRepository.Update(player);
+        }
+
+        public async Task Delete(PlayerEntity player)
+        {
+            await _playerRepository.Remove(player);
         }
 
         public async Task<PlayerEntity> GetUserPlayer(int userId)
         {
             return await _playerRepository.Get(x => x.UserId == userId);
         }
+
 
         public void Dispose()
         {

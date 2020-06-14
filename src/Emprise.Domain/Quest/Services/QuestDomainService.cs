@@ -36,16 +36,10 @@ namespace Emprise.Domain.Quest.Services
             return await _questRepository.Get(where);
         }
 
-        public async Task<List<QuestEntity>> GetAll()
+        public async Task<IQueryable<QuestEntity>> GetAll()
         {
-           
-            var key = CacheKey.QuestList;
-            return await _cache.GetOrCreateAsync(key, async p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
-                var query = await _questRepository.GetAll();
-                return query.ToList();
-            });
-  
+
+            return await _questRepository.GetAll();
         }
 
         public async Task<QuestEntity> Get(int id)
@@ -69,7 +63,11 @@ namespace Emprise.Domain.Quest.Services
             await _bus.RaiseEvent(new EntityUpdatedEvent<QuestEntity>(quest)).ConfigureAwait(false);
         }
 
-
+        public async Task Delete(QuestEntity quest)
+        {
+            await _questRepository.Remove(quest);
+            await _bus.RaiseEvent(new EntityDeletedEvent<QuestEntity>(quest)).ConfigureAwait(false);
+        }
 
 
 

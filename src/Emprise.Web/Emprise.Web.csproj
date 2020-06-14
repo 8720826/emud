@@ -6,21 +6,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\**" />
     <Compile Remove="Filter\**" />
     <Compile Remove="logs\**" />
     <Compile Remove="wwwroot\js\%40aspnet\**" />
     <Compile Remove="wwwroot\lib\jquery\**" />
     <Compile Remove="wwwroot\lib\layer\**" />
+    <Content Remove="Controllers\**" />
     <Content Remove="Filter\**" />
     <Content Remove="logs\**" />
     <Content Remove="wwwroot\js\%40aspnet\**" />
     <Content Remove="wwwroot\lib\jquery\**" />
     <Content Remove="wwwroot\lib\layer\**" />
+    <EmbeddedResource Remove="Controllers\**" />
     <EmbeddedResource Remove="Filter\**" />
     <EmbeddedResource Remove="logs\**" />
     <EmbeddedResource Remove="wwwroot\js\%40aspnet\**" />
     <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\**" />
+    <None Remove="Controllers\**" />
     <None Remove="Filter\**" />
     <None Remove="logs\**" />
     <None Remove="wwwroot\js\%40aspnet\**" />
@@ -31,6 +35,96 @@
   <ItemGroup>
     <Content Remove="appsettings.Development.json" />
     <Content Remove="wwwroot\js\template-web.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Admin\Pages\Config\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\Config\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Email\Add.cshtml" />
+    <None Include="Areas\Admin\Pages\Email\Delete.cshtml" />
+    <None Include="Areas\Admin\Pages\Email\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\Email\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\ItemDropRate\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\ItemDrop\Add.cshtml" />
+    <None Include="Areas\Admin\Pages\ItemDrop\Delete.cshtml" />
+    <None Include="Areas\Admin\Pages\ItemDrop\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\ItemDrop\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Map\Add.cshtml" />
+    <None Include="Areas\Admin\Pages\Map\Delete.cshtml" />
+    <None Include="Areas\Admin\Pages\Map\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\Map\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Map\List.cshtml" />
+    <None Include="Areas\Admin\Pages\Player\Delete.cshtml" />
+    <None Include="Areas\Admin\Pages\Player\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\Player\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Player\User.cshtml" />
+    <None Include="Areas\Admin\Pages\Quest\Add.cshtml" />
+    <None Include="Areas\Admin\Pages\Quest\Delete.cshtml" />
+    <None Include="Areas\Admin\Pages\Quest\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\Quest\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Quest\_ScriptTemplate.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\_Layout.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\_Paging.cshtml" />
+    <None Include="Areas\Admin\Pages\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="Areas\Admin\Pages\User\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\User\Password.cshtml" />
+    <None Include="Areas\Admin\Pages\User\Player.cshtml" />
+    <None Include="Areas\Admin\Pages\Ware\Add.cshtml" />
+    <None Include="Areas\Admin\Pages\Ware\Copy.cshtml" />
+    <None Include="Areas\Admin\Pages\Ware\Delete.cshtml" />
+    <None Include="Areas\Admin\Pages\Ware\Edit.cshtml" />
+    <None Include="Areas\Admin\Pages\Ware\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\Ware\_EffectTemplate.cshtml" />
+    <None Include="wwwroot\admin\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\admin\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\admin\js\amazeui.ie8polyfill.js" />
+    <None Include="wwwroot\admin\js\amazeui.ie8polyfill.min.js" />
+    <None Include="wwwroot\admin\js\amazeui.js" />
+    <None Include="wwwroot\admin\js\amazeui.legacy.js" />
+    <None Include="wwwroot\admin\js\amazeui.legacy.min.js" />
+    <None Include="wwwroot\admin\js\amazeui.min.js" />
+    <None Include="wwwroot\admin\js\amazeui.switch.js" />
+    <None Include="wwwroot\admin\js\amazeui.switch.min.js" />
+    <None Include="wwwroot\admin\js\amazeui.widgets.helper.js" />
+    <None Include="wwwroot\admin\js\amazeui.widgets.helper.min.js" />
+    <None Include="wwwroot\admin\js\app.js" />
+    <None Include="wwwroot\admin\js\axios.js" />
+    <None Include="wwwroot\admin\js\axios.min.js" />
+    <None Include="wwwroot\admin\js\axios.min.map" />
+    <None Include="wwwroot\admin\js\gulpfile.js" />
+    <None Include="wwwroot\admin\js\handlebars.min.js" />
+    <None Include="wwwroot\admin\js\jquery.min.js" />
+    <None Include="wwwroot\admin\js\jquery1.11.1.min.js" />
+    <None Include="wwwroot\admin\js\modernizr.js" />
+    <None Include="wwwroot\admin\js\polyfill\rem.min.js" />
+    <None Include="wwwroot\admin\js\polyfill\respond.min.js" />
+    <None Include="wwwroot\admin\js\template-web.js" />
+    <None Include="wwwroot\admin\layer\layer.js" />
+    <None Include="wwwroot\admin\layer\mobile\layer.js" />
+    <None Include="wwwroot\admin\simditor\scripts\beautify-html.js" />
+    <None Include="wwwroot\admin\simditor\scripts\beautify-html.min.js" />
+    <None Include="wwwroot\admin\simditor\scripts\dompurify.js" />
+    <None Include="wwwroot\admin\simditor\scripts\hotkeys.js" />
+    <None Include="wwwroot\admin\simditor\scripts\jquery.min.js" />
+    <None Include="wwwroot\admin\simditor\scripts\mobilecheck.js" />
+    <None Include="wwwroot\admin\simditor\scripts\module.js" />
+    <None Include="wwwroot\admin\simditor\scripts\page-demo.js" />
+    <None Include="wwwroot\admin\simditor\scripts\page-doc.js" />
+    <None Include="wwwroot\admin\simditor\scripts\page-download.js" />
+    <None Include="wwwroot\admin\simditor\scripts\page-form.js" />
+    <None Include="wwwroot\admin\simditor\scripts\simditor-html.js" />
+    <None Include="wwwroot\admin\simditor\scripts\simditor.js" />
+    <None Include="wwwroot\admin\simditor\scripts\uploader.js" />
+    <None Include="wwwroot\admin\simditor\_coffee\page-demo.coffee" />
+    <None Include="wwwroot\admin\simditor\_coffee\page-download.coffee" />
+    <None Include="wwwroot\admin\simditor\_coffee\page-form.coffee" />
+    <None Include="wwwroot\admin\simditor\_sass\app.scss" />
+    <None Include="wwwroot\admin\simditor\_sass\function.scss" />
+    <None Include="wwwroot\admin\simditor\_sass\highlight.scss" />
+    <None Include="wwwroot\admin\simditor\_sass\mobile.scss" />
+    <None Include="wwwroot\admin\simditor\_sass\reset.scss" />
+    <None Include="wwwroot\admin\webuploader\webuploader.html5only.js" />
+    <None Include="wwwroot\admin\webuploader\webuploader.html5only.min.js" />
   </ItemGroup>
 
   <ItemGroup>

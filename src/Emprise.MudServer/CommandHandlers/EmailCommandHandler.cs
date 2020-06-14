@@ -71,7 +71,7 @@ namespace Emprise.MudServer.CommandHandlers
             var playerId = command.PlayerId;
             var pageIndex = command.PageIndex;
 
-            var queryEmail = await _emailDomainService.Query();
+            var queryEmail = await _emailDomainService.GetAll();
             var queryPlayerEmail = await _playerEmailDomainService.Query();
 
             var query = from email in queryEmail

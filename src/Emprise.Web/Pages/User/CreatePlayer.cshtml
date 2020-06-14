@@ -24,41 +24,41 @@
             </div>
 
             <div class="join mt15" style="text-align:center">
+                <form>
+                    <div class="playerinfo">
+                        <input type="text" class="form-text playername" v-model="name" placeholder="角色名,2到4个中文" />
+                    </div>
 
-                <div class="playerinfo">
-                    <input type="text" class="form-text playername" v-model="name" placeholder="角色名,2到4个中文" />
-                </div>
+                    <div class="playerinfo">
+                        选择性别：
+                        <label>
+                            <input type="radio" v-model="gender" value=1>
+                            男
+                        </label>
 
-                <div class="playerinfo">
-                    选择性别：
-                    <label>
-                        <input type="radio" v-model="gender" value=1>
-                        男
-                    </label>
+                        <label>
+                            <input type="radio" v-model="gender" value=2>
+                            女
+                        </label>
+                    </div>
 
-                    <label>
-                        <input type="radio" v-model="gender" value=2>
-                        女
-                    </label>
-                </div>
-
-                <div class="attr playerinfo">
-                    你的先天属性：<a href="javascript:;" @@click="createAttr">随机</a>
-                    <ul>
-                        <li><label>臂力</label><input v-model="mystr" type="text" /></li>
-                        <li><label>根骨</label><input v-model="mycon" type="text" /></li>
-                        <li><label>身法</label><input v-model="mydex" type="text" /></li>
-                        <li><label>悟性</label><input v-model="myint" type="text" /></li>
-                    </ul>
-                </div>
+                    <div class="attr playerinfo">
+                        你的先天属性：<a href="javascript:;" @@click="createAttr">随机</a>
+                        <ul>
+                            <li><label>臂力</label><input v-model="mystr" type="text" /></li>
+                            <li><label>根骨</label><input v-model="mycon" type="text" /></li>
+                            <li><label>身法</label><input v-model="mydex" type="text" /></li>
+                            <li><label>悟性</label><input v-model="myint" type="text" /></li>
+                        </ul>
+                    </div>
 
 
 
-                <div class="join  mt15" style="text-align:center">
-                    <a class="btn" href="javascript:;" @@click="createPlayer">创建角色</a>
-                </div>
-                <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
-
+                    <div class="join  mt15" style="text-align:center">
+                        <a class="btn" href="javascript:;" @@click="createPlayer">创建角色</a>
+                    </div>
+                    <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
+                </form>
             </div>
 
 
@@ -189,13 +189,17 @@
 
                     that.loading = 1;
 
-                    axios.post("/api/player/create", {
+                    axios.post("", {
                         name: that.name,
                         gender: that.gender*1,
                         str: that.mystr,
                         con: that.mycon,
                         dex: that.mydex,
                         int: that.myint
+                    }, {
+                        headers: {
+                            RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
+                        }
                     })
                     .then(function (response) {
                         var result = response.data;
