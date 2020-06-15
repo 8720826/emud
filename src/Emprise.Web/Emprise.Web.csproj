@@ -49,6 +49,7 @@
     <None Include="Areas\Admin\Pages\ItemDrop\Delete.cshtml" />
     <None Include="Areas\Admin\Pages\ItemDrop\Edit.cshtml" />
     <None Include="Areas\Admin\Pages\ItemDrop\Index.cshtml" />
+    <None Include="Areas\Admin\Pages\OperatorLog\Index.cshtml" />
     <None Include="Areas\Admin\Pages\Map\Add.cshtml" />
     <None Include="Areas\Admin\Pages\Map\Delete.cshtml" />
     <None Include="Areas\Admin\Pages\Map\Edit.cshtml" />

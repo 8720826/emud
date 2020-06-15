@@ -16,6 +16,7 @@ namespace Emprise.Domain.Core.Enums
         修改地图,
         删除地图,
 
+        清除记录,
         清除1年前记录,
         清除半年前记录,
         清除3个月前记录,

@@ -2,8 +2,10 @@
 using Emprise.Domain.Log.Entity;
 using Emprise.Infra.Extensions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +19,21 @@ namespace Emprise.Domain.Log.Services
         {
             _logRepository = logRepository;
             _httpAccessor = httpAccessor;
+        }
+
+        public async Task<IQueryable<OperatorLogEntity>> GetAll()
+        {
+            return await _logRepository.GetAll();
+        }
+
+
+        public async Task ClearLog(DateTime dt)
+        {
+            var logs = (await _logRepository.GetAll()).Where(x => x.CreateDate < dt).ToList();
+            foreach (var log in logs)
+            {
+                await _logRepository.Remove(log);
+            }
         }
 
         public async Task AddSuccess(OperatorLogEntity item)
