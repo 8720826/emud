@@ -26,6 +26,8 @@ namespace Emprise.Domain.Core.Enums
         修改Npc,
         删除Npc,
         复制Npc,
+        禁用Npc,
+        启用Npc,
 
         修改用户,
         禁用用户,

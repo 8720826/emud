@@ -147,7 +147,7 @@ namespace Emprise.MudServer.EventHandlers
             await _mudProvider.Move(player.Id, roomModel);
 
             //更新当前玩家显示的npc列表
-            var nps = await _npcDomainService.Query(x => x.RoomId == roomIn.Id);
+            var nps = (await _npcDomainService.GetAll()).Where(x => x.RoomId == roomIn.Id);
             await _mudProvider.UpdatePlayerRoomNpcList(player.Id, nps);
 
 
@@ -187,7 +187,7 @@ namespace Emprise.MudServer.EventHandlers
             await _mudProvider.Move(player.Id, roomModel);
 
 
-            var nps = await _npcDomainService.Query(x => x.RoomId == room.Id);
+            var nps = (await _npcDomainService.GetAll()).Where(x => x.RoomId == room.Id);
             await _mudProvider.UpdatePlayerRoomNpcList(player.Id, nps);
 
 

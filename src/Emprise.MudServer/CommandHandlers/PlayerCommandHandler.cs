@@ -906,7 +906,7 @@ namespace Emprise.MudServer.CommandHandlers
         {
             _logger.LogDebug($"npc={npc.Id},scriptId={scriptId},commandId={commandId},input={input}");
 
-            var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
+            var npcScripts = (await _npcScriptDomainService.GetAll()).Where(x => x.NpcId == npc.Id);
             var scriptIds = npcScripts.Select(x => x.ScriptId).ToList();
             if (!scriptIds.Contains(scriptId))
             {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Emprise.Application.Email.Dtos;
+using Emprise.Application.Npc.Dtos;
 using Emprise.Application.User.Models;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Email.Entity;
@@ -39,6 +40,10 @@ namespace Emprise.Infra.Mapper
 
             CreateMap<EmailEntity, EmailInput>();
             CreateMap<EmailInput, EmailEntity>();
+
+
+            CreateMap<NpcEntity, NpcInput>();
+            CreateMap<NpcInput, NpcEntity>();
         }
     }
 }
