@@ -23,16 +23,19 @@ namespace Emprise.Application.ItemDrop.Services
     {
         private readonly IMapper _mapper;
         private readonly IItemDropDomainService _itemDropDomainService;
+        private readonly IItemDropRateDomainService _itemDropRateDomainService;
         private readonly IOperatorLogDomainService _operatorLogDomainService;
         public ItemDropAppService(
             IMapper mapper,
             IItemDropDomainService itemDropDomainService,
+            IItemDropRateDomainService itemDropRateDomainService,
             IUnitOfWork uow,
             IOperatorLogDomainService operatorLogDomainService)
             : base(uow)
         {
             _mapper = mapper;
             _itemDropDomainService = itemDropDomainService;
+            _itemDropRateDomainService = itemDropRateDomainService;
             _operatorLogDomainService = operatorLogDomainService;
         }
 
@@ -162,6 +165,15 @@ namespace Emprise.Application.ItemDrop.Services
             query = query.OrderBy(x => x.Id);
 
             return await query.Paged(pageIndex);
+        }
+
+
+
+        public async Task<List<ItemDropRateEntity>> GetRates(int id)
+        {
+            var query = await _itemDropRateDomainService.GetAll();
+
+            return query.Where(x => x.ItemDropId == id).ToList();
         }
     }
 }
