@@ -14,7 +14,7 @@
         <div class="am-fl am-cf">
             <div class="am-btn-toolbar am-fl">
                 <div class="am-btn-group am-btn-group-xs">
-                    <a asp-page="Add" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+                    <a asp-page="Add" asp-route-id="@(Model.Id)" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
                 </div>
 
             </div>
@@ -54,14 +54,11 @@
                     {
                     <tr>
                         <td>@(item.Id)</td>
-                        <td>@(item.WorkType)</td>
+                        <td>@(item.DropType)</td>
                         <td><a asp-page="./Edit" asp-route-id="@item.Id">@(item.WareId)</a></td>
                         <td>@(item.MaxNumber)</td>
                         <td>@(item.Percent)</td>
                         <td>@(item.Weight)</td>
-                        <td>@(item.Money)</td>
-                        <td>@(item.Exp)</td>
-                        <td>@(item.Pot)</td>
 
                         <td>
                             <div class="am-btn-toolbar">

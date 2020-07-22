@@ -33,16 +33,16 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
         }
 
 
-        public int SId { get; set; }
+        public int Id { get; set; }
 
         public List<ItemDropRateEntity> ItemDropRates { get; set; }
 
 
-        public async Task OnGetAsync(int sId)
+        public async Task OnGetAsync(int id)
         {
-            SId = sId;
+            Id = id;
 
-            ItemDropRates = await _itemDropAppService.GetRates(sId);
+            ItemDropRates = await _itemDropAppService.GetRates(id);
         }
     }
 }

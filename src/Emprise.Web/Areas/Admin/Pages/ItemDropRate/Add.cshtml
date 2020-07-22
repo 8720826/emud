@@ -7,16 +7,16 @@
 
 @section CssJs{
 
-    <link rel="stylesheet" type="text/css" href="~/simditor/styles/simditor.css" />
+    <link rel="stylesheet" type="text/css" href="~/admin/simditor/styles/simditor.css" />
 
-    <script type="text/javascript" src="~/simditor/scripts/jquery.min.js"></script>
-    <script type="text/javascript" src="~/simditor/scripts/module.js"></script>
-    <script type="text/javascript" src="~/simditor/scripts/hotkeys.js"></script>
-    <script type="text/javascript" src="~/simditor/scripts/simditor.js"></script>
-    <script type="text/javascript" src="~/simditor/scripts/beautify-html.js"></script>
-    <script type="text/javascript" src="~/simditor/scripts/simditor-html.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor-html.js"></script>
 
-    <link rel="stylesheet" href="~/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="~/admin/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
 }
 <div class="admin-content-body">
     <div class="am-cf am-padding">
@@ -29,26 +29,26 @@
                 <p></p>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="am-fade  am-in am-active">
+
+
                     <div class="am-g am-margin-top">
                         <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="ItemDropRate.WorkType" class="control-label"></label>
+                            <label asp-for="ItemDropRate.DropType" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
-                            <select class="am-input-sm am-form-field effects" style="width: 100px;">
+                            <select class="am-input-sm am-form-field" id="dropType" style="width: 100px;">
                                 <option value="">请选择</option>
-                                @foreach (var item in Enum.GetValues(typeof(WorkTypeEnum)))
+                                @foreach (var item in Enum.GetValues(typeof(ItemDropTypeEnum)))
                                 {
                                     <option value="@(item.ToString())">@(item.ToString())</option>
                                 }
                             </select>
-                            <span asp-validation-for="ItemDropRate.WorkType" class="text-danger"></span>
+                            <span asp-validation-for="ItemDropRate.DropType" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
-
-
-                    <div class="am-g am-margin-top-sm">
+                    <div class="am-g am-margin-top-sm dropWare" style="display:none">
                         <div class="am-u-sm-2 am-text-right">
                             <label asp-for="ItemDropRate.WareId" class="control-label"></label>
                         </div>
@@ -58,7 +58,19 @@
                         </div>
                     </div>
 
-                    <div class="am-g am-margin-top-sm">
+
+                    <div class="am-g am-margin-top-sm dropWare" style="display:none">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.MinNumber" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.MinNumber">
+                            <span asp-validation-for="ItemDropRate.MinNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm dropWare" style="display:none">
                         <div class="am-u-sm-2 am-text-right">
                             <label asp-for="ItemDropRate.MaxNumber" class="control-label"></label>
                         </div>
@@ -69,37 +81,9 @@
                     </div>
 
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="ItemDropRate.Money" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Money">
-                            <span asp-validation-for="ItemDropRate.Money" class="text-danger"></span>
-                        </div>
-                    </div>
 
 
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="ItemDropRate.Exp" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Exp">
-                            <span asp-validation-for="ItemDropRate.Exp" class="text-danger"></span>
-                        </div>
-                    </div>
 
-
-                    <div class="am-g am-margin-top-sm">
-                        <div class="am-u-sm-2 am-text-right">
-                            <label asp-for="ItemDropRate.Pot" class="control-label"></label>
-                        </div>
-                        <div class="am-u-sm-10">
-                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Pot">
-                            <span asp-validation-for="ItemDropRate.Pot" class="text-danger"></span>
-                        </div>
-                    </div>
 
                     <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
@@ -130,7 +114,7 @@
                         </div>
                         <div class="am-u-sm-10">
                             <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
-                            <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <a asp-page="./Index" asp-route-id="@(Model.Id)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
                             <div class="am-inline-block am-padding-left">
                                 <p style="color:#ff0000">@(Model.ErrorMessage)</p>
                             </div>
@@ -147,18 +131,23 @@
 
     <script type="text/javascript">
             $(function () {
-                Simditor.locale = 'zh-CN';//设置中文
-                var editor = new Simditor({
-                    textarea: $("#description"),  //textarea的id
-                    placeholder: '请输入描述',
-                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
-                    pasteImage: true,//允许粘贴图片
-                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
-                });
+
 
                 $("input[type=checkbox]:checked").each(function () {
-                $(this).parent(".am-btn").addClass("am-active");
-            });
+                    $(this).parent(".am-btn").addClass("am-active");
+                });
+
+
+                $(document).on("change", "#dropType", function () {
+                    var val = $(this).val();
+                    if (val=="物品") {
+                        $(".dropAttr").hide();
+                        $(".dropWare").show();
+                    } else {
+                        $(".dropAttr").show();
+                        $(".dropWare").hide();
+                    }
+                });
             });
     </script>
 }

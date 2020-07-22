@@ -175,5 +175,41 @@ namespace Emprise.Application.ItemDrop.Services
 
             return query.Where(x => x.ItemDropId == id).ToList();
         }
+
+
+        public async Task<ResultDto> AddRate(int id, ItemDropRateInput input)
+        {
+
+            var result = new ResultDto { Message = "" };
+
+            try
+            {
+                var itemDropRate = _mapper.Map<ItemDropRateEntity>(input);
+
+                itemDropRate.ItemDropId = id;
+                await _itemDropRateDomainService.Add(itemDropRate);
+
+                await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
+                {
+                    Type = OperatorLogType.添加掉落项,
+                    Content = JsonConvert.SerializeObject(input)
+                });
+
+                await Commit();
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                await _operatorLogDomainService.AddError(new OperatorLogEntity
+                {
+                    Type = OperatorLogType.添加掉落项,
+                    Content = $"Data={JsonConvert.SerializeObject(input)},ErrorMessage={result.Message}"
+                });
+                await Commit();
+            }
+            return result;
+        }
+
     }
 }

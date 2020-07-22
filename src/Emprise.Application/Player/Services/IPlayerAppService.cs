@@ -26,5 +26,7 @@ namespace Emprise.Application.Player.Services
         Task<UserEntity> GetUser(int playerId);
 
         Task<Paging<PlayerEntity>> GetPaging(string keyword, int pageIndex);
+
+        Task DoWork(PlayerEntity player);
     }
 }

@@ -11,25 +11,23 @@ namespace Emprise.Application.ItemDrop.Dtos
         public int ItemDropId { get; set; }
 
 
-        [Display(Name = "工作类型")]
+
+
+        [Display(Name = "掉落类型")]
         [Required(ErrorMessage = "请选择{0}")]
-        public WorkTypeEnum WorkType { set; get; }
+        public ItemDropTypeEnum DropType { set; get; }
+
+        [Display(Name = "掉落顺序")]
+        public int Order { set; get; }
 
         [Display(Name = "物品Id")]
-        public int WareId { set; get; }
+        public int? WareId { set; get; }
+
 
         [Display(Name = "最大数量")]
-        public int MaxNumber { set; get; }
+        public int? MaxNumber { set; get; }
 
-        [Display(Name = "金钱")]
-        public int Money { set; get; }
-
-        [Display(Name = "经验")]
-        public int Exp { set; get; }
-
-
-        [Display(Name = "潜能")]
-        public int Pot { set; get; }
+        public int? MinNumber { set; get; }
 
 
 

@@ -36,8 +36,34 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
 
         public string ErrorMessage { get; set; }
 
-        public void OnGet()
+        public int Id { get; set; }
+
+        public void OnGet(int id)
         {
+            Id = id;
+        }
+
+
+
+        public async Task<IActionResult> OnPostAsync(int id)
+        {
+            Id = id;
+            ErrorMessage = "";
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var result = await _itemDropAppService.AddRate(id,ItemDropRate);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = result.Message;
+                return Page();
+            }
+            else
+            {
+                return RedirectToPage("/ItemDrop/Index");
+            }
         }
     }
 }

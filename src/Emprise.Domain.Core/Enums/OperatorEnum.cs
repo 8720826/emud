@@ -70,6 +70,11 @@ namespace Emprise.Domain.Core.Enums
 
         添加掉落,
         修改掉落,
-        删除掉落
+        删除掉落,
+
+
+        添加掉落项,
+        修改掉落项,
+        删除掉落项,
     }
 }

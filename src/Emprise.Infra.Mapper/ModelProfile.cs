@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using Emprise.Application.Email.Dtos;
+using Emprise.Application.ItemDrop.Dtos;
 using Emprise.Application.Npc.Dtos;
 using Emprise.Application.User.Models;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Email.Entity;
+using Emprise.Domain.ItemDrop.Entity;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
@@ -44,6 +46,10 @@ namespace Emprise.Infra.Mapper
 
             CreateMap<NpcEntity, NpcInput>();
             CreateMap<NpcInput, NpcEntity>();
+
+            CreateMap<ItemDropRateEntity, ItemDropRateInput>();
+            CreateMap<ItemDropRateInput, ItemDropRateEntity>();
+            
         }
     }
 }
