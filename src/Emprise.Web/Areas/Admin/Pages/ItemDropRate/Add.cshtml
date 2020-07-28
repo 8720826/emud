@@ -36,19 +36,19 @@
                             <label asp-for="ItemDropRate.DropType" class="control-label"></label>
                         </div>
                         <div class="am-u-sm-4">
-                            <select class="am-input-sm am-form-field" id="dropType" style="width: 100px;">
-                                <option value="">请选择</option>
-                                @foreach (var item in Enum.GetValues(typeof(ItemDropTypeEnum)))
-                                {
-                                    <option value="@(item.ToString())">@(item.ToString())</option>
-                                }
-                            </select>
+                            @foreach (var item in Enum.GetValues(typeof(ItemDropTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="ItemDropRate.DropType" type="radio" name="ItemDropRate.DropType" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                </label>
+                            }
+
                             <span asp-validation-for="ItemDropRate.DropType" class="text-danger"></span>
                         </div>
                         <div class="am-u-sm-6"></div>
                     </div>
 
-                    <div class="am-g am-margin-top-sm dropWare" style="display:none">
+                    <div class="am-g am-margin-top-sm">
                         <div class="am-u-sm-2 am-text-right">
                             <label asp-for="ItemDropRate.WareId" class="control-label"></label>
                         </div>
@@ -81,8 +81,16 @@
                     </div>
 
 
-
-
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.Order" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Order">
+                            <span asp-validation-for="ItemDropRate.Order" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
 
 
                     <div class="am-g am-margin-top-sm">
@@ -138,16 +146,7 @@
                 });
 
 
-                $(document).on("change", "#dropType", function () {
-                    var val = $(this).val();
-                    if (val=="物品") {
-                        $(".dropAttr").hide();
-                        $(".dropWare").show();
-                    } else {
-                        $(".dropAttr").show();
-                        $(".dropWare").hide();
-                    }
-                });
+
             });
     </script>
 }

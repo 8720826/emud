@@ -526,7 +526,7 @@ namespace Emprise.MudServer.CommandHandlers
             player.Status = newStatus;
             await _playerDomainService.Update(player);
 
-            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 2, 10);
+            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 5, 15);
 
             if (await Commit())
             {

@@ -176,6 +176,11 @@ namespace Emprise.Application.ItemDrop.Services
             return query.Where(x => x.ItemDropId == id).ToList();
         }
 
+        public async Task<ItemDropRateEntity> GetRate(int id)
+        {
+            return await _itemDropRateDomainService.Get(id);
+
+        }
 
         public async Task<ResultDto> AddRate(int id, ItemDropRateInput input)
         {
@@ -211,5 +216,83 @@ namespace Emprise.Application.ItemDrop.Services
             return result;
         }
 
+        public async Task<ResultDto> UpdateRate(int id, ItemDropRateInput input)
+        {
+
+            var result = new ResultDto { Message = "" };
+            try
+            {
+                var rate = await _itemDropRateDomainService.Get(id);
+                if (rate == null)
+                {
+                    result.Message = $"掉落项 {id} 不存在！";
+                    return result;
+                }
+
+                var content = rate.ComparisonTo(input);
+                _mapper.Map(input, rate);
+
+                await _itemDropRateDomainService.Update(rate);
+
+                await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
+                {
+                    Type = OperatorLogType.修改掉落项,
+                    Content = $"Id = {id},Data = {content}"
+                });
+
+                await Commit();
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                await _operatorLogDomainService.AddError(new OperatorLogEntity
+                {
+                    Type = OperatorLogType.修改掉落项,
+                    Content = $"Data={JsonConvert.SerializeObject(input)},ErrorMessage={result.Message}"
+                });
+                await Commit();
+            }
+            return result;
+        }
+
+        public async Task<ResultDto> DeleteRate(int id)
+        {
+            var result = new ResultDto { Message = "" };
+            try
+            {
+                var rate = await _itemDropRateDomainService.Get(id);
+                if (rate == null)
+                {
+                    result.Message = $"掉落项 {id} 不存在！";
+                    return result;
+                }
+
+
+                await _itemDropRateDomainService.Delete(rate);
+
+                await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
+                {
+                    Type = OperatorLogType.删除掉落项,
+                    Content = JsonConvert.SerializeObject(rate)
+                });
+
+                await Commit();
+
+                result.IsSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                result.Message = ex.Message;
+                await _operatorLogDomainService.AddError(new OperatorLogEntity
+                {
+                    Type = OperatorLogType.删除掉落项,
+                    Content = $"id={id}，ErrorMessage={result.Message}"
+                });
+                await Commit();
+            }
+            return result;
+        }
     }
 }

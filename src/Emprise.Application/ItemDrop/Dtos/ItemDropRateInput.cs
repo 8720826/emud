@@ -8,7 +8,7 @@ namespace Emprise.Application.ItemDrop.Dtos
 {
     public class ItemDropRateInput
     {
-        public int ItemDropId { get; set; }
+      
 
 
 
@@ -27,6 +27,7 @@ namespace Emprise.Application.ItemDrop.Dtos
         [Display(Name = "最大数量")]
         public int? MaxNumber { set; get; }
 
+        [Display(Name = "最小数量")]
         public int? MinNumber { set; get; }
 
 

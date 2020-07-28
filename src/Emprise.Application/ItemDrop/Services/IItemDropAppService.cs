@@ -23,6 +23,12 @@ namespace Emprise.Application.ItemDrop.Services
 
         Task<List<ItemDropRateEntity>> GetRates(int id);
 
+        Task<ItemDropRateEntity> GetRate(int id);
+
+        Task<ResultDto> UpdateRate(int id, ItemDropRateInput input);
+
         Task<ResultDto> AddRate(int id, ItemDropRateInput input);
+
+        Task<ResultDto> DeleteRate(int id);
     }
 }
