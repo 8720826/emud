@@ -16,18 +16,18 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
 {
     public class IndexModel : BaseAdminPageModel
     {
-        private readonly IItemDropAppService _itemDropAppService;
+        private readonly IItemDropRateAppService _itemDropRateAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
         public IndexModel(
             ILogger<IndexModel> logger,
-            IItemDropAppService itemDropAppService,
+            IItemDropRateAppService itemDropRateAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
-            _itemDropAppService = itemDropAppService;
+            _itemDropRateAppService = itemDropRateAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
@@ -42,7 +42,7 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
         {
             Id = id;
 
-            ItemDropRates = await _itemDropAppService.GetRates(id);
+            ItemDropRates = await _itemDropRateAppService.GetAll(id);
         }
     }
 }

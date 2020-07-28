@@ -15,18 +15,18 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
 {
     public class AddModel : BaseAdminPageModel
     {
-        private readonly IItemDropAppService _itemDropAppService;
+        private readonly IItemDropRateAppService _itemDropRateAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
         public AddModel(
             ILogger<AddModel> logger,
-            IItemDropAppService itemDropAppService,
+            IItemDropRateAppService itemDropRateAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
-            _itemDropAppService = itemDropAppService;
+            _itemDropRateAppService = itemDropRateAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
@@ -54,7 +54,7 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
                 return Page();
             }
 
-            var result = await _itemDropAppService.AddRate(id,ItemDropRate);
+            var result = await _itemDropRateAppService.Add(id,ItemDropRate);
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.Message;

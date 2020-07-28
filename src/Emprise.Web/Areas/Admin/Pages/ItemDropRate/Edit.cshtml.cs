@@ -15,18 +15,18 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
 {
     public class EditModel : BaseAdminPageModel
     {
-        private readonly IItemDropAppService _itemDropAppService;
+        private readonly IItemDropRateAppService _itemDropRateAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
         public EditModel(
             ILogger<AddModel> logger,
-            IItemDropAppService itemDropAppService,
+            IItemDropRateAppService itemDropRateAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
-            _itemDropAppService = itemDropAppService;
+            _itemDropRateAppService = itemDropRateAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
@@ -43,7 +43,7 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
             Id = id;
             if (id > 0)
             {
-                var rate = await _itemDropAppService.GetRate(id);
+                var rate = await _itemDropRateAppService.Get(id);
 
                 ItemDropRate = _mapper.Map<ItemDropRateInput>(rate);
 
@@ -66,7 +66,7 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
                 return Page();
             }
 
-            var result = await _itemDropAppService.UpdateRate(id, ItemDropRate);
+            var result = await _itemDropRateAppService.Update(id, ItemDropRate);
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.Message;

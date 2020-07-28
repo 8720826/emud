@@ -19,46 +19,53 @@ using System.Threading.Tasks;
 
 namespace Emprise.Application.ItemDrop.Services
 {
-    public class ItemDropAppService : BaseAppService, IItemDropAppService
+    public class ItemDropRateAppService : BaseAppService, IItemDropRateAppService
     {
         private readonly IMapper _mapper;
-        private readonly IItemDropDomainService _itemDropDomainService;
         private readonly IItemDropRateDomainService _itemDropRateDomainService;
         private readonly IOperatorLogDomainService _operatorLogDomainService;
-        public ItemDropAppService(
+        public ItemDropRateAppService(
             IMapper mapper,
-            IItemDropDomainService itemDropDomainService,
             IItemDropRateDomainService itemDropRateDomainService,
             IUnitOfWork uow,
             IOperatorLogDomainService operatorLogDomainService)
             : base(uow)
         {
             _mapper = mapper;
-            _itemDropDomainService = itemDropDomainService;
             _itemDropRateDomainService = itemDropRateDomainService;
             _operatorLogDomainService = operatorLogDomainService;
         }
 
-        public async Task<ItemDropEntity> Get(int id)
+
+        public async Task<List<ItemDropRateEntity>> GetAll(int id)
         {
-            return await _itemDropDomainService.Get(id);
+            var query = await _itemDropRateDomainService.GetAll();
+
+            return query.Where(x => x.ItemDropId == id).ToList();
         }
 
-        public async Task<ResultDto> Add(ItemDropInput item)
+        public async Task<ItemDropRateEntity> Get(int id)
         {
+            return await _itemDropRateDomainService.Get(id);
+
+        }
+
+        public async Task<ResultDto> Add(int id, ItemDropRateInput input)
+        {
+
             var result = new ResultDto { Message = "" };
 
             try
             {
-                var itemDrop = _mapper.Map<ItemDropEntity>(item);
+                var itemDropRate = _mapper.Map<ItemDropRateEntity>(input);
 
-
-                await _itemDropDomainService.Add(itemDrop);
+                itemDropRate.ItemDropId = id;
+                await _itemDropRateDomainService.Add(itemDropRate);
 
                 await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.添加掉落,
-                    Content = JsonConvert.SerializeObject(item)
+                    Type = OperatorLogType.添加掉落项,
+                    Content = JsonConvert.SerializeObject(input)
                 });
 
                 await Commit();
@@ -69,34 +76,35 @@ namespace Emprise.Application.ItemDrop.Services
                 result.Message = ex.Message;
                 await _operatorLogDomainService.AddError(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.添加掉落,
-                    Content = $"Data={JsonConvert.SerializeObject(item)},ErrorMessage={result.Message}"
+                    Type = OperatorLogType.添加掉落项,
+                    Content = $"Data={JsonConvert.SerializeObject(input)},ErrorMessage={result.Message}"
                 });
                 await Commit();
             }
             return result;
         }
 
-        public async Task<ResultDto> Update(int id, ItemDropInput item)
+        public async Task<ResultDto> Update(int id, ItemDropRateInput input)
         {
+
             var result = new ResultDto { Message = "" };
             try
             {
-                var map = await _itemDropDomainService.Get(id);
-                if (map == null)
+                var rate = await _itemDropRateDomainService.Get(id);
+                if (rate == null)
                 {
-                    result.Message = $"掉落 {id} 不存在！";
+                    result.Message = $"掉落项 {id} 不存在！";
                     return result;
                 }
 
-                var content = map.ComparisonTo(item);
-                _mapper.Map(item, map);
+                var content = rate.ComparisonTo(input);
+                _mapper.Map(input, rate);
 
-                await _itemDropDomainService.Update(map);
+                await _itemDropRateDomainService.Update(rate);
 
                 await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.修改掉落,
+                    Type = OperatorLogType.修改掉落项,
                     Content = $"Id = {id},Data = {content}"
                 });
 
@@ -109,8 +117,8 @@ namespace Emprise.Application.ItemDrop.Services
                 result.Message = ex.Message;
                 await _operatorLogDomainService.AddError(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.修改掉落,
-                    Content = $"Data={JsonConvert.SerializeObject(item)},ErrorMessage={result.Message}"
+                    Type = OperatorLogType.修改掉落项,
+                    Content = $"Data={JsonConvert.SerializeObject(input)},ErrorMessage={result.Message}"
                 });
                 await Commit();
             }
@@ -122,19 +130,20 @@ namespace Emprise.Application.ItemDrop.Services
             var result = new ResultDto { Message = "" };
             try
             {
-                var map = await _itemDropDomainService.Get(id);
-                if (map == null)
+                var rate = await _itemDropRateDomainService.Get(id);
+                if (rate == null)
                 {
-                    result.Message = $"掉落 {id} 不存在！";
+                    result.Message = $"掉落项 {id} 不存在！";
                     return result;
                 }
 
-                await _itemDropDomainService.Delete(map);
+
+                await _itemDropRateDomainService.Delete(rate);
 
                 await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.删除掉落,
-                    Content = JsonConvert.SerializeObject(map)
+                    Type = OperatorLogType.删除掉落项,
+                    Content = JsonConvert.SerializeObject(rate)
                 });
 
                 await Commit();
@@ -146,29 +155,12 @@ namespace Emprise.Application.ItemDrop.Services
                 result.Message = ex.Message;
                 await _operatorLogDomainService.AddError(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.删除掉落,
+                    Type = OperatorLogType.删除掉落项,
                     Content = $"id={id}，ErrorMessage={result.Message}"
                 });
                 await Commit();
             }
             return result;
         }
-
-        public async Task<Paging<ItemDropEntity>> GetPaging(string keyword, int pageIndex)
-        {
-
-            var query = await _itemDropDomainService.GetAll();
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                query = query.Where(x => x.Name.Contains(keyword));
-            }
-            query = query.OrderBy(x => x.Id);
-
-            return await query.Paged(pageIndex);
-        }
-
-
-
-    
     }
 }

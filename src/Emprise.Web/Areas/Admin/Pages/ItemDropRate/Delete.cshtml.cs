@@ -15,18 +15,18 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
 {
     public class DeleteModel : BaseAdminPageModel
     {
-        private readonly IItemDropAppService _itemDropAppService;
+        private readonly IItemDropRateAppService _itemDropRateAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
         public DeleteModel(
             ILogger<DeleteModel> logger,
-            IItemDropAppService itemDropAppService,
+            IItemDropRateAppService itemDropRateAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
-            _itemDropAppService = itemDropAppService;
+            _itemDropRateAppService = itemDropRateAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
@@ -40,7 +40,7 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
         {
             if (id > 0)
             {
-                ItemDropRate = await _itemDropAppService.GetRate(id);
+                ItemDropRate = await _itemDropRateAppService.Get(id);
                 return Page();
             }
             else
@@ -57,7 +57,7 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
                 return Page();
             }
 
-            var result = await _itemDropAppService.DeleteRate(id);
+            var result = await _itemDropRateAppService.Delete(id);
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.Message;
