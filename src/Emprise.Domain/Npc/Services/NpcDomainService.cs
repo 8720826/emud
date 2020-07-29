@@ -34,10 +34,9 @@ namespace Emprise.Domain.Npc.Services
             _cache = cache;
         }
 
-        public async Task<List<NpcEntity>> Query(Expression<Func<NpcEntity, bool>> where)
+        public async Task<IQueryable<NpcEntity>> GetAll()
         {
-            var query =  await _npcRepository.GetAll(where);
-            return query.ToList();
+            return await _npcRepository.GetAll();
         }
 
         public async Task<NpcEntity> Get(Expression<Func<NpcEntity, bool>> where)
@@ -54,14 +53,19 @@ namespace Emprise.Domain.Npc.Services
             });
         }
 
-        public async Task Add(NpcEntity user)
+        public async Task Add(NpcEntity npc)
         {
-            await _npcRepository.Add(user);
+            await _npcRepository.Add(npc);
         }
 
-        public async Task Update(NpcEntity user)
+        public async Task Update(NpcEntity npc)
         {
-             await _npcRepository.Update(user);
+             await _npcRepository.Update(npc);
+        }
+
+        public async Task Delete(NpcEntity npc)
+        {
+            await _npcRepository.Remove(npc);
         }
 
         public void Dispose()

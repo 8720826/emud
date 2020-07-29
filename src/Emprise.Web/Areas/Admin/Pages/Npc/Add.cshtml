@@ -1,0 +1,199 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.Npc.AddModel
+@{
+    ViewData["Title"] = "Npc管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="~/admin/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="~/admin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="~/admin/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">Npc管理</strong> / <small>添加Npc</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="am-fade  am-in am-active">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Name" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Npc.Name">
+                            <span asp-validation-for="Npc.Name" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Type" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(NpcTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="Npc.Type" type="radio" name="Npc.Type" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+                            <span asp-validation-for="Npc.Type" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Gender" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group">
+                            @foreach (var item in Enum.GetValues(typeof(GenderEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="Npc.Gender" type="radio" name="Npc.Gender" value="@(item.ToString())"> @(item.ToString())
+                                </label>
+                            }
+                            <span asp-validation-for="Npc.Gender" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label class="control-label" for="Npc_Exp">属性</label>
+                        </div>
+                        <div class="am-u-sm-10 am-btn-group" data-am-button>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Npc.CanFight"> 切磋
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Npc.CanKill"> 杀死
+                            </label>
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Npc.CanMove"> 移动
+                            </label>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Age" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Npc.Age">
+                            <span asp-validation-for="Npc.Age" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Per" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Npc.Per">
+                            <span asp-validation-for="Npc.Per" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Exp" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" class="am-input-sm" asp-for="Npc.Exp">
+                            <span asp-validation-for="Npc.Exp" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.RoomId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            <input type="text" id="roomId" class="am-input-sm" asp-for="Npc.RoomId">
+                            <span asp-validation-for="Npc.RoomId" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.IsEnable" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-2">
+                            <label class="am-btn am-btn-default am-btn-xs">
+                                <input type="checkbox" asp-for="Npc.IsEnable" checked="checked"> 启用
+                                <span asp-validation-for="Npc.IsEnable" class="text-danger"></span>
+                            </label>
+
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Npc.Description" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="description" asp-for="Npc.Description"></textarea>
+                            <span asp-validation-for="Npc.Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="./Index" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+            $(function () {
+                Simditor.locale = 'zh-CN';//设置中文
+                var editor = new Simditor({
+                    textarea: $("#description"),  //textarea的id
+                    placeholder: '请输入Npc描述',
+                    toolbar: ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment', '|', 'html'], //工具条都包含哪些内容
+                    pasteImage: true,//允许粘贴图片
+                    defaultImage: ''//编辑器插入的默认图片，此处可以删除
+                });
+
+                $("input[type=checkbox]:checked").each(function () {
+                $(this).parent(".am-btn").addClass("am-active");
+            });
+            });
+    </script>
+}

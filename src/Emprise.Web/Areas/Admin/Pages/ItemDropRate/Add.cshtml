@@ -1,0 +1,152 @@
+﻿@page
+@model Emprise.Web.Areas.Admin.Pages.ItemDropRate.AddModel
+@{
+    ViewData["Title"] = "掉落管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+@section CssJs{
+
+    <link rel="stylesheet" type="text/css" href="~/admin/simditor/styles/simditor.css" />
+
+    <script type="text/javascript" src="~/admin/simditor/scripts/jquery.min.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/module.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/hotkeys.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/beautify-html.js"></script>
+    <script type="text/javascript" src="~/admin/simditor/scripts/simditor-html.js"></script>
+
+    <link rel="stylesheet" href="~/admin/simditor/styles/simditor-html.css" media="screen" charset="utf-8" />
+}
+<div class="admin-content-body">
+    <div class="am-cf am-padding">
+        <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">掉落管理</strong> / <small>添加掉落</small></div>
+    </div>
+
+    <div class="am-margin">
+        <form class="am-form" method="post">
+            <div class="am-g">
+                <p></p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="am-fade  am-in am-active">
+
+
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.DropType" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-4">
+                            @foreach (var item in Enum.GetValues(typeof(ItemDropTypeEnum)))
+                            {
+                                <label class="am-btn am-btn-default am-btn-xs">
+                                    <input asp-for="ItemDropRate.DropType" type="radio" name="ItemDropRate.DropType" value="@(item.ToString())" val="@((int)item)"> @(item.ToString())
+                                </label>
+                            }
+
+                            <span asp-validation-for="ItemDropRate.DropType" class="text-danger"></span>
+                        </div>
+                        <div class="am-u-sm-6"></div>
+                    </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.WareId" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.WareId">
+                            <span asp-validation-for="ItemDropRate.WareId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm dropWare" style="display:none">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.MinNumber" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.MinNumber">
+                            <span asp-validation-for="ItemDropRate.MinNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm dropWare" style="display:none">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.MaxNumber" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.MaxNumber">
+                            <span asp-validation-for="ItemDropRate.MaxNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.Order" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Order">
+                            <span asp-validation-for="ItemDropRate.Order" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.Weight" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Weight">
+                            <span asp-validation-for="ItemDropRate.Weight" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="ItemDropRate.Percent" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <input type="text" class="am-input-sm" asp-for="ItemDropRate.Percent">
+                            <span asp-validation-for="ItemDropRate.Percent" class="text-danger"></span>
+                        </div>
+                    </div>
+
+
+
+                    <div class="footer am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+
+                        </div>
+                        <div class="am-u-sm-10">
+                            <button type="submit" class="am-btn am-btn-primary am-btn-xs">提交保存</button>
+                            <a asp-page="./Index" asp-route-id="@(Model.Id)" class="am-btn am-btn-default am-btn-xs backup">返回</a>
+                            <div class="am-inline-block am-padding-left">
+                                <p style="color:#ff0000">@(Model.ErrorMessage)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+@section Scripts {
+
+    <script type="text/javascript">
+            $(function () {
+
+
+                $("input[type=checkbox]:checked").each(function () {
+                    $(this).parent(".am-btn").addClass("am-active");
+                });
+
+
+
+            });
+    </script>
+}

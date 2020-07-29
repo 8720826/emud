@@ -76,8 +76,7 @@
                 <li class="admin-parent" id="log">
                     <a class="am-cf @(menuGroupEnum == MenuGroupEnum.Log?"":"am-collapsed")" data-am-collapse="{target: '#collapse-nav3'}"><span class="am-icon-th"></span> 日志管理 <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
                     <ul class="am-list admin-sidebar-sub am-collapse @(menuGroupEnum == MenuGroupEnum.Log?"am-in":"")" id="collapse-nav3">
-                        <li><a asp-page="/Log/OperatorLog" class="am-cf"><span class="am-icon-list-alt"></span> 操作记录</a></li>
-                        <li><a asp-page="/Log/SystemLog" class="am-cf"><span class="am-icon-list-alt"></span> 异常日志</a></li>
+                        <li><a asp-page="/OperatorLog/Index" class="am-cf"><span class="am-icon-list-alt"></span> 操作记录</a></li>
                     </ul>
                 </li>
             </ul>

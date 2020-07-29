@@ -16,6 +16,7 @@ namespace Emprise.Domain.Core.Enums
         修改地图,
         删除地图,
 
+        清除记录,
         清除1年前记录,
         清除半年前记录,
         清除3个月前记录,
@@ -25,6 +26,8 @@ namespace Emprise.Domain.Core.Enums
         修改Npc,
         删除Npc,
         复制Npc,
+        禁用Npc,
+        启用Npc,
 
         修改用户,
         禁用用户,
@@ -67,6 +70,11 @@ namespace Emprise.Domain.Core.Enums
 
         添加掉落,
         修改掉落,
-        删除掉落
+        删除掉落,
+
+
+        添加掉落项,
+        修改掉落项,
+        删除掉落项,
     }
 }

@@ -3,6 +3,7 @@ using Emprise.Application.Player.Dtos;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
+using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Services;
 using Emprise.Domain.Log.Entity;
@@ -30,11 +31,14 @@ namespace Emprise.Application.Player.Services
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IUserDomainService _userDomainService;
         private readonly IOperatorLogDomainService _operatorLogDomainService;
+        private readonly IMudProvider _mudProvider;
+
         public PlayerAppService(
             IMapper mapper, 
             IPlayerDomainService playerDomainService,
             IUserDomainService userDomainService,
             IOperatorLogDomainService operatorLogDomainService,
+            IMudProvider mudProvider,
             IUnitOfWork uow,
             ILogger<PlayerAppService> logger)
             : base(uow)
@@ -44,6 +48,7 @@ namespace Emprise.Application.Player.Services
             _userDomainService = userDomainService;
             _operatorLogDomainService = operatorLogDomainService;
             _logger = logger;
+            _mudProvider = mudProvider;
         }
 
 
@@ -157,6 +162,12 @@ namespace Emprise.Application.Player.Services
 
             return await query.Paged(pageIndex);
         }
+
+        public async Task DoWork(PlayerEntity player)
+        {
+            await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
+        }
+
 
         public void Dispose()
         {

@@ -526,7 +526,7 @@ namespace Emprise.MudServer.CommandHandlers
             player.Status = newStatus;
             await _playerDomainService.Update(player);
 
-            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 2, 10);
+            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 5, 15);
 
             if (await Commit())
             {
@@ -906,7 +906,7 @@ namespace Emprise.MudServer.CommandHandlers
         {
             _logger.LogDebug($"npc={npc.Id},scriptId={scriptId},commandId={commandId},input={input}");
 
-            var npcScripts = await _npcScriptDomainService.Query(x => x.NpcId == npc.Id);
+            var npcScripts = (await _npcScriptDomainService.GetAll()).Where(x => x.NpcId == npc.Id);
             var scriptIds = npcScripts.Select(x => x.ScriptId).ToList();
             if (!scriptIds.Contains(scriptId))
             {

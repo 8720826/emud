@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Entity;
+using Emprise.Domain.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,5 +23,8 @@ namespace Emprise.Domain.ItemDrop.Entity
         /// 是否启用
         /// </summary>
         public bool IsEnable { set; get; }
+
+
+        public WorkTypeEnum WorkType { set; get; }
     }
 }

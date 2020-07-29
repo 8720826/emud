@@ -12,23 +12,22 @@ namespace Emprise.Domain.ItemDrop.Entity
     {
         public int ItemDropId { get; set; }
 
-        public WorkTypeEnum WorkType { set; get; }
+        public ItemDropTypeEnum DropType { set; get; }
 
-        
         public int WareId { set; get; }  
 
         public int MaxNumber { set; get; }
 
-        public int Money { set; get; }
 
-        public int Exp { set; get; }
-
-        public int Pot { set; get; }
-        
-
+        public int MinNumber { set; get; }
 
         /// <summary>
-        /// 权重，按值大小优先掉落，且总和不超过100
+        /// 掉落顺序，从小到大
+        /// </summary>
+        public int Order { set; get; }
+
+        /// <summary>
+        /// 权重，总权重为100，掉落物品累加，达到100后不再掉落
         /// </summary>
         public int Weight { set; get; }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Emprise.Application.ItemDrop.Services;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.ItemDrop.Entity;
 using Microsoft.AspNetCore.Http;
@@ -15,33 +16,33 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDropRate
 {
     public class IndexModel : BaseAdminPageModel
     {
-       // private readonly IItemDropAppService _itemDropAppService;
+        private readonly IItemDropRateAppService _itemDropRateAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
         public IndexModel(
             ILogger<IndexModel> logger,
-            //IItemDropAppService itemDropAppService,
+            IItemDropRateAppService itemDropRateAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
-           // _itemDropAppService = itemDropAppService;
+            _itemDropRateAppService = itemDropRateAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
 
 
-        public int SId { get; set; }
+        public int Id { get; set; }
 
         public List<ItemDropRateEntity> ItemDropRates { get; set; }
 
 
-        public void OnGet(int sId)
+        public async Task OnGetAsync(int id)
         {
-            SId = sId;
+            Id = id;
 
-            //ItemDropRates = _db.ItemDropRates.Where(x => x.ItemDropId == sId).ToList();
+            ItemDropRates = await _itemDropRateAppService.GetAll(id);
         }
     }
 }

@@ -63,40 +63,8 @@ namespace Emprise.Web.Areas.Admin.Pages.ItemDrop
             }
             else
             {
-                return RedirectToPage("/Ware/Index");
+                return RedirectToPage("/ItemDrop/Index");
             }
-
-            /*
-            try
-            {
-                var itemDrop = _mapper.Map<ItemDropEntity>(ItemDrop);
-
-                await _db.ItemDrops.AddAsync(itemDrop);
-
-                await _db.SaveChangesAsync();
-
-                await AddSuccess(new OperatorLog
-                {
-                    Type = OperatorLogType.添加掉落,
-                    Content = JsonConvert.SerializeObject(ItemDrop)
-                });
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-
-                await AddError(new OperatorLog
-                {
-                    Type = OperatorLogType.添加掉落,
-                    Content = $"Data={JsonConvert.SerializeObject(ItemDrop)},ErrorMessage={ErrorMessage}"
-                });
-                return Page();
-            }
-
-
-
-            return Redirect(UrlReferer);
-            */
         }
     }
 }

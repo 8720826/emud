@@ -28,4 +28,15 @@ namespace Emprise.Domain.Core.Enums
         采药 = 7,
         打猎 = 8,
     }
+
+
+    public enum DropTypeEnum
+    {
+        打工 = 1,
+        伐木 = 4,
+        钓鱼 = 5,
+        挖矿 = 6,
+        采药 = 7,
+        打猎 = 8,
+    }
 }

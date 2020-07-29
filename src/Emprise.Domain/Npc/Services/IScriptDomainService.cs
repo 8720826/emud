@@ -2,6 +2,7 @@
 using Emprise.Domain.Npc.Entity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace Emprise.Domain.Npc.Services
     {
         Task<ScriptEntity> Get(Expression<Func<ScriptEntity, bool>> where);
 
-        Task<List<ScriptEntity>> GetAll(Expression<Func<ScriptEntity, bool>> where);
+        Task<IQueryable<ScriptEntity>> GetAll();
 
         Task<ScriptEntity> Get(int id);
 

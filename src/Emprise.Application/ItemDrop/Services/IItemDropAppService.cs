@@ -20,5 +20,6 @@ namespace Emprise.Application.ItemDrop.Services
         Task<ResultDto> Delete(int id);
 
         Task<Paging<ItemDropEntity>> GetPaging(string keyword, int pageIndex);
+
     }
 }

@@ -17,5 +17,8 @@ namespace Emprise.Domain.Room.Entity
 
         public int ItemDropId { get; set; }
 
+
+
+
     }
 }

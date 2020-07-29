@@ -6,8 +6,11 @@
 
   <ItemGroup>
     <Compile Remove="Common\**" />
+    <Compile Remove="Npc\Models\**" />
     <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="Npc\Models\**" />
     <None Remove="Common\**" />
+    <None Remove="Npc\Models\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Npc\Models\" />
     <Folder Include="Player\Models\" />
   </ItemGroup>
 

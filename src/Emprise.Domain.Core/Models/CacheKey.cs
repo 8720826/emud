@@ -14,6 +14,7 @@ namespace Emprise.Domain.Core.Models
         public const string RoomList = "RoomList";
         public const string Room = "Room_{0}";
         public const string MapRoomList = "RoomList_{0}";
+        public const string RoomItemDropList = "Room_{0}_ItemDrop";
 
 
         public const string Script = "Script_{0}";

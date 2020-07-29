@@ -19,10 +19,9 @@ namespace Emprise.Domain.Npc.Services
             _npcScriptRepository = npcScriptRepository;
         }
 
-        public async Task<List<NpcScriptEntity>> Query(Expression<Func<NpcScriptEntity, bool>> where)
+        public async Task<IQueryable<NpcScriptEntity>> GetAll()
         {
-            var query = await _npcScriptRepository.GetAll(where);
-            return query.ToList();
+            return await _npcScriptRepository.GetAll();
         }
 
         public async Task<NpcScriptEntity> Get(Expression<Func<NpcScriptEntity, bool>> where)
@@ -43,6 +42,11 @@ namespace Emprise.Domain.Npc.Services
         public async Task Update(NpcScriptEntity entity)
         {
              await _npcScriptRepository.Update(entity);
+        }
+
+        public async Task Delete(NpcScriptEntity entity)
+        {
+            await _npcScriptRepository.Remove(entity);
         }
 
         public void Dispose()

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Configuration;
 using Emprise.Domain.Core.Models;
-using Emprise.Infra.Authorization;
-using Emprise.Infra.Bus;
 using Emprise.Infra.Data;
 using Emprise.Infra.Ioc;
 using Emprise.Infra.IoC;
@@ -86,20 +83,21 @@ namespace Emprise.Web
             }); ;
 
             var dataProvide = Configuration.GetValue<string>("DataProvider").ToLower();
-
+            string connectionString = Configuration.GetConnectionString(dataProvide);
             #endregion
 
             services.AddDbContext<EmpriseDbContext>(x=> {
                 switch (dataProvide)
                 {
                     case "mssql":
-                        x.UseSqlServer(Configuration.GetConnectionString(dataProvide));
+                       
+                        x.UseSqlServer(connectionString);
                         break;
                     case "mysql":
-                        x.UseMySql(Configuration.GetConnectionString(dataProvide));
+                        x.UseMySql(connectionString);
                         break;
                     case "postgresql":
-                        x.UseNpgsql(Configuration.GetConnectionString(dataProvide));
+                        x.UseNpgsql(connectionString);
                         break;
                     default:
                         throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");
@@ -111,13 +109,13 @@ namespace Emprise.Web
                 switch (dataProvide)
                 {
                     case "mssql":
-                        x.UseSqlServer(Configuration.GetConnectionString(dataProvide));
+                        x.UseSqlServer(connectionString);
                         break;
                     case "mysql":
-                        x.UseMySql(Configuration.GetConnectionString(dataProvide));
+                        x.UseMySql(connectionString);
                         break;
                     case "postgresql":
-                        x.UsePostgreSql(Configuration.GetConnectionString(dataProvide));
+                        x.UsePostgreSql(connectionString);
                         break;
                     default:
                         throw new Exception("数据库链接配置错误，请检查appsettings.json文件！");

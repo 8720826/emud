@@ -33,11 +33,9 @@ namespace Emprise.Domain.Npc.Services
             return await _scriptRepository.Get(where);
         }
 
-        public async Task<List<ScriptEntity>> GetAll(Expression<Func<ScriptEntity, bool>> where)
+        public async Task<IQueryable<ScriptEntity>> GetAll()
         {
-            var query = await _scriptRepository.GetAll(where);
-
-            return query.ToList();
+            return await _scriptRepository.GetAll();
         }
 
         public async Task<ScriptEntity> Get(int id)
