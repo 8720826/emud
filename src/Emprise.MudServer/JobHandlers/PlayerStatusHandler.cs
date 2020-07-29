@@ -1,6 +1,7 @@
 ﻿using Emprise.Application.Player.Services;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Core.Queue.Models;
@@ -9,10 +10,13 @@ using Emprise.Domain.ItemDrop.Services;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
+using Emprise.Domain.Ware.Entity;
+using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Events;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +38,9 @@ namespace Emprise.MudServer.Handles
         private readonly IRoomItemDropDomainService  _roomItemDropDomainService;
         private readonly IItemDropDomainService  _itemDropDomainService;
         private readonly IItemDropRateDomainService  _itemDropRateDomainService;
+        private readonly IWareDomainService _wareDomainService;
+        private readonly IPlayerWareDomainService _playerWareDomainService;
+
         public PlayerStatusHandler(
             IMudProvider mudProvider, 
             IPlayerDomainService playerDomainService, 
@@ -43,6 +50,8 @@ namespace Emprise.MudServer.Handles
            IRoomItemDropDomainService roomItemDropDomainService,
            IItemDropDomainService itemDropDomainService,
            IItemDropRateDomainService itemDropRateDomainService,
+           IWareDomainService wareDomainService,
+           IPlayerWareDomainService playerWareDomainService,
             IMediatorHandler bus)
         {
             _mudProvider = mudProvider;
@@ -54,6 +63,8 @@ namespace Emprise.MudServer.Handles
             _roomItemDropDomainService = roomItemDropDomainService;
             _itemDropDomainService = itemDropDomainService;
             _itemDropRateDomainService = itemDropRateDomainService;
+            _wareDomainService = wareDomainService;
+            _playerWareDomainService = playerWareDomainService;
         }
         public async Task Execute(PlayerStatusModel model)
         {
@@ -202,10 +213,104 @@ namespace Emprise.MudServer.Handles
                 return;
             }
 
+            var playerAttributeChanged = false;
+            List<string> dropContents = new List<string>() ;
+
             foreach (var itemDropModel in itemDropModels)
             {
-                await _mudProvider.ShowMessage(player.Id, $"掉落，{itemDropModel.DropType.ToString()},{itemDropModel.WareId},{itemDropModel.Number}。。。");
+                switch (itemDropModel.DropType)
+                {
+                    case ItemDropTypeEnum.潜能:
+                        playerAttributeChanged = true;
+                        player.Pot += itemDropModel.Number;
+                        dropContents.Add($"潜能 +{itemDropModel.Number}");
+                        break;
+                    case ItemDropTypeEnum.经验:
+                        playerAttributeChanged = true;
+                        player.Exp += itemDropModel.Number;
+                        dropContents.Add($"经验 +{itemDropModel.Number}");
+                        break;
+                    case ItemDropTypeEnum.金钱:
+                        playerAttributeChanged = true;
+                        player.Money += itemDropModel.Number;
+                        dropContents.Add($" +{itemDropModel.Number.ToMoney()}");
+                        break;
+                    case ItemDropTypeEnum.物品:
+                        #region MyRegion
+                        int wareId = itemDropModel.WareId;
+                        int number = itemDropModel.Number;
+
+                        var ware = await _wareDomainService.Get(wareId);
+                        if (ware == null)
+                        {
+                            continue;
+                        }
+
+                        dropContents.Add($"{ware.Name} X{number}");
+
+                        var canStack = ware.Category != WareCategoryEnum.武器;
+
+                        if (canStack)
+                        {
+                            var playerWare = await _playerWareDomainService.Get(x => x.WareId == ware.Id && x.PlayerId == player.Id);
+                            if (playerWare == null)
+                            {
+                                playerWare = new PlayerWareEntity
+                                {
+                                    IsBind = false,
+                                    IsTemp = false,
+                                    Level = 1,
+                                    Number = number,
+                                    Damage = 0,
+                                    PlayerId = player.Id,
+                                    Status = WareStatusEnum.卸下,
+                                    WareId = wareId,
+                                    WareName = ware.Name
+                                };
+                                await _playerWareDomainService.Add(playerWare);
+                            }
+                            else
+                            {
+                                playerWare.Number += number;
+                                await _playerWareDomainService.Update(playerWare);
+                            }
+                        }
+                        else
+                        {
+                            var playerWare = new PlayerWareEntity
+                            {
+                                IsBind = false,
+                                IsTemp = false,
+                                Level = 1,
+                                Number = number,
+                                Damage = 0,
+                                PlayerId = player.Id,
+                                Status = WareStatusEnum.卸下,
+                                WareId = wareId,
+                                WareName = ware.Name
+                            };
+                            await _playerWareDomainService.Add(playerWare);
+                        }
+                        #endregion
+
+
+                        break;
+                }
+               
             }
+
+            if (playerAttributeChanged)
+            {
+                await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
+            }
+
+
+            if (dropContents.Count > 0)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"获得{ string.Join("，", dropContents)   }。");   
+            }
+
+
         }
 
 
@@ -224,5 +329,7 @@ namespace Emprise.MudServer.Handles
         {
             await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
         }
+
+
     }
 }

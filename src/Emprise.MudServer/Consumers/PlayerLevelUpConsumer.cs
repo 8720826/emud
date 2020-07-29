@@ -21,38 +21,38 @@ using System.Threading.Tasks;
 
 namespace Emprise.MudServer.Consumers
 {
-    public interface IPlayerStatusConsumer : ITransient
+    public interface IPlayerLevelUpConsumer : ITransient
     {
-        Task<bool> PlayerStatusQueueConsumer(PlayerStatusQueue message);
 
+        Task<bool> PlayerLevelUpQueueConsumer(PlayerLevelUpQueue message);
         
 
     }
 
-    public class PlayerStatusConsumer : BaseConsumer, IPlayerStatusConsumer, ICapSubscribe
+    public class PlayerLevelUpConsumer : BaseConsumer, IPlayerLevelUpConsumer, ICapSubscribe
     {
         private readonly ILogger<ChatConsumer> _logger;
-        private readonly IPlayerStatusHandler _playerStatusHandler;
+        private readonly IPlayerLevelUpHandler _playerLevelUpHandler;
         private readonly IMudProvider _mudProvider;
       
-        public PlayerStatusConsumer(
-            IPlayerStatusHandler playerStatusHandler,
+        public PlayerLevelUpConsumer(
+            IPlayerLevelUpHandler playerLevelUpHandler,
             ILogger<ChatConsumer> logger, 
             IUnitOfWork uow,
             IMudProvider mudProvider,
             IRedisDb redisDb) : base(uow, redisDb)
         {
             _logger = logger;
-            _playerStatusHandler = playerStatusHandler;
+            _playerLevelUpHandler = playerLevelUpHandler;
             _mudProvider = mudProvider;
         }
 
-        [CapSubscribe("PlayerStatusQueue")]
-        public async Task<bool> PlayerStatusQueueConsumer(PlayerStatusQueue message)
+        [CapSubscribe("PlayerLevelUpQueue")]
+        public async Task<bool> PlayerLevelUpQueueConsumer(PlayerLevelUpQueue message)
         {
             _logger.LogDebug($"Consumer Get Queue {JsonConvert.SerializeObject(message)} ready");
 
-            await _playerStatusHandler.Execute(message.Status);
+            await _playerLevelUpHandler.Execute(message.PlayerId);
 
             if (await Commit())
             {
@@ -61,7 +61,6 @@ namespace Emprise.MudServer.Consumers
 
             return true;
         }
-
         
     }
 }

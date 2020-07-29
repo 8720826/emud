@@ -43,10 +43,12 @@ namespace Emprise.MudServer.EventHandlers
         INotificationHandler<PlayerStatusChangedEvent>,
         INotificationHandler<SendMessageEvent>,
         INotificationHandler<CompleteQuestEvent>,
-        INotificationHandler<QuestTriggerEvent>
+        INotificationHandler<QuestTriggerEvent>,
+        INotificationHandler<PlayerAttributeChangedEvent>
+
+
 
         
-
 
     {
         public const string Player = "Player_{0}";
@@ -235,6 +237,27 @@ namespace Emprise.MudServer.EventHandlers
 
         }
 
+        public async Task Handle(PlayerAttributeChangedEvent message, CancellationToken cancellationToken)
+        {
+            var player = message.Player;
+            var myInfo = _mapper.Map<MyInfo>(player);
+            await _mudProvider.UpdatePlayerInfo(player.Id, myInfo);
+
+            // ((i - 1) * (i - 1) * (i - 1) + 60) / 5 * ((i - 1) * 2 + 60) - 600
+
+            var level = player.Level;
+            var levelUpExp = (level * level * level + 60) / 5 * (level * 2 + 60) - 600;
+
+            if (levelUpExp <= player.Exp)
+            {
+                await _queueHandler.SendQueueMessage(new PlayerLevelUpQueue(player.Id));
+            }
+
+            _logger.LogDebug($"PlayerAttributeChangedEvent levelUpExp={levelUpExp}");
+        }
+        
+
+
         public async Task Handle(SendMessageEvent message, CancellationToken cancellationToken)
         {
             var playerId = message.PlayerId;
@@ -338,6 +361,9 @@ namespace Emprise.MudServer.EventHandlers
 
 
         }
+
+
+
 
 
         /*

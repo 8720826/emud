@@ -3,6 +3,7 @@ using Emprise.Application.Email.Dtos;
 using Emprise.Application.ItemDrop.Dtos;
 using Emprise.Application.Npc.Dtos;
 using Emprise.Application.User.Models;
+using Emprise.Application.Ware.Dtos;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Email.Entity;
 using Emprise.Domain.ItemDrop.Entity;
@@ -39,6 +40,9 @@ namespace Emprise.Infra.Mapper
 
 
             CreateMap<WareEntity, WareModel>();
+            CreateMap<WareEntity, WareInput>();
+            CreateMap<WareInput, WareEntity>();
+
 
             CreateMap<EmailEntity, EmailInput>();
             CreateMap<EmailInput, EmailEntity>();
