@@ -51,14 +51,20 @@ namespace Emprise.MudServer.JobHandlers
                 return;
             }
 
+            var level = player.Level;
+            var levelUpExp = (level * level * level + 60) / 5 * (level * 2 + 60) - 600;
 
-            player.Level += 1;
-            player.Point += 1;
-            await _playerDomainService.Update(player);
+            if (levelUpExp <= player.Exp)
+            {
+                player.Level += 1;
+                player.Point += 1;
+                await _playerDomainService.Update(player);
 
-            await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
 
-            await _mudProvider.ShowMessage(player.Id, $"恭喜你升级到 Lv{ player.Level }。");
+                await _mudProvider.ShowMessage(player.Id, $"恭喜你升级到 Lv{ player.Level }。");
+            }
+
 
         }
     }
