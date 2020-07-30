@@ -510,10 +510,20 @@ namespace Emprise.MudServer.CommandHandlers
                     break;
 
                 case PlayerStatusEnum.疗伤:
+                    if (player.Hp >= player.MaxHp)
+                    {
+                        await _mudProvider.ShowMessage(playerId, "你没有受伤，无需治疗。");
+                        return;
+                    }
                     await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始运功疗伤。");
                     break;
 
                 case PlayerStatusEnum.打坐:
+                    if (player.Mp >= player.MaxMp)
+                    {
+                        await _mudProvider.ShowMessage(playerId, "你内力充沛，无需打坐。");
+                        return;
+                    }
                     await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始打坐。");
                     break;
 

@@ -120,7 +120,7 @@ namespace Emprise.MudServer.Handles
                     break;
 
                 case PlayerStatusEnum.战斗:
-                    await Fighting(player);
+                    await Fighting(player, model.TargetId);
                     break;
             }
 
@@ -314,20 +314,76 @@ namespace Emprise.MudServer.Handles
         }
 
 
-
+        /// <summary>
+        /// 疗伤，恢复体力
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
         private async Task Heal(PlayerEntity player)
         {
-            await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
+            if (player.Hp >= player.MaxHp)
+            {
+                await _recurringQueue.Remove<PlayerStatusModel>(player.Id);
+                await _mudProvider.ShowMessage(player.Id, $"{player.Status}结束，你站了起来。。。");
+                player.Status = PlayerStatusEnum.空闲;
+                await _playerDomainService.Update(player);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            }
+            else
+            {
+                Random random = new Random();
+                int addHp = random.Next((player.MaxHp / 40) + 1, (player.MaxHp / 20) + 1);
+                if (player.Hp + addHp > player.MaxHp)
+                {
+                    addHp = player.MaxHp - player.Hp;
+                }
+                player.Hp += addHp;
+
+                await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
+                await _mudProvider.ShowMessage(player.Id, $"你感觉身体好多了，气血恢复 +{addHp}。。。");
+                await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
+            }
+         
         }
 
+        /// <summary>
+        /// 打坐，恢复内力
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
         private async Task Muse(PlayerEntity player)
         {
-            await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
+            if (player.Mp >= player.MaxMp)
+            {
+                await _recurringQueue.Remove<PlayerStatusModel>(player.Id);
+                await _mudProvider.ShowMessage(player.Id, $"{player.Status}结束，你站了起来。。。");
+                player.Status = PlayerStatusEnum.空闲;
+                await _playerDomainService.Update(player);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            }
+            else
+            {
+                Random random = new Random();
+                int addMp = random.Next((player.MaxMp / 40) + 1, (player.MaxMp / 20) + 1);
+                if (player.Mp + addMp > player.MaxMp)
+                {
+                    addMp = player.MaxMp - player.Mp;
+                }
+                player.Mp += addMp;
+
+                await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
+                await _mudProvider.ShowMessage(player.Id, $"你感觉精神好多了，内力恢复 +{addMp}。。。");
+                await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
+            }
+          
         }
 
-        private async Task Fighting(PlayerEntity player)
+        private async Task Fighting(PlayerEntity player,int targetId)
         {
-            await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
+
+
+            await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}，{targetId}。。。");
+
         }
 
 

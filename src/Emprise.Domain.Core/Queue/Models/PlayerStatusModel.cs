@@ -13,5 +13,7 @@ namespace Emprise.Domain.Core.Queue.Models
         /// 玩家状态
         /// </summary>
         public PlayerStatusEnum Status { get; set; }
+
+        public int TargetId { get; set; }
     }
 }
