@@ -84,7 +84,7 @@
                 </div>
                 <div class="action">
                     <button @@click="search">探索</button>
-                    <button @@click="meditate">打坐</button>
+                    <button @@click="meditate" v-show="myinfo.mp<myinfo.maxMp">打坐</button>
                     <button @@click="exert" v-show="myinfo.hp<myinfo.maxHp">疗伤</button>
                     <button @@click="fish" v-show="room.canFish">钓鱼</button>
                     <button @@click="dig" v-show="room.canDig">挖矿</button>
