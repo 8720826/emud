@@ -24,6 +24,8 @@ namespace Emprise.Domain.Player.Services
 
         Task Delete(PlayerEntity player);
 
+        Task<PlayerEntity> Computed(PlayerEntity player);
+
         Task<PlayerEntity> GetUserPlayer(int userId);
     }
 }

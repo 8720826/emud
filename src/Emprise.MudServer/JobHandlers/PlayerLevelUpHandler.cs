@@ -58,6 +58,9 @@ namespace Emprise.MudServer.JobHandlers
             {
                 player.Level += 1;
                 player.Point += 1;
+
+                player =  await _playerDomainService.Computed(player);
+
                 await _playerDomainService.Update(player);
 
                 await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);

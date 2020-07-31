@@ -54,6 +54,18 @@ namespace Emprise.Domain.Player.Services
             return await _playerRepository.Get(x => x.UserId == userId);
         }
 
+        public async Task<PlayerEntity> Computed(PlayerEntity player)
+        {
+            player.MaxHp = (player.Str * 3 + player.StrAdd) * 10 + player.Level * 5 + 100;
+            player.LimitMp = ((player.Con * 4 + player.ConAdd) * 10 + player.Level * 5 + 100) * 10;
+            if (player.MaxMp * 10 < player.LimitMp)
+            {
+                player.MaxMp = player.LimitMp / 10;
+            }
+
+            return await Task.FromResult(player);
+        }
+
 
         public void Dispose()
         {

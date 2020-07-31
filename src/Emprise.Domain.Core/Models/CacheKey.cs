@@ -8,6 +8,8 @@ namespace Emprise.Domain.Core.Models
     {
         public const int ExpireMinutes = 60;
 
+        public const string IsActivityIn24Hours = "IsActivityIn24Hours";
+
         public const string MapList = "MapList";
         public const string Map = "Map_{0}";
 

@@ -143,6 +143,7 @@ namespace Emprise.Domain.Player.Entity
 
         /// <summary>
         /// 福缘
+        /// 幸运数字，每次进入游戏重新生成
         /// </summary>
         [ConditionField(PlayerConditionFieldEnum.福缘)]
         public int Kar { set; get; }
@@ -210,18 +211,22 @@ namespace Emprise.Domain.Player.Entity
 
         /// <summary>
         /// 命中
+        /// 基本拳脚、基本兵器，每升一级增加1点
         /// </summary>
         [ConditionField(PlayerConditionFieldEnum.命中)]
         public int Hit { set; get; }
 
         /// <summary>
         /// 闪避
+        /// 基本轻功，每升一级增加1点
         /// </summary>
         [ConditionField(PlayerConditionFieldEnum.闪避)]
         public int Flee { set; get; }
 
         /// <summary>
         /// 招架
+        /// 基本内功，每升一级增加1点
+        /// 闪避失败后判断招架，招架成功后减少伤害
         /// </summary>
         [ConditionField(PlayerConditionFieldEnum.招架)]
         public int Parry { set; get; }

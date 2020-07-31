@@ -187,17 +187,17 @@
                         <li><label>【等级】</label><span>{{myinfo.level}}</span></li>
                         <li><label>【经验】</label><span>{{myinfo.exp}}</span></li>
                         <li><label>【潜能】</label><span>{{myinfo.pot}}</span></li>
-                        <li class="long"><label>【气血】</label><span>{{myinfo.hp}}</span></li>
-                        <li class="long"><label>【内力】</label><span>{{myinfo.mp}}</span></li>
+                        <li class="long"><label>【气血】</label><span>{{myinfo.hp}}</span>/<span>{{myinfo.maxHp}}</span></li>
+                        <li class="long"><label>【内力】</label><span>{{myinfo.mp}}</span>/<span>{{myinfo.maxMp}}</span>/<span>{{myinfo.limitMp}}</span></li>
                     </ul>
 
                     <p class="mt15">先天属性</p>
                     <hr />
                     <ul>
-                        <li><label>【臂力】</label><span>{{myinfo.str}}</span></li>
-                        <li><label>【根骨】</label><span>{{myinfo.con}}</span></li>
-                        <li><label>【身法】</label><span>{{myinfo.dex}}</span></li>
-                        <li><label>【悟性】</label><span>{{myinfo._int}}</span></li>
+                        <li><label>【臂力】</label><span>{{myinfo.str}}</span><span v-show="myinfo.strAdd>0">+{{myinfo.strAdd}}</span></li>
+                        <li><label>【根骨】</label><span>{{myinfo.con}}</span><span v-show="myinfo.conAdd>0">+{{myinfo.conAdd}}</span></li>
+                        <li><label>【身法】</label><span>{{myinfo.dex}}</span><span v-show="myinfo.dexAdd>0">+{{myinfo.dexAdd}}</span></li>
+                        <li><label>【悟性】</label><span>{{myinfo._int}}</span><span v-show="myinfo.intAdd>0">+{{myinfo.intAdd}}</span></li>
                         <li><label>【容貌】</label><span>{{myinfo.per}}</span></li>
                         <li><label>【福缘】</label><span>{{myinfo.kar}}</span></li>
                     </ul>

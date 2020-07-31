@@ -196,6 +196,8 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
+            Random random = new Random();
+
             player = new PlayerEntity
             {
                 CreateDate = DateTime.Now,
@@ -222,21 +224,25 @@ namespace Emprise.MudServer.CommandHandlers
                 Exp = 0,
                 Cor = 20,
                 Cps = 20,
-                Flee = 0,
-                Hit = 0,
+                
+                
                 Pot = 0,
-                Kar = 20,
+                Kar = random.Next(1, 100),
                 Def = 0,
                 Hp = 0,
                 LimitMp = 0,
                 MaxHp = 0,
                 MaxMp = 0,
                 Mp = 0,
+
+                Hit = 0,
                 Parry = 0,
-                Per = 0,
+                Flee = 0,
+                Per = random.Next(10, 50),
                 Nrg = 0
             };
 
+            player = await _playerDomainService.Computed(player);
 
             await _playerDomainService.Add(player);
 
@@ -329,6 +335,18 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
             player.LastDate = DateTime.Now;
+
+
+            await _cache.GetOrCreateAsync(CacheKey.IsActivityIn24Hours, async x => {
+                x.AbsoluteExpiration = DateTime.UtcNow.AddHours(24);
+                Random random = new Random();
+                player.Kar = random.Next(1, 100);
+                return await Task.FromResult(true);
+            });
+
+            player = await _playerDomainService.Computed(player);
+
+
             await _playerDomainService.Update(player);
 
 
