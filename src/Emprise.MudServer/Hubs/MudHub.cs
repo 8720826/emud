@@ -138,6 +138,27 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
+        public async Task ShowMyWeapon()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowMyWeaponCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+        
+
+        public async Task ShowMySkill()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowMySkillCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
         public async Task ShowEmail(ShowEmailAction showEmailAction)
         {
             var result = await DoCommand(async () => {

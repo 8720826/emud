@@ -20,12 +20,15 @@ using Emprise.Domain.Ware.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Emprise.Domain.Ware.Models;
 using Emprise.Domain.Player.Models;
+using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Ware.Entity;
 
 namespace Emprise.MudServer.CommandHandlers
 {
     
     public class WareCommandHandler : CommandHandler,
         IRequestHandler<ShowMyPackCommand, Unit>,
+        IRequestHandler<ShowMyWeaponCommand, Unit>,
         IRequestHandler<LoadWareCommand, Unit>,
         IRequestHandler<UnLoadWareCommand, Unit>
 
@@ -109,6 +112,89 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
             await _mudProvider.ShowMyPack(playerId, myPack);
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(ShowMyWeaponCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var parts = new List<WarePartEnum>() {
+                WarePartEnum.头部,
+                WarePartEnum.武器,
+                WarePartEnum.衣服,
+                WarePartEnum.裤子,
+                WarePartEnum.腰带,
+                WarePartEnum.鞋子
+            };
+
+            List<Weapon> myWeapons = new List<Weapon>();
+
+            var playerWares = await _playerWareDomainService.GetAll(player.Id);
+            var ids = playerWares?.Where(x => x.Status == WareStatusEnum.装备).Select(x => x.WareId);
+
+            var wares = (await _wareDomainService.GetAll()).Where(x => ids.Contains(x.Id));
+
+            foreach (var part in parts)
+            {
+                WareEntity ware = null;
+                switch (part)
+                {
+                    case WarePartEnum.头部:
+                        ware = wares.FirstOrDefault(x => x.Type == WareTypeEnum.帽);
+                        break;
+
+                    case WarePartEnum.武器:
+                         ware = wares.FirstOrDefault(x => x.Type == WareTypeEnum.刀 || x.Type == WareTypeEnum.剑 || x.Type == WareTypeEnum.枪);
+
+                        break;
+
+                    case WarePartEnum.腰带:
+                         //ware = wares.FirstOrDefault(x => x.Type == WareTypeEnum.帽);
+                        break;
+
+                    case WarePartEnum.衣服:
+                         ware = wares.FirstOrDefault(x => x.Type == WareTypeEnum.衣服);
+                        break;
+
+                    case WarePartEnum.裤子:
+                        // ware = wares.FirstOrDefault(x => x.Type == WareTypeEnum.);
+                        break;
+                    case WarePartEnum.鞋子:
+                         ware = wares.FirstOrDefault(x => x.Type == WareTypeEnum.鞋);
+                        break;
+
+                }
+
+                var weapon = new Weapon { Part = part.ToString() };
+                if (ware != null)
+                {
+                    weapon.Ware = _mapper.Map<WareModel>(ware);
+                }
+                myWeapons.Add(weapon);
+            }
+
+            /*
+                foreach (var playerWare in playerWares)
+            {
+                var ware = wares.FirstOrDefault(x => x.Id == playerWare.WareId);
+                if (ware != null)
+                {
+                    var wareModel = _mapper.Map<WareModel>(ware);
+                    wareModel.Number = playerWare.Number;
+                    wareModel.Status = playerWare.Status;
+                    myWeapons.Add(wareModel);
+                }
+
+            }*/
+
+            await _mudProvider.ShowMyWeapon(playerId, myWeapons);
 
             return Unit.Value;
         }

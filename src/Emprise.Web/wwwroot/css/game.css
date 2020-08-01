@@ -776,6 +776,21 @@ footer a span {
         display: inline-block;
     }
 
+.weapon button {
+    display: inline;
+    margin: 10px;
+    padding: 1px 10px;
+    width: 5pc;
+    border: 1px solid #ae9455;
+    border-radius: 3px;
+    background-color: #231d18;
+    color: #918d84;
+    line-height: 20px;
+    width: 43%;
+    height: 30px;
+}
+
+
 .email li {
     padding-left: 10px;
     border-bottom: 1px solid #343434;

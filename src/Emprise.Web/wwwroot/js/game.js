@@ -39,7 +39,7 @@ new Vue({
         msg: "",
         myBox: "",
         myBoxMenus: [],
-        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "技能", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "武器", group: "player" },
+        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "武功", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
             { id: "email", name: "邮箱", group: "email" }],
         modal: {
             isShowConfirm: 0,
@@ -54,8 +54,9 @@ new Vue({
         mainQuest: {},
         myPack: {},
         unreadEmailCount: 0,
-        myEmail: null
-
+        myEmail: null,
+        skills: [],
+        weapons:[]
     },
     computed: {
         getMenus() {
@@ -204,6 +205,13 @@ new Vue({
                 that.myinfo = result;
             });
 
+            connection.on("ShowMySkill", result => {
+                console.log("ShowMySkill:" + JSON.stringify(result));
+                that.myBox = "skill";
+                that.skills = result;
+            });
+            
+
             connection.on("UpdatePlayerStatus", result => {
                 console.log("UpdatePlayerStatus:" + result);
                 that.myinfo.status = result;
@@ -228,6 +236,13 @@ new Vue({
                 that.myBox = "mypack";
                 that.myPack = result;
             });
+
+            connection.on("ShowMyWeapon", result => {
+                console.log("ShowMyWeapon:" + JSON.stringify(result));
+                that.myBox = "weapon";
+                that.weapons = result;
+            });
+            
 
             connection.on("UpdateUnreadEmailCount", result => {
                 console.log("UpdateUnreadEmailCount:" + result);
@@ -281,6 +296,12 @@ new Vue({
         showMyPack: function () {
             connection.invoke("ShowMyPack");
         },
+        showSkill: function () {
+            connection.invoke("ShowMySkill");
+        },
+        showWeapon: function () {
+            connection.invoke("ShowMyWeapon");
+        },
         showEmail: function (pageIndex) {
             connection.invoke("ShowEmail", { pageIndex: pageIndex||1 });
         },
@@ -319,10 +340,17 @@ new Vue({
                 case "status":
                     this.showStatus();
                     break;
-
                 case "mypack":
                     this.showMyPack();
                     break;
+                case "skill":
+                    this.showSkill();
+                    break;
+                case "weapon":
+                    this.showWeapon();
+                    break;
+                    
+
                 case "email":
                     this.showEmail(1);
                     break;

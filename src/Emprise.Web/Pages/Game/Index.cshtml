@@ -218,6 +218,35 @@
 
                 </div>
 
+                <div class="status" v-if="myBox=='skill'">
+                    <p>武功</p>
+
+                </div>
+
+                <div class="status" v-if="myBox=='achv'">
+                    <p>成就</p>
+
+                </div>
+
+                <div class="weapon" v-if="myBox=='weapon'">
+                    <p>你装备了以下物品：</p>
+                    <hr />
+                    <p><span>攻击：+{{myinfo.atk}}</span>   <span>防御：+{{myinfo.def}}</span> </p>
+                    <hr />
+                    <div class="mt15">
+                        <button v-for="weapon,index in weapons">
+                            [{{weapon.part}}]：
+                            <template v-if="weapon.ware">
+                                {{weapon.ware.name}}
+                            </template>
+                            <template v-else>
+                                无
+                            </template>
+                        </button>
+                    </div>
+                </div>
+
+
                 <div class="email" v-if="myBox=='email'">
                     <p v-if="myEmail&&myEmail.data&&myEmail.data.length>0">共有{{myEmail.data.length}}封邮件(点击标题展开)：</p>
                     <p v-else>收件箱没有任何邮件</p>
@@ -242,7 +271,7 @@
                     </ul>
                     <p class="mt15 paging">
                         <a href="javascript:;" @@click="showEmail(myEmail.pageIndex-1)" v-if="myEmail.pageIndex>1">上一页</a>
-                        
+
                         <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)" v-if="myEmail.pageIndex>myEmail.pageCount&&myEmail.pageCount>0">下一页</a>
                     </p>
                 </div>

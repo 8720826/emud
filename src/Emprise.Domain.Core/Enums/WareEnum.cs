@@ -63,4 +63,14 @@ namespace Emprise.Domain.Core.Enums
         增加气血 = 4,
 
     }
+
+    public enum WarePartEnum
+    {
+        头部 = 1,
+        衣服 = 2,
+        裤子 = 3,
+        鞋子 = 4,
+        腰带 = 5,
+        武器 = 6
+    }
 }

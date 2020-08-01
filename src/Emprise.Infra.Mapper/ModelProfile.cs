@@ -40,6 +40,7 @@ namespace Emprise.Infra.Mapper
 
 
             CreateMap<WareEntity, WareModel>();
+            CreateMap<WareEntity, Weapon>();
             CreateMap<WareEntity, WareInput>();
             CreateMap<WareInput, WareEntity>();
 
