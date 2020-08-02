@@ -9,7 +9,7 @@ namespace Emprise.Domain.Ware.Models
     public class WareEffect
     {
         [JsonProperty("effect")]
-        public string Condition { get; set; }
+        public string Effect { get; set; }
 
         [JsonProperty("attrs")]
         public List<EffectAttribute> Attrs { get; set; }

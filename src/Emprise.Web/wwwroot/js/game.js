@@ -41,6 +41,7 @@ new Vue({
         myBoxMenus: [],
         menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "武功", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
             { id: "email", name: "邮箱", group: "email" }],
+        myDetail:"",
         modal: {
             isShowConfirm: 0,
             type: "confirm",
@@ -242,6 +243,26 @@ new Vue({
                 that.myBox = "weapon";
                 that.weapons = result;
             });
+
+            connection.on("LoadWare", result => {
+                console.log("LoadWare:" + JSON.stringify(result));
+                for (var i = 0; i < that.myPack.wares.length; i++) {
+                    if (that.myPack.wares[i].playerWareId == result.playerWareId) {
+                        that.myPack.wares[i].status = result.status;
+                    }
+                }
+            });
+
+
+            connection.on("UnLoadWare", result => {
+                console.log("UnLoadWare:" + JSON.stringify(result));
+                for (var i = 0; i < that.myPack.wares.length; i++) {
+                    if (that.myPack.wares[i].playerWareId == result.playerWareId) {
+                        that.myPack.wares[i].status = result.status;
+                    }
+                }
+            });
+            
             
 
             connection.on("UpdateUnreadEmailCount", result => {
@@ -404,11 +425,16 @@ new Vue({
             that.dialog(title, content, function () {
 
             });
-        }, load: function (id) {
+        },
+        load: function (id) {
+            console.log("Load=" + id);
             connection.invoke("Load", { wareId: id });
-        }, unload: function (id) {
+        },
+        unload: function (id) {
+            console.log("UnLoad=" + id);
             connection.invoke("UnLoad", { wareId: id });
-        }, deleteEmail: function (id, title) {
+        },
+        deleteEmail: function (id, title) {
             console.log("deleteEmail=" + id);
             var that = this;
             that.confirm("要删除邮件[" + title + "]吗？", function () {
@@ -435,7 +461,17 @@ new Vue({
             height = height - that.$refs.menu.offsetHeight - 10;
             that.$refs.content.style.height = height + "px";
 
-        }, chats: {
+        },
+        myDetail(val) {
+            var that = this;
+            console.log("val=" + val);
+            var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            height = height - that.$refs.message.offsetHeight - 52;
+            that.$refs.myDetail.style.height = height + "px";
+            that.$refs.detail.style.height = height + "px";
+
+        }
+        , chats: {
             handler() {
                 var that = this;
                 that.$nextTick(function () {

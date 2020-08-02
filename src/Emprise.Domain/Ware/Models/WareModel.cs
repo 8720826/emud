@@ -46,6 +46,7 @@ namespace Emprise.Domain.Ware.Models
         /// </summary>
         public string Img { set; get; }
 
+        public int PlayerWareId { get; set; }
 
         public int Number { get; set; }
 

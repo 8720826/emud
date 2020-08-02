@@ -22,6 +22,7 @@ using Emprise.Domain.Ware.Models;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Ware.Entity;
+using Newtonsoft.Json;
 
 namespace Emprise.MudServer.CommandHandlers
 {
@@ -104,6 +105,7 @@ namespace Emprise.MudServer.CommandHandlers
                 if (ware != null)
                 {
                     var wareModel = _mapper.Map<WareModel>(ware);
+                    wareModel.PlayerWareId = playerWare.Id;
                     wareModel.Number = playerWare.Number;
                     wareModel.Status = playerWare.Status;
                     myPack.Wares.Add(wareModel);
@@ -180,20 +182,6 @@ namespace Emprise.MudServer.CommandHandlers
                 myWeapons.Add(weapon);
             }
 
-            /*
-                foreach (var playerWare in playerWares)
-            {
-                var ware = wares.FirstOrDefault(x => x.Id == playerWare.WareId);
-                if (ware != null)
-                {
-                    var wareModel = _mapper.Map<WareModel>(ware);
-                    wareModel.Number = playerWare.Number;
-                    wareModel.Status = playerWare.Status;
-                    myWeapons.Add(wareModel);
-                }
-
-            }*/
-
             await _mudProvider.ShowMyWeapon(playerId, myWeapons);
 
             return Unit.Value;
@@ -219,6 +207,29 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
+            var playerWare = await _playerWareDomainService.Get(x => x.PlayerId == playerId && x.WareId == wareId && x.Status == WareStatusEnum.卸下);
+            if (playerWare == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"武器不存在！"));
+                return Unit.Value;
+            }
+
+            playerWare.Status = WareStatusEnum.装备;
+            await _playerWareDomainService.Update(playerWare);
+
+            var wareEffectAttr = await Computed(playerId);
+
+            player.Atk = wareEffectAttr.Atk;
+            player.Def = wareEffectAttr.Def;
+
+            await _playerDomainService.Update(player);
+
+
+            var wareModel = _mapper.Map<WareModel>(ware);
+            wareModel.PlayerWareId = playerWare.Id;
+            wareModel.Number = playerWare.Number;
+            wareModel.Status = playerWare.Status;
+            await _mudProvider.LoadWare(playerId, wareModel);
 
             return Unit.Value;
         }
@@ -242,7 +253,66 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
+            var playerWare = await _playerWareDomainService.Get(x => x.PlayerId == playerId && x.WareId == wareId && x.Status == WareStatusEnum.装备);
+            if (playerWare == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"武器不存在！"));
+                return Unit.Value;
+            }
+
+            playerWare.Status = WareStatusEnum.卸下;
+            await _playerWareDomainService.Update(playerWare);
+
+            var wareEffectAttr = await Computed(playerId);
+
+            player.Atk = wareEffectAttr.Atk;
+            player.Def = wareEffectAttr.Def;
+
+            await _playerDomainService.Update(player);
+
+            var wareModel = _mapper.Map<WareModel>(ware);
+            wareModel.PlayerWareId = playerWare.Id;
+            wareModel.Number = playerWare.Number;
+            wareModel.Status = playerWare.Status;
+            await _mudProvider.UnLoadWare(playerId, wareModel);
+
             return Unit.Value;
+        }
+
+
+        private async Task<WareEffectAttr> Computed(int playerId)
+        {
+            var wareEffectAttr = new WareEffectAttr();
+            var playerWares = await _playerWareDomainService.GetAll(playerId);
+
+            var ids = playerWares.Where(x => x.Status == WareStatusEnum.装备).Select(x => x.WareId).ToList();
+
+            var wareQuery = await _wareDomainService.GetAll();
+            var wares = wareQuery.Where(x => ids.Contains(x.Id));
+            foreach (var item in wares)
+            {
+                var effects = JsonConvert.DeserializeObject<List<WareEffect>>(item.Effect);
+                foreach (var effect in effects)
+                {
+                    foreach(var attr in effect.Attrs)
+                    {
+                        int.TryParse(attr.Val,out int val);
+
+                        switch (attr.Attr)
+                        {
+                            case "Atk":
+                                wareEffectAttr.Atk += val;
+                                break;
+
+                            case "Def":
+                                wareEffectAttr.Def += val;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return wareEffectAttr;
         }
     }
 }

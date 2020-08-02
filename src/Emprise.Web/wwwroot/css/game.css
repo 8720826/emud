@@ -4,6 +4,23 @@
     box-sizing: border-box
 }
 
+* {
+    -webkit-touch-callout: none; /*系统默认菜单被禁用*/
+    -webkit-user-select: none; /*webkit浏览器*/
+    -khtml-user-select: none; /*早期浏览器*/
+    -moz-user-select: none; /*火狐*/
+    -ms-user-select: none; /*IE10*/
+    user-select: none;
+}
+
+input {
+    -webkit-user-select: auto; /*webkit浏览器*/
+}
+
+textarea {
+    -webkit-user-select: auto; /*webkit浏览器*/
+}
+
 blockquote, body, dd, div, dl, dt, fieldset, form, h1, h2, h3, h4, h5, h6, html, input, li, ol, p, pre, td, textarea, th, ul {
     margin: 0;
     padding: 0
@@ -833,3 +850,35 @@ footer a span {
 .fl {
     float: left;
 }
+
+
+.myDetail {
+    position: absolute;
+    top: 20px;
+    z-index: 9999;
+    overflow: auto;
+    width: 100%;
+    background-color: #151515;
+}
+
+.myDetail .myDetailTitle {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    line-height:30px;
+}
+
+    .myDetail .myDetailTitle .title {
+        float:left;
+        padding-left:10px;
+    }
+
+    .myDetail .myDetailTitle .back {
+        float: right;
+        padding-right: 10px;
+    }
+
+    .myDetail .detail {
+        overflow: auto;
+        margin: 5px;
+    }
