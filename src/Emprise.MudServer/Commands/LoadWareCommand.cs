@@ -9,11 +9,11 @@ namespace Emprise.MudServer.Commands
     {
         public int PlayerId { get; set; }
 
-        public int WareId { get; set; }
-        public LoadWareCommand(int playerId, int wareId)
+        public int MyWareId { get; set; }
+        public LoadWareCommand(int playerId, int myWareId)
         {
             PlayerId = playerId;
-            WareId = wareId;
+            MyWareId = myWareId;
         }
     }
 }

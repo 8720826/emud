@@ -324,7 +324,7 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
 
-                var command = new LoadWareCommand(playerId, wareAction.WareId);
+                var command = new LoadWareCommand(playerId, wareAction.MyWareId);
                 await _bus.SendCommand(command);
             });
         }
@@ -334,7 +334,7 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
  
-                var command = new UnLoadWareCommand(playerId, wareAction.WareId);
+                var command = new UnLoadWareCommand(playerId, wareAction.MyWareId);
                 await _bus.SendCommand(command);
             });
         }

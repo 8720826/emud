@@ -190,7 +190,7 @@ namespace Emprise.MudServer.CommandHandlers
 
         public async Task<Unit> Handle(LoadWareCommand command, CancellationToken cancellationToken)
         {
-            var wareId = command.WareId;
+            var myWareId = command.MyWareId;
             var playerId = command.PlayerId;
 
             var player = await _playerDomainService.Get(playerId);
@@ -200,19 +200,73 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            var ware = await _wareDomainService.Get(wareId);
-            if (ware == null)
+            var playerWare = await _playerWareDomainService.Get(myWareId);
+            if (playerWare == null || playerWare.PlayerId != playerId)
             {
                 await _bus.RaiseEvent(new DomainNotification($"武器不存在！"));
                 return Unit.Value;
             }
 
-            var playerWare = await _playerWareDomainService.Get(x => x.PlayerId == playerId && x.WareId == wareId && x.Status == WareStatusEnum.卸下);
-            if (playerWare == null)
+            if (playerWare.Status == WareStatusEnum.装备)
             {
-                await _bus.RaiseEvent(new DomainNotification($"武器不存在！"));
+                await _bus.RaiseEvent(new DomainNotification($"武器已装备！"));
                 return Unit.Value;
             }
+
+            if (playerWare.Status == WareStatusEnum.寄售)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"武器正在寄售！"));
+                return Unit.Value;
+            }
+
+
+            var ware = await _wareDomainService.Get(playerWare.WareId);
+            if (ware == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"武器状态异常！"));
+                return Unit.Value;
+            }
+
+
+            var playerWares = await _playerWareDomainService.GetAll(playerId);
+
+            var ids = playerWares.Where(x => x.Status == WareStatusEnum.装备).Select(x => x.WareId).ToList();
+            var wareQuery = await _wareDomainService.GetAll();
+            var wares = wareQuery.Where(x => ids.Contains(x.Id));
+
+            WareTypeEnum[] wareTypes = null;
+            WareEntity loadWare = null;
+            switch (ware.Type) 
+            {
+                case WareTypeEnum.刀:
+                case WareTypeEnum.剑:
+                case WareTypeEnum.枪:
+                    wareTypes = new[] { WareTypeEnum.刀, WareTypeEnum.剑, WareTypeEnum.枪 };
+                    break;
+
+                case WareTypeEnum.衣服:
+                    wareTypes = new[] { WareTypeEnum.衣服 };
+                    break;
+
+                case WareTypeEnum.鞋:
+                    wareTypes = new[] { WareTypeEnum.鞋 };
+                    break;
+
+                case WareTypeEnum.帽:
+                    wareTypes = new[] { WareTypeEnum.帽 };
+                    break;
+            }
+            if (wareTypes != null)
+            {
+                loadWare = wares.FirstOrDefault(x => wareTypes.Contains(x.Type));
+            }
+
+            if (loadWare!=null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"你已经装备了 [{loadWare.Name}]！"));
+                return Unit.Value;
+            }
+
 
             playerWare.Status = WareStatusEnum.装备;
             await _playerWareDomainService.Update(playerWare);
@@ -236,7 +290,7 @@ namespace Emprise.MudServer.CommandHandlers
 
         public async Task<Unit> Handle(UnLoadWareCommand command, CancellationToken cancellationToken)
         {
-            var wareId = command.WareId;
+            var myWareId = command.MyWareId;
             var playerId = command.PlayerId;
 
             var player = await _playerDomainService.Get(playerId);
@@ -246,19 +300,34 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            var ware = await _wareDomainService.Get(wareId);
-            if (ware == null)
+            var playerWare = await _playerWareDomainService.Get(myWareId);
+            if (playerWare == null || playerWare.PlayerId != playerId)
             {
                 await _bus.RaiseEvent(new DomainNotification($"武器不存在！"));
                 return Unit.Value;
             }
 
-            var playerWare = await _playerWareDomainService.Get(x => x.PlayerId == playerId && x.WareId == wareId && x.Status == WareStatusEnum.装备);
-            if (playerWare == null)
+            if (playerWare.Status == WareStatusEnum.卸下)
             {
-                await _bus.RaiseEvent(new DomainNotification($"武器不存在！"));
+                await _bus.RaiseEvent(new DomainNotification($"武器已卸下！"));
                 return Unit.Value;
             }
+
+            if (playerWare.Status == WareStatusEnum.寄售)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"武器正在寄售！"));
+                return Unit.Value;
+            }
+
+
+            var ware = await _wareDomainService.Get(playerWare.WareId);
+            if (ware == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"武器状态异常！"));
+                return Unit.Value;
+            }
+
+
 
             playerWare.Status = WareStatusEnum.卸下;
             await _playerWareDomainService.Update(playerWare);

@@ -6,6 +6,6 @@ namespace Emprise.MudServer.Hubs.Actions
 {
     public class WareAction
     {
-        public int WareId { get; set; }
+        public int MyWareId { get; set; }
     }
 }

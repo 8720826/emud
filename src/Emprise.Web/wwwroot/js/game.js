@@ -428,11 +428,11 @@ new Vue({
         },
         load: function (id) {
             console.log("Load=" + id);
-            connection.invoke("Load", { wareId: id });
+            connection.invoke("Load", { myWareId: id });
         },
         unload: function (id) {
             console.log("UnLoad=" + id);
-            connection.invoke("UnLoad", { wareId: id });
+            connection.invoke("UnLoad", { myWareId: id });
         },
         deleteEmail: function (id, title) {
             console.log("deleteEmail=" + id);
