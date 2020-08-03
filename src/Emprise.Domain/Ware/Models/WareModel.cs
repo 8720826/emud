@@ -31,7 +31,7 @@ namespace Emprise.Domain.Ware.Models
         /// <summary>
         /// 效果，使用后产生，使用后物品会被消耗
         /// </summary>
-        public string Effect { set; get; }
+        public WareEffectAttr WareEffect { set; get; }
 
 
 

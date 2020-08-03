@@ -41,7 +41,7 @@ new Vue({
         myBoxMenus: [],
         menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "武功", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
             { id: "email", name: "邮箱", group: "email" }],
-        myDetail:"",
+        myDetail: "",
         modal: {
             isShowConfirm: 0,
             type: "confirm",
@@ -57,7 +57,8 @@ new Vue({
         unreadEmailCount: 0,
         myEmail: null,
         skills: [],
-        weapons:[]
+        weapons: [],
+        myWare:null
     },
     computed: {
         getMenus() {
@@ -262,6 +263,31 @@ new Vue({
                     }
                 }
             });
+
+            connection.on("ShowWare", result => {
+                console.log("ShowWare:" + JSON.stringify(result));
+                for (var i = 0; i < that.myPack.wares.length; i++) {
+                    if (that.myPack.wares[i].playerWareId == result.playerWareId) {
+                        that.myPack.wares[i].status = result.status;
+
+                        that.myWare = result;
+                        that.myDetail = "ware";
+                    }
+                }
+               
+            });
+
+            connection.on("DropWare", result => {
+                console.log("DropWare:" + JSON.stringify(result));
+
+                that.myPack.wares = that.myPack.wares.filter(item => {
+                    if (result.playerWareId !== item.playerWareId) {
+                        return true;
+                    }
+                });
+                that.myWare = null;
+                that.myDetail = "";
+            });
             
             
 
@@ -370,13 +396,17 @@ new Vue({
                 case "weapon":
                     this.showWeapon();
                     break;
-                    
-
                 case "email":
                     this.showEmail(1);
                     break;
                     
             }
+        },
+        showWare: function (id) {
+            connection.invoke("ShowWare", { myWareId: id });
+        },
+        closeDetail: function () {
+            that.myDetail = "";
         },
         setRoom: function (direction) {
             console.log(direction);
@@ -434,13 +464,21 @@ new Vue({
             console.log("UnLoad=" + id);
             connection.invoke("UnLoad", { myWareId: id });
         },
+        drop: function (name, id) {
+            console.log("drop=" + id);
+            var that = this;
+            that.confirm("要丢掉[" + name + "]吗？", function () {
+                connection.invoke("Drop", { myWareId: id });
+            });
+        },
         deleteEmail: function (id, title) {
             console.log("deleteEmail=" + id);
             var that = this;
             that.confirm("要删除邮件[" + title + "]吗？", function () {
                 connection.invoke("DeleteEmail", { playerEmailId: id });
             }); 
-        }, readEmail: function (id, status) {
+        },
+        readEmail: function (id, status) {
             console.log("readEmail=" + id + "," + status);
 
             if (status === 0) {
@@ -460,18 +498,19 @@ new Vue({
             that.$refs.myBox.style.height = height + "px";
             height = height - that.$refs.menu.offsetHeight - 10;
             that.$refs.content.style.height = height + "px";
-
+            that.myDetail = "";
         },
         myDetail(val) {
+            
             var that = this;
             console.log("val=" + val);
             var height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
             height = height - that.$refs.message.offsetHeight - 52;
             that.$refs.myDetail.style.height = height + "px";
-            that.$refs.detail.style.height = height + "px";
-
-        }
-        , chats: {
+            that.$refs.detail && (that.$refs.detail.style.height = height + "px");
+            
+        },
+        chats: {
             handler() {
                 var that = this;
                 that.$nextTick(function () {
@@ -481,7 +520,8 @@ new Vue({
                     document.querySelector('#chat').scrollTop = document.getElementById('chat').scrollHeight + 30;
                 });
             }
-        }, messages: {
+        },
+        messages: {
             handler() {
                 var that = this;
                 that.$nextTick(function () {

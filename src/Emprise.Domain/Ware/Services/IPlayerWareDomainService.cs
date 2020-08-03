@@ -20,5 +20,7 @@ namespace Emprise.Domain.Ware.Services
         Task Add(PlayerWareEntity entity);
 
         Task Update(PlayerWareEntity entity);
+
+        Task Delete(int id);
     }
 }

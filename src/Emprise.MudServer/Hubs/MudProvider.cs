@@ -318,6 +318,17 @@ namespace Emprise.MudServer.Hubs
             await _context.Clients.User(playerId.ToString()).SendAsync("UnLoadWare", obj);
         }
 
+
+        public async Task ShowWare(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowWare", obj);
+        }
+
+        public async Task DropWare(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("DropWare", obj);
+        }
+
         public async Task ShowChat(object obj)
         {
             await _context.Clients.All.SendAsync("ShowMessage", obj);

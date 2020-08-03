@@ -21,6 +21,7 @@ using Emprise.MudServer.Commands;
 using Emprise.MudServer.Events;
 using Emprise.MudServer.Commands.EmailCommands;
 using Emprise.Infra.Authorization;
+using Emprise.MudServer.Commands.WareCommands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -339,7 +340,24 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
+        public async Task ShowWare(WareAction wareAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
 
-        
+                var command = new ShowWareCommand(playerId, wareAction.MyWareId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task Drop(WareAction wareAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new DropWareCommand(playerId, wareAction.MyWareId);
+                await _bus.SendCommand(command);
+            });
+        }
     }
 }

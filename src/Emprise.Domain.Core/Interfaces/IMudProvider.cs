@@ -68,6 +68,10 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task UnLoadWare(int playerId, object obj);
 
+        Task ShowWare(int playerId, object obj);
+
+        Task DropWare(int playerId, object obj);
+
         Task ShowChat(object obj);
 
         Task UpdateUnreadEmailCount(int playerId, int count);

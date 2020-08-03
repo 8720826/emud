@@ -52,6 +52,13 @@ namespace Emprise.Domain.Ware.Services
             await _scriptRepository.Update(entity);
         }
 
+        public async Task Delete(int id)
+        {
+            await _scriptRepository.Remove(id);
+        }
+
+        
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
