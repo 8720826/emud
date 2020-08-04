@@ -349,7 +349,11 @@ namespace Emprise.MudServer.Hubs
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("RemoveEmail", playerEmailId);
         }
-        
 
+        public async Task ShowEmailDetail(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowEmailDetail", obj);
+        }
+        
     }
 }

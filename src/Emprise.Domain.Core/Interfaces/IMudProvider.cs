@@ -80,5 +80,7 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task RemoveEmail(int playerId, int playerEmailId);
 
+        Task ShowEmailDetail(int playerId, object obj);
+
     }
 }

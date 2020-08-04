@@ -170,6 +170,17 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
+
+        public async Task ShowEmailDetail(ShowEmailDetailAction  showEmailDetailAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowEmailDetailCommand(playerId, showEmailDetailAction.PlayerEmailId);
+                await _bus.SendCommand(command);
+            });
+        }
+
         public async Task DeleteEmail(DeleteEmailAction deleteEmailAction)
         {
             var result = await DoCommand(async () => {

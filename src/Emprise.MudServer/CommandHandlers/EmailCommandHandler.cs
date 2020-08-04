@@ -26,7 +26,7 @@ namespace Emprise.MudServer.CommandHandlers
     public class EmailCommandHandler : CommandHandler, 
         IRequestHandler<ShowEmailCommand, Unit>,
         IRequestHandler<DeleteEmailCommand, Unit>,
-        IRequestHandler<ReadEmailCommand, Unit>
+        IRequestHandler<ShowEmailDetailCommand, Unit>
     {
         private readonly IMediatorHandler _bus;
         private readonly ILogger<EmailCommandHandler> _logger;
@@ -77,7 +77,7 @@ namespace Emprise.MudServer.CommandHandlers
             var query = from email in queryEmail
                         join playerEmail in queryPlayerEmail
                               on email.Id equals playerEmail.EmailId
-                        where playerEmail.PlayerId == playerId
+                        where playerEmail.PlayerId == playerId && playerEmail.Status != EmailStatusEnum.删除
                         select new PlayerEmailModel { Id = playerEmail.Id, PlayerId = playerEmail.PlayerId, Status = playerEmail.Status, CreateDate = playerEmail.CreateDate.ToFriendlyTime(), EmailId = playerEmail.EmailId, ExpiryDate = playerEmail.ExpiryDate, Title = email.Title, Content = email.Content};
 
 
@@ -119,9 +119,9 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(ReadEmailCommand command, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ShowEmailDetailCommand command, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Handle ReadEmailCommand:{JsonConvert.SerializeObject(command)}");
+            _logger.LogDebug($"Handle ShowEmailDetailCommand:{JsonConvert.SerializeObject(command)}");
 
             var playerId = command.PlayerId;
             var playerEmailId = command.PlayerEmailId;
@@ -132,17 +132,35 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
+            var email = await _emailDomainService.Get(playerEmail.EmailId);
+            if (email == null)
+            {
+                return Unit.Value;
+            }
+
             playerEmail.Status = EmailStatusEnum.已读;
             await _playerEmailDomainService.Update(playerEmail);
 
             if (await Commit())
             {
                 //TODO
-                await _mudProvider.RemoveEmail(playerId, playerEmailId);
+                var emailModel = new PlayerEmailModel { 
+                    Id = playerEmail.Id, 
+                    PlayerId = playerEmail.PlayerId,
+                    Status = playerEmail.Status,
+                    CreateDate = playerEmail.CreateDate.ToFriendlyTime(), 
+                    EmailId = playerEmail.EmailId, 
+                    ExpiryDate = playerEmail.ExpiryDate, 
+                    Title = email.Title, 
+                    Content = email.Content 
+                };
+                await _mudProvider.ShowEmailDetail(playerId, emailModel);
 
                 await _bus.RaiseEvent(new DeletedEmailEvent(playerId, playerEmailId)).ConfigureAwait(false);
 
             }
+
+
 
             return Unit.Value;
         }

@@ -248,31 +248,20 @@
 
 
                 <div class="email" v-if="myBox=='email'">
-                    <p v-if="myEmail&&myEmail.data&&myEmail.data.length>0">共有{{myEmail.data.length}}封邮件(点击标题展开)：</p>
+                    <p v-if="myEmails&&myEmails.data&&myEmails.data.length>0">共有{{myEmails.data.length}}封邮件(点击标题展开)：</p>
                     <p v-else>收件箱没有任何邮件</p>
                     <ul class="mt15">
-                        <li v-for="email,index in myEmail.data">
+                        <li v-for="email,index in myEmails.data" @@click="showEmailDetail(email.id)">
 
-                            <a href="javascript:;" v-show="!email.isShow" v-if="email.status===0" @@click="email.isShow=!email.isShow;readEmail(email.id,email.status);email.status=1;"> <font class="red">[未读]</font> <b>{{email.title}}</b> <span>({{email.createDate}})</span> </a>
-                            <a href="javascript:;" v-show="!email.isShow" v-else @@click="email.isShow=!email.isShow;"> {{email.title}} <span>({{email.createDate}})</span> </a>
+                            <a href="javascript:;" v-if="email.status===0" > <font class="red">[未读]</font> <b>{{email.title}}</b> <span>({{email.createDate}})</span> </a>
+                            <a href="javascript:;" v-else> {{email.title}} <span>({{email.createDate}})</span> </a>
 
-                            <div class="line" v-show="email.isShow" @@click="email.isShow=!email.isShow">
-                                <h5>{{email.title}}</h5>
-                                <div v-html="email.content">
-                                    {{email.content}}
-                                </div>
-                                <p>
-                                    发送于：<span>{{email.createDate}}</span>
-                                    <button style="float:none" type="button" @@click.stop="deleteEmail(email.id,email.title)">删除</button>
-                                </p>
-
-                            </div>
                         </li>
                     </ul>
                     <p class="mt15 paging">
-                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex-1)" v-if="myEmail.pageIndex>1">上一页</a>
+                        <a href="javascript:;" @@click="showEmail(myEmails.pageIndex-1)" v-if="myEmails.pageIndex>1">上一页</a>
 
-                        <a href="javascript:;" @@click="showEmail(myEmail.pageIndex+1)" v-if="myEmail.pageIndex>myEmail.pageCount&&myEmail.pageCount>0">下一页</a>
+                        <a href="javascript:;" @@click="showEmail(myEmails.pageIndex+1)" v-if="myEmails.pageIndex>myEmails.pageCount&&myEmails.pageCount>0">下一页</a>
                     </p>
                 </div>
 
@@ -321,10 +310,27 @@
                         </span>
 
                     </p>
-                    <hr  v-if="myWare.wareEffect.length>0" />
+                    <hr v-if="myWare.wareEffect.length>0" />
                     <button v-if="myWare.category===102&&myWare.status===0" @@click="load(myWare.playerWareId)">装备</button>
                     <button v-if="myWare.category===102&&myWare.status===1" @@click="unload(myWare.playerWareId)">卸下</button>
                     <button v-if="myWare.status===0" @@click="drop(myWare.name,myWare.playerWareId)">丢弃</button>
+                </div>
+            </div>
+
+            <div v-if="myDetail=='email'">
+
+                <div class="myDetailTitle" ref="myDetailTitle">
+                    <span class="title">{{myEmail.title}}</span>
+                    <span class="back" @@click="myDetail=''">返回</span>
+                </div>
+                <div class="detail" ref="detail">
+                    <p v-html="myEmail.content">{{myEmail.content}}</p>
+
+                    <p>
+                        发送于：<span>{{myEmail.createDate}}</span>
+                    </p>
+                    <hr />
+                    <button type="button" @@click.stop="deleteEmail(myEmail.id,myEmail.title)">删除</button>
                 </div>
             </div>
         </div>

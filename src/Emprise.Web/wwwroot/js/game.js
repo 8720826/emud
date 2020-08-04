@@ -55,6 +55,7 @@ new Vue({
         mainQuest: {},
         myPack: {},
         unreadEmailCount: 0,
+        myEmails: null,
         myEmail: null,
         skills: [],
         weapons: [],
@@ -299,18 +300,28 @@ new Vue({
             connection.on("ShowEmail", result => {
                 console.log("ShowEmail:" + JSON.stringify(result));
                 that.myBox = "email";
-                that.myEmail = result;
+                that.myEmails = result;
             });
 
             connection.on("RemoveEmail", result => {
                 console.log("RemoveEmail:" + result);
 
-                that.myEmail = that.myEmail.filter(item => {
-                    if (result !== item.id) {
-                        return true
-                    }
-                });
+                that.showEmail(1);
+                that.myEmail = null;
+                that.myDetail = "";
+            });
 
+            connection.on("ShowEmailDetail", result => {
+                console.log("ShowEmailDetail:" + result);
+
+                for (var i = 0; i < that.myEmails.data.length; i++) {
+                    if (that.myEmails.data[i].id == result.id) {
+                        that.myEmails.data[i] = result;
+                    }
+                }
+
+                that.myEmail = result;
+                that.myDetail = "email";
             });
             //RemoveEmail
         },
@@ -351,6 +362,9 @@ new Vue({
         },
         showEmail: function (pageIndex) {
             connection.invoke("ShowEmail", { pageIndex: pageIndex||1 });
+        },
+        showEmailDetail: function (id) {
+            connection.invoke("ShowEmailDetail", { playerEmailId: id});
         },
         search: function () {
             connection.invoke("Search");
