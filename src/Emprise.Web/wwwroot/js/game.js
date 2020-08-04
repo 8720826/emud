@@ -250,7 +250,8 @@ new Vue({
                 console.log("LoadWare:" + JSON.stringify(result));
                 for (var i = 0; i < that.myPack.wares.length; i++) {
                     if (that.myPack.wares[i].playerWareId == result.playerWareId) {
-                        that.myPack.wares[i].status = result.status;
+                        that.myPack.wares[i] = result;
+                        that.myWare = result;
                     }
                 }
             });
@@ -260,7 +261,8 @@ new Vue({
                 console.log("UnLoadWare:" + JSON.stringify(result));
                 for (var i = 0; i < that.myPack.wares.length; i++) {
                     if (that.myPack.wares[i].playerWareId == result.playerWareId) {
-                        that.myPack.wares[i].status = result.status;
+                        that.myPack.wares[i] = result;
+                        that.myWare = result;
                     }
                 }
             });
@@ -269,7 +271,7 @@ new Vue({
                 console.log("ShowWare:" + JSON.stringify(result));
                 for (var i = 0; i < that.myPack.wares.length; i++) {
                     if (that.myPack.wares[i].playerWareId == result.playerWareId) {
-                        that.myPack.wares[i].status = result.status;
+                        that.myPack.wares[i] = result;
 
                         that.myWare = result;
                         that.myDetail = "ware";
@@ -323,7 +325,7 @@ new Vue({
                 that.myEmail = result;
                 that.myDetail = "email";
             });
-            //RemoveEmail
+      
         },
         move: function (roomId) {
             if (roomId > 0) {
