@@ -38,32 +38,10 @@ namespace Emprise.Domain.Quest.Entity
 
 
         /// <summary>
-        /// 地图说明
+        /// 任务说明
         /// </summary>
         public string Description { set; get; }
 
-        /*
-        /// <summary>
-        /// 创建任务前的提示文本
-        /// </summary>
-        public string BeforeCreate { set; get; }
-
-        /// <summary>
-        /// 创建任务后的提示文本
-        /// </summary>
-
-        public string CreatedWords { set; get; }
-
-        /// <summary>
-        /// 任务进行中的提示文本
-        /// </summary>
-        public string InProgressWords { set; get; }
-
-        /// <summary>
-        /// 完成任务后的提示文本
-        /// </summary>
-        public string CompletedWords { set; get; }
-        */
 
         /// <summary>
         /// 任务消耗

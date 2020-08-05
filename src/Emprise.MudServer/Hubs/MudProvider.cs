@@ -265,10 +265,16 @@ namespace Emprise.MudServer.Hubs
             await _context.Clients.User(playerId.ToString()).SendAsync("UpdatePlayerStatus", obj);
         }
 
+        public async Task ShowMainQuest(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowMainQuest", obj);
+        }
+
         public async Task ShowQuest(int playerId, object obj)
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowQuest", obj);
         }
+        
 
         public async Task ShowNpc(int playerId, object obj)
         {
@@ -354,6 +360,15 @@ namespace Emprise.MudServer.Hubs
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowEmailDetail", obj);
         }
-        
+
+        public async Task ShowQuests(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowQuests", obj);
+        }
+        public async Task ShowHistoryQuests(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowHistoryQuests", obj);
+        }
+
     }
 }

@@ -52,7 +52,7 @@ namespace Emprise.MudServer.Consumers
             //已经领取的所有任务
             var myQuests = (await _playerQuestDomainService.GetPlayerQuests(playerId));
             //正在进行的任务
-            var myQuestsNotComplete = myQuests.Where(x => !x.IsComplete);
+            var myQuestsNotComplete = myQuests.Where(x => x.Status== QuestStateEnum.已领取进行中);
             //所有主线任务
             var mainQuests = (await _questDomainService.GetAll()).Where(x => x.Type == QuestTypeEnum.主线).OrderBy(x => x.SortId);
             //是否有正在进行的主线任务
@@ -68,12 +68,13 @@ namespace Emprise.MudServer.Consumers
                     {
                         PlayerId = playerId,
                         QuestId = mainQuest.Id,
-                        IsComplete = false,
+                        Status = QuestStateEnum.已领取进行中,
+                        //IsComplete = false,
                         TakeDate = DateTime.Now,
                         CompleteDate = DateTime.Now,
                         CreateDate = DateTime.Now,
                         DayTimes = 1,
-                        HasTake = true,
+                        //HasTake = true,
                         Target = mainQuest.Target,
                         Times = 1,
                         UpdateDate = DateTime.Now
@@ -86,7 +87,7 @@ namespace Emprise.MudServer.Consumers
                     var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
 
 
-                    await _mudProvider.ShowQuest(playerId, new { mainQuest, isFirst });
+                    await _mudProvider.ShowMainQuest(playerId, new { mainQuest, isFirst });
                 }
                 else
                 {
@@ -101,7 +102,7 @@ namespace Emprise.MudServer.Consumers
                 //判断是否第一个任务
                 var isFirst = mainQuests.FirstOrDefault()?.Id == mainQuest.Id;
 
-                await _mudProvider.ShowQuest(playerId, new { mainQuest, isFirst });
+                await _mudProvider.ShowMainQuest(playerId, new { mainQuest, isFirst });
             }
 
 

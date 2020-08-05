@@ -40,7 +40,8 @@ new Vue({
         myBox: "",
         myBoxMenus: [],
         menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "武功", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
-            { id: "email", name: "邮箱", group: "email" }],
+            { id: "email", name: "邮箱", group: "email" },
+            { id: "activityQuest", name: "我的任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" }],
         myDetail: "",
         modal: {
             isShowConfirm: 0,
@@ -59,7 +60,8 @@ new Vue({
         myEmail: null,
         skills: [],
         weapons: [],
-        myWare:null
+        myWare: null,
+        quest:null
     },
     computed: {
         getMenus() {
@@ -226,12 +228,18 @@ new Vue({
                 location.replace("/game/offline");
             });
 
-            connection.on("ShowQuest", result => {
-                console.log("ShowQuest:" + JSON.stringify(result));
+            connection.on("ShowMainQuest", result => {
+                console.log("ShowMainQuest:" + JSON.stringify(result));
                 that.mainQuest = result.mainQuest;
                 if (result.isFirst) {
                     that.showMainQuest();
                 } 
+            });
+
+            connection.on("ShowQuest", result => {
+                console.log("ShowQuest:" + JSON.stringify(result));
+                that.quest = result;
+                that.myDetail = "quest";
             });
 
             connection.on("ShowMyPack", result => {
@@ -314,7 +322,7 @@ new Vue({
             });
 
             connection.on("ShowEmailDetail", result => {
-                console.log("ShowEmailDetail:" + result);
+                console.log("ShowEmailDetail:" + JSON.stringify(result));
 
                 for (var i = 0; i < that.myEmails.data.length; i++) {
                     if (that.myEmails.data[i].id == result.id) {
@@ -325,7 +333,20 @@ new Vue({
                 that.myEmail = result;
                 that.myDetail = "email";
             });
-      
+
+            connection.on("ShowQuests", result => {
+                console.log("ShowQuests:" + JSON.stringify(result));
+                that.myBox = "activityQuest";
+                that.myQuests = result;
+            });
+
+            connection.on("ShowHistoryQuests", result => {
+                console.log("ShowHistoryQuests:" + JSON.stringify(result));
+                that.myBox = "historyQuest";
+                that.myHistoryQuests = result;
+            });
+            
+
         },
         move: function (roomId) {
             if (roomId > 0) {
@@ -367,6 +388,15 @@ new Vue({
         },
         showEmailDetail: function (id) {
             connection.invoke("ShowEmailDetail", { playerEmailId: id});
+        },
+        showMyQuest: function () {
+            connection.invoke("ShowMyQuest");
+        },
+        showMyHistoryQuest: function () {
+            connection.invoke("ShowMyHistoryQuest");
+        },
+        showQuestDetail: function (id) {
+            connection.invoke("ShowQuestDetail", { questId: id });
         },
         search: function () {
             connection.invoke("Search");
@@ -415,7 +445,14 @@ new Vue({
                 case "email":
                     this.showEmail(1);
                     break;
-                    
+
+                case "activityQuest":
+                    this.showMyQuest();
+                    break;
+
+                case "historyQuest":
+                    this.showMyHistoryQuest();
+                    break;
             }
         },
         showWare: function (id) {

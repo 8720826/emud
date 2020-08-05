@@ -22,6 +22,7 @@ using Emprise.MudServer.Events;
 using Emprise.MudServer.Commands.EmailCommands;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands.WareCommands;
+using Emprise.MudServer.Commands.QuestCommands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -370,5 +371,36 @@ namespace Emprise.MudServer.Hubs
                 await _bus.SendCommand(command);
             });
         }
+
+        public async Task ShowMyQuest()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowMyQuestCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task ShowMyHistoryQuest()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowMyHistoryQuestCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task ShowQuestDetail(QuestAction questAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowQuestDetailCommand(playerId, questAction.QuestId);
+                await _bus.SendCommand(command);
+            });
+        }
+
     }
 }

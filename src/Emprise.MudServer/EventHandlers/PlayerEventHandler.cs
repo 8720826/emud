@@ -303,7 +303,7 @@ namespace Emprise.MudServer.EventHandlers
             //已经领取的所有任务
             var myQuests = (await _playerQuestDomainService.GetPlayerQuests(player.Id));
             //正在进行的任务
-            var myQuestsNotComplete = myQuests.Where(x => !x.IsComplete);
+            var myQuestsNotComplete = myQuests.Where(x => x.Status== QuestStateEnum.已领取进行中);
             //所有未完成任务
             var quests = (await _questDomainService.GetAll()).Where(x => myQuestsNotComplete.Select(y => y.QuestId).Contains(x.Id));
 

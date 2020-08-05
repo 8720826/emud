@@ -239,9 +239,9 @@ namespace Emprise.Domain.Core.Enums
     public enum QuestStateEnum
     {
         未领取 = 0,
-        进行中 = 1,
-        已失败 = 2,
-        完成未领奖 = 3,
-        完成已领奖 = 4
+        已领取进行中 = 1,//HasTake = true;IsComplete = false;
+        //已失败 = 2,
+        //完成未领奖 = 3,
+        完成已领奖 = 4//HasTake = false;IsComplete = true;
     }
 }

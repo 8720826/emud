@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Entity;
+using Emprise.Domain.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -36,12 +37,15 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public int DayTimes { set; get; }
 
-
+        /// <summary>
+        /// 完成次数
+        /// </summary>
+        public int CompleteTimes { set; get; }
 
         /// <summary>
         /// 是否领取任务
         /// </summary>
-        public bool HasTake { set; get; }
+        //public bool HasTake { set; get; }
 
 
         /// <summary>
@@ -62,6 +66,8 @@ namespace Emprise.Domain.Quest.Entity
         /// <summary>
         /// 是否完成
         /// </summary>
-        public bool IsComplete { set; get; }
-    }
+        //public bool IsComplete { set; get; }
+
+        public QuestStateEnum Status { set; get; }
+}
 }

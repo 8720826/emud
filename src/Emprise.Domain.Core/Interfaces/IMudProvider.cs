@@ -48,6 +48,8 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task UpdatePlayerStatus(int playerId, object obj);
 
+        Task ShowMainQuest(int playerId, object obj);
+
         Task ShowQuest(int playerId, object obj);
 
         Task ShowNpc(int playerId, object obj);
@@ -82,5 +84,8 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task ShowEmailDetail(int playerId, object obj);
 
+        Task ShowQuests(int playerId, object obj);
+
+        Task ShowHistoryQuests(int playerId, object obj);
     }
 }

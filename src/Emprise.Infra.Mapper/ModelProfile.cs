@@ -10,6 +10,8 @@ using Emprise.Domain.ItemDrop.Entity;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
+using Emprise.Domain.Quest.Entity;
+using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Room.Entity;
 using Emprise.Domain.Room.Models;
 using Emprise.Domain.User.Entity;
@@ -54,7 +56,11 @@ namespace Emprise.Infra.Mapper
 
             CreateMap<ItemDropRateEntity, ItemDropRateInput>();
             CreateMap<ItemDropRateInput, ItemDropRateEntity>();
+
+            CreateMap<QuestEntity, QuestModel>();
             
+
+
         }
     }
 }

@@ -899,3 +899,34 @@ footer a span {
     line-height: 20px;
     height: 30px;
 }
+
+.quest li {
+    padding-left: 10px;
+    border-bottom: 1px solid #343434;
+    line-height: 30px;
+    position: relative;
+    display: block;
+    border-radius: 3px;
+}
+
+    .quest li a {
+        padding-right: 10px;
+        display: block;
+        word-wrap: normal;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        color: #FFFFFF;
+    }
+
+    .quest li span {
+        color: #999;
+    }
+
+    .quest li button {
+        display: inline-block;
+    }
+
+.quest .paging a {
+    margin: 0px 10px;
+}

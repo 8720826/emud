@@ -128,7 +128,7 @@
         <footer>
             <a href="javascript:;" @@click="showMe"><span>人物</span></a>
             <a href="javascript:;" @@click=""><span>社交</span></a>
-            <a href="javascript:;"><span>任务</span></a>
+            <a href="javascript:;" @@click="showMyQuest"><span>任务</span></a>
             <a href="javascript:;"><span>商店</span></a>
             <a href="javascript:;"><span>排行</span></a>
             <a href="javascript:;"><span>帮助</span></a>
@@ -253,7 +253,7 @@
                     <ul class="mt15">
                         <li v-for="email,index in myEmails.data" @@click="showEmailDetail(email.id)">
 
-                            <a href="javascript:;" v-if="email.status===0" > <font class="red">[未读]</font> <b>{{email.title}}</b> <span>({{email.createDate}})</span> </a>
+                            <a href="javascript:;" v-if="email.status===0"> <font class="red">[未读]</font> <b>{{email.title}}</b> <span>({{email.createDate}})</span> </a>
                             <a href="javascript:;" v-else> {{email.title}} <span>({{email.createDate}})</span> </a>
 
                         </li>
@@ -277,11 +277,38 @@
                         <button v-for="myWare,index in myPack.wares" @@click="showWare(myWare.playerWareId)">
                             <span> {{myWare.name}} </span>
                             <em>({{myWare.number}}个)</em>
+                            <span v-if="myWare.status===1"> √</span>
                         </button>
                     </div>
 
                 </div>
 
+                <div class="quest" v-if="myBox=='activityQuest'">
+                    <p v-if="myQuests&&myQuests.length>0">共有{{myQuests.length}}个任务(点击展开)：</p>
+                    <p v-else>没有任何任务</p>
+                    <ul class="mt15">
+                        <li v-for="quest,index in myQuests" @@click="showQuestDetail(quest.id)">
+
+                            <a href="javascript:;"> {{quest.name }} <span>({{quest.type}})</span> </a>
+
+                        </li>
+                    </ul>
+
+                </div>
+
+
+                <div class="quest" v-if="myBox=='historyQuest'">
+                    <p v-if="myHistoryQuests&&myHistoryQuests.length>0">共有{{myHistoryQuests.length}}个任务(点击展开)：</p>
+                    <p v-else>没有任何任务</p>
+                    <ul class="mt15">
+                        <li v-for="quest,index in myHistoryQuests" @@click="showQuestDetail(quest.id)">
+
+                            <a href="javascript:;"> {{quest.name}} <span>({{quest.type}})</span> </a>
+
+                        </li>
+                    </ul>
+
+                </div>
             </div>
         </div>
 
@@ -333,6 +360,34 @@
                     <button type="button" @@click.stop="deleteEmail(myEmail.id,myEmail.title)">删除</button>
                 </div>
             </div>
+
+            <div v-if="myDetail=='quest'">
+
+                <div class="myDetailTitle" ref="myDetailTitle">
+                    <span class="title">{{quest.name}}[{{quest.type}}]</span>
+                    <span class="back" @@click="myDetail=''">返回</span>
+                </div>
+                <div class="detail" ref="detail">
+                    <p v-html="quest.description">{{quest.description}}</p>
+                    <hr />
+                    <p>
+                        目标：<span>{{quest.target}}</span>
+                    </p>
+                    <hr />
+                    <p>
+                        限制：<span>{{quest.period}}</span>
+                    </p>
+                    <hr />
+                    <p>
+                        奖励：<span>{{quest.reward}}</span>
+                    </p>
+                    <hr />
+                    <p>
+                        消耗：<span>{{quest.consume}}</span>
+                    </p>
+                </div>
+            </div>
+            
         </div>
 
         <template>

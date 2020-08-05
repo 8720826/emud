@@ -65,7 +65,6 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<HuntCommand, Unit>,
         IRequestHandler<WorkCommand, Unit>,
         IRequestHandler<NpcActionCommand, Unit>,
-        IRequestHandler<CompleteQuestCommand, Unit>,
         IRequestHandler<ShowMeCommand, Unit>,
         IRequestHandler<ShowMyStatusCommand, Unit>,
         IRequestHandler<ShowMySkillCommand, Unit>,
@@ -680,82 +679,7 @@ namespace Emprise.MudServer.CommandHandlers
         }
 
 
-        public async Task<Unit> Handle(CompleteQuestCommand command, CancellationToken cancellationToken)
-        {
 
-            var playerId = command.PlayerId;
-            var questId = command.QuestId;
-
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return Unit.Value;
-            }
-
-            var quest = await _questDomainService.Get(questId);
-            if (quest == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"任务不存在！"));
-                return Unit.Value;
-            }
-
-            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == playerId && x.QuestId == quest.Id);
-            if (playerQuest == null) 
-            {
-                await _mudProvider.ShowMessage(playerId, "请先领取任务！");
-                return Unit.Value;
-            }
-
-            //未领取
-            if (!playerQuest.HasTake)
-            {
-                await _mudProvider.ShowMessage(playerId, "请先领取任务！");
-                return Unit.Value;
-            }
-
-            var checkResult = await CheckQuestIfComplete(player, playerQuest.Target);
-            if (!checkResult.IsSuccess)
-            {
-                //任务未完成
-                await _mudProvider.ShowMessage(player.Id, "任务未完成！");
-                return Unit.Value;
-            }
-
-            var checkConsumeResult = await CheckQuestConsume(player, quest.Consume);
-
-            if (!checkConsumeResult.IsSuccess)
-            {
-                await _mudProvider.ShowMessage(player.Id, $"领取奖励失败！{checkConsumeResult.ErrorMessage}");
-                return Unit.Value;
-            }
-
-
-
-            //TODO 修改任务状态
-            playerQuest.HasTake = false;
-            playerQuest.CompleteDate = DateTime.Now;
-            playerQuest.IsComplete = true;
-            await _playerQuestDomainService.Update(playerQuest);
-
-            await DoQuestConsume(player, quest.Consume);
-
-
-            await TakeQuestReward(player, quest.Reward);
-            //TODO  领取奖励
-
-          
-
-            if (await Commit())
-            {
-                //await _mudProvider.ShowMessage(player.Id, quest.CompletedWords);
-                await _mudProvider.ShowMessage(player.Id, "领取奖励成功");
-
-                await _bus.RaiseEvent(new CompleteQuestEvent(player, quest)).ConfigureAwait(false);
-            }
-
-            return Unit.Value;
-        }
 
         public async Task<Unit> Handle(ShowMeCommand command, CancellationToken cancellationToken)
         {
@@ -1193,15 +1117,17 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
             //未领取
-            if (!playerQuest.HasTake)
+            if (playerQuest.Status != QuestStateEnum.已领取进行中)
             {
                 return;
             }
 
             //TODO 修改任务状态
-            playerQuest.HasTake = false;
+            //playerQuest.HasTake = false;
             playerQuest.CompleteDate = DateTime.Now;
-            playerQuest.IsComplete = true;
+            playerQuest.Status = QuestStateEnum.完成已领奖;
+            playerQuest.CompleteTimes++;
+            //playerQuest.IsComplete = true;
             await _playerQuestDomainService.Update(playerQuest);
 
             await _mudProvider.ShowMessage(player.Id, $"你完成了任务 [{quest.Name}]");
@@ -1229,12 +1155,13 @@ namespace Emprise.MudServer.CommandHandlers
                 {
                     PlayerId = player.Id,
                     QuestId = questId,
-                    IsComplete = false,
+                    Status = QuestStateEnum.已领取进行中,
+                    //IsComplete = false,
                     TakeDate = DateTime.Now,
                     CompleteDate = DateTime.Now,
                     CreateDate = DateTime.Now,
                     DayTimes = 1,
-                    HasTake = true,
+                    //HasTake = true,
                     Target = questToTake.Target,
                     Times = 1,
                     UpdateDate = DateTime.Now
@@ -1242,11 +1169,13 @@ namespace Emprise.MudServer.CommandHandlers
                 await _playerQuestDomainService.Add(playerQuestToTake);
 
             }
-            else if (!playerQuestToTake.HasTake)
+            else if (playerQuestToTake.Status == QuestStateEnum.完成已领奖|| playerQuestToTake.Status == QuestStateEnum.未领取)
             {
                 //TODO 领取任务
-                playerQuestToTake.HasTake = true;
-                playerQuestToTake.IsComplete = false;
+                //playerQuestToTake.HasTake = true;
+                //playerQuestToTake.IsComplete = false;
+
+                playerQuestToTake.Status = QuestStateEnum.已领取进行中;
                 playerQuestToTake.TakeDate = DateTime.Now;
                 playerQuestToTake.Times += 1;
                 playerQuestToTake.Target = questToTake.Target;
@@ -1387,269 +1316,7 @@ namespace Emprise.MudServer.CommandHandlers
         }
 
 
-        /// <summary>
-        /// 判断用户是否可以领取某个任务
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="takeConditionStr"></param>
-        /// <returns></returns>
-        private async Task<ResultModel> CheckTakeCondition(PlayerEntity player, string takeConditionStr)
-        {
-            var result = new ResultModel { IsSuccess = false };
 
-            if (!string.IsNullOrEmpty(takeConditionStr))
-            {
-                List<QuestTakeCondition> takeConditions = new List<QuestTakeCondition>();
-                try
-                {
-                    takeConditions = JsonConvert.DeserializeObject<List<QuestTakeCondition>>(takeConditionStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert CaseIf:{ex}");
-                }
-
-                foreach (var takeCondition in takeConditions)
-                {
-                    var npcId = takeCondition.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
-                    var questId = takeCondition.Attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val;
-                    int.TryParse(takeCondition.Attrs.FirstOrDefault(x => x.Attr == "RoomId")?.Val, out int roomId);
-
-                    var targetEnum = (QuestTakeConditionEnum)Enum.Parse(typeof(QuestTakeConditionEnum), takeCondition.Condition, true);
-
-
-                    switch (targetEnum)
-                    {
-
-
-                        case QuestTakeConditionEnum.与某个Npc对话:
-                            if (await _redisDb.StringGet<int>(string.Format(RedisKey.ChatWithNpc, player.Id, npcId)) != 1)
-                            {
-                                result.ErrorMessage = $"";
-                                return result;
-                            }
-                            break;
-
-                        case QuestTakeConditionEnum.完成前置任务:
-
-                            if (await _redisDb.StringGet<int>(string.Format(RedisKey.CompleteQuest, player.Id, questId)) != 1)
-                            {
-                                result.ErrorMessage = $"";
-                                return result;
-                            }
-
-                            break;
-
-
-                    }
-                }
-            }
-
-
-
-
-            result.IsSuccess = true;
-            return result;
-        }
-
-        /// <summary>
-        /// 判断用户是否满足完成任务的条件
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="targetStr"></param>
-        /// <returns></returns>
-        private async Task<ResultModel> CheckQuestIfComplete(PlayerEntity player, string targetStr)
-        {
-            var result = new ResultModel { IsSuccess = false };
-
-            if (!string.IsNullOrEmpty(targetStr))
-            {
-                List<QuestTarget> questTargets = new List<QuestTarget>();
-                try
-                {
-                    questTargets = JsonConvert.DeserializeObject<List<QuestTarget>>(targetStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert QuestTarget:{ex}");
-                }
-
-                foreach (var questTarget in questTargets)
-                {
-                    var npcId = questTarget.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
-                    var questId = questTarget.Attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val;
-                    int.TryParse(questTarget.Attrs.FirstOrDefault(x => x.Attr == "RoomId")?.Val, out int roomId);
-
-                    var targetEnum = (QuestTargetEnum)Enum.Parse(typeof(QuestTargetEnum), questTarget.Target, true);
-
-
-                    switch (targetEnum)
-                    {
-
-
-                        case QuestTargetEnum.与某个Npc对话:
-                            if (await _redisDb.StringGet<int>(string.Format(RedisKey.ChatWithNpc, player.Id, npcId)) != 1)
-                            {
-                                result.ErrorMessage = $"";
-                                return result;
-                            }
-                            break;
-
-                        case QuestTargetEnum.所在房间:
-                            if (player.RoomId != roomId)
-                            {
-                                result.ErrorMessage = "";
-                                return result;
-                            }
-
-
-                            break;
-
-                    }
-                }
-            }
-
-
-
-
-
-            result.IsSuccess = true;
-            return result;
-        }
-
-        /// <summary>
-        /// 检查消耗
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="consumeStr"></param>
-        /// <returns></returns>
-        private async Task<ResultModel> CheckQuestConsume(PlayerEntity player, string consumeStr)
-        {
-            var result = new ResultModel
-            {
-                IsSuccess = false
-            };
-            if (!string.IsNullOrEmpty(consumeStr))
-            {
-                List<QuestConsume> questConsumes = new List<QuestConsume>();
-                try
-                {
-                    questConsumes = JsonConvert.DeserializeObject<List<QuestConsume>>(consumeStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert QuestConsume:{ex}");
-                }
-
-                foreach (var questConsume in questConsumes)
-                {
-                    var npcId = questConsume.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
-                    int.TryParse(questConsume.Attrs.FirstOrDefault(x => x.Attr == "Exp")?.Val, out int exp);
-                    long.TryParse(questConsume.Attrs.FirstOrDefault(x => x.Attr == "Money")?.Val, out long money);
-
-                    var consumeEnum = (QuestConsumeEnum)Enum.Parse(typeof(QuestConsumeEnum), questConsume.Consume, true);
-
-
-                    switch (consumeEnum)
-                    {
-
-
-                        case QuestConsumeEnum.物品:
-
-                            //TODO
-                            result.ErrorMessage = $"完成任务需要消耗物品";
-                            return result;
-                            break;
-
-                        case QuestConsumeEnum.经验:
-                            if (player.Exp < exp)
-                            {
-                                result.ErrorMessage = $"完成任务需要消耗经验 {exp}";
-                                return result;
-                            }
-                            break;
-
-                        case QuestConsumeEnum.金钱:
-                            if (player.Money < money)
-                            {
-                                result.ErrorMessage = $"完成任务需要消耗 {money.ToMoney()}";
-                                return result;
-                            }
-
-                            break;
-
-
-                    }
-
-                }
-            }
-
-            result.IsSuccess = true;
-            return await Task.FromResult(result);
-        }
-
-        /// <summary>
-        /// 执行消耗
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="consumeStr"></param>
-        /// <returns></returns>
-        private async Task<ResultModel> DoQuestConsume(PlayerEntity player, string consumeStr)
-        {
-            var result = new ResultModel
-            {
-                IsSuccess = false
-            };
-            if (!string.IsNullOrEmpty(consumeStr))
-            {
-                List<QuestConsume> questConsumes = new List<QuestConsume>();
-                try
-                {
-                    questConsumes = JsonConvert.DeserializeObject<List<QuestConsume>>(consumeStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert QuestConsume:{ex}");
-                }
-
-                foreach (var questConsume in questConsumes)
-                {
-                    var npcId = questConsume.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val;
-                    int.TryParse(questConsume.Attrs.FirstOrDefault(x => x.Attr == "Exp")?.Val, out int exp);
-                    long.TryParse(questConsume.Attrs.FirstOrDefault(x => x.Attr == "Money")?.Val, out long money);
-
-                    var consumeEnum = (QuestConsumeEnum)Enum.Parse(typeof(QuestConsumeEnum), questConsume.Consume, true);
-
-
-                    switch (consumeEnum)
-                    {
-
-
-                        case QuestConsumeEnum.物品:
-
-                            //TODO 减少物品
-                            return result;
-                            break;
-
-                        case QuestConsumeEnum.经验:
-                            player.Exp -= exp;
-                            break;
-
-                        case QuestConsumeEnum.金钱:
-                            player.Money -= money;
-                            break;
-
-
-                    }
-
-                }
-
-                await _playerDomainService.Update(player);
-            }
-
-            result.IsSuccess = true;
-            return await Task.FromResult(result);
-        }
 
         /// <summary>
         /// 领取奖励
