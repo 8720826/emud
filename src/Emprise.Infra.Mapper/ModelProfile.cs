@@ -2,6 +2,7 @@
 using Emprise.Application.Email.Dtos;
 using Emprise.Application.ItemDrop.Dtos;
 using Emprise.Application.Npc.Dtos;
+using Emprise.Application.Quest.Dtos;
 using Emprise.Application.User.Models;
 using Emprise.Application.Ware.Dtos;
 using Emprise.Domain.Core.Extensions;
@@ -60,7 +61,8 @@ namespace Emprise.Infra.Mapper
             CreateMap<QuestEntity, QuestModel>();
             CreateMap<QuestEntity, QuestDetailModel>();
 
-
+            CreateMap<QuestEntity, QuestInput>();
+            CreateMap<QuestInput, QuestEntity>();
         }
     }
 }

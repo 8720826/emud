@@ -505,7 +505,7 @@ new Vue({
                 console.log("TakeQuest=" + questId);
                 connection.invoke("TakeQuest", { questId: questId });
             } else if (obj.className === 'completeQuest') {
-                console.log("TakeQuest=" + questId);
+                console.log("CompleteQuest=" + questId);
                 connection.invoke("CompleteQuest", { questId: questId });
             }
         },

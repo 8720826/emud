@@ -514,6 +514,9 @@ namespace Emprise.MudServer.CommandHandlers
 
                 case PlayerStatusEnum.伐木:
                     await _mudProvider.ShowMessage(playerId, "你拿起斧头，对着一棵大树嘿呦嘿呦得砍了起来。");
+
+                    //新手任务
+                    await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次伐木));
                     break;
 
                 case PlayerStatusEnum.采药:
@@ -785,7 +788,10 @@ namespace Emprise.MudServer.CommandHandlers
 
 
             await _bus.RaiseEvent(new SendMessageEvent(playerId, content)).ConfigureAwait(false);
-            
+
+            //新手任务
+            await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次聊天));
+
             return Unit.Value;
         }
 

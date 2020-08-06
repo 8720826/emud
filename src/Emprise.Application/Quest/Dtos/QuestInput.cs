@@ -79,5 +79,12 @@ namespace Emprise.Application.Quest.Dtos
         public string Reward { set; get; }
 
 
+        [Display(Name = "任务奖励描述")]
+        [StringLength(4000, ErrorMessage = "{0}最长不能超过{1}个字符")]
+        [Required(ErrorMessage = "请输入任务奖励描述")]
+
+        public string RewardDescription { set; get; }
+
+
     }
 }

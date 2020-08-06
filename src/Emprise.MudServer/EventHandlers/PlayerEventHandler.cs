@@ -266,20 +266,9 @@ namespace Emprise.MudServer.EventHandlers
             var content = message.Content;
       
             await _queueHandler.SendQueueMessage(new SaveChatLogQueue(playerId, content));
-            //await _mudProvider.ShowMessage(playerId, $"你说：{content}");
-
-            /*
-            await _chatLogDomainService.Add(new ChatLogEntity
-            {
-                PlayerId = playerId,
-                Content = content,
-                PostDate = DateTime.Now
-            });
 
 
-            await Commit();
-            */
-            // await _delayedQueue.Publish(new MessageModel { Content = receivedMessage.Content, PlayerId = _account.PlayerId }, 2, 10);
+
 
         }
 

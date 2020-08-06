@@ -206,6 +206,16 @@
                             <span asp-validation-for="Quest.Description" class="text-danger"></span>
                         </div>
                     </div>
+
+                    <div class="am-g am-margin-top-sm">
+                        <div class="am-u-sm-2 am-text-right">
+                            <label asp-for="Quest.RewardDescription" class="control-label"></label>
+                        </div>
+                        <div class="am-u-sm-10">
+                            <textarea rows="5" placeholder="" id="rewardDescription" asp-for="Quest.RewardDescription"></textarea>
+                            <span asp-validation-for="Quest.RewardDescription" class="text-danger"></span>
+                        </div>
+                    </div>
                     @*
         <div class="am-g am-margin-top-sm">
             <div class="am-u-sm-2 am-text-right">

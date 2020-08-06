@@ -244,4 +244,11 @@ namespace Emprise.Domain.Core.Enums
         //完成未领奖 = 3,
         完成已领奖 = 4//HasTake = false;IsComplete = true;
     }
+
+
+    public enum NewbieQuestEnum
+    {
+        第一次聊天,
+        第一次伐木
+    }
 }
