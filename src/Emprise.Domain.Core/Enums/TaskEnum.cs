@@ -249,6 +249,13 @@ namespace Emprise.Domain.Core.Enums
     public enum NewbieQuestEnum
     {
         第一次聊天,
-        第一次伐木
+        第一次伐木,
+        第一次打猎,
+        第一次打坐, 
+        第一次采药, 
+        第一次挖矿, 
+        第一次钓鱼, 
+        第一次疗伤, 
+        第一次探索
     }
 }

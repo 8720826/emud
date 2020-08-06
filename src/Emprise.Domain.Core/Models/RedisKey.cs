@@ -35,5 +35,20 @@ namespace Emprise.Domain.Core.Models
         /// UnreadEmailCount_{playerId}
         /// </summary>
         public const string UnreadEmailCount = "unreadEmailCount_{0}";
+
+        /// <summary>
+        /// chatTimes_{playerId}
+        /// </summary>
+        public const string ChatTimes = "chatTimes_{0}";
+
+        /// <summary>
+        /// workTimes_{playerId}_{workType}
+        /// </summary>
+        public const string WorkTimes = "workTimes_{0}_{1}";
+
+        /// <summary>
+        /// chatTimes_{playerId}
+        /// </summary>
+        public const string SearchTimes = "searchTimes_{0}";
     }
 }

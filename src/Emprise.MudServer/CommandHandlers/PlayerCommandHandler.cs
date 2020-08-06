@@ -430,7 +430,14 @@ namespace Emprise.MudServer.CommandHandlers
 
             if (await Commit())
             {
-               
+                //新手任务
+                var searchTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.SearchTimes, playerId));
+                if (searchTimes <= 0)
+                {
+                    await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次探索));
+                }
+                searchTimes++;
+                await _redisDb.StringSet(string.Format(RedisKey.SearchTimes, playerId), searchTimes);
             }
             return Unit.Value;
         }
@@ -505,30 +512,50 @@ namespace Emprise.MudServer.CommandHandlers
                 await _bus.RaiseEvent(new DomainNotification($"你正在{player.Status}中，请先停下！"));
                 return;
             }
+            var workTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.WorkTimes, playerId, newStatus));
 
             switch (newStatus)
             {
                 case PlayerStatusEnum.打猎:
                     await _mudProvider.ShowMessage(playerId, "你开始在丛林中寻找猎物的踪影。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次打猎));
+                    }
                     break;
 
                 case PlayerStatusEnum.伐木:
                     await _mudProvider.ShowMessage(playerId, "你拿起斧头，对着一棵大树嘿呦嘿呦得砍了起来。");
 
                     //新手任务
-                    await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次伐木));
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次伐木));
+                    }
                     break;
 
                 case PlayerStatusEnum.采药:
                     await _mudProvider.ShowMessage(playerId, "你开始在草丛中搜寻草药的踪影。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次采药));
+                    }
                     break;
 
                 case PlayerStatusEnum.挖矿:
                     await _mudProvider.ShowMessage(playerId, "你挥动铁锹，开始挖矿。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次挖矿));
+                    }
                     break;
 
                 case PlayerStatusEnum.钓鱼:
                     await _mudProvider.ShowMessage(playerId, "你把鱼竿一甩，开始等待鱼儿上钩。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次钓鱼));
+                    }
                     break;
 
                 case PlayerStatusEnum.疗伤:
@@ -538,6 +565,10 @@ namespace Emprise.MudServer.CommandHandlers
                         return;
                     }
                     await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始运功疗伤。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次疗伤));
+                    }
                     break;
 
                 case PlayerStatusEnum.打坐:
@@ -547,6 +578,10 @@ namespace Emprise.MudServer.CommandHandlers
                         return;
                     }
                     await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始打坐。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次打坐));
+                    }
                     break;
 
                 default:
@@ -557,6 +592,11 @@ namespace Emprise.MudServer.CommandHandlers
           
             player.Status = newStatus;
             await _playerDomainService.Update(player);
+
+            //新手任务
+            workTimes++;
+            await _redisDb.StringSet(string.Format(RedisKey.ChatTimes, playerId), workTimes);
+
 
             await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 5, 15);
 
@@ -790,7 +830,13 @@ namespace Emprise.MudServer.CommandHandlers
             await _bus.RaiseEvent(new SendMessageEvent(playerId, content)).ConfigureAwait(false);
 
             //新手任务
-            await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次聊天));
+            var chatTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.ChatTimes, playerId));
+            if (chatTimes <= 0)
+            {
+                await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次聊天));
+            }
+            chatTimes++;
+            await _redisDb.StringSet(string.Format(RedisKey.ChatTimes, playerId), chatTimes);
 
             return Unit.Value;
         }
