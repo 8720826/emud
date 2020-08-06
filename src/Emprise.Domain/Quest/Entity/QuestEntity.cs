@@ -59,7 +59,12 @@ namespace Emprise.Domain.Quest.Entity
         /// </summary>
         public string Reward { set; get; }
 
+        public string RewardDescription { set; get; }
+
+
         public int  SortId { set; get; }
+
+
 
     }
 }

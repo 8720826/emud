@@ -23,6 +23,7 @@ using Emprise.MudServer.Commands.EmailCommands;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands.WareCommands;
 using Emprise.MudServer.Commands.QuestCommands;
+using Emprise.Domain.Core.Enums;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -312,7 +313,7 @@ namespace Emprise.MudServer.Hubs
         }
 
 
-        public async Task TakeQuest(QuestAction questAction)
+        public async Task TakeQuest(QuestDetailAction questAction)
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
@@ -322,7 +323,7 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
-        public async Task CompleteQuest(QuestAction questAction)
+        public async Task CompleteQuest(QuestDetailAction questAction)
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
@@ -372,12 +373,12 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
-        public async Task ShowMyQuest()
+        public async Task ShowMyQuest(QuestAction questAction)
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
 
-                var command = new ShowMyQuestCommand(playerId);
+                var command = new ShowMyQuestCommand(playerId, questAction.Type);
                 await _bus.SendCommand(command);
             });
         }
@@ -392,7 +393,7 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
-        public async Task ShowQuestDetail(QuestAction questAction)
+        public async Task ShowQuestDetail(QuestDetailAction questAction)
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;

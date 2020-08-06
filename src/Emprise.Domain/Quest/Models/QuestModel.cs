@@ -56,6 +56,8 @@ namespace Emprise.Domain.Quest.Models
         /// </summary>
         public string Reward { set; get; }
 
+        public string RewardDescription { set; get; }
+
         public int SortId { set; get; }
 
     }

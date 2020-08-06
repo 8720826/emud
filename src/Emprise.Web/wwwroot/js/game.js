@@ -41,7 +41,7 @@ new Vue({
         myBoxMenus: [],
         menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "武功", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
             { id: "email", name: "邮箱", group: "email" },
-            { id: "activityQuest", name: "我的任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" }],
+            { id: "activityQuest1", name: "新手任务", group: "quest" }, { id: "activityQuest2", name: "主线任务", group: "quest" }, { id: "activityQuest3", name: "日常任务", group: "quest" }, { id: "activityQuest4", name: "支线任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" }],
         myDetail: "",
         modal: {
             isShowConfirm: 0,
@@ -336,8 +336,8 @@ new Vue({
 
             connection.on("ShowQuests", result => {
                 console.log("ShowQuests:" + JSON.stringify(result));
-                that.myBox = "activityQuest";
-                that.myQuests = result;
+                that.myBox = "activityQuest" + result.type;
+                that.myQuests = result.quests;
             });
 
             connection.on("ShowHistoryQuests", result => {
@@ -389,8 +389,8 @@ new Vue({
         showEmailDetail: function (id) {
             connection.invoke("ShowEmailDetail", { playerEmailId: id});
         },
-        showMyQuest: function () {
-            connection.invoke("ShowMyQuest");
+        showMyQuest: function (type) {
+            connection.invoke("ShowMyQuest", { type: type||1 });
         },
         showMyHistoryQuest: function () {
             connection.invoke("ShowMyHistoryQuest");
@@ -446,8 +446,20 @@ new Vue({
                     this.showEmail(1);
                     break;
 
-                case "activityQuest":
-                    this.showMyQuest();
+                case "activityQuest1":
+                    this.showMyQuest(1);
+                    break;
+
+                case "activityQuest2":
+                    this.showMyQuest(2);
+                    break;
+
+                case "activityQuest3":
+                    this.showMyQuest(3);
+                    break;
+
+                case "activityQuest4":
+                    this.showMyQuest(4);
                     break;
 
                 case "historyQuest":

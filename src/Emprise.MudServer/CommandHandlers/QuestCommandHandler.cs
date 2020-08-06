@@ -291,6 +291,8 @@ namespace Emprise.MudServer.CommandHandlers
         public async Task<Unit> Handle(ShowMyQuestCommand command, CancellationToken cancellationToken)
         {
             var playerId = command.PlayerId;
+            var type = command.Type;
+            
 
             var playerQuests = await _playerQuestDomainService.GetPlayerQuests(playerId);
 
@@ -298,11 +300,15 @@ namespace Emprise.MudServer.CommandHandlers
 
             var questQuery = await _questDomainService.GetAll();
 
-            var quests = questQuery.Where(x => ids.Contains(x.Id));
+            var quests = questQuery.Where(x => x.Type == type && ids.Contains(x.Id));
 
+            var myQuest = new MyQuest
+            {
+                Quests = _mapper.Map<List<QuestModel>>(quests),
+                Type = type
+            };
 
-
-            await _mudProvider.ShowQuests(playerId, _mapper.Map<List<QuestModel>>(quests));
+            await _mudProvider.ShowQuests(playerId, myQuest);
 
             return Unit.Value;
         }
@@ -353,9 +359,12 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
+            var questDetail = _mapper.Map<QuestDetailModel>(quest);
+
+            //questTargets = JsonConvert.DeserializeObject<List<QuestReward>>(quest.Reward);
 
 
-            await _mudProvider.ShowQuest(playerId, _mapper.Map<QuestModel>(quest));
+            await _mudProvider.ShowQuest(playerId, questDetail);
 
             return Unit.Value;
         }

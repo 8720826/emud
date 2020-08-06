@@ -44,11 +44,11 @@ namespace Emprise.MudServer.EventHandlers
         INotificationHandler<SendMessageEvent>,
         INotificationHandler<CompleteQuestEvent>,
         INotificationHandler<QuestTriggerEvent>,
-        INotificationHandler<PlayerAttributeChangedEvent>
-
-
-
+        INotificationHandler<PlayerAttributeChangedEvent>,
+        INotificationHandler<CreatedEvent>
         
+
+
 
     {
         public const string Player = "Player_{0}";
@@ -227,6 +227,8 @@ namespace Emprise.MudServer.EventHandlers
 
             await _queueHandler.SendQueueMessage(new CheckPlayerMainQuestQueue(player.Id));
 
+            await _queueHandler.SendQueueMessage(new CheckPlayerNewbieQuestQueue(player.Id));
+
         }
 
         public async Task Handle(PlayerStatusChangedEvent message, CancellationToken cancellationToken)
@@ -292,6 +294,15 @@ namespace Emprise.MudServer.EventHandlers
                 //await CheckPlayerMainQuest(player);
                 await _queueHandler.SendQueueMessage(new CheckPlayerMainQuestQueue(player.Id));
             }
+        }
+
+
+        public async Task Handle(CreatedEvent message, CancellationToken cancellationToken)
+        {
+            var player = message.Player;
+
+           await _queueHandler.SendQueueMessage(new CheckPlayerNewbieQuestQueue(player.Id));
+            
         }
 
 

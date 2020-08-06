@@ -58,7 +58,7 @@ namespace Emprise.Infra.Mapper
             CreateMap<ItemDropRateInput, ItemDropRateEntity>();
 
             CreateMap<QuestEntity, QuestModel>();
-            
+            CreateMap<QuestEntity, QuestDetailModel>();
 
 
         }

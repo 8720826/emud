@@ -20,6 +20,8 @@ namespace Emprise.MudServer.Consumers
     {
         Task<bool> CheckPlayerMainQuestQueue(CheckPlayerMainQuestQueue message);
 
+
+        Task<bool> CheckPlayerNewbieQuestQueue(CheckPlayerMainQuestQueue message);
     }
 
     public class QuestConsumer : BaseConsumer, IQuestConsumer, ICapSubscribe
@@ -108,6 +110,48 @@ namespace Emprise.MudServer.Consumers
 
             await Commit();
 
+            return true;
+        }
+
+
+
+        [CapSubscribe("CheckPlayerNewbieQuestQueue")]
+        public async Task<bool> CheckPlayerNewbieQuestQueue(CheckPlayerMainQuestQueue message)
+        {
+            _logger.LogDebug($"Consumer Get Queue {JsonConvert.SerializeObject(message)} ready");
+
+            var playerId = message.PlayerId;
+
+            //已经领取的所有任务
+            var myQuests = (await _playerQuestDomainService.GetPlayerQuests(playerId));
+
+            //正在进行的任务
+            var myQuestsNotComplete = myQuests.Where(x => x.Status == QuestStateEnum.已领取进行中);
+            //所有新手任务
+            var newbieQuests = (await _questDomainService.GetAll()).Where(x => x.Type == QuestTypeEnum.新手).ToList();
+            foreach (var newbieQuest in newbieQuests)
+            {
+                if(myQuests.Count(x=>x.QuestId== newbieQuest.Id) == 0)
+                {
+                    var playerQuest = new PlayerQuestEntity
+                    {
+                        PlayerId = playerId,
+                        QuestId = newbieQuest.Id,
+                        Status = QuestStateEnum.已领取进行中,
+                        TakeDate = DateTime.Now,
+                        CompleteDate = DateTime.Now,
+                        CreateDate = DateTime.Now,
+                        DayTimes = 1,
+                        Target = newbieQuest.Target,
+                        Times = 1,
+                        UpdateDate = DateTime.Now
+                    };
+                    await _playerQuestDomainService.Add(playerQuest);
+                }
+            }
+
+
+            await Commit();
             return true;
         }
     }
