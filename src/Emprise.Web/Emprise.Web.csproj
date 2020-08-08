@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+	<UserSecretsId>b0e07485-0ebd-455a-8078-d7b0ff7deac7</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

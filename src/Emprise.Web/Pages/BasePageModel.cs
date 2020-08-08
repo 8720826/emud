@@ -25,6 +25,14 @@ namespace Emprise.Web.Pages
             _appConfig = appConfig.CurrentValue;
 
             SiteConfig =  _appConfig.Site;
+
+            if (SiteConfig == null)
+            {
+                SiteConfig = new SiteConfig
+                {
+                    Name = "Emprise Mud"
+                };
+            }
         }
     }
 }

@@ -73,7 +73,22 @@ namespace Emprise.Domain.Config.Services
 
                 if (prop.PropertyType.IsValueType || prop.PropertyType.Name.StartsWith("String"))
                 {
-                    configDic.TryGetValue(key, out string value);
+                    string value = "";
+                    try
+                    {
+                        configDic.TryGetValue(key, out  value);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+                    if (string.IsNullOrEmpty(value)&& prop.PropertyType.IsValueType)
+                    {
+                        var defaultValue = Activator.CreateInstance(prop.PropertyType);
+                        value = defaultValue.ToString();
+                    }
+
                     var attribute = prop.GetCustomAttribute(typeof(DisplayNameAttribute)) as DisplayNameAttribute;
                     configs.Add(new ConfigModel
                     {

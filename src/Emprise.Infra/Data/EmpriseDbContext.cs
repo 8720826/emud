@@ -12,11 +12,11 @@ namespace Emprise.Infra.Data
 {
     public class EmpriseDbContext : DbContext
     {
-
+          
 
         public EmpriseDbContext(DbContextOptions<EmpriseDbContext> options) : base(options)
         {
-            Database.EnsureCreated();
+            Database.EnsureCreated(); 
         }
 
 

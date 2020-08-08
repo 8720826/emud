@@ -79,20 +79,6 @@ namespace Emprise.Domain.Core.Models
         public int BornRoomId { get; set; }
 
 
-
-        /// <summary>
-        /// 是否开启远程api，开启后，后台管理操作将更新游戏缓存。当不需要使用后台时，建议关闭
-        /// </summary>
-        [DisplayName("是否开启远程api")]
-        public bool IsApiEnable { get; set; }
-
-        /// <summary>
-        /// 远程api验证密钥，请妥善保管，切勿泄漏！！！
-        /// </summary>
-        [DisplayName("远程api验证密钥")]
-        public string ApiKey { get; set; }
-
-
         /// <summary>
         /// 统计代码
         /// </summary>
