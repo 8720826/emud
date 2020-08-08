@@ -83,10 +83,25 @@ namespace Emprise.Domain.Config.Services
 
                     }
 
-                    if (string.IsNullOrEmpty(value)&& prop.PropertyType.IsValueType)
+                    if (string.IsNullOrEmpty(value))
                     {
-                        var defaultValue = Activator.CreateInstance(prop.PropertyType);
-                        value = defaultValue.ToString();
+                        if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?) ||
+                            prop.PropertyType == typeof(bool) || prop.PropertyType == typeof(bool?) ||
+                            prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?) ||
+                            prop.PropertyType == typeof(double)|| prop.PropertyType == typeof(double?) 
+                            )
+                        {
+                            var defaultValue = Activator.CreateInstance(prop.PropertyType);
+                            value = defaultValue.ToString();
+                        }
+                        else if (prop.PropertyType == typeof(DateTime?) || prop.PropertyType == typeof(DateTime))
+                        {
+                            value = DateTime.Now.ToString();
+                        }
+                        else if (prop.PropertyType == typeof(Guid?) || prop.PropertyType == typeof(Guid))
+                        {
+                            value = Guid.Empty.ToString();
+                        }
                     }
 
                     var attribute = prop.GetCustomAttribute(typeof(DisplayNameAttribute)) as DisplayNameAttribute;
