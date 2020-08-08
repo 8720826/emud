@@ -93,7 +93,7 @@ namespace Emprise.Application.Map.Services
 
                 await _operatorLogDomainService.AddSuccess(new OperatorLogEntity
                 {
-                    Type = OperatorLogType.修改物品,
+                    Type = OperatorLogType.修改地图,
                     Content = $"Id = {id},Data = {content}"
                 });
 

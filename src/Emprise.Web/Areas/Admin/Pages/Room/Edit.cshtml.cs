@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Application.Map.Dtos;
-using Emprise.Application.Map.Services;
+using Emprise.Application.Room.Models;
+using Emprise.Application.User.Services;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Models;
 using Emprise.Web.Areas.Admin.Pages;
@@ -15,60 +15,70 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace Emprise.Web.Areas.Admin.Pages.Map
+namespace Emprise.Admin.Pages.Room
 {
     public class EditModel : BaseAdminPageModel
     {
-        private readonly IMapAppService _mapAppService;
+        private readonly IRoomAppService _roomAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
         public EditModel(
             ILogger<EditModel> logger,
-            IMapAppService mapAppService,
+            IRoomAppService roomAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
-            _mapAppService = mapAppService;
+            _roomAppService = roomAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
 
+        public int Id { get; set; }
+
+
+
         [BindProperty]
-        public MapInput Map { get; set; }
+        public RoomInput Room { get; set; }
+
+        public int MapId { get; set; }
 
         public string ErrorMessage { get; set; }
 
 
 
-
-
         public async Task<IActionResult> OnGetAsync(int id)
         {
+
             if (id > 0)
             {
-                var map = await _mapAppService.Get(id);
+                Id = id;
+                var room = await _roomAppService.Get(id);
 
-                Map = _mapper.Map<MapInput>(map);
+                Room = _mapper.Map<RoomInput>(room);
+
+                MapId = room.MapId;
 
                 return Page();
             }
             else
             {
-                return RedirectToPage("/Map/Index");
+                return RedirectToPage("/Room/Index");
             }
         }
 
+
         public async Task<IActionResult> OnPostAsync(int id)
         {
+            Id = id;
             ErrorMessage = "";
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            var result = await _mapAppService.Update(id, Map);
+            var result = await _roomAppService.Update(id, Room);
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.Message;

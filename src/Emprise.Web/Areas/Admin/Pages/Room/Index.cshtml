@@ -1,0 +1,109 @@
+﻿@page "{pageIndex?}"
+@model Emprise.Admin.Pages.Room.IndexModel
+@{
+    ViewData["Title"] = "房间管理";
+    ViewData["MenuGroup"] = MenuGroupEnum.System;
+}
+
+<div class="am-cf am-padding">
+    <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">房间管理-@(Model.Map?.Name??"全地图")</strong> / <small>  房间列表</small></div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-md-6 am-cf">
+        <div class="am-fl am-cf">
+            <div class="am-btn-toolbar am-fl">
+                <div class="am-btn-group am-btn-group-xs">
+                    <a asp-page="Add" asp-route-mapId="@(Model.Map?.Id)" class="am-btn am-btn-default"><span class="am-icon-plus"></span> 新增</a>
+
+                    <a asp-page="/Map/Index"   class="am-btn am-btn-default am-btn-xs  backup"><span class="am-icon-angle-double-left"></span> 返回</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="am-u-md-3 am-cf">
+
+    </div>
+</div>
+
+<div class="am-g">
+    <div class="am-u-sm-12">
+        <form class="am-form">
+            <table class="am-table am-table-striped am-table-hover table-main">
+                <thead>
+                    <tr>
+                        <th style="width:60px">ID</th>
+                        <th style="width:120px">房间名</th>
+                        <th style="width:120px">出口</th>
+                        <th>描述</th>
+                        <th style="width:180px">属性</th>
+                        <th style="width:150px">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var room in Model.Paging.Data)
+                    {
+                    <tr>
+                        <td>@(room.Id)</td>
+                        <td><a asp-page="./Edit" asp-route-id="@room.Id">@(room.Name)</a></td>
+                        <td>
+                            @if (room.East > 0)
+                            {
+                                <text>东：</text> @(room.EastName)
+                                <br />
+                            }
+
+                            @if (room.West > 0)
+                            {
+                                <text>西：</text> @(room.WestName)
+                                <br />
+                            }
+
+                            @if (room.South > 0)
+                            {
+                                <text>南：</text> @(room.SouthName)
+                                <br />
+                            }
+
+                            @if (room.North > 0)
+                            {
+                                <text>北：</text> @(room.NorthName)
+                            }
+                        </td>
+                        <td title="@(room.Description)">@(room.Description)</td>
+                        <td>
+                            @(room.CanFight ? "PK" : "")
+                            @(room.CanCollect ? "采集" : "")
+                            @(room.CanCut ? "伐木" : "")
+                            @(room.CanDig ? "挖矿" : "")
+                            @(room.CanFish ? "钓鱼" : "")
+                            @(room.CanHunt ? "打猎" : "")
+                        </td>
+                        <td>
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <a asp-page="./Edit" asp-route-id="@room.Id" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</a>
+                                    <a asp-page="./Delete" asp-route-id="@room.Id" class="am-btn am-btn-default am-btn-xs am-text-danger"><span class="am-icon-trash-o"></span> 删除</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <hr />
+            <p>注：.....</p>
+        </form>
+    </div>
+
+</div>
+
+
+
+@section Scripts {
+    <script type="text/javascript">
+
+    </script>
+}

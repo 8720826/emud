@@ -3,66 +3,58 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Emprise.Application.Map.Dtos;
 using Emprise.Application.Map.Services;
+using Emprise.Application.User.Services;
+using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Room.Entity;
 using Emprise.Web.Areas.Admin.Pages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
-namespace Emprise.Web.Areas.Admin.Pages.Map
+namespace Emprise.Admin.Pages.Room
 {
-    public class AddModel : BaseAdminPageModel
+    public class ListModel : BaseAdminPageModel
     {
         private readonly IMapAppService _mapAppService;
+        private readonly IRoomAppService _roomAppService;
         private readonly AppConfig _appConfig;
         private readonly IMapper _mapper;
-        public AddModel(
-            ILogger<AddModel> logger,
+        public ListModel(
+            ILogger<ListModel> logger,
             IMapAppService mapAppService,
+            IRoomAppService roomAppService,
             IMapper mapper,
             IOptionsMonitor<AppConfig> appConfig)
             : base(logger)
         {
             _mapper = mapper;
             _mapAppService = mapAppService;
+            _roomAppService = roomAppService;
             _appConfig = appConfig.CurrentValue;
 
         }
 
-        [BindProperty]
-        public MapInput Map { get; set; }
 
-        public string ErrorMessage { get; set; }
+        public Paging<RoomEntity> Paging { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public string Keyword { get; set; }
 
-        public void OnGet()
+        public int MapId { get; set; }
+
+        public int RoomId { get; set; }
+
+        public async Task OnGetAsync(int pageIndex,int mapId, int roomId)
         {
+            MapId = mapId;
+            RoomId = roomId;
 
-        }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            ErrorMessage = "";
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
-
-            var result = await _mapAppService.Add(Map);
-            if (!result.IsSuccess)
-            {
-                ErrorMessage = result.Message;
-                return Page();
-            }
-            else
-            {
-                return RedirectToPage("/Map/Index");
-            }
+            Paging = await _roomAppService.GetPaging(mapId, Keyword, pageIndex);
         }
     }
 }

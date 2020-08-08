@@ -33,11 +33,9 @@ namespace Emprise.Domain.Room.Services
             return await _roomRepository.Get(where);
         }
 
-        public async Task<List<RoomEntity>> GetAll(Expression<Func<RoomEntity, bool>> where)
+        public async Task<IQueryable<RoomEntity>> GetAll()
         {
-            var query = await _roomRepository.GetAll(where);
-
-            return query.ToList();
+            return await _roomRepository.GetAll();
         }
 
         public async Task<RoomEntity> Get(int id)
@@ -58,6 +56,12 @@ namespace Emprise.Domain.Room.Services
         {
             await _roomRepository.Update(room);
             await _bus.RaiseEvent(new EntityUpdatedEvent<RoomEntity>(room)).ConfigureAwait(false);
+        }
+
+        public async Task Delete(RoomEntity entity)
+        {
+            await _roomRepository.Remove(entity);
+            await _bus.RaiseEvent(new EntityDeletedEvent<RoomEntity>(entity)).ConfigureAwait(false);
         }
 
         public void Dispose()

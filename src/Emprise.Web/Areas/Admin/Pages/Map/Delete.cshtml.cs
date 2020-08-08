@@ -72,52 +72,6 @@ namespace Emprise.Web.Areas.Admin.Pages.Map
             {
                 return RedirectToPage("/Map/Index");
             }
-            /*
-            try
-            {
-                var roomCount = await _db.Rooms.CountAsync(x => x.MapId == id);
-                if (roomCount > 0)
-                {
-                    ErrorMessage = $"该地图下还有{roomCount}个房间，删除失败";
-
-                    await AddError(new OperatorLog
-                    {
-                        Type = OperatorLogType.删除地图,
-                        Content = $"id={id}，ErrorMessage={ErrorMessage}"
-                    });
-                    return Page();
-                }
-
-
-                var map = await _db.Maps.FindAsync(id); 
-                if (map == null)
-                {
-                    ErrorMessage = $"地图 {id} 不存在！";
-                    return Page();
-                }
-                _db.Maps.Remove(map);
-                await _db.SaveChangesAsync();
-
-                await AddSuccess(new OperatorLog
-                {
-                    Type = OperatorLogType.删除地图,
-                    Content = JsonConvert.SerializeObject(map)
-                });
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-
-                await AddError(new OperatorLog
-                {
-                    Type = OperatorLogType.删除地图,
-                    Content = $"id={id}，ErrorMessage={ErrorMessage}"
-                });
-                return Page();
-            }
-
-            return Redirect(UrlReferer);
-            */
         }
     }
 }
