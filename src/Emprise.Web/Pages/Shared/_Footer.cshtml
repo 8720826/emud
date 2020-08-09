@@ -1,12 +1,30 @@
 ﻿
 @model Emprise.Domain.Core.Models.SiteConfig
+@{
+    var version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
 
+    if (version.Contains("."))
+    {
+        var vers = version.Split('.');
+        version = $"{vers[0]}.{vers[1]}";
+    }
+    else
+    {
+        version = $"{version}.0";
+    }
+
+    var lastUpdateTime = System.IO.File.GetLastWriteTime(this.GetType().Assembly.Location).ToString();
+
+}
 <div class="footer">
     <p>
         &copy; @(DateTime.Now.Year)  <a href="@(Model.Url)">@(Model.Name)</a>
         Powered by <a href="https://github.com/8720826/emud" target="_blank">EMud</a>
+        v@(version)
     </p>
-
+    <p>
+        更新时间: @(lastUpdateTime)  
+    </p>
     <p style="margin-top:10px;">
         <a href="http://www.miitbeian.gov.cn" target="_blank" rel="nofollow">@(Model.BeiAn)</a>
     </p>

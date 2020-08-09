@@ -73,6 +73,8 @@ namespace Emprise.Infra.Mapper
 
             CreateMap<RoomEntity, RoomInput>();
             CreateMap<RoomInput, RoomEntity>();
+
+
         }
     }
 }

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-	<UserSecretsId>b0e07485-0ebd-455a-8078-d7b0ff7deac7</UserSecretsId>
+	  <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <AssemblyVersion>3.1</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,13 +22,11 @@
     <EmbeddedResource Remove="Controllers\**" />
     <EmbeddedResource Remove="Filter\**" />
     <EmbeddedResource Remove="logs\**" />
-    <EmbeddedResource Remove="wwwroot\js\%40aspnet\**" />
     <EmbeddedResource Remove="wwwroot\lib\jquery\**" />
     <EmbeddedResource Remove="wwwroot\lib\layer\**" />
     <None Remove="Controllers\**" />
     <None Remove="Filter\**" />
     <None Remove="logs\**" />
-    <None Remove="wwwroot\js\%40aspnet\**" />
     <None Remove="wwwroot\lib\jquery\**" />
     <None Remove="wwwroot\lib\layer\**" />
   </ItemGroup>
