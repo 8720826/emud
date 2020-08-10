@@ -30,14 +30,16 @@ namespace Emprise.Infra.Middleware
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex, _logger);
+                _logger.LogError($"ErrorHandling:{ex}");
+
+
+                await HandleExceptionAsync(context, ex);
             }
         }
 
         private static async Task HandleExceptionAsync(
             HttpContext context,
-            Exception exception,
-            ILogger<ErrorHandlingMiddleware> logger
+            Exception exception
             )
         {
             var errors = string.IsNullOrWhiteSpace(exception.Message) ? "Error" : exception.Message;
