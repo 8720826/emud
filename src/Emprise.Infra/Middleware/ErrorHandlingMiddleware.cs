@@ -42,18 +42,10 @@ namespace Emprise.Infra.Middleware
             Exception exception
             )
         {
-            var errors = string.IsNullOrWhiteSpace(exception.Message) ? "Error" : exception.Message;
+            var error = string.IsNullOrWhiteSpace(exception.Message) ? "InternalServerError" : exception.Message;
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
             context.Response.ContentType = "application/json";
-
-            var result = JsonConvert.SerializeObject(new
-            {
-                errors
-            });
-
-
-            await context.Response.WriteAsync(result);
+            await context.Response.WriteAsync(error);
         }
     }
 }
