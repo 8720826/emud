@@ -21,7 +21,6 @@
 * vue
 * mysql/sqlserver/PostgreSql
 * redis
-* hangfire
 * efcore
 * signalr
 
@@ -41,10 +40,8 @@
     PostgreSql
     
 4.  发布  
-    游戏主程序  ```Emprise.Web```  
-	游戏后台管理 ```Emprise.Admin```  
-	
-	可以发布到IIS或其他web服务器
+    游戏兼容windows和linux
+    可以发布到IIS或nginx等其他web服务器
      
 5.  安装  
 	游戏免安装，无需数据库脚本  
