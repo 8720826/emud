@@ -64,10 +64,9 @@ namespace Emprise.Infra.Bus
             var channel = typeof(T).Name.ToLower();
             var key = $"{queueName}_{channel}";
             var dic = await _redisDb.HashGetAll<QueueData<T>>(key);
-            //var dic = await GetAll(channel);
             if (dic == null || dic.Count == 0)
             {
-             
+              
                 return default;
             }
 

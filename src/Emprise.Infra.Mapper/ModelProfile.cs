@@ -5,6 +5,7 @@ using Emprise.Application.Map.Dtos;
 using Emprise.Application.Npc.Dtos;
 using Emprise.Application.Quest.Dtos;
 using Emprise.Application.Room.Models;
+using Emprise.Application.Skill.Dtos;
 using Emprise.Application.User.Models;
 using Emprise.Application.Ware.Dtos;
 using Emprise.Domain.Core.Extensions;
@@ -18,6 +19,8 @@ using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Room.Entity;
 using Emprise.Domain.Room.Models;
+using Emprise.Domain.Skill.Entity;
+using Emprise.Domain.Skill.Models;
 using Emprise.Domain.User.Entity;
 using Emprise.Domain.Ware.Entity;
 using Emprise.Domain.Ware.Models;
@@ -74,7 +77,11 @@ namespace Emprise.Infra.Mapper
             CreateMap<RoomEntity, RoomInput>();
             CreateMap<RoomInput, RoomEntity>();
 
+            CreateMap<SkillEntity, SkillInput>();
+            CreateMap<SkillInput, SkillEntity>();
 
+            CreateMap<SkillEntity, SkillModel>();
+            
         }
     }
 }

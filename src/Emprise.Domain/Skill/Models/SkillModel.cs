@@ -1,27 +1,24 @@
-﻿using Emprise.Domain.Core.Entity;
-using Emprise.Domain.Core.Enums;
+﻿using Emprise.Domain.Core.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Emprise.Domain.Skill.Entity
+namespace Emprise.Domain.Skill.Models
 {
-
-    [Table("Skill")]
-    public class SkillEntity : BaseEntity
+    public class SkillModel
     {
+        public int Id { set; get; }
+
+        public int PlayerSkillId { set; get; }
+
         /// <summary>
         /// 名称
         /// </summary>
-        [StringLength(20)]
         public string Name { set; get; }
 
         /// <summary>
         /// 描述
         /// </summary>
-        [StringLength(500)]
         public string Description { set; get; }
 
         /// <summary>
@@ -48,5 +45,10 @@ namespace Emprise.Domain.Skill.Entity
         /// 使用时消耗内力
         /// </summary>
         public int UseForce { set; get; }
+
+
+        public int Level { get; set; }
+
+        public int Exp { get; set; }
     }
 }

@@ -1,16 +1,12 @@
-﻿using Emprise.Domain.Core.Entity;
-using Emprise.Domain.Core.Enums;
+﻿using Emprise.Domain.Core.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Emprise.Domain.Skill.Entity
+namespace Emprise.Application.Skill.Dtos
 {
-
-    [Table("Skill")]
-    public class SkillEntity : BaseEntity
+    public class SkillInput
     {
         /// <summary>
         /// 名称

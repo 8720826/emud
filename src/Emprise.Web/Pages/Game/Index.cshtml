@@ -218,9 +218,14 @@
 
                 </div>
 
-                <div class="status" v-if="myBox=='skill'">
-                    <p>武功</p>
-
+                <div class="mypack" v-if="myBox=='skill'">
+                    <p>你学到的武功：</p>
+                    <div class="mt15">
+                        <button v-for="skill,index in skills" @@click="showSkill(skill.playerSkillId)">
+                            <span> {{skill.name}} </span>
+                            <em>(Lv{{skill.level}})</em>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="status" v-if="myBox=='achv'">

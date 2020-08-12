@@ -39,7 +39,6 @@ namespace Emprise.MudServer.Jobs
             {
                 var queue = scope.ServiceProvider.GetRequiredService<IRecurringQueue>();
                 var handle = scope.ServiceProvider.GetRequiredService<IQueueHandler>();
-
                 var msgs = await queue.Subscribe<PlayerStatusModel>();
                 if (msgs == null || msgs.Count == 0)
                 {

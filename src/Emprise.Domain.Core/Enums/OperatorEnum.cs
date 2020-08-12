@@ -76,5 +76,9 @@ namespace Emprise.Domain.Core.Enums
         添加掉落项,
         修改掉落项,
         删除掉落项,
+
+        添加武功,
+        修改武功,
+        删除武功,
     }
 }

@@ -72,7 +72,6 @@ namespace Emprise.MudServer.Handles
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
             {
-                _logger.LogDebug($"player == null");
                 return;
             }
 

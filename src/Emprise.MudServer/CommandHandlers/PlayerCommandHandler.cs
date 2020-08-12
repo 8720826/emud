@@ -67,8 +67,6 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<NpcActionCommand, Unit>,
         IRequestHandler<ShowMeCommand, Unit>,
         IRequestHandler<ShowMyStatusCommand, Unit>,
-        IRequestHandler<ShowMySkillCommand, Unit>,
-        
         IRequestHandler<PingCommand, Unit>,
         IRequestHandler<SendMessageCommand, Unit>
 
@@ -752,19 +750,7 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(ShowMySkillCommand command, CancellationToken cancellationToken)
-        {
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                return Unit.Value;
-            }
-            var myInfo = _mapper.Map<MyInfo>(player);
 
-            await _mudProvider.ShowMySkill(playerId, myInfo);
-            return Unit.Value;
-        }
         
 
         public async Task<Unit> Handle(PingCommand command, CancellationToken cancellationToken)

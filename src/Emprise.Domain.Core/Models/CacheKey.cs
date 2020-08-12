@@ -35,5 +35,7 @@ namespace Emprise.Domain.Core.Models
         public const string PlayerQuestList = "PlayerQuestList_{0}";
 
         public const string Email = "Email_{0}";
+
+        public const string Skill = "Skill_{0}";
     }
 }
