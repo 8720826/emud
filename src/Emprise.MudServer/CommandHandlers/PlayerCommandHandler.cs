@@ -24,6 +24,7 @@ using Emprise.Domain.Room.Services;
 using Emprise.Domain.Ware.Services;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands;
+using Emprise.MudServer.Commands.SkillCommands;
 using Emprise.MudServer.Events;
 using Emprise.MudServer.Hubs.Models;
 using Emprise.MudServer.Models;
@@ -68,9 +69,10 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<ShowMeCommand, Unit>,
         IRequestHandler<ShowMyStatusCommand, Unit>,
         IRequestHandler<PingCommand, Unit>,
-        IRequestHandler<SendMessageCommand, Unit>
+        IRequestHandler<SendMessageCommand, Unit>,
+        IRequestHandler<LearnSkillCommand, Unit>
 
-        
+
 
     {
         private readonly IMediatorHandler _bus;
@@ -491,7 +493,14 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        private async Task BeginChangeStatus(int playerId, PlayerStatusEnum newStatus)
+
+        public async Task<Unit> Handle(LearnSkillCommand command, CancellationToken cancellationToken)
+        {
+            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.修练, command.MySkillId);
+            return Unit.Value;
+        }
+
+        private async Task BeginChangeStatus(int playerId, PlayerStatusEnum newStatus, int targetId=0)
         {
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
@@ -582,6 +591,25 @@ namespace Emprise.MudServer.CommandHandlers
                     }
                     break;
 
+                case PlayerStatusEnum.修练:
+                    if (player.Pot<=0)
+                    {
+                        await _mudProvider.ShowMessage(playerId, "你的潜能不够，无法修练。");
+                        return;
+                    }
+                    if (targetId <= 0)
+                    {
+                        return;
+                    }
+
+                    await _mudProvider.ShowMessage(playerId, "你开始修练。。。");
+                    if (workTimes <= 0)
+                    {
+                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次修练));
+                    }
+
+                    break;
+
                 default:
                     await _mudProvider.ShowMessage(playerId, $"你开始{newStatus}。。。");
                     break;
@@ -596,7 +624,7 @@ namespace Emprise.MudServer.CommandHandlers
             await _redisDb.StringSet(string.Format(RedisKey.ChatTimes, playerId), workTimes);
 
 
-            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus }, 5, 15);
+            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus, TargetId = targetId }, 5, 15);
 
             if (await Commit())
             {

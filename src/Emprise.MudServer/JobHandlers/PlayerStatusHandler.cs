@@ -10,6 +10,7 @@ using Emprise.Domain.ItemDrop.Services;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
+using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Entity;
 using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Events;
@@ -40,6 +41,9 @@ namespace Emprise.MudServer.Handles
         private readonly IItemDropRateDomainService  _itemDropRateDomainService;
         private readonly IWareDomainService _wareDomainService;
         private readonly IPlayerWareDomainService _playerWareDomainService;
+        private readonly ISkillDomainService _skillDomainService;
+        private readonly IPlayerSkillDomainService _playerSkillDomainService;
+
 
         public PlayerStatusHandler(
             IMudProvider mudProvider, 
@@ -52,6 +56,8 @@ namespace Emprise.MudServer.Handles
            IItemDropRateDomainService itemDropRateDomainService,
            IWareDomainService wareDomainService,
            IPlayerWareDomainService playerWareDomainService,
+           ISkillDomainService skillDomainService,
+           IPlayerSkillDomainService playerSkillDomainService,
             IMediatorHandler bus)
         {
             _mudProvider = mudProvider;
@@ -65,6 +71,8 @@ namespace Emprise.MudServer.Handles
             _itemDropRateDomainService = itemDropRateDomainService;
             _wareDomainService = wareDomainService;
             _playerWareDomainService = playerWareDomainService;
+            _skillDomainService = skillDomainService;
+            _playerSkillDomainService = playerSkillDomainService;
         }
         public async Task Execute(PlayerStatusModel model)
         {
@@ -120,6 +128,11 @@ namespace Emprise.MudServer.Handles
 
                 case PlayerStatusEnum.战斗:
                     await Fighting(player, model.TargetId);
+                    break;
+
+                case PlayerStatusEnum.修练:
+
+                    await LearnSkill(player, model.TargetId);
                     break;
             }
 
@@ -369,6 +382,7 @@ namespace Emprise.MudServer.Handles
                     addMp = player.MaxMp - player.Mp;
                 }
                 player.Mp += addMp;
+                await _playerDomainService.Update(player);
 
                 await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}。。。");
                 await _mudProvider.ShowMessage(player.Id, $"你感觉精神好多了，内力恢复 +{addMp}。。。");
@@ -385,6 +399,86 @@ namespace Emprise.MudServer.Handles
 
         }
 
+        private async Task LearnSkill(PlayerEntity player, int playerSkillId)
+        {
+            var playerSkill = await _playerSkillDomainService.Get(playerSkillId);
+            if (playerSkill == null)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"你结束了修练！");
+                player.Status = PlayerStatusEnum.空闲;
+                await _playerDomainService.Update(player);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+                return;
+            }
 
+            var skill = await _skillDomainService.Get(playerSkill.SkillId);
+            if (skill == null)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"你结束了修练！！");
+                return;
+            }
+
+            if (player.Pot <= 0)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"潜能耗尽，你结束了修练！");
+                player.Status = PlayerStatusEnum.空闲;
+                await _playerDomainService.Update(player);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+                return;
+            }
+
+            var @int = player.Int * 3 + player.IntAdd;
+
+            var levelUpExp = (playerSkill.Level + 1) * (playerSkill.Level + 1) * 50 - playerSkill.Level * playerSkill.Level * 50;
+
+            Random random = new Random();
+            int exp = random.Next(1, levelUpExp / 10);
+
+            var needPot = exp * 100 / @int;
+
+            if (player.Pot < needPot)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"潜能即将耗尽，你结束了修练！");
+                player.Status = PlayerStatusEnum.空闲;
+                await _playerDomainService.Update(player);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+                return ;
+            }
+
+            var effect = exp * 1000 / levelUpExp;
+
+            string effectWords;
+            if (effect > 80)
+            {
+                effectWords = "恍然大悟";
+            }
+            else if (effect > 50)
+            {
+                effectWords = "有所顿悟";
+            }
+            else if (effect > 20)
+            {
+                effectWords = "略有所获";
+            }
+            else if (effect > 10)
+            {
+                effectWords = "略有所获";
+            }
+            else
+            {
+                effectWords = "似乎没有什么进展";
+            }
+
+            player.Pot -= needPot;
+            await _playerDomainService.Update(player);
+
+            playerSkill.Exp += exp;
+            await _playerSkillDomainService.Update(playerSkill);
+
+            await _mudProvider.ShowMessage(player.Id, $"你消耗潜能{needPot}，{effectWords}，[{skill.Name}]经验增加{exp}！");
+
+            await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
+        }
+        
     }
 }

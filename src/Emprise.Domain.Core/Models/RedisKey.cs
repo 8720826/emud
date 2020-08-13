@@ -50,5 +50,10 @@ namespace Emprise.Domain.Core.Models
         /// chatTimes_{playerId}
         /// </summary>
         public const string SearchTimes = "searchTimes_{0}";
+
+        /// <summary>
+        /// learnSkillId_{playerId}
+        /// </summary>
+        public const string LearnSkillId = "learnSkillId_{0}";
     }
 }

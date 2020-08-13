@@ -91,7 +91,7 @@
                     <button @@click="collect" v-show="room.canCollect">采药</button>
                     <button @@click="cut" v-show="room.canCut">伐木</button>
                     <button @@click="hunt" v-show="room.canHunt">打猎</button>
-                    <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止</button>
+                    <button class="stop" @@click="stopAction" v-show="myinfo.status!='空闲'">停止{{myinfo.status}}</button>
 
                 </div>
                 <span id="mypack" @@click="showMyPack">背包</span>
@@ -221,7 +221,7 @@
                 <div class="mypack" v-if="myBox=='skill'">
                     <p>你学到的武功：</p>
                     <div class="mt15">
-                        <button v-for="skill,index in skills" @@click="showSkill(skill.playerSkillId)">
+                        <button v-for="skill,index in skills" @@click="showSkillDetail(skill.playerSkillId)">
                             <span> {{skill.name}} </span>
                             <em>(Lv{{skill.level}})</em>
                         </button>
@@ -423,7 +423,24 @@
                     </p>
                 </div>
             </div>
-            
+
+
+            <div v-if="myDetail=='skill'">
+
+                <div class="myDetailTitle" ref="myDetailTitle">
+                    <span class="title">[{{mySkill.name}}](Lv.{{mySkill.level}})</span>
+                    <span class="back" @@click="myDetail=''">返回</span>
+                </div>
+                <div class="detail" ref="detail">
+                    <p v-html="mySkill.description">{{mySkill.description}}</p>
+                    <hr />
+
+
+                    <button @@click="learnSkill(mySkill.playerSkillId)" v-show="myinfo.status=='空闲'">修炼</button>
+
+                    <button @@click="stopAction" v-show="myinfo.status!='空闲'">停止{{myinfo.status}}</button>
+                </div>
+            </div>
         </div>
 
         <template>

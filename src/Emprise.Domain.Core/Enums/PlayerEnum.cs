@@ -16,6 +16,7 @@ namespace Emprise.Domain.Core.Enums
         采药 = 7,
         打猎 = 8,
         战斗 = 9,
+        修练 =10
     }
 
 

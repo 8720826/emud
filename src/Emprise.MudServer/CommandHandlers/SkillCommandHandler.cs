@@ -10,6 +10,7 @@ using Emprise.Domain.Skill.Models;
 using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Commands;
+using Emprise.MudServer.Commands.SkillCommands;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,10 @@ using System.Threading.Tasks;
 namespace Emprise.MudServer.CommandHandlers
 {
     public class SkillCommandHandler : CommandHandler,
-        IRequestHandler<ShowMySkillCommand, Unit>
+        IRequestHandler<ShowMySkillCommand, Unit>,
+        IRequestHandler<ShowSkillDetailCommand, Unit>
+
+        
     {
         private readonly IMediatorHandler _bus;
         private readonly ILogger<SkillCommandHandler> _logger;
@@ -100,5 +104,40 @@ namespace Emprise.MudServer.CommandHandlers
             await _mudProvider.ShowMySkill(playerId, skillModels);
             return Unit.Value;
         }
+
+        public async Task<Unit> Handle(ShowSkillDetailCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var skillId = command.MySkillId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var playerSkill = await _playerSkillDomainService.Get(skillId);
+            if (playerSkill == null)
+            {
+                return Unit.Value;
+            }
+
+            var skill = await _skillDomainService.Get(playerSkill.SkillId);
+            if (skill == null)
+            {
+                return Unit.Value;
+            }
+
+            var skillModel = _mapper.Map<SkillModel>(skill);
+            skillModel.PlayerSkillId = playerSkill.Id;
+            skillModel.Level = playerSkill.Level;
+            skillModel.Exp = playerSkill.Exp;
+
+            await _mudProvider.ShowSkill(playerId, skillModel);
+
+            return Unit.Value;
+        }
+
+
+        
     }
 }

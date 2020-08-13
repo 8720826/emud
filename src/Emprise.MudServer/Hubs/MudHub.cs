@@ -24,6 +24,7 @@ using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands.WareCommands;
 using Emprise.MudServer.Commands.QuestCommands;
 using Emprise.Domain.Core.Enums;
+using Emprise.MudServer.Commands.SkillCommands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -403,5 +404,28 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
+
+        public async Task ShowSkillDetail(SkillDetailAction questAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowSkillDetailCommand(playerId, questAction.PlayerSkillId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+
+
+        public async Task LearnSkill(SkillDetailAction questAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new LearnSkillCommand(playerId, questAction.PlayerSkillId);
+                await _bus.SendCommand(command);
+            });
+        }
+        
     }
 }

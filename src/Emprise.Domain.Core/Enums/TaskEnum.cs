@@ -256,6 +256,7 @@ namespace Emprise.Domain.Core.Enums
         第一次挖矿, 
         第一次钓鱼, 
         第一次疗伤, 
-        第一次探索
+        第一次探索,
+        第一次修练
     }
 }

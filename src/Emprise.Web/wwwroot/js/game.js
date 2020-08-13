@@ -59,6 +59,7 @@ new Vue({
         myEmails: null,
         myEmail: null,
         skills: [],
+        mySkill:null,
         weapons: [],
         myWare: null,
         quest:null
@@ -214,6 +215,19 @@ new Vue({
                 console.log("ShowMySkill:" + JSON.stringify(result));
                 that.myBox = "skill";
                 that.skills = result;
+            });
+
+            connection.on("ShowSkill", result => {
+                console.log("ShowSkill:" + JSON.stringify(result));
+                for (var i = 0; i < that.skills.length; i++) {
+                    if (that.skills[i].playerSkillId == result.playerSkillId) {
+                        that.skills[i] = result;
+                    }
+                }
+
+                that.mySkill = result;
+                that.myDetail = "skill";
+
             });
             
 
@@ -398,6 +412,13 @@ new Vue({
         showQuestDetail: function (id) {
             connection.invoke("ShowQuestDetail", { questId: id });
         },
+        showSkillDetail: function (id) {
+            connection.invoke("ShowSkillDetail", { playerSkillId: id });
+        },
+        learnSkill: function (id) {
+            connection.invoke("LearnSkill", { playerSkillId: id });
+        },
+
         search: function () {
             connection.invoke("Search");
         },
