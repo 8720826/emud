@@ -376,5 +376,10 @@ namespace Emprise.MudServer.Hubs
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowHistoryQuests", obj);
         }
 
+        public async Task ShowFriend(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowFriend", obj);
+        }
+        
     }
 }

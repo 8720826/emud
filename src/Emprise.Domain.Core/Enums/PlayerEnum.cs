@@ -40,4 +40,14 @@ namespace Emprise.Domain.Core.Enums
         采药 = 7,
         打猎 = 8,
     }
+
+    public enum PlayerActionEnum
+    {
+        //闲聊 = 1,
+        //给予 = 2,
+        切磋 = 3,
+        杀死 = 4,
+        添加好友 = 5,
+        拜师 = 6,
+    }
 }

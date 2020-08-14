@@ -48,6 +48,9 @@ namespace Emprise.Infra.Mapper
                 .ForMember(x => x._int, y => y.MapFrom(s => s.Int));
 
 
+            CreateMap<PlayerEntity, PlayerBaseInfo>();
+            
+
             CreateMap<WareEntity, WareModel>();
             CreateMap<WareEntity, Weapon>();
             CreateMap<WareEntity, WareInput>();

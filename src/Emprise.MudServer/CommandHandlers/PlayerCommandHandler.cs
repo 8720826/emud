@@ -884,6 +884,8 @@ namespace Emprise.MudServer.CommandHandlers
             playerInfo.Commands.Add("切磋");
             playerInfo.Commands.Add("杀死");
 
+            playerInfo.Commands.Add("添加好友");
+
             await _mudProvider.ShowPlayer(myId, playerInfo);
 
             return Unit.Value;

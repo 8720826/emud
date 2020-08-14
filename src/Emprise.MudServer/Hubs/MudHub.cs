@@ -25,6 +25,7 @@ using Emprise.MudServer.Commands.WareCommands;
 using Emprise.MudServer.Commands.QuestCommands;
 using Emprise.Domain.Core.Enums;
 using Emprise.MudServer.Commands.SkillCommands;
+using Emprise.MudServer.Commands.RelationCommonds;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -426,6 +427,25 @@ namespace Emprise.MudServer.Hubs
                 await _bus.SendCommand(command);
             });
         }
-        
+
+        public async Task PlayerAction(PlayerCommandAction commandAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new PlayerActionCommand(playerId, commandAction.TargetId, commandAction.CommandName);
+                await _bus.SendCommand(command);
+            });
+        }
+
+        public async Task ShowFriend()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowFriendCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
     }
 }

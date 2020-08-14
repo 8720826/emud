@@ -89,5 +89,7 @@ namespace Emprise.Domain.Core.Interfaces
         Task ShowQuests(int playerId, object obj);
 
         Task ShowHistoryQuests(int playerId, object obj);
+
+        Task ShowFriend(int playerId, object obj);
     }
 }

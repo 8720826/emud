@@ -12,7 +12,9 @@
     -ms-user-select: none; /*IE10*/
     user-select: none;
 }
-
+[v-cloak] {
+    display: none;
+}
 input {
     -webkit-user-select: auto; /*webkit浏览器*/
 }
@@ -593,7 +595,9 @@ footer a span {
     margin-top: 15px
 }
 
-
+.mb15 {
+    margin-bottom: 15px
+}
 
 .loading {
     display: flex;
@@ -929,4 +933,22 @@ footer a span {
 
 .quest .paging a {
     margin: 0px 10px;
+}
+
+
+.friend button {
+    overflow: auto;
+    margin: 0px;
+    padding: 0 .714em;
+    width: auto;
+    height: 26px;
+    border: 1px solid hsla(0,100%,94%,.3);
+    border-radius: 3px;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    font-size: 10px;
+    margin-top: 2px;
+    margin-right: 10px;
+    display: inline-block;
+    float:none;
 }

@@ -12,7 +12,7 @@
     <link href="/css/game.css" rel="stylesheet" />
 </head>
 <body>
-    <div class="bg" id="app" @@click="showchat=false">
+    <div class="bg" id="app" @@click="showchat=false"  v-cloak>
         <header>
             <span class="username">{{myinfo.name}} <{{myinfo.status}}中></span>
             <div class="hps">
@@ -127,11 +127,11 @@
 
         <footer>
             <a href="javascript:;" @@click="showMe"><span>人物</span></a>
-            <a href="javascript:;" @@click=""><span>社交</span></a>
+            <a href="javascript:;" @@click="showFriend"><span>社交</span></a>
             <a href="javascript:;" @@click="showMyQuest(2)"><span>任务</span></a>
-            <a href="javascript:;"><span>商店</span></a>
-            <a href="javascript:;"><span>排行</span></a>
-            <a href="javascript:;"><span>帮助</span></a>
+            <a href="javascript:;" @@click="showShop"><span>商店</span></a>
+            <a href="javascript:;" @@click="showRanking"><span>排行</span></a>
+            <a href="javascript:;" @@click="showHelp"><span>帮助</span></a>
 
         </footer>
 
@@ -162,7 +162,7 @@
                         {{description}}
                     </p>
                     <div class="mt15">
-                        <button type="button" v-for="command,index in player.commands">{{command}}</button>
+                        <button type="button" v-for="command,index in player.commands"  @@click="playerAction(player.id,command)">{{command}}</button>
                     </div>
                 </div>
 
@@ -232,6 +232,52 @@
                     <p>成就</p>
 
                 </div>
+
+                <div class="status" v-if="myBox=='help'">
+                    <p>帮助文档正在紧张撰写中...</p>
+
+                </div>
+
+                <div class="status" v-if="myBox=='ranking'">
+                    <p>排行榜正在统计中...</p>
+
+                </div>
+
+                <div class="friend" v-if="myBox=='friend'">
+                    <p>我的好友</p>
+                    <div class="mt15 mb15">
+                        <p v-if="myFriends.friends.length==0">你还没有任何好友</p>
+                        <button v-for="friend,index in myFriends.friends">
+                            <span> {{friend.name}} </span>
+                        </button>
+                    </div>
+                   
+                    <template v-if="myFriends.friendMes.length>0">
+                        <hr />
+                        <p class="mt15">请求加我的</p>
+                        <div class="mt15 mb15">
+                            <button v-for="friendMe,index in myFriends.friendMes">
+                                <span> {{friendMe.name}} </span>
+                            </button>
+                        </div>
+                       
+                    </template>
+                    <template v-if="myFriends.requests.length>0">
+                        <hr />
+                        <p class="mt15">我的申请</p>
+                        <div class="mt15">
+                            <button v-for="request,index in myFriends.requests">
+                                <span> {{request.name}} </span>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="status" v-if="myBox=='shop'">
+                    <p>商店正在紧张装修中...</p>
+
+                </div>
+                
 
                 <div class="weapon" v-if="myBox=='weapon'">
                     <p>你装备了以下物品：</p>
@@ -436,7 +482,7 @@
                     <hr />
 
 
-                    <button @@click="learnSkill(mySkill.playerSkillId)" v-show="myinfo.status=='空闲'">修炼</button>
+                    <button @@click="learnSkill(mySkill.playerSkillId)" v-show="myinfo.status=='空闲'">修练</button>
 
                     <button @@click="stopAction" v-show="myinfo.status!='空闲'">停止{{myinfo.status}}</button>
                 </div>

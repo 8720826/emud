@@ -1,4 +1,5 @@
-﻿Vue.directive('long', {
+﻿
+Vue.directive('long', {
     inserted(el, binding) {
         var methods = {
             timer: null,
@@ -39,9 +40,11 @@ new Vue({
         msg: "",
         myBox: "",
         myBoxMenus: [],
-        menus: [{ id: "me", name: "属性", group: "player" }, { id: "status", name: "状态", group: "player" }, { id: "skill", name: "武功", group: "player" }, { id: "achv", name: "成就", group: "player" }, { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
+        menus: [{ id: "me", name: "属性", group: "player" }, /*{ id: "status", name: "状态", group: "player" },*/ { id: "skill", name: "武功", group: "player" }, /*{ id: "achv", name: "成就", group: "player" },*/ { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
             { id: "email", name: "邮箱", group: "email" },
-            { id: "activityQuest1", name: "新手任务", group: "quest" }, { id: "activityQuest2", name: "主线任务", group: "quest" }, { id: "activityQuest3", name: "日常任务", group: "quest" }, { id: "activityQuest4", name: "支线任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" }],
+            { id: "activityQuest1", name: "新手任务", group: "quest" }, { id: "activityQuest2", name: "主线任务", group: "quest" }, { id: "activityQuest3", name: "日常任务", group: "quest" }, { id: "activityQuest4", name: "支线任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" },
+            
+            { id: "friend", name: "好友", group: "social" }, { id: "enemy", name: "仇人", group: "social" }, { id: "master", name: "师傅", group: "social" }, { id: "apprentice", name: "徒弟", group: "social" }, { id: "couple", name: "伴侣", group: "social" }],
         myDetail: "",
         modal: {
             isShowConfirm: 0,
@@ -62,7 +65,8 @@ new Vue({
         mySkill:null,
         weapons: [],
         myWare: null,
-        quest:null
+        quest: null,
+        myFriends: {}
     },
     computed: {
         getMenus() {
@@ -359,8 +363,13 @@ new Vue({
                 that.myBox = "historyQuest";
                 that.myHistoryQuests = result;
             });
-            
 
+            connection.on("ShowFriend", result => {
+                console.log("ShowFriend:" + JSON.stringify(result));
+                that.myBox = "friend";
+                that.myFriends = result;
+            });
+            
         },
         move: function (roomId) {
             if (roomId > 0) {
@@ -498,8 +507,12 @@ new Vue({
             console.log(direction);
         },
         npcAction: function (npcId, action) {
-            console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
+            console.log("npcId=" + npcId + ",action=" + action);
             connection.invoke("NpcAction",  {  npcId,  action});
+        },
+        playerAction: function (targetId, commandName) {
+            console.log("targetId=" + targetId + ",commandName=" + commandName);
+            connection.invoke("PlayerAction", { targetId, commandName });
         },
         clickCommand: function (e) {
             var that = this;
@@ -522,7 +535,7 @@ new Vue({
                 connection.invoke("NpcAction", { npcId, action });
                 obj.previousElementSibling.value = "";
             } else if (obj.className === 'quest') {
-                
+
                 console.log("TakeQuest=" + questId);
                 connection.invoke("TakeQuest", { questId: questId });
             } else if (obj.className === 'completeQuest') {
@@ -570,9 +583,27 @@ new Vue({
             if (status === 0) {
                 connection.invoke("ReadEmail", { playerEmailId: id });
             };
-        }
+        },
+        showHelp: function () {
+            var that = this;
 
-        
+            that.myBox = "help";
+        },
+        showRanking: function () {
+            var that = this;
+
+            that.myBox = "ranking";
+        },
+        showShop: function () {
+            var that = this;
+
+            that.myBox = "shop";
+        },
+        showFriend: function () {
+            var that = this;
+            connection.invoke("ShowFriend");
+           // that.myBox = "friend";
+        }
     },
     watch: {
         myBox(val) {
