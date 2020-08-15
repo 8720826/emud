@@ -162,7 +162,7 @@
                         {{description}}
                     </p>
                     <div class="mt15">
-                        <button type="button" v-for="command,index in player.commands"  @@click="playerAction(player.id,command)">{{command}}</button>
+                        <button type="button" v-for="command,index in player.commands" @@click="playerAction(player.id,command)">{{command.commandName}}</button>
                     </div>
                 </div>
 
@@ -228,6 +228,17 @@
                     </div>
                 </div>
 
+                <div class="mypack" v-if="myBox=='friendSkill'">
+                    <p>以下是{{friendSkills.player.name}}学到的武功：</p>
+                    <div class="mt15">
+                        <button v-for="skill,index in friendSkills.skills" @@click="showSkillDetail(skill.playerSkillId)">
+                            <span> {{skill.name}} </span>
+                            <em>(Lv{{skill.level}})</em>
+                        </button>
+                    </div>
+                </div>
+                
+
                 <div class="status" v-if="myBox=='achv'">
                     <p>成就</p>
 
@@ -247,11 +258,11 @@
                     <p>我的好友</p>
                     <div class="mt15 mb15">
                         <p v-if="myFriends.friends.length==0">你还没有任何好友</p>
-                        <button v-for="friend,index in myFriends.friends">
+                        <button v-for="friend,index in myFriends.friends" @@click="showPlayer(friend.id)">
                             <span> {{friend.name}} </span>
                         </button>
                     </div>
-                   
+
                     <template v-if="myFriends.friendMes.length>0">
                         <hr />
                         <p class="mt15">请求加我的</p>
@@ -260,7 +271,7 @@
                                 <span> {{friendMe.name}} </span>
                             </button>
                         </div>
-                       
+
                     </template>
                     <template v-if="myFriends.requests.length>0">
                         <hr />
@@ -277,7 +288,7 @@
                     <p>商店正在紧张装修中...</p>
 
                 </div>
-                
+
 
                 <div class="weapon" v-if="myBox=='weapon'">
                     <p>你装备了以下物品：</p>

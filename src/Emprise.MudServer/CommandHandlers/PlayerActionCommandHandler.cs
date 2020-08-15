@@ -70,7 +70,7 @@ namespace Emprise.MudServer.CommandHandlers
         }
 
         
-        public async Task Friend(PlayerEntity player, PlayerEntity relation)
+        private async Task Friend(PlayerEntity player, PlayerEntity relation)
         {
 
             if (await _redisDb.StringGet<int>(string.Format(RedisKey.RefuseFriend, player.Id, relation.Id)) > 0)
@@ -168,6 +168,57 @@ namespace Emprise.MudServer.CommandHandlers
 
         }
         
+        private async Task UnFriend(PlayerEntity player, PlayerEntity relation)
+        {
+
+            //我加对方
+            var playerRelationFrom = await _playerRelationDomainService.Get(x => x.PlayerId == player.Id
+                && x.RelationId == relation.Id
+                && x.Type == PlayerRelationTypeEnum.好友);
+
+            //对方加我
+            var playerRelationTo = await _playerRelationDomainService.Get(x => x.PlayerId == relation.Id
+                && x.RelationId == player.Id
+                && x.Type == PlayerRelationTypeEnum.好友);
+
+
+
+            if (playerRelationFrom != null && playerRelationTo != null)
+            {
+                await _playerRelationDomainService.Delete(playerRelationFrom);
+
+                await _playerRelationDomainService.Delete(playerRelationTo);
+
+                //1天内不得重复申请
+                await _redisDb.StringSet(string.Format(RedisKey.RefuseFriend, relation.Id, player.Id), 1, DateTime.Now.AddDays(1));
+
+                await _mudProvider.ShowMessage(player.Id, $"【好友】你已经与[{relation.Name}]取消好友关系。");
+
+                var content = $"【好友】[{player.Name}]已经与你取消好友关系。";
+
+                await _emailDomainService.Add(new EmailEntity
+                {
+                    ExpiryDate = DateTime.Now.AddDays(30),
+                    SendDate = DateTime.Now,
+                    Title = $"{player.Name}与你取消好友关系",
+                    Content = content,
+                    Type = EmailTypeEnum.系统,
+                    TypeId = relation.Id
+                });
+
+
+                await _mudProvider.ShowMessage(relation.Id, content);
+            }
+            else
+            {
+                await _mudProvider.ShowMessage(player.Id, $"【好友】你们并不是好友。");
+            }
+        }
+
+        private async Task ShowFriendSkill(PlayerEntity player, PlayerEntity relation)
+        {
+
+        }
 
 
         public async Task<Unit> Handle(PlayerActionCommand command, CancellationToken cancellationToken)
@@ -204,6 +255,14 @@ namespace Emprise.MudServer.CommandHandlers
             {
                 case PlayerActionEnum.添加好友:
                     await Friend(player, target);
+                    break;
+
+                case PlayerActionEnum.割袍断义:
+                    await UnFriend(player, target);
+                    break;
+
+                case PlayerActionEnum.查看武功:
+                    await ShowFriendSkill(player, target);
                     break;
             }
 

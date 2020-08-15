@@ -38,7 +38,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IRedisDb _redisDb;
         private readonly IMudProvider _mudProvider;
 
-
+        
         public EmailCommandHandler(
             IMediatorHandler bus,
             ILogger<EmailCommandHandler> logger,

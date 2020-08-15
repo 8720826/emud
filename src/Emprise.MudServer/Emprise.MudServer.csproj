@@ -11,6 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="CommandHandlers\PlayerActionCommandHandler.cs" />
+    <Compile Remove="Commands\NpcActionCommand.cs" />
+    <Compile Remove="Commands\PlayerActionCommand.cs" />
     <Compile Remove="Hubs\CheckCommonAttribute.cs" />
     <Compile Remove="Hubs\Models\PostedMessage.cs" />
     <Compile Remove="Jobs\Queues.cs" />

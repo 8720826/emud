@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -16,16 +15,15 @@ using Emprise.MudServer.Hubs.Models;
 using Emprise.MudServer.Hubs.Actions;
 using Emprise.Domain.Core.Notifications;
 using MediatR;
-using Emprise.Domain.Core.Models.Chat;
 using Emprise.MudServer.Commands;
-using Emprise.MudServer.Events;
 using Emprise.MudServer.Commands.EmailCommands;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands.WareCommands;
 using Emprise.MudServer.Commands.QuestCommands;
-using Emprise.Domain.Core.Enums;
 using Emprise.MudServer.Commands.SkillCommands;
 using Emprise.MudServer.Commands.RelationCommonds;
+using Emprise.Domain.Core.Enums;
+using Emprise.MudServer.Commands.NpcActionCommands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -309,8 +307,48 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
 
-                var command = new NpcActionCommand(playerId, commandAction.NpcId, commandAction.Action.ScriptId, commandAction.Action.CommandId, commandAction.Action.Name, commandAction.Action.Message);
-                await _bus.SendCommand(command);
+                var npcId = commandAction.NpcId;
+                var commandId = commandAction.Action.CommandId;
+                var commandName = commandAction.Action.Name;
+                var input = commandAction.Action.Message;
+                var scriptId = commandAction.Action.ScriptId;
+
+
+
+                if (scriptId > 0)
+                {
+                    var command = new NpcScriptCommand(playerId, commandAction.NpcId, commandAction.Action.ScriptId, commandAction.Action.CommandId,  commandAction.Action.Message);
+                    await _bus.SendCommand(command);
+                }
+                else
+                {
+                    NpcActionEnum actionEnum;
+                    if (Enum.TryParse(commandName, out actionEnum))
+                    {
+                        switch (actionEnum)
+                        {
+                            case NpcActionEnum.切磋:
+
+                                await _bus.SendCommand(new FightWithNpcCommand(playerId, commandAction.NpcId));
+
+                                break;
+
+                            case NpcActionEnum.杀死:
+
+                                await _bus.SendCommand(new KillNpcCommand(playerId, commandAction.NpcId));
+
+                                break;
+
+                            case NpcActionEnum.给予:
+
+                                await _bus.SendCommand(new GiveToNpcCommand(playerId, commandAction.NpcId));
+
+                                break;
+                        }
+                    }
+                }
+
+
             });
         }
 
@@ -432,9 +470,31 @@ namespace Emprise.MudServer.Hubs
         {
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
+                var targetId = commandAction.TargetId;
+                var commandName = commandAction.CommandName;
 
-                var command = new PlayerActionCommand(playerId, commandAction.TargetId, commandAction.CommandName);
-                await _bus.SendCommand(command);
+                PlayerActionEnum actionEnum;
+                if (!Enum.TryParse(commandName, out actionEnum))
+                {
+                    return;
+                }
+
+                switch (actionEnum)
+                {
+                    case PlayerActionEnum.添加好友:
+                        await _bus.SendCommand(new FriendToCommand(playerId, commandAction.TargetId));
+                        break;
+
+                    case PlayerActionEnum.割袍断义:
+                        await _bus.SendCommand(new UnFriendToCommand(playerId, commandAction.TargetId));
+                        break;
+
+                    case PlayerActionEnum.查看武功:
+                        await _bus.SendCommand(new ShowFriendSkillCommand(playerId, commandAction.TargetId));
+                        break;
+                }
+
+
             });
         }
 

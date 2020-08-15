@@ -4,6 +4,7 @@ using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Skill.Models;
@@ -11,6 +12,7 @@ using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Commands;
 using Emprise.MudServer.Commands.SkillCommands;
+using Emprise.MudServer.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -25,8 +27,8 @@ namespace Emprise.MudServer.CommandHandlers
 {
     public class SkillCommandHandler : CommandHandler,
         IRequestHandler<ShowMySkillCommand, Unit>,
-        IRequestHandler<ShowSkillDetailCommand, Unit>
-
+        IRequestHandler<ShowSkillDetailCommand, Unit>,
+        IRequestHandler<ShowFriendSkillCommand, Unit>
         
     {
         private readonly IMediatorHandler _bus;
@@ -40,9 +42,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IPlayerSkillDomainService _playerSkillDomainService;
         private readonly IRedisDb _redisDb;
         private readonly IMudProvider _mudProvider;
-
-
-        public SkillCommandHandler(
+       public SkillCommandHandler(
             IMediatorHandler bus,
             ILogger<SkillCommandHandler> logger,
             ISkillDomainService skillDomainService,
@@ -137,7 +137,61 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
+        public async Task<Unit> Handle(ShowFriendSkillCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var friendId = command.FriendId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
 
+            var friend = await _playerDomainService.Get(friendId);
+            if (friend == null)
+            {
+                return Unit.Value;
+            }
+
+            var friendSkillInfoModel = new FriendSkillInfoModel
+            {
+                Player = _mapper.Map<PlayerBaseInfo>(friend)
+            };
+
+            var skillModels = new List<FriendSkillModel>();
+            var friendSkills = await _playerSkillDomainService.GetAll(friendId);
+            var friendSkillIds = friendSkills?.Select(x => x.SkillId);
+
+            var mySkills = await _playerSkillDomainService.GetAll(playerId);
+
+            var skills = (await _skillDomainService.GetAll()).Where(x => friendSkillIds.Contains(x.Id));
+            foreach (var friendSkill in friendSkills)
+            {
+                var mySkill = mySkills.FirstOrDefault(x => x.SkillId == friendSkill.SkillId);
+
+                var skill = skills.FirstOrDefault(x => x.Id == friendSkill.SkillId);
+                if (skill != null)
+                {
+                    var skillModel = _mapper.Map<FriendSkillModel>(skill);
+                    skillModel.PlayerSkillId = friendSkill.Id;
+                    skillModel.Level = friendSkill.Level;
+                    skillModel.Exp = friendSkill.Exp;
+
+                    skillModel.MyExp = mySkill?.Exp ?? 0;
+                    skillModel.MyLevel = mySkill?.Exp ?? 0;
+
+                    skillModels.Add(skillModel);
+                }
+
+            }
+
+            friendSkillInfoModel.Skills = skillModels;
+
+            await _mudProvider.ShowFriendSkill(playerId, friendSkillInfoModel);
+
+
+            return Unit.Value;
+        }
         
     }
 }

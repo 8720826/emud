@@ -66,7 +66,8 @@ new Vue({
         weapons: [],
         myWare: null,
         quest: null,
-        myFriends: {}
+        myFriends: {},
+        friendSkills:[]
     },
     computed: {
         getMenus() {
@@ -128,6 +129,7 @@ new Vue({
         },
         confirm: function (content, callback, no) {
             var that = this;
+            that.modal.title = "";
             that.modal.type = "confirm";
             that.modal.isShowConfirm = 1;
             that.modal.content = content;
@@ -234,11 +236,16 @@ new Vue({
                         that.skills[i] = result;
                     }
                 }
-
                 that.mySkill = result;
                 that.myDetail = "skill";
-
             });
+
+            connection.on("ShowFriendSkill", result => {
+                console.log("ShowFriendSkill:" + JSON.stringify(result));
+                that.myBox = "friendSkill";
+                that.friendSkills = result;
+            });
+            
             
 
             connection.on("UpdatePlayerStatus", result => {
@@ -516,9 +523,19 @@ new Vue({
             console.log("npcId=" + npcId + ",action=" + action);
             connection.invoke("NpcAction",  {  npcId,  action});
         },
-        playerAction: function (targetId, commandName) {
-            console.log("targetId=" + targetId + ",commandName=" + commandName);
-            connection.invoke("PlayerAction", { targetId, commandName });
+        playerAction: function (targetId, command) {
+            var that = this;
+            console.log("targetId=" + targetId + ",command=" + JSON.stringify(command));
+            if (command.tips) {
+                that.confirm(command.tips, function () {
+                    connection.invoke("PlayerAction", { targetId, commandName: command.commandName });
+                });
+            }else{
+                connection.invoke("PlayerAction", { targetId, commandName:command.commandName });
+            }
+
+
+            
         },
         clickCommand: function (e) {
             var that = this;

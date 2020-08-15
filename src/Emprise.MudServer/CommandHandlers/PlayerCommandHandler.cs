@@ -17,6 +17,7 @@ using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.PlayerRelation.Services;
 using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Quest.Models;
 using Emprise.Domain.Quest.Services;
@@ -30,8 +31,6 @@ using Emprise.MudServer.Hubs.Models;
 using Emprise.MudServer.Models;
 using Emprise.MudServer.Queues;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -48,8 +47,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.MudServer.CommandHandlers
 {
-    
-    public class PlayerCommandHandler : CommandHandler, 
+
+    public class PlayerCommandHandler : CommandHandler,
         IRequestHandler<CreateCommand, Unit>,
         IRequestHandler<JoinGameCommand, Unit>,
         IRequestHandler<InitGameCommand, Unit>,
@@ -65,7 +64,7 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<CutCommand, Unit>,
         IRequestHandler<HuntCommand, Unit>,
         IRequestHandler<WorkCommand, Unit>,
-        IRequestHandler<NpcActionCommand, Unit>,
+        //IRequestHandler<NpcActionCommand, Unit>,
         IRequestHandler<ShowMeCommand, Unit>,
         IRequestHandler<ShowMyStatusCommand, Unit>,
         IRequestHandler<PingCommand, Unit>,
@@ -81,23 +80,18 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IMapper _mapper;
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IRoomDomainService _roomDomainService;
-        private readonly INpcDomainService _npcDomainService;
         private readonly IAccountContext _account;
-        private readonly IDelayedQueue  _delayedQueue;
+        private readonly IDelayedQueue _delayedQueue;
         private readonly IRecurringQueue _recurringQueue;
         private readonly IMudProvider _mudProvider;
         private readonly AppConfig _appConfig;
-        private readonly IScriptDomainService _scriptDomainService;
-        private readonly INpcScriptDomainService _npcScriptDomainService;
-        private readonly IScriptCommandDomainService _ScriptCommandDomainService;
-        private readonly IWareDomainService _wareDomainService;
-        private readonly IPlayerWareDomainService _playerWareDomainService;
-        private readonly IQuestDomainService _questDomainService ;
-        private readonly IPlayerQuestDomainService _playerQuestDomainService;
         private readonly IRedisDb _redisDb;
         private readonly IMemoryCache _cache;
         private readonly IMudOnlineProvider _mudOnlineProvider;
         private readonly IQueueHandler _queueHandler;
+        private readonly IPlayerRelationDomainService _playerRelationDomainService;
+
+
 
         public PlayerCommandHandler(
             IMediatorHandler bus,
@@ -106,24 +100,17 @@ namespace Emprise.MudServer.CommandHandlers
             IMapper mapper,
             IPlayerDomainService playerDomainService,
             IRoomDomainService roomDomainService,
-            INpcDomainService npcDomainService,
             IAccountContext account,
             IDelayedQueue delayedQueue,
             IRecurringQueue recurringQueue,
             IMudProvider mudProvider,
             IOptionsMonitor<AppConfig> appConfig,
-            IScriptDomainService scriptDomainService,
-            INpcScriptDomainService npcScriptDomainService,
-            IScriptCommandDomainService ScriptCommandDomainService,
-            IWareDomainService wareDomainService,
-            IPlayerWareDomainService playerWareDomainService,
-            IQuestDomainService questDomainService,
-            IPlayerQuestDomainService playerQuestDomainService,
             IRedisDb redisDb,
             IMemoryCache cache,
             INotificationHandler<DomainNotification> notifications,
             IMudOnlineProvider mudOnlineProvider,
             IQueueHandler queueHandler,
+            IPlayerRelationDomainService playerRelationDomainService,
             IUnitOfWork uow) : base(uow, bus, notifications)
         {
 
@@ -139,17 +126,10 @@ namespace Emprise.MudServer.CommandHandlers
             _recurringQueue = recurringQueue;
             _mudProvider = mudProvider;
             _appConfig = appConfig.CurrentValue;
-            _scriptDomainService = scriptDomainService;
-            _npcScriptDomainService = npcScriptDomainService;
-            _ScriptCommandDomainService = ScriptCommandDomainService;
-            _npcDomainService = npcDomainService;
-            _wareDomainService = wareDomainService;
-            _playerWareDomainService = playerWareDomainService;
-            _questDomainService = questDomainService;
-            _playerQuestDomainService = playerQuestDomainService;
             _redisDb = redisDb;
             _mudOnlineProvider = mudOnlineProvider;
             _queueHandler = queueHandler;
+            _playerRelationDomainService = playerRelationDomainService;
         }
 
         public async Task<Unit> Handle(CreateCommand command, CancellationToken cancellationToken)
@@ -225,8 +205,8 @@ namespace Emprise.MudServer.CommandHandlers
                 Exp = 0,
                 Cor = 20,
                 Cps = 20,
-                
-                
+
+
                 Pot = 0,
                 Kar = random.Next(1, 100),
                 Def = 0,
@@ -257,11 +237,11 @@ namespace Emprise.MudServer.CommandHandlers
 
             await _httpAccessor.HttpContext.SignIn("user", jwtAccount);
 
-            if(await Commit())
+            if (await Commit())
             {
                 await _bus.RaiseEvent(new CreatedEvent(player)).ConfigureAwait(false);
             }
-          
+
 
             return Unit.Value;
         }
@@ -357,7 +337,7 @@ namespace Emprise.MudServer.CommandHandlers
                 await _bus.RaiseEvent(new InitGameEvent(player)).ConfigureAwait(false);
                 await _bus.RaiseEvent(new PlayerInRoomEvent(player, room)).ConfigureAwait(false);
             }
-        
+
 
             return Unit.Value;
         }
@@ -367,7 +347,7 @@ namespace Emprise.MudServer.CommandHandlers
 
             var roomId = command.RoomId;
             var playerId = command.PlayerId;
-           
+
             if (roomId <= 0)
             {
                 await _bus.RaiseEvent(new DomainNotification($"房间不存在！"));
@@ -380,7 +360,7 @@ namespace Emprise.MudServer.CommandHandlers
                 await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
                 return Unit.Value;
             }
-            if (player.Status!= PlayerStatusEnum.空闲)
+            if (player.Status != PlayerStatusEnum.空闲)
             {
                 await _bus.RaiseEvent(new DomainNotification($"请先停止{player.Status}！"));
                 return Unit.Value;
@@ -442,9 +422,6 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-
-
-
         public async Task<Unit> Handle(WorkCommand command, CancellationToken cancellationToken)
         {
             await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打工);
@@ -493,14 +470,245 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-
         public async Task<Unit> Handle(LearnSkillCommand command, CancellationToken cancellationToken)
         {
             await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.修练, command.MySkillId);
             return Unit.Value;
         }
 
-        private async Task BeginChangeStatus(int playerId, PlayerStatusEnum newStatus, int targetId=0)
+        public async Task<Unit> Handle(StopActionCommand command, CancellationToken cancellationToken)
+        {
+            //await _bus.RaiseEvent(new DomainNotification("功能暂时未实现"));
+
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+            var status = player.Status;
+            if (status == PlayerStatusEnum.空闲)
+            {
+                return Unit.Value;
+            }
+
+
+            player.Status = PlayerStatusEnum.空闲;
+            await _playerDomainService.Update(player);
+
+            switch (status)
+            {
+                case PlayerStatusEnum.打坐:
+                    await _mudProvider.ShowMessage(playerId, "你停止了打坐。。。");
+
+                    break;
+
+                case PlayerStatusEnum.打工:
+                    await _mudProvider.ShowMessage(playerId, "你停止了打工。。。");
+                    break;
+
+                case PlayerStatusEnum.伐木:
+                    await _mudProvider.ShowMessage(playerId, "你停止了伐木。。。");
+                    break;
+
+                case PlayerStatusEnum.打猎:
+                    await _mudProvider.ShowMessage(playerId, "你停止了打猎。。。");
+                    break;
+
+                case PlayerStatusEnum.挖矿:
+                    await _mudProvider.ShowMessage(playerId, "你停止了挖矿。。。");
+                    break;
+
+                case PlayerStatusEnum.疗伤:
+                    await _mudProvider.ShowMessage(playerId, "你停止了疗伤。。。");
+                    break;
+
+                case PlayerStatusEnum.采药:
+                    await _mudProvider.ShowMessage(playerId, "你停止了采药。。。");
+                    break;
+
+                case PlayerStatusEnum.钓鱼:
+                    await _mudProvider.ShowMessage(playerId, "你停止了钓鱼。。。");
+                    break;
+
+                default:
+                    await _mudProvider.ShowMessage(playerId, $"你停止了{status}。。。");
+                    break;
+            }
+
+            await _recurringQueue.Remove<PlayerStatusModel>(playerId);
+
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+            }
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(ShowMeCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+            var myInfo = _mapper.Map<MyInfo>(player);
+
+            await _mudProvider.ShowMe(playerId, myInfo);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(ShowMyStatusCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+            var myInfo = _mapper.Map<MyInfo>(player);
+
+            await _mudProvider.ShowMyStatus(playerId, myInfo);
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(PingCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+
+            await _queueHandler.SendQueueMessage(new ReceiveEmailQueue(playerId));
+
+            //更新玩家在线数据
+            var model = await _mudOnlineProvider.GetPlayerOnline(playerId);
+            if (model != null)
+            {
+                await _mudOnlineProvider.SetPlayerOnline(new PlayerOnlineModel
+                {
+                    IsOnline = true,
+                    LastDate = DateTime.Now,
+                    Level = model.Level,
+                    PlayerName = model.PlayerName,
+                    PlayerId = model.PlayerId,
+                    RoomId = model.RoomId,
+                    Gender = model.Gender,
+                    Title = model.Title
+                });
+                return Unit.Value;
+            }
+
+            var player = await _playerDomainService.Get(playerId);
+            await _mudOnlineProvider.SetPlayerOnline(new PlayerOnlineModel
+            {
+                IsOnline = true,
+                LastDate = DateTime.Now,
+                Level = player.Level,
+                PlayerName = player.Name,
+                PlayerId = player.Id,
+                RoomId = player.RoomId,
+                Gender = player.Gender,
+                Title = player.Title
+            });
+
+
+
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(SendMessageCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var channel = command.Channel;
+            var content = command.Content;
+
+            var receivedMessage = new PlayerMessage()
+            {
+                Channel = "闲聊",
+                Content = WebUtility.HtmlEncode(content),
+                Sender = _account.PlayerName,
+                PlayerId = _account.PlayerId
+            };
+
+            await _mudProvider.ShowChat(receivedMessage);
+
+
+            await _bus.RaiseEvent(new SendMessageEvent(playerId, content)).ConfigureAwait(false);
+
+            //新手任务
+            var chatTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.ChatTimes, playerId));
+            if (chatTimes <= 0)
+            {
+                await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次聊天));
+            }
+            chatTimes++;
+            await _redisDb.StringSet(string.Format(RedisKey.ChatTimes, playerId), chatTimes);
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(ShowPlayerCommand command, CancellationToken cancellationToken)
+        {
+            var myId = command.MyId;
+            var me = await _playerDomainService.Get(myId);
+            if (me == null)
+            {
+                return Unit.Value;
+            }
+
+
+            var playerId = command.PlayerId;
+            var playerInfo = new PlayerInfo()
+            {
+                Descriptions = new List<string>(),
+                Commands = new List<PlayerCommandModel>()
+            };
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+            playerInfo.Id = playerId;
+            playerInfo.Name = player.Name;
+            string genderStr = player.Gender.ToGender();
+
+
+            //年龄
+            playerInfo.Descriptions.Add($"{genderStr}{player.Age.ToAge()}");
+
+
+            playerInfo.Descriptions.Add($"{genderStr}的武功看不出深浅。");
+            playerInfo.Descriptions.Add($"{genderStr}看起来气血充盈，并没有受伤。");
+
+            if (me.RoomId == player.RoomId)
+            {
+                playerInfo.Commands.Add(new PlayerCommandModel("切磋"));
+                playerInfo.Commands.Add(new PlayerCommandModel("杀死"));
+            }
+
+            var playerRelationFrom = await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.好友 && x.PlayerId == myId && x.RelationId == playerId);
+
+            var playerRelationTo = await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.好友 && x.PlayerId == playerId && x.RelationId == myId);
+
+            if (playerRelationFrom == null)
+            {
+                playerInfo.Commands.Add(new PlayerCommandModel("添加好友"));
+            }
+            if (playerRelationFrom != null && playerRelationTo != null)
+            {
+                playerInfo.Commands.Add(new PlayerCommandModel("割袍断义", $"是否要与[{player.Name}]取消好友关系？"));
+                
+                playerInfo.Commands.Add(new PlayerCommandModel("查看武功"));
+            }
+
+
+            await _mudProvider.ShowPlayer(myId, playerInfo);
+
+            return Unit.Value;
+        }
+
+        private async Task BeginChangeStatus(int playerId, PlayerStatusEnum newStatus, int targetId = 0)
         {
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
@@ -592,7 +800,7 @@ namespace Emprise.MudServer.CommandHandlers
                     break;
 
                 case PlayerStatusEnum.修练:
-                    if (player.Pot<=0)
+                    if (player.Pot <= 0)
                     {
                         await _mudProvider.ShowMessage(playerId, "你的潜能不够，无法修练。");
                         return;
@@ -615,7 +823,7 @@ namespace Emprise.MudServer.CommandHandlers
                     break;
             }
 
-          
+
             player.Status = newStatus;
             await _playerDomainService.Update(player);
 
@@ -631,835 +839,5 @@ namespace Emprise.MudServer.CommandHandlers
                 await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
             }
         }
-
-        public async Task<Unit> Handle(StopActionCommand command, CancellationToken cancellationToken)
-        {
-            //await _bus.RaiseEvent(new DomainNotification("功能暂时未实现"));
-
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return Unit.Value;
-            }
-            var status = player.Status;
-            if (status == PlayerStatusEnum.空闲)
-            {
-                return Unit.Value;
-            }
-
-
-            player.Status = PlayerStatusEnum.空闲;
-            await _playerDomainService.Update(player);
-
-            switch (status)
-            {
-                case PlayerStatusEnum.打坐:
-                    await _mudProvider.ShowMessage(playerId, "你停止了打坐。。。");
-                  
-                    break;
-
-                case PlayerStatusEnum.打工:
-                    await _mudProvider.ShowMessage(playerId, "你停止了打工。。。");
-                    break;
-
-                case PlayerStatusEnum.伐木:
-                    await _mudProvider.ShowMessage(playerId, "你停止了伐木。。。");
-                    break;
-
-                case PlayerStatusEnum.打猎:
-                    await _mudProvider.ShowMessage(playerId, "你停止了打猎。。。");
-                    break;
-
-                case PlayerStatusEnum.挖矿:
-                    await _mudProvider.ShowMessage(playerId, "你停止了挖矿。。。");
-                    break;
-
-                case PlayerStatusEnum.疗伤:
-                    await _mudProvider.ShowMessage(playerId, "你停止了疗伤。。。");
-                    break;
-
-                case PlayerStatusEnum.采药:
-                    await _mudProvider.ShowMessage(playerId, "你停止了采药。。。");
-                    break;
-
-                case PlayerStatusEnum.钓鱼:
-                    await _mudProvider.ShowMessage(playerId, "你停止了钓鱼。。。");
-                    break;
-
-                default:
-                    await _mudProvider.ShowMessage(playerId, $"你停止了{status}。。。");
-                    break;
-            }
-
-            await _recurringQueue.Remove<PlayerStatusModel>(playerId);
-
-            if (await Commit())
-            {
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
-            }
-            return Unit.Value;
-        }
-
-
-        public async Task<Unit> Handle(NpcActionCommand command, CancellationToken cancellationToken)
-        {
-
-            var npcId = command.NpcId;
-            var playerId = command.PlayerId;
-            var commandId = command.CommandId;
-            var commandName = command.CommandName;
-            var input = command.Message;
-            var scriptId = command.ScriptId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return Unit.Value;
-            }
-
-            var npc = await _npcDomainService.Get(npcId);
-            if (npc == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"npc不存在！"));
-                return Unit.Value;
-            }
-
-            //埋点
-            await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpc, player.Id, npcId), 1);
-
-
-            if (scriptId > 0)
-            {
-                await DoScript(player, npc, scriptId, commandId, input);
-            }
-            else
-            {
-                await DoAction(player, npc, commandName);
-            }
-
-            if (await Commit())
-            {
-                //Do nothing
-            }
-
-            return Unit.Value;
-        }
-
-
-
-
-        public async Task<Unit> Handle(ShowMeCommand command, CancellationToken cancellationToken)
-        {
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                return Unit.Value;
-            }
-            var myInfo = _mapper.Map<MyInfo>(player);
-
-            await _mudProvider.ShowMe(playerId, myInfo);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(ShowMyStatusCommand command, CancellationToken cancellationToken)
-        {
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                return Unit.Value;
-            }
-            var myInfo = _mapper.Map<MyInfo>(player);
-
-            await _mudProvider.ShowMyStatus(playerId, myInfo);
-            return Unit.Value;
-        }
-
-
-        
-
-        public async Task<Unit> Handle(PingCommand command, CancellationToken cancellationToken)
-        {
-            var playerId = command.PlayerId;
-
-            await _queueHandler.SendQueueMessage(new ReceiveEmailQueue(playerId));
-
-            //更新玩家在线数据
-            var model = await _mudOnlineProvider.GetPlayerOnline(playerId);
-            if (model != null)
-            {
-                await _mudOnlineProvider.SetPlayerOnline(new PlayerOnlineModel
-                {
-                    IsOnline = true,
-                    LastDate = DateTime.Now,
-                    Level = model.Level,
-                    PlayerName = model.PlayerName,
-                    PlayerId = model.PlayerId,
-                    RoomId = model.RoomId,
-                    Gender = model.Gender,
-                    Title = model.Title
-                });
-                return Unit.Value;
-            }
-
-            var player = await _playerDomainService.Get(playerId);
-            await _mudOnlineProvider.SetPlayerOnline(new PlayerOnlineModel
-            {
-                IsOnline = true,
-                LastDate = DateTime.Now,
-                Level = player.Level,
-                PlayerName = player.Name,
-                PlayerId = player.Id,
-                RoomId = player.RoomId,
-                Gender = player.Gender,
-                Title = player.Title
-            });
-
-
-          
-
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(SendMessageCommand command, CancellationToken cancellationToken)
-        {
-            var playerId = command.PlayerId;
-            var channel = command.Channel;
-            var content = command.Content;
-
-            var receivedMessage = new PlayerMessage()
-            {
-                Channel = "闲聊",
-                Content = WebUtility.HtmlEncode(content),
-                Sender = _account.PlayerName,
-                PlayerId = _account.PlayerId
-            };
-
-            await _mudProvider.ShowChat(receivedMessage);
-
-
-            await _bus.RaiseEvent(new SendMessageEvent(playerId, content)).ConfigureAwait(false);
-
-            //新手任务
-            var chatTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.ChatTimes, playerId));
-            if (chatTimes <= 0)
-            {
-                await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次聊天));
-            }
-            chatTimes++;
-            await _redisDb.StringSet(string.Format(RedisKey.ChatTimes, playerId), chatTimes);
-
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(ShowPlayerCommand command, CancellationToken cancellationToken)
-        {
-            var myId = command.MyId;
-            var playerId = command.PlayerId;
-            var playerInfo = new PlayerInfo()
-            {
-                Descriptions = new List<string>(),
-                Commands = new List<string>()
-            };
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                return Unit.Value;
-            }
-            playerInfo.Id = playerId;
-            playerInfo.Name = player.Name;
-            string genderStr = player.Gender.ToGender();
-
-
-            //年龄
-            playerInfo.Descriptions.Add($"{genderStr}{player.Age.ToAge()}");
-
-
-            playerInfo.Descriptions.Add($"{genderStr}的武功看不出深浅。");
-            playerInfo.Descriptions.Add($"{genderStr}看起来气血充盈，并没有受伤。");
-
-            playerInfo.Commands.Add("切磋");
-            playerInfo.Commands.Add("杀死");
-
-            playerInfo.Commands.Add("添加好友");
-
-            await _mudProvider.ShowPlayer(myId, playerInfo);
-
-            return Unit.Value;
-        }
-        
-        #region 私有方法
-
-
-
-
-        private async Task DoAction(PlayerEntity player, NpcEntity npc,string commandName)
-        {
-            NpcActionEnum actionEnum;
-            if (Enum.TryParse(commandName, out actionEnum))
-            {
-                switch (actionEnum)
-                {
-                    case NpcActionEnum.切磋:
-                        if (!npc.CanFight)
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
-                        }
-                        else
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
-                        }
-                        break;
-
-                    case NpcActionEnum.杀死:
-                        if (!npc.CanKill)
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
-                        }
-                        else
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
-                        }
-                        break;
-
-                    case NpcActionEnum.给予:
-                        if (npc.Type != NpcTypeEnum.人物)
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 错误！"));
-                        }
-                        else
-                        {
-                            await _bus.RaiseEvent(new DomainNotification($"指令 {commandName} 未实现！"));
-                        }
-                        break;
-                }
-            }
-        }
-
-        private async Task DoScript(PlayerEntity player, NpcEntity npc, int scriptId, int commandId, string input = "")
-        {
-            _logger.LogDebug($"npc={npc.Id},scriptId={scriptId},commandId={commandId},input={input}");
-
-            var npcScripts = (await _npcScriptDomainService.GetAll()).Where(x => x.NpcId == npc.Id);
-            var scriptIds = npcScripts.Select(x => x.ScriptId).ToList();
-            if (!scriptIds.Contains(scriptId))
-            {
-                //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                return;
-            }
-
-            var script = await _scriptDomainService.Get(scriptId);
-            if (script == null)
-            {
-                //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                return;
-            }
-            ScriptCommandEntity scriptCommand;
-            var scriptCommands = await _ScriptCommandDomainService.Query(x => x.ScriptId == scriptId);
-            if (commandId == 0)
-            {
-                scriptCommand = scriptCommands.FirstOrDefault(x => x.IsEntry);
-            }
-            else
-            {
-                scriptCommand = scriptCommands.FirstOrDefault(x => x.Id == commandId);
-            }
-
-            if (scriptCommand == null)
-            {
-                return;
-            }
-
-            if (!scriptCommand.IsEntry)
-            {
-                var key = string.Format(RedisKey.CommandIds, player.Id, npc.Id, scriptId);
-                var commandIds = await _redisDb.StringGet<List<int>>(key);
-                if (commandIds == null || !commandIds.Contains(scriptCommand.Id))
-                {
-                    return;
-                }
-            }
-
-            var checkIf = true;//判断if条件是否为true
-
-            var caseIfStr = scriptCommand.CaseIf;
-         
-
-            if (!string.IsNullOrEmpty(caseIfStr))
-            {
-                List<CaseIf> caseIfs = new List<CaseIf>();
-                try
-                {
-                    caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError($"Convert CaseIf:{ex}");
-                }
-
-                foreach (var caseIf in caseIfs)
-                {
-                    checkIf = await CheckIf(player, caseIf.Condition, caseIf.Attrs, input);
-                    if (!checkIf)
-                    {
-                        break;
-                    }
-                }
-            }
-
-
-            if (checkIf)
-            {
-                //执行then分支
-                var caseThenStr = scriptCommand.CaseThen;
-
-
-                if (!string.IsNullOrEmpty(caseThenStr))
-                {
-                    List<CaseThen> caseThens = new List<CaseThen>();
-                    try
-                    {
-                        caseThens = JsonConvert.DeserializeObject<List<CaseThen>>(caseThenStr);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Convert CaseThen:{ex}");
-                    }
-
-
-                    foreach (var caseThen in caseThens)
-                    {
-                        await DoCommand(player, npc, scriptId, caseThen.Command, caseThen.Attrs, input);
-                    }
-                }
-            }
-            else
-            {
-                //执行else分支
-                var caseElseStr = scriptCommand.CaseElse;
-                if (!string.IsNullOrEmpty(caseElseStr))
-                {
-                    List<CaseElse> caseElses = new List<CaseElse>();
-                    try
-                    {
-                        caseElses = JsonConvert.DeserializeObject<List<CaseElse>>(caseElseStr);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Convert CaseElse:{ex}");
-                    }
-
-                    foreach (var caseElse in caseElses)
-                    {
-                        await DoCommand(player, npc, scriptId, caseElse.Command, caseElse.Attrs, input);
-                    }
-                }
-            }
-        }
-
-        private async Task<bool> CheckIf(PlayerEntity player, string condition, List<CaseAttribute> attrs, string input)
-        {
-            var field = attrs.FirstOrDefault(x => x.Attr == "Field")?.Val;
-            var relation = attrs.FirstOrDefault(x => x.Attr == "Relation")?.Val;
-            var value = attrs.FirstOrDefault(x => x.Attr == "Value")?.Val;
-            var wareName = attrs.FirstOrDefault(x => x.Attr == "WareName")?.Val;
-            var number = attrs.FirstOrDefault(x => x.Attr == "Number")?.Val;
-            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val, out int questId);
-
-            if (string.IsNullOrEmpty(condition))
-            {
-                return true;
-            }
-
-            if(!Enum.TryParse(condition, true, out ConditionTypeEnum conditionEnum))
-            {
-                return true;
-            }
-
-
-            switch (conditionEnum)
-            {
-                case ConditionTypeEnum.角色属性:
-                    if (!CheckField(player, field, value, relation))
-                    {
-                        return false;
-                    }
-                    break;
-
-                case ConditionTypeEnum.是否拥有物品:
-                    if (!await CheckWare(player.Id, wareName, number, relation))
-                    {
-                        return false;
-                    }
-
-                    break;
-
-                case ConditionTypeEnum.是否领取任务:
-
-                    var playerQuest = await _playerQuestDomainService.Get(x => x.QuestId == questId && x.PlayerId == player.Id);
-                    if (playerQuest == null)
-                    {
-                        return false;
-                    }
-                    break;
-
-                case ConditionTypeEnum.是否完成任务:
-
-                    break;
-
-                case ConditionTypeEnum.活动记录:
-
-                    break;
-            }
-
-            return true;
-        }
-
-        private async Task DoCommand(PlayerEntity player, NpcEntity npc, int scriptId, string command,List<CaseAttribute> attrs, string input)
-        {
-            var title = attrs.FirstOrDefault(x => x.Attr == "Title")?.Val;
-            var message = attrs.FirstOrDefault(x => x.Attr == "Message")?.Val;
-            var tips = attrs.FirstOrDefault(x => x.Attr == "Tips")?.Val;
-            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "CommandId")?.Val, out int commandId);
-            int.TryParse(attrs.FirstOrDefault(x => x.Attr == "QuestId")?.Val, out int questId);
-
-          
-
-            var key = $"commandIds_{player.Id}_{npc.Id}_{scriptId}";
-            var commandIds = await _redisDb.StringGet<List<int>>(key) ?? new List<int>();
-            if (commandId > 0 && !commandIds.Contains(commandId))
-            {
-                commandIds.Add(commandId);
-            }
-
-            await _redisDb.StringSet(key, commandIds);
-
-            var commandEnum = (CommandTypeEnum)Enum.Parse(typeof(CommandTypeEnum), command, true);
-
-            //await _bus.RaiseEvent(new DomainNotification($"command= {command}"));
-            switch (commandEnum)
-            {
-                case CommandTypeEnum.播放对话:
-                    await _mudProvider.ShowMessage(player.Id, $"{npc.Name}：{message}", MessageTypeEnum.聊天);
-                    break;
-
-                case CommandTypeEnum.对话选项:
-                    await _mudProvider.ShowMessage(player.Id, $" → <a href='javascript:;' class='chat' npcId='{npc.Id}' scriptId='{scriptId}' commandId='{commandId}'>{title}</a><br />", MessageTypeEnum.指令);
-                    break;
-
-                case CommandTypeEnum.输入选项:
-                    await _mudProvider.ShowMessage(player.Id, $" → <a href = 'javascript:;'>{tips}</a>  <input type = 'text' name='input' style='width:120px;margin-left:10px;' />  <button type = 'button' class='input' style='padding:1px 3px;' npcId='{npc.Id}'  scriptId='{scriptId}'  commandId='{commandId}'> 确定 </button><br />", MessageTypeEnum.指令);
-                    break;
-
-                case CommandTypeEnum.跳转到分支:
-                    await DoScript(player, npc, scriptId, commandId);
-                    break;
-
-
-                case CommandTypeEnum.领取任务:
-                    await TakeQuest(player, questId);
-                    break;
-
-                case CommandTypeEnum.完成任务:
-                    await ComplateQuest(player, questId);
-                    break;
-            }
-        }
-
-        private async Task ComplateQuest(PlayerEntity player, int questId)
-        {
-
-            var quest = await _questDomainService.Get(questId);
-            if (quest == null)
-            {
-                return;
-            }
-
-            var playerQuest = await _playerQuestDomainService.Get(x => x.PlayerId == player.Id && x.QuestId == questId);
-            if (playerQuest == null)
-            {
-                return;
-            }
-
-            //未领取
-            if (playerQuest.Status != QuestStateEnum.已领取进行中)
-            {
-                return;
-            }
-
-            //TODO 修改任务状态
-            //playerQuest.HasTake = false;
-            playerQuest.CompleteDate = DateTime.Now;
-            playerQuest.Status = QuestStateEnum.完成已领奖;
-            playerQuest.CompleteTimes++;
-            //playerQuest.IsComplete = true;
-            await _playerQuestDomainService.Update(playerQuest);
-
-            await _mudProvider.ShowMessage(player.Id, $"你完成了任务 [{quest.Name}]");
-
-            await TakeQuestReward(player, quest.Reward);
-
-            await _bus.RaiseEvent(new CompleteQuestEvent(player, quest)).ConfigureAwait(false);
-
-        }
-
-
-        private async Task TakeQuest(PlayerEntity player, int questId)
-        {
-            var questToTake = await _questDomainService.Get(questId);
-            if (questToTake == null)
-            {
-                return;
-            }
-
-            var playerQuestToTake = await _playerQuestDomainService.Get(x => x.PlayerId == player.Id && x.QuestId == questToTake.Id);
-
-            if (playerQuestToTake == null)
-            {
-                playerQuestToTake = new PlayerQuestEntity
-                {
-                    PlayerId = player.Id,
-                    QuestId = questId,
-                    Status = QuestStateEnum.已领取进行中,
-                    //IsComplete = false,
-                    TakeDate = DateTime.Now,
-                    CompleteDate = DateTime.Now,
-                    CreateDate = DateTime.Now,
-                    DayTimes = 1,
-                    //HasTake = true,
-                    Target = questToTake.Target,
-                    Times = 1,
-                    UpdateDate = DateTime.Now
-                };
-                await _playerQuestDomainService.Add(playerQuestToTake);
-
-            }
-            else if (playerQuestToTake.Status == QuestStateEnum.完成已领奖|| playerQuestToTake.Status == QuestStateEnum.未领取)
-            {
-                //TODO 领取任务
-                //playerQuestToTake.HasTake = true;
-                //playerQuestToTake.IsComplete = false;
-
-                playerQuestToTake.Status = QuestStateEnum.已领取进行中;
-                playerQuestToTake.TakeDate = DateTime.Now;
-                playerQuestToTake.Times += 1;
-                playerQuestToTake.Target = questToTake.Target;
-
-                await _playerQuestDomainService.Update(playerQuestToTake);
-            }
-        }
-
-        private async Task<bool> CheckWare(int playerId, string wareName, string number, string strRelation)
-        {
-            if(!int.TryParse(number, out int numberValue))
-            {
-                return false;
-            }
-
-            var ware = await _wareDomainService.Get(x=>x.Name== wareName);
-            if (ware==null)
-            {
-                return false;
-            }
-
-            var playerWare = await _playerWareDomainService.Get(x=>x.WareId== ware.Id && x.PlayerId== playerId);
-            if (playerWare == null)
-            {
-                return false;
-            }
-
-            var relations = GetRelations(strRelation);
-            return relations.Contains(playerWare.Number.CompareTo(numberValue));
-        }
-
-        private List<int> GetRelations(string relation)
-        {
-            List<int> relations = new List<int>();// 1 大于，0 等于 ，-1 小于
-            var relationEnum = (LogicalRelationTypeEnum)Enum.Parse(typeof(LogicalRelationTypeEnum), relation, true);
-            switch (relationEnum)
-            {
-                case LogicalRelationTypeEnum.不等于:
-                    relations = new List<int>() { 1, -1 };
-                    break;
-
-                case LogicalRelationTypeEnum.大于:
-                    relations = new List<int>() { 1 };
-                    break;
-
-                case LogicalRelationTypeEnum.大于等于:
-                    relations = new List<int>() { 1, 0 };
-                    break;
-
-                case LogicalRelationTypeEnum.小于:
-                    relations = new List<int>() { -1 };
-                    break;
-
-                case LogicalRelationTypeEnum.小于等于:
-                    relations = new List<int>() { 0, -1 };
-                    break;
-
-                case LogicalRelationTypeEnum.等于:
-                    relations = new List<int>() { 0 };
-                    break;
-            }
-
-            return relations;
-        }
-
-        private bool CheckField(PlayerEntity player, string field, string strValue, string strRelation)
-        {
-            try
-            {
-                var relations = GetRelations(strRelation);// 1 大于，0 等于 ，-1 小于
-
-                var fieldProp = GetFieldPropertyInfo(player, field);
-                if (fieldProp==null)
-                {
-                    return false;
-                }
-
-                var objectValue = fieldProp.GetValue(player);
-                var typeCode = Type.GetTypeCode(fieldProp.GetType());
-                switch (typeCode)
-                {
-                    case TypeCode.Int32:
-                        return relations.Contains(Convert.ToInt32(strValue).CompareTo(Convert.ToInt32(objectValue)));
-
-                    case TypeCode.Int64:
-                        return relations.Contains(Convert.ToInt64(strValue).CompareTo(Convert.ToInt64(objectValue)));
-
-                    case TypeCode.Decimal:
-                        return relations.Contains(Convert.ToDecimal(strValue).CompareTo(Convert.ToDecimal(objectValue)));
-
-                    case TypeCode.Double:
-                        return relations.Contains(Convert.ToDouble(strValue).CompareTo(Convert.ToDouble(objectValue)));
-
-                    case TypeCode.Boolean: 
-                        return relations.Contains(Convert.ToBoolean(strValue).CompareTo(Convert.ToBoolean(objectValue)));
-
-                    case TypeCode.DateTime:
-                        return relations.Contains(Convert.ToDateTime(strValue).CompareTo(Convert.ToDateTime(objectValue)));
-
-                    case TypeCode.String:
-                        return relations.Contains(strValue.CompareTo(objectValue));
-
-                    default:
-                        throw new Exception($"不支持的数据类型： {typeCode}");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"CheckField Exception:{ex}");
-                return false;
-            }
-        }
-
-        private PropertyInfo GetFieldPropertyInfo(PlayerEntity player, string field)
-        {
-            var fieldEnum = (PlayerConditionFieldEnum)Enum.Parse(typeof(PlayerConditionFieldEnum), field, true);
-
-
-            var key = $"player_properties";
-            var properties = _cache.GetOrCreate(key, p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromHours(24));
-                return player.GetType().GetProperties();
-            });
-
-            foreach (var prop in properties)
-            {
-                var attribute = prop.GetCustomAttributes(typeof(ConditionFieldAttribute), true).FirstOrDefault();
-                if (attribute != null)
-                {
-                    if ((attribute as ConditionFieldAttribute).FieldEnum == fieldEnum)
-                    {
-                        return prop;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-
-
-
-        /// <summary>
-        /// 领取奖励
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="rewardStr"></param>
-        /// <returns></returns>
-        private async Task<ResultModel> TakeQuestReward(PlayerEntity player, string rewardStr)
-        {
-            var result = new ResultModel
-            {
-                IsSuccess = false
-            };
-            if (!string.IsNullOrEmpty(rewardStr))
-            {
-                List<QuestReward> questRewards = new List<QuestReward>();
-                try
-                {
-                    questRewards = JsonConvert.DeserializeObject<List<QuestReward>>(rewardStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert QuestReward:{ex}");
-                }
-
-                foreach (var questReward in questRewards)
-                {
-                    int.TryParse(questReward.Attrs.FirstOrDefault(x => x.Attr == "NpcId")?.Val, out int npcId);
-                    int.TryParse(questReward.Attrs.FirstOrDefault(x => x.Attr == "Exp")?.Val, out int exp);
-                    long.TryParse(questReward.Attrs.FirstOrDefault(x => x.Attr == "Money")?.Val, out long money);
-                    int.TryParse(questReward.Attrs.FirstOrDefault(x => x.Attr == "WareId")?.Val, out int wareId);
-                    int.TryParse(questReward.Attrs.FirstOrDefault(x => x.Attr == "Number")?.Val, out int number);
-
-                    var rewardEnum = (QuestRewardEnum)Enum.Parse(typeof(QuestRewardEnum), questReward.Reward, true);
-
-
-                    switch (rewardEnum)
-                    {
-
-
-                        case QuestRewardEnum.物品:
-                            var ware = await _wareDomainService.Get(wareId);
-                            if (ware != null)
-                            {
-                                await _mudProvider.ShowMessage(player.Id, $"获得 [{ware.Name}] X{number}");
-                            }
-                            // 添加物品
-                   
-                            break;
-
-                        case QuestRewardEnum.经验:
-                            player.Exp += exp;
-                            await _mudProvider.ShowMessage(player.Id, $"获得经验 +{exp}");
-                            break;
-
-                        case QuestRewardEnum.金钱:
-                            player.Money += money;
-                            await _mudProvider.ShowMessage(player.Id, $"获得 +{money.ToMoney()}");
-                            break;
-
-
-                    }
-
-                }
-
-                await _playerDomainService.Update(player);
-            }
-
-            result.IsSuccess = true;
-            return await Task.FromResult(result);
-        }
-
-
-
-        #endregion
-
     }
 }

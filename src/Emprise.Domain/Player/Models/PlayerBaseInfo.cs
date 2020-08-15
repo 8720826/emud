@@ -19,9 +19,7 @@ namespace Emprise.Domain.Player.Models
 
         public int Level { set; get; }
 
-        public PlayerRelationStatusEnum Status{ set; get; }
 
-        public DateTime UpdatedTime { set; get; }
 
 
     }

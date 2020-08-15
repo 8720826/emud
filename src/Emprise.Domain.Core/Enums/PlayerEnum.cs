@@ -49,5 +49,7 @@ namespace Emprise.Domain.Core.Enums
         杀死 = 4,
         添加好友 = 5,
         拜师 = 6,
+        割袍断义 =7,
+        查看武功=8
     }
 }

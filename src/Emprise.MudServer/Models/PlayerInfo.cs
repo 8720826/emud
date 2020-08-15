@@ -22,6 +22,6 @@ namespace Emprise.MudServer.Models
         /// <summary>
         /// 操作
         /// </summary>
-        public List<string> Commands { set; get; }
+        public List<PlayerCommandModel> Commands { set; get; }
     }
 }
