@@ -256,7 +256,7 @@
                         <hr />
                         <p class="mt15">请求加我的</p>
                         <div class="mt15 mb15">
-                            <button v-for="friendMe,index in myFriends.friendMes">
+                            <button v-for="friendMe,index in myFriends.friendMes" @@click="agreeFriend(friendMe.id,friendMe.name)">
                                 <span> {{friendMe.name}} </span>
                             </button>
                         </div>
@@ -264,7 +264,7 @@
                     </template>
                     <template v-if="myFriends.requests.length>0">
                         <hr />
-                        <p class="mt15">我的申请</p>
+                        <p class="mt15">等待对方同意的</p>
                         <div class="mt15">
                             <button v-for="request,index in myFriends.requests">
                                 <span> {{request.name}} </span>
@@ -499,7 +499,7 @@
                         <p v-else class="my-confirm-content" v-html="modal.content" style="text-align:left;">{{ modal.content }}</p>
 
                         <div class="my-operation">
-                            <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('cancel')">
+                            <div v-if="modal.type==='confirm'" class="my-cancel-btn" @@click="confirmEvent('no')">
                                 <p class="my-btn-text my-border-right">{{ modal.cancelText }}</p>
                             </div>
                             <div class="confirm-btn" @@click="confirmEvent('ok')">

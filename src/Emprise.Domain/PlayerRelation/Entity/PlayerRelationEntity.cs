@@ -18,5 +18,6 @@ namespace Emprise.Domain.PlayerRelation.Entity
 
         public DateTime CreatedTime { set; get; }
 
+
     }
 }

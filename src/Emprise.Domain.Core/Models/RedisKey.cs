@@ -55,5 +55,10 @@ namespace Emprise.Domain.Core.Models
         /// learnSkillId_{playerId}
         /// </summary>
         public const string LearnSkillId = "learnSkillId_{0}";
+
+        /// <summary>
+        /// RefuseFriend_{playerId}_{relationId}
+        /// </summary>
+        public const string RefuseFriend = "RefuseFriend_{0}_{1}";
     }
 }

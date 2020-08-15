@@ -44,6 +44,7 @@ namespace Emprise.Domain.Email.Services
         public async Task Add(EmailEntity entity)
         {
             await _emailRepository.Add(entity);
+            await _bus.RaiseEvent(new EntityInsertedEvent<EmailEntity>(entity)).ConfigureAwait(false);
         }
 
         public async Task<IQueryable<EmailEntity>> GetAll()
@@ -66,7 +67,13 @@ namespace Emprise.Domain.Email.Services
 
         public async Task<List<EmailEntity>> GetMyEmails(int playerId, int factionId)
         {
-            var query = await _emailRepository.GetAll(x => x.Type == EmailTypeEnum.公告 || x.Type == EmailTypeEnum.系统 || (x.Type == EmailTypeEnum.私信 && x.TypeId == playerId) || (factionId > 0 && x.Type == EmailTypeEnum.帮派 && x.TypeId == factionId));
+            //公告：系统发送给所有人
+            //系统：系统发送给某个人
+            //私信：个人发送给某个人
+            //帮派：系统发送给某个帮派的所有人
+            var query = await _emailRepository.GetAll(x => x.Type == EmailTypeEnum.公告 
+            || ((x.Type == EmailTypeEnum.系统 || x.Type == EmailTypeEnum.私信) && x.TypeId == playerId) 
+            || (factionId > 0 && x.Type == EmailTypeEnum.帮派 && x.TypeId == factionId));
             return query.ToList();
         }
 

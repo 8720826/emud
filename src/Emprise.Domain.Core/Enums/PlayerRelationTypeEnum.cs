@@ -12,4 +12,12 @@ namespace Emprise.Domain.Core.Enums
         徒弟 = 4, 
         夫妻 = 5
     }
+
+
+    public enum PlayerRelationStatusEnum
+    {
+        申请 = 1,
+        同意 = 2,
+        黑名单 = 3
+    }
 }

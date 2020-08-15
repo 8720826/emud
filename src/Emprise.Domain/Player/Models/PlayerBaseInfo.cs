@@ -18,5 +18,11 @@ namespace Emprise.Domain.Player.Models
         public GenderEnum Gender { set; get; }
 
         public int Level { set; get; }
+
+        public PlayerRelationStatusEnum Status{ set; get; }
+
+        public DateTime UpdatedTime { set; get; }
+
+
     }
 }

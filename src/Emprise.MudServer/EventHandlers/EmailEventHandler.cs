@@ -1,4 +1,5 @@
-﻿using Emprise.Domain.Core.Events;
+﻿using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Email.Entity;
@@ -50,6 +51,14 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(EntityInsertedEvent<EmailEntity> message, CancellationToken cancellationToken)
         {
+            var typeId = message.Entity.TypeId;
+
+            if (message.Entity.Type == EmailTypeEnum.系统|| message.Entity.Type == EmailTypeEnum.私信)
+            {
+                string key = string.Format(RedisKey.UnreadEmailCount, typeId);
+                await _redisDb.KeyDelete(key);
+            }
+
 
         }
 

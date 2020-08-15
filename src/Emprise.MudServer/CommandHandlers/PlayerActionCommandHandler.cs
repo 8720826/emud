@@ -4,13 +4,17 @@ using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces;
+using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Email.Entity;
+using Emprise.Domain.Email.Services;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.PlayerRelation.Entity;
 using Emprise.Domain.PlayerRelation.Services;
 using Emprise.MudServer.Commands;
 using Emprise.MudServer.Commands.RelationCommonds;
+using Emprise.MudServer.Queues;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -31,22 +35,25 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly ILogger<PlayerActionCommandHandler> _logger;
         private readonly IPlayerRelationDomainService  _playerRelationDomainService;
         private readonly IPlayerDomainService _playerDomainService;
+        private readonly IEmailDomainService _emailDomainService;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
         private readonly IRedisDb _redisDb;
         private readonly IMudProvider _mudProvider;
-
+        private readonly IQueueHandler _queueHandler;
 
         public PlayerActionCommandHandler(
             IMediatorHandler bus,
             ILogger<PlayerActionCommandHandler> logger,
             IPlayerRelationDomainService playerRelationDomainService,
             IPlayerDomainService playerDomainService,
+            IEmailDomainService emailDomainService,
             IMapper mapper,
             IMemoryCache cache,
             IRedisDb redisDb,
             IMudProvider mudProvider,
             INotificationHandler<DomainNotification> notifications,
+            IQueueHandler queueHandler,
             IUnitOfWork uow) : base(uow, bus, notifications)
         {
 
@@ -56,31 +63,109 @@ namespace Emprise.MudServer.CommandHandlers
             _mapper = mapper;
             _cache = cache;
             _playerDomainService = playerDomainService;
+            _emailDomainService = emailDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
+            _queueHandler = queueHandler;
         }
 
         
         public async Task Friend(PlayerEntity player, PlayerEntity relation)
         {
-            var playerRelation = await _playerRelationDomainService.Get(x => x.PlayerId == player.Id
-            && x.RelationId == relation.Id
-            && x.Type == PlayerRelationTypeEnum.好友);
-            if (playerRelation != null)
+
+            if (await _redisDb.StringGet<int>(string.Format(RedisKey.RefuseFriend, player.Id, relation.Id)) > 0)
             {
-                await _mudProvider.ShowMessage(player.Id, $"你已申请加{relation.Name}为好友，请等待对方同意。");
+                await _mudProvider.ShowMessage(player.Id, $"【好友】[{relation.Name}]已拒绝你的申请。");
                 return;
             }
 
-            playerRelation = new PlayerRelationEntity
+            //我加对方
+            var playerRelationFrom = await _playerRelationDomainService.Get(x => x.PlayerId == player.Id
+                && x.RelationId == relation.Id
+                && x.Type == PlayerRelationTypeEnum.好友);
+
+            //对方加我
+            var playerRelationTo = await _playerRelationDomainService.Get(x => x.PlayerId == relation.Id
+                && x.RelationId == player.Id
+                && x.Type == PlayerRelationTypeEnum.好友);
+
+
+
+            if (playerRelationFrom != null && playerRelationTo != null)
             {
-                CreatedTime = DateTime.Now,
-                PlayerId = player.Id,
-                RelationId = relation.Id,
-                Type = PlayerRelationTypeEnum.好友
-            };
-            await _playerRelationDomainService.Add(playerRelation);
-            await _mudProvider.ShowMessage(player.Id, $"你已申请加{relation.Name}为好友，请等待对方同意。");
+                if (playerRelationTo != null)
+                {
+                    await _mudProvider.ShowMessage(player.Id, $"【好友】你们已经是好友。");
+                    return;
+                }
+                else
+                {
+                    await _mudProvider.ShowMessage(player.Id, $"【好友】你已申请加[{relation.Name}]为好友，请等待对方同意。");
+                    return;
+                }
+
+            }
+
+
+
+            if (playerRelationFrom == null)
+            {
+                if(playerRelationTo == null)
+                {
+
+                    await _mudProvider.ShowMessage(player.Id, $"【好友】你申请加[{relation.Name}]为好友，请等待对方同意。");
+
+                    var content = $"【好友】[{player.Name}]想和你成为好友，到 '社交'->'好友' 界面可以同意或拒绝对方的申请，你也可以直接添加对方为好友。";
+
+                    await _emailDomainService.Add(new EmailEntity
+                    {
+                        ExpiryDate = DateTime.Now.AddDays(30),
+                        SendDate = DateTime.Now,
+                        Title = $"{player.Name}想和你成为好友",
+                        Content = content,
+                        Type = EmailTypeEnum.系统,
+                        TypeId = relation.Id
+                    });
+
+
+                    await _mudProvider.ShowMessage(relation.Id, content);
+                }
+                else
+                {
+                    await _mudProvider.ShowMessage(player.Id, $"【好友】你成功添加[{relation.Name}]为好友。");
+
+
+                    var content = $"【好友】[{player.Name}]同意了你的申请，你们已成为了好友。";
+
+                    await _emailDomainService.Add(new EmailEntity
+                    {
+                        ExpiryDate = DateTime.Now.AddDays(30),
+                        SendDate = DateTime.Now,
+                        Title = $"{player.Name}同意了你的好友申请",
+                        Content = content,
+                        Type = EmailTypeEnum.系统,
+                        TypeId = relation.Id
+                    });
+
+
+                    await _mudProvider.ShowMessage(relation.Id, content);
+                }
+
+
+                playerRelationFrom = new PlayerRelationEntity
+                {
+                    CreatedTime = DateTime.Now,
+                    PlayerId = player.Id,
+                    RelationId = relation.Id,
+                    Type = PlayerRelationTypeEnum.好友
+                };
+                await _playerRelationDomainService.Add(playerRelationFrom);
+
+
+
+                await _queueHandler.SendQueueMessage(new ReceiveEmailQueue(relation.Id));
+            }
+
         }
         
 

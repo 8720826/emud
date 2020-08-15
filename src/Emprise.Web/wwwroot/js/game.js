@@ -126,16 +126,22 @@ new Vue({
                     });
             });
         },
-        confirm: function (content, callback) {
+        confirm: function (content, callback, no) {
             var that = this;
+            that.modal.type = "confirm";
             that.modal.isShowConfirm = 1;
             that.modal.content = content;
             that.modal.callback = callback;
+            that.modal.no = no;
+
+
         },
         confirmEvent: function (type) {
             var that = this;
             if (type === "ok") {
                 that.modal.callback && that.modal.callback();
+            } else if (type === "no") {
+                that.modal.no && that.modal.no();
             }
             that.modal.isShowConfirm = false;
         },
@@ -603,6 +609,16 @@ new Vue({
             var that = this;
             connection.invoke("ShowFriend");
            // that.myBox = "friend";
+        },
+        agreeFriend: function (id, name) {
+            var that = this;
+            that.confirm("要同意添加[" + name + "]为好友吗？", function () {
+                connection.invoke("AgreeFriend", { relationId: id });
+                console.log("AgreeFriend=" + id);
+            }, function () {
+                    connection.invoke("RefuseFriend", { relationId: id });
+                    console.log("RefuseFriend=" + id);
+            });
         }
     },
     watch: {
