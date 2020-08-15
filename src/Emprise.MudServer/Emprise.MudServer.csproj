@@ -16,7 +16,7 @@
     <Compile Remove="Commands\PlayerActionCommand.cs" />
     <Compile Remove="Hubs\CheckCommonAttribute.cs" />
     <Compile Remove="Hubs\Models\PostedMessage.cs" />
-    <Compile Remove="Jobs\Queues.cs" />
+    <Compile Remove="BackgroundServices\Queues.cs" />
   </ItemGroup>
 
   <ItemGroup>

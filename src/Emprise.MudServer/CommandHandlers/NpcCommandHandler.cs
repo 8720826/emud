@@ -142,7 +142,7 @@ namespace Emprise.MudServer.CommandHandlers
             npcInfo.Descriptions.Add($"{genderStr}{npc.Exp.ToKunFuLevel(player.Exp)}");
 
 
-            var npcScripts = (await _npcScriptDomainService.GetAll()).Where(x => x.NpcId == npc.Id);
+            var npcScripts = (await _npcScriptDomainService.GetAll()).Where(x => x.NpcId == npc.Id).ToList();
             foreach (var npcScript in npcScripts)
             {
                 var script = await _scriptDomainService.Get(npcScript.ScriptId);
