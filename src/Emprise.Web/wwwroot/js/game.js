@@ -41,10 +41,11 @@ new Vue({
         myBox: "",
         myBoxMenus: [],
         menus: [{ id: "me", name: "属性", group: "player" }, /*{ id: "status", name: "状态", group: "player" },*/ { id: "skill", name: "武功", group: "player" }, /*{ id: "achv", name: "成就", group: "player" },*/ { id: "mypack", name: "背包", group: "player" }, { id: "weapon", name: "装备", group: "player" },
+
             { id: "email", name: "邮箱", group: "email" },
-            { id: "activityQuest1", name: "新手任务", group: "quest" }, { id: "activityQuest2", name: "主线任务", group: "quest" }, { id: "activityQuest3", name: "日常任务", group: "quest" }, { id: "activityQuest4", name: "支线任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" },
-            
-            { id: "friend", name: "好友", group: "social" }, { id: "enemy", name: "仇人", group: "social" }, { id: "master", name: "师傅", group: "social" }, { id: "apprentice", name: "徒弟", group: "social" }, { id: "couple", name: "伴侣", group: "social" }],
+
+            { id: "activityQuest1", name: "新手任务", group: "quest" }, { id: "activityQuest2", name: "主线任务", group: "quest" }, { id: "activityQuest3", name: "日常任务", group: "quest" }, { id: "activityQuest4", name: "支线任务", group: "quest" }, { id: "historyQuest", name: "已完成", group: "quest" },  
+            { id: "friend", name: "好友", group: "social" }, { id: "enemy", name: "仇人", group: "social" }, { id: "master", name: "师傅", group: "social" }, { id: "couple", name: "伴侣", group: "social" }],
         myDetail: "",
         modal: {
             isShowConfirm: 0,

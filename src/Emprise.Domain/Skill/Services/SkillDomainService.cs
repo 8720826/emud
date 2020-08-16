@@ -44,6 +44,7 @@ namespace Emprise.Domain.Skill.Services
         public async Task Add(SkillEntity entity)
         {
             await _skillRepository.Add(entity);
+            await _bus.RaiseEvent(new EntityInsertedEvent<SkillEntity>(entity)).ConfigureAwait(false);
         }
 
         public async Task<IQueryable<SkillEntity>> GetAll()
@@ -61,6 +62,15 @@ namespace Emprise.Domain.Skill.Services
         {
             await _skillRepository.Remove(entity);
             await _bus.RaiseEvent(new EntityDeletedEvent<SkillEntity>(entity)).ConfigureAwait(false);
+        }
+
+        public async Task<List<SkillEntity>> GetAllBaseSkills()
+        {
+            var key = CacheKey.BaseSkills;
+            return await _cache.GetOrCreateAsync(key, async p => {
+                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
+                return (await _skillRepository.GetAll(x => x.IsBase)).ToList();
+            });
         }
 
 

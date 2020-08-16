@@ -7,6 +7,7 @@ using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Quest.Services;
+using Emprise.Domain.Skill.Entity;
 using Emprise.Domain.Skill.Models;
 using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Services;
@@ -84,6 +85,26 @@ namespace Emprise.MudServer.CommandHandlers
             var skillModels = new List<SkillModel>();
 
             var playerSkills = await _playerSkillDomainService.GetAll(player.Id);
+
+            var baseSkills = await _skillDomainService.GetAllBaseSkills();
+            foreach (var baseSkill in baseSkills)
+            {
+                if(playerSkills.Count(x=>x.SkillId== baseSkill.Id) == 0)
+                {
+                    var playerSkill = new PlayerSkillEntity
+                    {
+                        Exp = 0,
+                        Level = 0,
+                        PlayerId = playerId,
+                        SkillId = baseSkill.Id,
+                        SkillName = baseSkill.Name
+                    };
+                    await _playerSkillDomainService.Add(playerSkill);
+                    playerSkills.Add(playerSkill);
+                }
+            }
+
+
             var ids = playerSkills?.Select(x => x.SkillId);
 
             var skills = (await _skillDomainService.GetAll()).Where(x => ids.Contains(x.Id));

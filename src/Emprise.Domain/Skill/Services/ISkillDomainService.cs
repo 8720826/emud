@@ -25,5 +25,7 @@ namespace Emprise.Domain.Skill.Services
         Task Update(SkillEntity entity);
 
         Task Delete(SkillEntity entity);
+
+        Task<List<SkillEntity>> GetAllBaseSkills();
     }
 }

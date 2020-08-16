@@ -42,9 +42,8 @@ namespace Emprise.Infra.Middleware
             Exception exception
             )
         {
-            var error = string.IsNullOrWhiteSpace(exception.Message) ? "InternalServerError" : exception.Message;
+            var error = string.IsNullOrWhiteSpace(exception.Message) ? "Internal Server Error" : exception.Message;
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(error);
         }
     }

@@ -427,9 +427,18 @@ namespace Emprise.MudServer.Handles
                 return;
             }
 
-            var @int = player.Int * 3 + player.IntAdd;
+            if (player.Level * 10 < playerSkill.Level)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"武功最高等级不能超过自身等级的10倍！");
+                player.Status = PlayerStatusEnum.空闲;
+                await _playerDomainService.Update(player);
+                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+                return;
+            }
 
-            var levelUpExp = (playerSkill.Level + 1) * (playerSkill.Level + 1) * 50 - playerSkill.Level * playerSkill.Level * 50;
+            var @int = player.Int * 3 + player.IntAdd;
+            var nextLevelExp = (playerSkill.Level + 1) * (playerSkill.Level + 1) * 50;
+            var levelUpExp = nextLevelExp - playerSkill.Level * playerSkill.Level * 50;
 
             Random random = new Random();
             int exp = random.Next(1, levelUpExp / 10);
@@ -471,11 +480,21 @@ namespace Emprise.MudServer.Handles
 
             player.Pot -= needPot;
             await _playerDomainService.Update(player);
-
+            playerSkill.SkillName = skill.Name;
             playerSkill.Exp += exp;
+            await _mudProvider.ShowMessage(player.Id, $"你消耗潜能{needPot}，{effectWords}，[{skill.Name}]经验增加{exp}！");
+
+            if (playerSkill.Exp > nextLevelExp)
+            {
+                playerSkill.Level++;
+                await _mudProvider.ShowMessage(player.Id, $"[{skill.Name}]等级上升为 Lv.{playerSkill.Level}！");
+            }
+
+           
+
             await _playerSkillDomainService.Update(playerSkill);
 
-            await _mudProvider.ShowMessage(player.Id, $"你消耗潜能{needPot}，{effectWords}，[{skill.Name}]经验增加{exp}！");
+          
 
             await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
         }
