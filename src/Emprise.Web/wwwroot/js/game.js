@@ -1,5 +1,4 @@
-﻿
-Vue.directive('long', {
+﻿Vue.directive('long', {
     inserted(el, binding) {
         var methods = {
             timer: null,

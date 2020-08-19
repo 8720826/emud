@@ -57,6 +57,7 @@ namespace Emprise.Infra.Providers
             }
             catch(Exception ex)
             {
+                _logger.LogError($"Exception={ex}");
                 //TODO
             }
             return default;
@@ -94,8 +95,9 @@ namespace Emprise.Infra.Providers
                     }
                 }
             }
-            catch (Exception ex) {
-                //_logger.LogError($"Exception={ex}");
+            catch (Exception ex) 
+            {
+                _logger.LogError($"Exception={ex}");
             }
 
             return dic;

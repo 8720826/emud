@@ -147,7 +147,7 @@ namespace Emprise.Domain.Core.Extensions
                     if (result == null) { continue; }
                     list.Add(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }

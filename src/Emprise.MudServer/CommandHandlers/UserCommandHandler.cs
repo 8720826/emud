@@ -328,6 +328,7 @@ namespace Emprise.MudServer.CommandHandlers
             }
             catch(Exception ex)
             {
+                _logger.LogError($"邮件发送失败  {ex}");
                 await _bus.RaiseEvent(new DomainNotification($"邮件发送失败，请稍后重试"));
                 return Unit.Value;
             }
@@ -379,6 +380,7 @@ namespace Emprise.MudServer.CommandHandlers
             }
             catch (Exception ex)
             {
+                _logger.LogError($"邮件发送失败  {ex}");
                 await _bus.RaiseEvent(new DomainNotification($"邮件发送失败，请稍后重试"));
                 return Unit.Value;
             }

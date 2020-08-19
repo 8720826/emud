@@ -5,14 +5,14 @@ using System.Text;
 
 namespace Emprise.Domain.Core.Queue.Models
 {
-    public class PlayerStatusModel
+    public class NpcStatusModel
     {
         public int PlayerId { get; set; }
 
         /// <summary>
-        /// 玩家状态
+        /// Npc状态
         /// </summary>
-        public PlayerStatusEnum Status { get; set; }
+        public NpcStatusEnum Status { get; set; }
 
         public TargetTypeEnum? TargetType { get; set; }
 

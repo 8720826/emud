@@ -46,7 +46,7 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(EntityUpdatedEvent<EmailEntity> message, CancellationToken cancellationToken)
         {
-
+             await Task.CompletedTask;
         }
 
         public async Task Handle(EntityInsertedEvent<EmailEntity> message, CancellationToken cancellationToken)
@@ -64,7 +64,7 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(EntityDeletedEvent<EmailEntity> message, CancellationToken cancellationToken)
         {
-
+            await Task.CompletedTask;
         }
 
         public async Task Handle(ReceivedEmailEvent message, CancellationToken cancellationToken)

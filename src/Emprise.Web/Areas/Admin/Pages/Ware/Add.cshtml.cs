@@ -46,7 +46,7 @@ namespace Emprise.Web.Areas.Admin.Pages.Ware
 
         public async Task OnGetAsync()
         {
-  
+            await Task.CompletedTask;
         }
 
 

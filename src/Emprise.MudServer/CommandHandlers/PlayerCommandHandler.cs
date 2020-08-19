@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Emprise.Domain.Core.Attributes;
 using Emprise.Domain.Core.Authorization;
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.CommandHandlers;
@@ -11,20 +10,14 @@ using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Models.Chat;
 using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Core.Queue.Models;
-using Emprise.Domain.Npc.Entity;
-using Emprise.Domain.Npc.Models;
-using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.PlayerRelation.Services;
-using Emprise.Domain.Quest.Entity;
-using Emprise.Domain.Quest.Models;
-using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Room.Services;
-using Emprise.Domain.Ware.Services;
 using Emprise.Infra.Authorization;
 using Emprise.MudServer.Commands;
+using Emprise.MudServer.Commands.NpcActionCommands;
 using Emprise.MudServer.Commands.SkillCommands;
 using Emprise.MudServer.Events;
 using Emprise.MudServer.Hubs.Models;
@@ -54,23 +47,11 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<InitGameCommand, Unit>,
         IRequestHandler<MoveCommand, Unit>,
         IRequestHandler<SearchCommand, Unit>,
-        IRequestHandler<MeditateCommand, Unit>,
-        IRequestHandler<StopActionCommand, Unit>,
-        IRequestHandler<ExertCommand, Unit>,
         IRequestHandler<ShowPlayerCommand, Unit>,
-        IRequestHandler<FishCommand, Unit>,
-        IRequestHandler<DigCommand, Unit>,
-        IRequestHandler<CollectCommand, Unit>,
-        IRequestHandler<CutCommand, Unit>,
-        IRequestHandler<HuntCommand, Unit>,
-        IRequestHandler<WorkCommand, Unit>,
-        //IRequestHandler<NpcActionCommand, Unit>,
         IRequestHandler<ShowMeCommand, Unit>,
         IRequestHandler<ShowMyStatusCommand, Unit>,
         IRequestHandler<PingCommand, Unit>,
-        IRequestHandler<SendMessageCommand, Unit>,
-        IRequestHandler<LearnSkillCommand, Unit>
-
+        IRequestHandler<SendMessageCommand, Unit>
 
 
     {
@@ -422,129 +403,6 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(WorkCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打工);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(MeditateCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打坐);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(ExertCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.疗伤);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(FishCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.钓鱼);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(DigCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.挖矿);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(CollectCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.采药);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(CutCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.伐木);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(HuntCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.打猎);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(LearnSkillCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(command.PlayerId, PlayerStatusEnum.修练, command.MySkillId);
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(StopActionCommand command, CancellationToken cancellationToken)
-        {
-            //await _bus.RaiseEvent(new DomainNotification("功能暂时未实现"));
-
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return Unit.Value;
-            }
-            var status = player.Status;
-            if (status == PlayerStatusEnum.空闲)
-            {
-                return Unit.Value;
-            }
-
-
-            player.Status = PlayerStatusEnum.空闲;
-            await _playerDomainService.Update(player);
-
-            switch (status)
-            {
-                case PlayerStatusEnum.打坐:
-                    await _mudProvider.ShowMessage(playerId, "你停止了打坐。。。");
-
-                    break;
-
-                case PlayerStatusEnum.打工:
-                    await _mudProvider.ShowMessage(playerId, "你停止了打工。。。");
-                    break;
-
-                case PlayerStatusEnum.伐木:
-                    await _mudProvider.ShowMessage(playerId, "你停止了伐木。。。");
-                    break;
-
-                case PlayerStatusEnum.打猎:
-                    await _mudProvider.ShowMessage(playerId, "你停止了打猎。。。");
-                    break;
-
-                case PlayerStatusEnum.挖矿:
-                    await _mudProvider.ShowMessage(playerId, "你停止了挖矿。。。");
-                    break;
-
-                case PlayerStatusEnum.疗伤:
-                    await _mudProvider.ShowMessage(playerId, "你停止了疗伤。。。");
-                    break;
-
-                case PlayerStatusEnum.采药:
-                    await _mudProvider.ShowMessage(playerId, "你停止了采药。。。");
-                    break;
-
-                case PlayerStatusEnum.钓鱼:
-                    await _mudProvider.ShowMessage(playerId, "你停止了钓鱼。。。");
-                    break;
-
-                default:
-                    await _mudProvider.ShowMessage(playerId, $"你停止了{status}。。。");
-                    break;
-            }
-
-            await _recurringQueue.Remove<PlayerStatusModel>(playerId);
-
-            if (await Commit())
-            {
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
-            }
-            return Unit.Value;
-        }
 
         public async Task<Unit> Handle(ShowMeCommand command, CancellationToken cancellationToken)
         {
@@ -708,136 +566,5 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        private async Task BeginChangeStatus(int playerId, PlayerStatusEnum newStatus, int targetId = 0)
-        {
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
-                return;
-            }
-            var status = player.Status;
-            if (status == newStatus)
-            {
-                return;
-            }
-
-            if (player.Status != PlayerStatusEnum.空闲)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"你正在{player.Status}中，请先停下！"));
-                return;
-            }
-            var workTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.WorkTimes, playerId, newStatus));
-
-            switch (newStatus)
-            {
-                case PlayerStatusEnum.打猎:
-                    await _mudProvider.ShowMessage(playerId, "你开始在丛林中寻找猎物的踪影。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次打猎));
-                    }
-                    break;
-
-                case PlayerStatusEnum.伐木:
-                    await _mudProvider.ShowMessage(playerId, "你拿起斧头，对着一棵大树嘿呦嘿呦得砍了起来。");
-
-                    //新手任务
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次伐木));
-                    }
-                    break;
-
-                case PlayerStatusEnum.采药:
-                    await _mudProvider.ShowMessage(playerId, "你开始在草丛中搜寻草药的踪影。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次采药));
-                    }
-                    break;
-
-                case PlayerStatusEnum.挖矿:
-                    await _mudProvider.ShowMessage(playerId, "你挥动铁锹，开始挖矿。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次挖矿));
-                    }
-                    break;
-
-                case PlayerStatusEnum.钓鱼:
-                    await _mudProvider.ShowMessage(playerId, "你把鱼竿一甩，开始等待鱼儿上钩。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次钓鱼));
-                    }
-                    break;
-
-                case PlayerStatusEnum.疗伤:
-                    if (player.Hp >= player.MaxHp)
-                    {
-                        await _mudProvider.ShowMessage(playerId, "你没有受伤，无需治疗。");
-                        return;
-                    }
-                    await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始运功疗伤。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次疗伤));
-                    }
-                    break;
-
-                case PlayerStatusEnum.打坐:
-                    if (player.Mp >= player.MaxMp)
-                    {
-                        await _mudProvider.ShowMessage(playerId, "你内力充沛，无需打坐。");
-                        return;
-                    }
-                    await _mudProvider.ShowMessage(playerId, "你盘膝坐下，开始打坐。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次打坐));
-                    }
-                    break;
-
-                case PlayerStatusEnum.修练:
-                    if (player.Pot <= 0)
-                    {
-                        await _mudProvider.ShowMessage(playerId, "你的潜能不够，无法修练。");
-                        return;
-                    }
-                    if (targetId <= 0)
-                    {
-                        return;
-                    }
-
-                    await _mudProvider.ShowMessage(playerId, "你开始修练。。。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次修练));
-                    }
-
-                    break;
-
-                default:
-                    await _mudProvider.ShowMessage(playerId, $"你开始{newStatus}。。。");
-                    break;
-            }
-
-
-            player.Status = newStatus;
-            await _playerDomainService.Update(player);
-
-            //新手任务
-            workTimes++;
-            await _redisDb.StringSet(string.Format(RedisKey.ChatTimes, playerId), workTimes);
-
-
-            await _recurringQueue.Publish(playerId, new PlayerStatusModel { PlayerId = player.Id, Status = newStatus, TargetId = targetId }, 5, 15);
-
-            if (await Commit())
-            {
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
-            }
-        }
     }
 }

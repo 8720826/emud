@@ -80,5 +80,8 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public bool IsEnable { set; get; }
 
-    }
+
+        public bool IsDead { set; get; }
+
+}
 }

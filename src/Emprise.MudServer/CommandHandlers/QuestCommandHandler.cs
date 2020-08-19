@@ -116,7 +116,6 @@ namespace Emprise.MudServer.CommandHandlers
                     case QuestPeriodEnum.不可重复:
                         await _mudProvider.ShowMessage(playerId, "该任务仅可领取一次，你已经领取过！");
                         return Unit.Value;
-                        break;
 
                     case QuestPeriodEnum.无限制:
 
@@ -543,7 +542,6 @@ namespace Emprise.MudServer.CommandHandlers
                             //TODO
                             result.ErrorMessage = $"完成任务需要消耗物品";
                             return result;
-                            break;
 
                         case QuestConsumeEnum.经验:
                             if (player.Exp < exp)
@@ -613,7 +611,6 @@ namespace Emprise.MudServer.CommandHandlers
 
                             //TODO 减少物品
                             return result;
-                            break;
 
                         case QuestConsumeEnum.经验:
                             player.Exp -= exp;

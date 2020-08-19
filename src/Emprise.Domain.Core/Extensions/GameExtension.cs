@@ -57,13 +57,13 @@ namespace Emprise.Domain.Core.Extensions
             {
                 case GenderEnum.男:
                     return "他";
-                    break;
+             
                 case GenderEnum.女:
                     return "她";
-                    break;
+               
                 default:
                     return "它";
-                    break;
+                
             }
         }
 

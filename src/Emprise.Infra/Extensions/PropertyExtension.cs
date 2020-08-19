@@ -37,9 +37,9 @@ namespace Emprise.Infra.Extensions
                     }
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-
+              
             }
             return diff;
         }

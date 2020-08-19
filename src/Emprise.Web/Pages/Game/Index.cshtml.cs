@@ -30,7 +30,6 @@ namespace Emprise.Web.Pages.Game
 
             Title = _appConfig.Site.Name;
 
-
             return Page();
         }
     }

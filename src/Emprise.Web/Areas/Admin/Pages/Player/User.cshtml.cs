@@ -42,7 +42,7 @@ namespace Emprise.Web.Areas.Admin.Pages.Player
         [BindProperty(SupportsGet = true)]
         public string Keyword { get; set; }
 
-        public UserEntity User { get; set; }
+        public new UserEntity User { get; set; }
 
         public async Task OnGetAsync(int id)
         {

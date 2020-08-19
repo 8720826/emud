@@ -39,7 +39,7 @@ namespace Emprise.MudServer.CommandHandlers
     
     public class NpcCommandHandler : CommandHandler,
         IRequestHandler<ShowNpcCommand, Unit>,
-        IRequestHandler<FightWithNpcCommand, Unit>,
+        
         IRequestHandler<KillNpcCommand, Unit>,
         IRequestHandler<GiveToNpcCommand, Unit>,
         IRequestHandler<NpcScriptCommand, Unit>
@@ -165,33 +165,7 @@ namespace Emprise.MudServer.CommandHandlers
             return Unit.Value;
         }
 
-        public async Task<Unit> Handle(FightWithNpcCommand command, CancellationToken cancellationToken)
-        {
-            var playerId = command.PlayerId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                return Unit.Value;
-            }
 
-            var npcId = command.NpcId;
-            var npc = await _npcDomainService.Get(npcId);
-            if (npc == null)
-            {
-                return Unit.Value;
-            }
-
-            if (!npc.CanFight)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"指令 错误！"));
-            }
-            else
-            {
-                await _bus.RaiseEvent(new DomainNotification($"指令 未实现！"));
-            }
-
-            return Unit.Value;
-        }
 
         public async Task<Unit> Handle(GiveToNpcCommand command, CancellationToken cancellationToken)
         {

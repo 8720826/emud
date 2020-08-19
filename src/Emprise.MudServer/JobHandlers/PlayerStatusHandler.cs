@@ -7,6 +7,8 @@ using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Core.Queue.Models;
 using Emprise.Domain.ItemDrop.Models;
 using Emprise.Domain.ItemDrop.Services;
+using Emprise.Domain.Npc.Entity;
+using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
@@ -43,7 +45,7 @@ namespace Emprise.MudServer.Handles
         private readonly IPlayerWareDomainService _playerWareDomainService;
         private readonly ISkillDomainService _skillDomainService;
         private readonly IPlayerSkillDomainService _playerSkillDomainService;
-
+        private readonly INpcDomainService _npcDomainService;
 
         public PlayerStatusHandler(
             IMudProvider mudProvider, 
@@ -58,6 +60,7 @@ namespace Emprise.MudServer.Handles
            IPlayerWareDomainService playerWareDomainService,
            ISkillDomainService skillDomainService,
            IPlayerSkillDomainService playerSkillDomainService,
+           INpcDomainService npcDomainService,
             IMediatorHandler bus)
         {
             _mudProvider = mudProvider;
@@ -73,6 +76,7 @@ namespace Emprise.MudServer.Handles
             _playerWareDomainService = playerWareDomainService;
             _skillDomainService = skillDomainService;
             _playerSkillDomainService = playerSkillDomainService;
+            _npcDomainService = npcDomainService;
         }
         public async Task Execute(PlayerStatusModel model)
         {
@@ -87,7 +91,7 @@ namespace Emprise.MudServer.Handles
             if (online == null)
             {
                 //玩家离线后，从队列删除，并且修改状态为空闲
-                await _recurringQueue.Remove<PlayerStatusModel>(playerId);
+                await _recurringQueue.Remove<PlayerStatusModel>($"player_{playerId}");
                 if (player.Status!= PlayerStatusEnum.空闲)
                 {
                     player.Status = PlayerStatusEnum.空闲;
@@ -100,7 +104,7 @@ namespace Emprise.MudServer.Handles
 
             if (player.Status!= model.Status)
             {
-                await _recurringQueue.Remove<PlayerStatusModel>(playerId);
+                await _recurringQueue.Remove<PlayerStatusModel>($"player_{playerId}");
                 return;
             }
 
@@ -126,8 +130,12 @@ namespace Emprise.MudServer.Handles
                     await Muse(player);
                     break;
 
+                case PlayerStatusEnum.切磋:
+                    await Fighting(player, model.TargetType, model.TargetId);
+                    break;
+
                 case PlayerStatusEnum.战斗:
-                    await Fighting(player, model.TargetId);
+                    await Killing(player, model.TargetId);
                     break;
 
                 case PlayerStatusEnum.修练:
@@ -335,11 +343,9 @@ namespace Emprise.MudServer.Handles
         {
             if (player.Hp >= player.MaxHp)
             {
-                await _recurringQueue.Remove<PlayerStatusModel>(player.Id);
                 await _mudProvider.ShowMessage(player.Id, $"{player.Status}结束，你站了起来。。。");
-                player.Status = PlayerStatusEnum.空闲;
-                await _playerDomainService.Update(player);
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+
+                await StopAction(player);
             }
             else
             {
@@ -367,11 +373,8 @@ namespace Emprise.MudServer.Handles
         {
             if (player.Mp >= player.MaxMp)
             {
-                await _recurringQueue.Remove<PlayerStatusModel>(player.Id);
+                await StopAction(player);
                 await _mudProvider.ShowMessage(player.Id, $"{player.Status}结束，你站了起来。。。");
-                player.Status = PlayerStatusEnum.空闲;
-                await _playerDomainService.Update(player);
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
             }
             else
             {
@@ -391,7 +394,52 @@ namespace Emprise.MudServer.Handles
           
         }
 
-        private async Task Fighting(PlayerEntity player,int targetId)
+        private async Task Fighting(PlayerEntity player, TargetTypeEnum? targetType, int targetId)
+        {
+            if (targetType == TargetTypeEnum.Npc)
+            {
+                var npc = await _npcDomainService.Get(targetId);
+                if (npc == null)
+                {
+                    await StopAction(player);
+                    return;
+                }
+
+                await FightingNpc(player, npc);
+            }
+            else if (targetType == TargetTypeEnum.玩家)
+            {
+                var target = await _playerDomainService.Get(targetId);
+                if (target == null)
+                {
+                    await StopAction(player);
+                    return;
+                }
+
+                await FightingPlayer(player, target);
+            }
+            else
+            {
+                await StopAction(player);
+            }
+
+
+          
+
+        }
+
+        private async Task FightingNpc(PlayerEntity player, NpcEntity npc)
+        {
+            await _mudProvider.ShowMessage(player.Id, $"【切磋】你正在攻击[{npc.Name}]。。。");
+        }
+
+        private async Task FightingPlayer(PlayerEntity player, PlayerEntity target)
+        {
+            await _mudProvider.ShowMessage(player.Id, $"【切磋】你正在攻击[{target.Name}]。。。");
+        }
+
+
+        private async Task Killing(PlayerEntity player, int targetId)
         {
 
 
@@ -405,9 +453,8 @@ namespace Emprise.MudServer.Handles
             if (playerSkill == null)
             {
                 await _mudProvider.ShowMessage(player.Id, $"你结束了修练！");
-                player.Status = PlayerStatusEnum.空闲;
-                await _playerDomainService.Update(player);
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+
+                await StopAction(player);
                 return;
             }
 
@@ -415,24 +462,24 @@ namespace Emprise.MudServer.Handles
             if (skill == null)
             {
                 await _mudProvider.ShowMessage(player.Id, $"你结束了修练！！");
+
+                await StopAction(player);
                 return;
             }
 
             if (player.Pot <= 0)
             {
                 await _mudProvider.ShowMessage(player.Id, $"潜能耗尽，你结束了修练！");
-                player.Status = PlayerStatusEnum.空闲;
-                await _playerDomainService.Update(player);
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+
+                await StopAction(player);
                 return;
             }
 
             if (player.Level * 10 < playerSkill.Level)
             {
                 await _mudProvider.ShowMessage(player.Id, $"武功最高等级不能超过自身等级的10倍！");
-                player.Status = PlayerStatusEnum.空闲;
-                await _playerDomainService.Update(player);
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+
+                await StopAction(player);
                 return;
             }
 
@@ -448,9 +495,8 @@ namespace Emprise.MudServer.Handles
             if (player.Pot < needPot)
             {
                 await _mudProvider.ShowMessage(player.Id, $"潜能即将耗尽，你结束了修练！");
-                player.Status = PlayerStatusEnum.空闲;
-                await _playerDomainService.Update(player);
-                await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+
+                await StopAction(player);
                 return ;
             }
 
@@ -498,6 +544,17 @@ namespace Emprise.MudServer.Handles
 
             await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
         }
-        
+
+
+
+
+        private async Task StopAction(PlayerEntity player)
+        {
+            await _recurringQueue.Remove<PlayerStatusModel>($"player_{player.Id}");
+            player.Status = PlayerStatusEnum.空闲;
+            await _playerDomainService.Update(player);
+            await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
+
+        }
     }
 }

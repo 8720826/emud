@@ -97,7 +97,10 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(EntityUpdatedEvent<PlayerEntity> message, CancellationToken cancellationToken)
         {
+            await Task.Run(() =>
+            {
 
+            });
         }
 
         public async Task Handle(EntityInsertedEvent<PlayerEntity> message, CancellationToken cancellationToken)
@@ -109,7 +112,10 @@ namespace Emprise.MudServer.EventHandlers
 
         public async Task Handle(EntityDeletedEvent<PlayerEntity> message, CancellationToken cancellationToken)
         {
+            await Task.Run(() =>
+            {
 
+            });
         }
         
         public async Task Handle(MovedEvent message, CancellationToken cancellationToken)

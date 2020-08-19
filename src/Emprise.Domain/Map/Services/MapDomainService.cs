@@ -25,7 +25,7 @@ namespace Emprise.Domain.Map.Services
         public MapDomainService(IRepository<MapEntity> mapRepository, IRepository<RoomEntity> roomRepository, IMemoryCache cache, IMediatorHandler bus)
         {
             _mapRepository = mapRepository;
-            _mapRepository = mapRepository;
+            _roomRepository = roomRepository;
             _cache = cache;
             _bus = bus;
         }

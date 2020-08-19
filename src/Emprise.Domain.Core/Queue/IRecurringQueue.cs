@@ -11,12 +11,12 @@ namespace Emprise.Domain.Core.Bus
     /// </summary>
     public interface IRecurringQueue : IScoped
     {
-        Task<bool> Publish<T>(int playerId, T t, int delayMin, int delayMax = 0);
+        Task<bool> Publish<T>(string uniqueId, T t, int delayMin, int delayMax = 0);
 
         //Task<bool> Publish<T>(T t, int delay, DateTime? endtime);
 
-        Task<Dictionary<int, T>> Subscribe<T>();
+        Task<Dictionary<string, T>> Subscribe<T>();
 
-        Task Remove<T>(int playerId);
+        Task Remove<T>(string uniqueId);
     }
 }

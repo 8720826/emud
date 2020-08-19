@@ -31,7 +31,7 @@ namespace Emprise.Infra.Bus
             _logger = logger;
         }
 
-        public async Task<bool> Publish<T>(int playerId, T t, int delayMin, int delayMax = 0)
+        public async Task<bool> Publish<T>(string uniqueId, T t, int delayMin, int delayMax = 0)
         {
             if (delayMin <= 0)
             {
@@ -49,7 +49,7 @@ namespace Emprise.Infra.Bus
                 DelayTime = DateTime.Now.AddSeconds(delay)
             };
 
-            var isSuccess = await _redisDb.HashSet(key, playerId.ToString(), message);
+            var isSuccess = await _redisDb.HashSet(key, uniqueId, message);
             if (isSuccess)
             {
                 await RemoveCache(channel);
@@ -58,9 +58,9 @@ namespace Emprise.Infra.Bus
         }
 
 
-        public async Task<Dictionary<int,T>> Subscribe<T>()
+        public async Task<Dictionary<string,T>> Subscribe<T>()
         {
-            var list = new Dictionary<int, T>();
+            var list = new Dictionary<string, T>();
             var channel = typeof(T).Name.ToLower();
             var key = $"{queueName}_{channel}";
             var dic = await _redisDb.HashGetAll<QueueData<T>>(key);
@@ -74,7 +74,7 @@ namespace Emprise.Infra.Bus
             Random rnd = new Random();
             foreach (var item in dic)
             {
-                var itemKey = item.Key;
+                var uniqueId = item.Key;
                 var itemValue = item.Value;
                 if (itemValue.DelayTime.Subtract(DateTime.Now).TotalMilliseconds > 0)
                 {
@@ -87,12 +87,11 @@ namespace Emprise.Infra.Bus
                 //下次消费时间
                 itemValue.DelayTime = DateTime.Now.AddSeconds(delay);
 
-                int.TryParse(itemKey, out int playerId);
-                if (!list.ContainsKey(playerId))
+                if (!list.ContainsKey(uniqueId))
                 {
-                    list.Add(playerId, itemValue.Data);
+                    list.Add(uniqueId, itemValue.Data);
                 }
-                await _redisDb.HashSet($"{queueName}_{channel}", itemKey, itemValue);
+                await _redisDb.HashSet($"{queueName}_{channel}", uniqueId, itemValue);
                 hasChange = true;
             }
 
@@ -126,14 +125,15 @@ namespace Emprise.Infra.Bus
                 _cache.Remove(key);
             });
             */
+            await Task.CompletedTask;
         }
 
-        public async Task Remove<T>(int playerId)
+        public async Task Remove<T>(string uniqueId)
         {
             var channel = typeof(T).Name.ToLower();
             var key = $"{queueName}_{channel}";
             
-            await _redisDb.HashDelete(key, playerId.ToString());
+            await _redisDb.HashDelete(key, uniqueId);
             await RemoveCache(channel);
 
         }

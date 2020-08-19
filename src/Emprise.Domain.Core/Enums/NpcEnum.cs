@@ -7,14 +7,16 @@ namespace Emprise.Domain.Core.Enums
     public enum NpcStatusEnum
     {
         /// <summary>
-        /// 正常
+        /// 空闲
         /// </summary>
-        正常 = 0,
+        空闲 = 0,
 
         /// <summary>
         /// 死亡
         /// </summary>
-        死亡 = 1,
+        切磋 = 1,
+
+        战斗 = 2,
 
     }
 

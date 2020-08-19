@@ -58,6 +58,7 @@ namespace Emprise.Domain.Config.Services
                     _redisDb.HashSet("configurations", config.Key, config.Value);
                 }
             }
+            await Task.CompletedTask;
         }
 
 
@@ -78,7 +79,7 @@ namespace Emprise.Domain.Config.Services
                     {
                         configDic.TryGetValue(key, out  value);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }

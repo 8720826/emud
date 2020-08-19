@@ -60,5 +60,10 @@ namespace Emprise.Domain.Core.Models
         /// RefuseFriend_{playerId}_{relationId}
         /// </summary>
         public const string RefuseFriend = "RefuseFriend_{0}_{1}";
+
+        /// <summary>
+        /// NpcFighting_{NpcId}
+        /// </summary>
+        public const string NpcFighting = "NpcFighting_{0}";
     }
 }

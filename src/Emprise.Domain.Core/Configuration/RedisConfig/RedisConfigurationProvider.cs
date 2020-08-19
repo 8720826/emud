@@ -55,16 +55,17 @@ namespace Emprise.Domain.Core.Configuration
 
         public async Task LoadData()
         {
-            var redis = ConnectionMultiplexer.Connect(_source.RedisString);
-            var configurations = redis.GetDatabase().HashGetAll(_source.ConfigKey);
+            await Task.Run(() =>
+            {
+                var redis = ConnectionMultiplexer.Connect(_source.RedisString);
+                var configurations = redis.GetDatabase().HashGetAll(_source.ConfigKey);
 
-            if (configurations.Length == 0)
-                return;
+                if (configurations.Length == 0)
+                    return;
 
-            var dictionary = configurations.ToDictionary(it => it.Name.ToString(), it => it.Value.ToString());
-            Data = new Dictionary<string, string>(dictionary, StringComparer.OrdinalIgnoreCase);
-
-
+                var dictionary = configurations.ToDictionary(it => it.Name.ToString(), it => it.Value.ToString());
+                Data = new Dictionary<string, string>(dictionary, StringComparer.OrdinalIgnoreCase);
+            });
         }
 
 

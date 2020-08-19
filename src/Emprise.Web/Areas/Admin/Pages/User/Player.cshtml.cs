@@ -30,7 +30,7 @@ namespace Emprise.Web.Areas.Admin.Pages.User
             _appConfig = appConfig.CurrentValue;
         }
 
-        public  UserEntity User { get; set; }
+        public new UserEntity User { get; set; }
         public List<PlayerEntity> Players { get; set; }
 
         public async Task OnGetAsync(int userId)
