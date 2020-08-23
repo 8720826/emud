@@ -4,6 +4,7 @@ using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Interfaces.Ioc;
+using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Queue.Models;
 using Emprise.Domain.ItemDrop.Models;
 using Emprise.Domain.ItemDrop.Services;
@@ -46,7 +47,7 @@ namespace Emprise.MudServer.Handles
         private readonly ISkillDomainService _skillDomainService;
         private readonly IPlayerSkillDomainService _playerSkillDomainService;
         private readonly INpcDomainService _npcDomainService;
-
+        private readonly IRedisDb _redisDb;
         public NpcStatusHandler(
             IMudProvider mudProvider, 
             IPlayerDomainService playerDomainService, 
@@ -61,6 +62,7 @@ namespace Emprise.MudServer.Handles
            ISkillDomainService skillDomainService,
            IPlayerSkillDomainService playerSkillDomainService,
            INpcDomainService npcDomainService,
+           IRedisDb redisDb,
             IMediatorHandler bus)
         {
             _mudProvider = mudProvider;
@@ -77,19 +79,32 @@ namespace Emprise.MudServer.Handles
             _skillDomainService = skillDomainService;
             _playerSkillDomainService = playerSkillDomainService;
             _npcDomainService = npcDomainService;
+            _redisDb = redisDb;
         }
         public async Task Execute(NpcStatusModel model)
         {
-            int playerId = model.PlayerId;
-            int targetId = model.TargetId;
+            int playerId = model.TargetId;
+            int npcId = model.NpcId;
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
             {
+                await _mudProvider.ShowMessage(player.Id, $"【切磋】1111111111111");
+                await StopAction(npcId);
                 return;
             }
-            var npc = await _npcDomainService.Get(targetId);
+            var npc = await _npcDomainService.Get(npcId);
             if (npc == null)
             {
+                await _mudProvider.ShowMessage(player.Id, $"【切磋】22222222222222");
+                await StopAction(npcId);
+                return;
+            }
+
+            var npcFightingPlayerId = await _redisDb.StringGet<int>(string.Format(RedisKey.NpcFighting, npc.Id));
+            if (npcFightingPlayerId != playerId)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"【切磋】{npcFightingPlayerId},{playerId},{npcId}");
+                await StopAction(npcId);
                 return;
             }
 
@@ -98,7 +113,11 @@ namespace Emprise.MudServer.Handles
         }
 
 
-
+        private async Task StopAction(int npcId)
+        {
+            await _recurringQueue.Remove<NpcStatusModel>($"npc_{npcId}");
+         
+        }
 
 
     }

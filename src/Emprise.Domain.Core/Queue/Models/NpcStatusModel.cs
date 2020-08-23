@@ -7,7 +7,7 @@ namespace Emprise.Domain.Core.Queue.Models
 {
     public class NpcStatusModel
     {
-        public int PlayerId { get; set; }
+        public int NpcId { get; set; }
 
         /// <summary>
         /// Npc状态

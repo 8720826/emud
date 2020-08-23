@@ -95,12 +95,20 @@
 
                 </div>
                 <span id="mypack" @@click="showMyPack">背包</span>
+
             </div>
 
         </div>
 
         <div>
-            <span class="myQuest" v-if="mainQuest.id" @@click="showQuestDetail(mainQuest.id)">{{mainQuest.name}}</span>
+            <span class="myQuest" v-if="mainQuest.id && myinfo.status!='切磋'" @@click="showQuestDetail(mainQuest.id)">{{mainQuest.name}}</span>
+
+            <span id="myFighting" class="twinkling" v-if="myinfo.status=='切磋'&&myBox!='fighting'"  @@click="showMyFighting">
+                你正在切磋中，点击进入切磋界面
+            </span>
+
+            <span id="myKilling" v-if="myinfo.status=='战斗'"  @@click="showMyKilling">战斗</span>
+
             <div id="message" ref="message">
 
                 <ul>
@@ -237,7 +245,7 @@
                         </button>
                     </div>
                 </div>
-                
+
 
                 <div class="status" v-if="myBox=='achv'">
                     <p>成就</p>
@@ -408,6 +416,13 @@
 
                         </li>
                     </ul>
+
+                </div>
+
+
+                <div class="mypack" v-if="myBox=='fighting'">
+
+                    切磋界面正在绘制中...
 
                 </div>
             </div>

@@ -382,6 +382,12 @@ new Vue({
                 that.myBox = "friend";
                 that.myFriends = result;
             });
+
+            connection.on("ShowBox", result => {
+                console.log("ShowBox:" + JSON.stringify(result));
+                that.myBox = result.boxName;
+            });
+            
             
         },
         move: function (roomId) {
@@ -636,6 +642,13 @@ new Vue({
                     connection.invoke("RefuseFriend", { relationId: id });
                     console.log("RefuseFriend=" + id);
             });
+        },
+        showMyFighting: function () {
+            var that = this;
+            that.myBox = "fighting";
+        },
+        showMyKilling: function () {
+
         }
     },
     watch: {

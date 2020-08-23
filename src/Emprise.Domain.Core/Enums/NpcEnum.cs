@@ -17,6 +17,7 @@ namespace Emprise.Domain.Core.Enums
         切磋 = 1,
 
         战斗 = 2,
+        移动 = 3
 
     }
 

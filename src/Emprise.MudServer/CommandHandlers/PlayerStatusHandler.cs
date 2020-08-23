@@ -60,7 +60,6 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IMemoryCache _cache;
         private readonly IMudOnlineProvider _mudOnlineProvider;
         private readonly IQueueHandler _queueHandler;
-        private readonly IPlayerRelationDomainService _playerRelationDomainService;
         private readonly INpcDomainService _npcDomainService;
 
 
@@ -82,7 +81,6 @@ namespace Emprise.MudServer.CommandHandlers
             INotificationHandler<DomainNotification> notifications,
             IMudOnlineProvider mudOnlineProvider,
             IQueueHandler queueHandler,
-            IPlayerRelationDomainService playerRelationDomainService,
             IUnitOfWork uow) : base(uow, bus, notifications)
         {
 
@@ -101,7 +99,6 @@ namespace Emprise.MudServer.CommandHandlers
             _redisDb = redisDb;
             _mudOnlineProvider = mudOnlineProvider;
             _queueHandler = queueHandler;
-            _playerRelationDomainService = playerRelationDomainService;
             _npcDomainService = npcDomainService;
         }
 
@@ -303,14 +300,10 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
             var npcFightingPlayerId = await _redisDb.StringGet<int>(string.Format(RedisKey.NpcFighting, npc.Id));
-            if (npcFightingPlayerId == playerId)
-            {
-                return Unit.Value;
-            }
-
-            if (npcFightingPlayerId > 0)
+            if (npcFightingPlayerId > 0 && npcFightingPlayerId != playerId)
             {
                 await _bus.RaiseEvent(new DomainNotification($"[{npc.Name}]拒绝了你的切磋请求！"));
+                return Unit.Value;
             }
 
 
@@ -329,16 +322,17 @@ namespace Emprise.MudServer.CommandHandlers
 
                 await _mudProvider.ShowMessage(playerId, $"【切磋】[{npc.Name}]说道：「既然小兄弟赐教，在下只好奉陪，我们点到为止。」");
 
-                await _redisDb.StringSet(string.Format(RedisKey.NpcFighting, npc.Id), playerId);
-
+                await _redisDb.StringSet(string.Format(RedisKey.NpcFighting, npc.Id), playerId, DateTime.Now.AddSeconds(20));
 
                 await _recurringQueue.Publish($"npc_{npc.Id}", new NpcStatusModel
                 {
-                    PlayerId = player.Id,
+                    NpcId = npc.Id,
                     Status = NpcStatusEnum.切磋,
                     TargetId = playerId,
                     TargetType = TargetTypeEnum.玩家
                 }, 5, 15);
+
+                await _mudProvider.ShowBox(playerId, new { boxName = "fighting" });
             }
 
 
