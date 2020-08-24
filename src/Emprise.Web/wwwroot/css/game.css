@@ -1051,3 +1051,46 @@ footer a span {
         /*-webkit-transform: scale(0.8);*/
     }
 }
+
+
+.fighting {
+
+}
+
+.fightingBox{
+    display:flex;
+    margin-top:5px;
+}
+
+.fightingTarget {
+    width: 100px;
+    text-align: left;
+    margin:10px;
+}
+
+    .fightingTarget .targetName {
+        padding: 2px;
+    }
+
+    .fightingTarget .hp {
+        background: #333;
+    }
+
+    .fightingTarget .hpLine {
+        background: #FF0000;
+        height: 2px;
+    }
+
+    .fightingTarget .mp {
+        background: #333;
+    }
+
+    .fightingTarget .mpLine {
+        background: #1c86ee;
+        height: 2px;
+    }
+
+    .fighting_command {
+        position: absolute;
+        bottom: 0;
+    }

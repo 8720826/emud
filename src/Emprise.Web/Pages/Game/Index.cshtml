@@ -420,10 +420,29 @@
                 </div>
 
 
-                <div class="mypack" v-if="myBox=='fighting'">
-
-                    切磋界面正在绘制中...
-
+                <div class="fighting" v-if="myBox=='fighting'">
+                    <div class="fightingBox">
+                        <div class="fightingTarget" v-for="fightTarget,index in fightTargets">
+                            <div class="hp">
+                                <div class="hpLine" :style="        'width:'+ (fightTarget.hp > fightTarget.maxHp ? 100 : (fightTarget.hp + 1) * 100 / (fightTarget.maxHp + 1)) +'px'"></div>
+                            </div>
+                            <div class="mp">
+                                <div class="mpLine" :style="'width:'+ (fightTarget.mp > fightTarget.maxMp ? 100 : (fightTarget.mp + 1) * 100 / (fightTarget.maxMp + 1)) +'px'"></div>
+                            </div>
+                            <div class="targetName">
+                                <span>{{fightTarget.targetName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fighting_command">
+                        <button>按钮</button>
+                        <button>按钮</button>
+                        <button>按钮</button>
+                        <button>按钮</button>
+                        <button>按钮</button>
+                        <button>按钮</button>
+                        <button>按钮</button>
+                    </div>
                 </div>
             </div>
         </div>

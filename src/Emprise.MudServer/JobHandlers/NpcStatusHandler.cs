@@ -17,6 +17,7 @@ using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Entity;
 using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Events;
+using Emprise.MudServer.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -88,14 +89,12 @@ namespace Emprise.MudServer.Handles
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
             {
-                await _mudProvider.ShowMessage(player.Id, $"【切磋】1111111111111");
                 await StopAction(npcId);
                 return;
             }
             var npc = await _npcDomainService.Get(npcId);
             if (npc == null)
             {
-                await _mudProvider.ShowMessage(player.Id, $"【切磋】22222222222222");
                 await StopAction(npcId);
                 return;
             }
@@ -109,6 +108,18 @@ namespace Emprise.MudServer.Handles
             }
 
             await _mudProvider.ShowMessage(player.Id, $"【切磋】[{npc.Name}]正在攻击你。。。");
+
+
+            await _mudProvider.AddFightingTarget(player.Id, new FightingTargetModel
+            {
+                TargetId = npcId,
+                TargetName = npc.Name,
+                Hp = npc.Hp,
+                Mp = npc.Mp,
+                MaxHp = npc.MaxHp,
+                MaxMp = npc.MaxMp,
+                TargetType = TargetTypeEnum.Npc
+            });
 
         }
 

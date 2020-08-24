@@ -83,5 +83,22 @@ namespace Emprise.Domain.Npc.Entity
 
         public bool IsDead { set; get; }
 
-}
+        /// <summary>
+        /// 气血
+        /// </summary>
+        public int Hp { set; get; }
+
+        /// <summary>
+        /// 最大气血
+        /// </summary>
+        public int MaxHp { set; get; }
+
+        public int Mp { set; get; }
+
+        /// <summary>
+        /// 最大内力
+        /// </summary>
+        public int MaxMp { set; get; }
+
+    }
 }

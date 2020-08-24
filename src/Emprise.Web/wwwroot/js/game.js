@@ -67,7 +67,8 @@ new Vue({
         myWare: null,
         quest: null,
         myFriends: {},
-        friendSkills:[]
+        friendSkills: [],
+        fightTargets:[]
     },
     computed: {
         getMenus() {
@@ -386,6 +387,21 @@ new Vue({
             connection.on("ShowBox", result => {
                 console.log("ShowBox:" + JSON.stringify(result));
                 that.myBox = result.boxName;
+            });
+
+            connection.on("AddFightingTarget", result => {
+                console.log("AddFightingTarget:" + JSON.stringify(result));
+                var hasTarget = false;
+                for (var i = 0; i < that.fightTargets.length; i++) {
+                    if (that.fightTargets[i].targetId == result.targetId && that.fightTargets[i].targetType == result.targetType) {
+                        that.fightTargets[i].hp = result.hp;
+                        that.fightTargets[i].mp = result.mp;
+                        hasTarget = true;
+                    }
+                }
+                if(!hasTarget){
+                    that.fightTargets.push(result);
+                }
             });
             
             

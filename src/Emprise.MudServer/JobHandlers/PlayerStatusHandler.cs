@@ -17,6 +17,7 @@ using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Entity;
 using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Events;
+using Emprise.MudServer.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -445,6 +446,17 @@ namespace Emprise.MudServer.Handles
 
 
             await _mudProvider.ShowMessage(player.Id, $"【切磋】你正在攻击[{npc.Name}]。。。");
+
+            await _mudProvider.AddFightingTarget(player.Id, new FightingTargetModel
+            {
+                TargetId = npc.Id,
+                TargetName = npc.Name,
+                Hp = npc.Hp,
+                Mp = npc.Mp,
+                MaxHp = npc.MaxHp,
+                MaxMp = npc.MaxMp,
+                TargetType = TargetTypeEnum.Npc
+            });
         }
 
         private async Task FightingPlayer(PlayerEntity player, PlayerEntity target)

@@ -392,5 +392,10 @@ namespace Emprise.MudServer.Hubs
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowBox", obj);
         }
+
+        public async Task AddFightingTarget(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("AddFightingTarget", obj);
+        }
     }
 }
