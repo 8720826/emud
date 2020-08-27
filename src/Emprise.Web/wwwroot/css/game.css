@@ -1054,8 +1054,10 @@ footer a span {
 
 
 .fighting {
-
+    line-height:35px;
 }
+
+
 
 .fightingBox{
     display:flex;
@@ -1090,7 +1092,56 @@ footer a span {
         height: 2px;
     }
 
-    .fighting_command {
-        position: absolute;
-        bottom: 0;
+.fighting .fighting_status{
+    position:absolute;
+    bottom:0px;
+}
+
+.fighting_command_wg {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    background: #2F4056;
+    margin: 5px 10px;
+}
+
+.fighting_command_qg {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    background: #2F4056;
+    margin: 5px 10px;
+}
+
+.fighting_command_ng {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    background: #2F4056;
+    margin: 5px 10px;
+}
+
+.fighting button {
+    margin: 5px 10px;
+}
+
+
+.fighting_bar {
+    margin: 10px;
+}
+
+    .fighting_bar .cd_title {
+        height: 20px;
+        display: inline;
+    }
+
+    .fighting_bar .cd {
+        background: #2F4056;
+        height: 5px;
+    }
+
+
+    .fighting_bar .cdLine {
+        height: 5px;
+        background: #ae9455;
     }

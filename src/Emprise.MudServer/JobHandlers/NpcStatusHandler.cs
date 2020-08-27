@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.MudServer.Handles
 {
-    public interface INpcStatusHandler : IScoped
+    public interface INpcStatusHandler : ITransient
     {
         Task Execute(NpcStatusModel model);
     }
