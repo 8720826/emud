@@ -97,5 +97,7 @@ namespace Emprise.Domain.Core.Interfaces
         Task ShowBox(int playerId, object obj);
 
         Task AddFightingTarget(int playerId, object obj);
+
+        Task ShowRemainingTime(int playerId, object obj);
     }
 }

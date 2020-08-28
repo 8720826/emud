@@ -13,6 +13,8 @@ namespace Emprise.Domain.Core.Bus
     {
         Task<bool> Publish<T>(string uniqueId, T t, int delayMin, int delayMax = 0);
 
+        Task<int> GetRemainingTime<T>(string uniqueId);
+
         //Task<bool> Publish<T>(T t, int delay, DateTime? endtime);
 
         Task<Dictionary<string, T>> Subscribe<T>();

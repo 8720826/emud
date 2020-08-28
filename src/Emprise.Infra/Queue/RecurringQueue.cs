@@ -103,6 +103,28 @@ namespace Emprise.Infra.Bus
             return list;
         }
 
+
+        public async Task<int> GetRemainingTime<T>(string uniqueId)
+        {
+            var channel = typeof(T).Name.ToLower();
+            var key = $"{queueName}_{channel}";
+            var dic = await _redisDb.HashGetAll<QueueData<T>>(key);
+            if (dic == null || dic.Count == 0)
+            {
+                return 0;
+            }
+
+            if (!dic.ContainsKey(uniqueId))
+            {
+                return 0;
+            }
+
+            var delayTime = dic[uniqueId].DelayTime;
+
+            return (int)delayTime.Subtract(DateTime.Now).TotalMilliseconds;
+
+        }
+
         private async Task<Dictionary<string, QueueData<T>>> GetAll<T>(string channel)
         {
             var key = $"{queueName}_{channel}";

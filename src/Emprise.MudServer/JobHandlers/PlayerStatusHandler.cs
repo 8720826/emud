@@ -112,7 +112,11 @@ namespace Emprise.MudServer.Handles
                 return;
             }
 
-          
+            var remainingTime = await _recurringQueue.GetRemainingTime<PlayerStatusModel>($"player_{playerId}");
+
+
+            await _mudProvider.ShowRemainingTime(playerId, remainingTime);
+
             //TODO
             switch (model.Status)
             {

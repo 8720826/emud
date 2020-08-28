@@ -424,7 +424,7 @@
                     <div class="fightingBox">
                         <div class="fightingTarget" v-for="fightTarget,index in fightTargets">
                             <div class="hp">
-                                <div class="hpLine" :style="        'width:'+ (fightTarget.hp > fightTarget.maxHp ? 100 : (fightTarget.hp + 1) * 100 / (fightTarget.maxHp + 1)) +'px'"></div>
+                                <div class="hpLine" :style="'width:'+ (fightTarget.hp > fightTarget.maxHp ? 100 : (fightTarget.hp + 1) * 100 / (fightTarget.maxHp + 1)) +'px'"></div>
                             </div>
                             <div class="mp">
                                 <div class="mpLine" :style="'width:'+ (fightTarget.mp > fightTarget.maxMp ? 100 : (fightTarget.mp + 1) * 100 / (fightTarget.maxMp + 1)) +'px'"></div>
@@ -437,20 +437,25 @@
 
                     <div class="fighting_status">
                         <div class="fighting_bar">
-                            <div class="cd_title">攻击准备中...</div>
+                            <div class="cd_title">攻击准备中,默认使用普通攻击(等待{{remainingTime/1000}}秒)...</div>
                             <div class="cd">
-                                <div class="cdLine" style="width:50px"></div>
+                                <div class="cdLine" :style="'width:'+ (maxRemainingTime>0?remainingTime*100/maxRemainingTime:0) +'%'"></div>
+                            </div>
+                        </div>
+
+                        <div class="fighting_bar">
+                            <div class="cd_title">行动点数 {{actionPoint}}</div>
+                            <div class="action">
+                                <div class="actionLine" :style="'width:'+ (actionPoint/10)*100 +'%'"></div>
                             </div>
                         </div>
 
                         <div class="fighting_command_wg">
-                            <button>刀法1</button>
-                            <button>刀法2</button>
-                            <button>刀法3</button>
-                            <button>刀法4</button>
-                            <button>刀法5</button>
-                            <button>刀法6</button>
-                            <button>刀法7</button>
+                            <button>刀法lv.1(1)</button>
+                            <button>刀法lv.11(2)</button>
+                            <button>刀法lv.1111(4)</button>
+                            <button>刀法lv.121(5)</button>
+                            <button>刀法lv.113(1)</button>
                         </div>
                         <div class="fighting_command_qg">
                             <button>轻功1</button>

@@ -1,4 +1,4 @@
-﻿Vue.directive('long', {
+﻿/*Vue.directive('long', {
     inserted(el, binding) {
         var methods = {
             timer: null,
@@ -19,7 +19,7 @@
         el.addEventListener('mouseup', methods.gtouchend.bind(methods));
     }
 });
-
+*/
 new Vue({
     el: '#app',
     data: {
@@ -56,6 +56,7 @@ new Vue({
             callback: null
         },
         timer: null,
+        statusTimer: null,
         mainQuest: {},
         myPack: {},
         unreadEmailCount: 0,
@@ -68,7 +69,10 @@ new Vue({
         quest: null,
         myFriends: {},
         friendSkills: [],
-        fightTargets:[]
+        fightTargets: [],
+        maxRemainingTime:0,
+        remainingTime: 0,
+        actionPoint: 0
     },
     computed: {
         getMenus() {
@@ -160,6 +164,21 @@ new Vue({
             this.timer = setInterval(() => {
                 connection.invoke("Ping");
             }, 1000 * 60);
+        },
+        checkStatusTime: function () {
+            var that = this;
+            that.statusTimer = setInterval(() => {
+                if (that.remainingTime > 0) {
+                    that.remainingTime -= 100;
+                    if (that.remainingTime < 0) {
+                        that.remainingTime = 0;
+                    }
+                    if (that.actionPoint < 10) {
+                        that.actionPoint++;
+                    }
+                  
+                }
+            }, 100);
         },
         joinGame: function () {
             var that = this;
@@ -403,7 +422,21 @@ new Vue({
                     that.fightTargets.push(result);
                 }
             });
-            
+
+            connection.on("ShowRemainingTime", result => {
+                console.log("ShowRemainingTime:" + JSON.stringify(result));
+                if (result > 0) {
+                    that.remainingTime = result;
+                    that.maxRemainingTime = result;
+                }
+            });
+
+            connection.on("ShowActionPoint", result => {
+                console.log("ShowActionPoint:" + JSON.stringify(result));
+                if (result >= 0) {
+                    that.actionPoint = result;
+                }
+            });
             
         },
         move: function (roomId) {
@@ -715,10 +748,13 @@ new Vue({
     mounted: function () {
         this.joinGame();
         clearInterval(this.timer);
+        clearInterval(this.statusTimer);
         this.ping();
+        this.checkStatusTime();
     },
     beforeDestroy() {
         clearInterval(this.timer);
+        clearInterval(this.statusTimer);
     }
 });
 
