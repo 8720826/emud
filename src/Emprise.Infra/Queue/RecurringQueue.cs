@@ -41,12 +41,16 @@ namespace Emprise.Infra.Bus
             var key = $"{queueName}_{channel}";
             Random rnd = new Random();
             var delay = delayMax > delayMin ? rnd.Next(delayMin, delayMax) : delayMin;
+            if (delay < 2000)
+            {
+                delay = 2000;
+            }
             var message = new QueueData<T>
             {
                 DelayMin = delayMin,
                 DelayMax = delayMax,
                 Data = t,
-                DelayTime = DateTime.Now.AddSeconds(delay)
+                DelayTime = DateTime.Now.AddMilliseconds(delay)
             };
 
             var isSuccess = await _redisDb.HashSet(key, uniqueId, message);
@@ -83,9 +87,12 @@ namespace Emprise.Infra.Bus
                 }
 
                 var delay = itemValue.DelayMax > itemValue.DelayMin ? rnd.Next(itemValue.DelayMin, itemValue.DelayMax) : itemValue.DelayMin;
-
+                if (delay < 2000)
+                {
+                    delay = 2000;
+                } 
                 //下次消费时间
-                itemValue.DelayTime = DateTime.Now.AddSeconds(delay);
+                itemValue.DelayTime = DateTime.Now.AddMilliseconds(delay);
 
                 if (!list.ContainsKey(uniqueId))
                 {

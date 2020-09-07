@@ -447,7 +447,15 @@ namespace Emprise.MudServer.Handles
 
         private async Task FightingNpc(PlayerEntity player, NpcEntity npc)
         {
+            var actionPoint = await _redisDb.StringGet<int>(string.Format(RedisKey.ActionPoint, player.Id));
+            if (actionPoint < 10)
+            {
+                actionPoint++;
+                await _redisDb.StringSet(string.Format(RedisKey.ActionPoint, player.Id), actionPoint);
+            }
 
+
+            await _mudProvider.ShowActionPoint(player.Id, actionPoint);
 
             await _mudProvider.ShowMessage(player.Id, $"【切磋】你正在攻击[{npc.Name}]。。。");
 

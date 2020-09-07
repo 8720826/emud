@@ -173,10 +173,7 @@ new Vue({
                     if (that.remainingTime < 0) {
                         that.remainingTime = 0;
                     }
-                    if (that.actionPoint < 10) {
-                        that.actionPoint++;
-                    }
-                  
+
                 }
             }, 100);
         },

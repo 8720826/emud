@@ -65,5 +65,11 @@ namespace Emprise.Domain.Core.Models
         /// NpcFighting_{NpcId}
         /// </summary>
         public const string NpcFighting = "NpcFighting_{0}";
+
+
+        /// <summary>
+        /// ActionPoint_{playerId}
+        /// </summary>
+        public const string ActionPoint = "ActionPoint_{0}";
     }
 }

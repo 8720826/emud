@@ -324,13 +324,19 @@ namespace Emprise.MudServer.CommandHandlers
 
                 await _redisDb.StringSet(string.Format(RedisKey.NpcFighting, npc.Id), playerId, DateTime.Now.AddSeconds(20));
 
+                int minDelay = npc.Speed;
+                int maxDelay = minDelay + 1000;
+
+                var actionPoint = await _redisDb.StringGet<int>(string.Format(RedisKey.ActionPoint, playerId));
+                await _mudProvider.ShowActionPoint(playerId, actionPoint);
+
                 await _recurringQueue.Publish($"npc_{npc.Id}", new NpcStatusModel
                 {
                     NpcId = npc.Id,
                     Status = NpcStatusEnum.切磋,
                     TargetId = playerId,
                     TargetType = TargetTypeEnum.玩家
-                }, 5, 15);
+                }, minDelay, maxDelay);
 
                 await _mudProvider.ShowBox(playerId, new { boxName = "fighting" });
             }
@@ -366,6 +372,9 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
             var workTimes = await _redisDb.StringGet<int>(string.Format(RedisKey.WorkTimes, playerId, newStatus));
+
+            int minDelay = 5000;
+            int maxDelay = 15000;
 
             switch (newStatus)
             {
@@ -459,7 +468,8 @@ namespace Emprise.MudServer.CommandHandlers
 
                 case PlayerStatusEnum.切磋:
 
-                    
+                    minDelay = player.Speed;
+                    maxDelay = minDelay + 1000;
 
                     break;
 
@@ -483,7 +493,7 @@ namespace Emprise.MudServer.CommandHandlers
                 Status = newStatus,
                 TargetType = targetType,
                 TargetId = targetId
-            }, 5, 15);
+            }, minDelay, maxDelay);
 
             if (await Commit())
             {

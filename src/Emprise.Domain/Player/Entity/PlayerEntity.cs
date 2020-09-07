@@ -251,6 +251,11 @@ namespace Emprise.Domain.Player.Entity
         [ConditionField(PlayerConditionFieldEnum.可分配点数)]
         public int Point { set; get; }
 
+        /// <summary>
+        /// 攻击速度（毫秒）
+        /// </summary>
+        public int Speed { set; get; }
+
 
     }
 }

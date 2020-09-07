@@ -402,6 +402,11 @@ namespace Emprise.MudServer.Hubs
         {
             await _context.Clients.User(playerId.ToString()).SendAsync("ShowRemainingTime", obj);
         }
+
+        public async Task ShowActionPoint(int playerId, object obj)
+        {
+            await _context.Clients.User(playerId.ToString()).SendAsync("ShowActionPoint", obj);
+        }
         
     }
 }

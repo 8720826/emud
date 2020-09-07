@@ -100,5 +100,10 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public int MaxMp { set; get; }
 
+        /// <summary>
+        /// 攻击速度（毫秒）
+        /// </summary>
+        public int Speed { set; get; }
+
     }
 }

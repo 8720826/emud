@@ -175,5 +175,11 @@ namespace Emprise.Domain.Player.Models
         /// 可分配点数
         /// </summary>
         public int Point { set; get; }
+
+
+        /// <summary>
+        /// 攻击速度（毫秒）
+        /// </summary>
+        public int Speed { set; get; }
     }
 }
