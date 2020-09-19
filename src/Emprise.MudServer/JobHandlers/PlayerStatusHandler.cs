@@ -451,8 +451,17 @@ namespace Emprise.MudServer.Handles
             if (actionPoint < 10)
             {
                 actionPoint++;
-                await _redisDb.StringSet(string.Format(RedisKey.ActionPoint, player.Id), actionPoint);
             }
+
+            Random random = new Random();
+
+            actionPoint -= random.Next(0, 4);
+            if (actionPoint <= 0)
+            {
+                actionPoint = 0;
+            }
+
+            await _redisDb.StringSet(string.Format(RedisKey.ActionPoint, player.Id), actionPoint);
 
 
             await _mudProvider.ShowActionPoint(player.Id, actionPoint);

@@ -1,26 +1,4 @@
-﻿/*Vue.directive('long', {
-    inserted(el, binding) {
-        var methods = {
-            timer: null,
-            msg: binding.value,
-            gtouchstart() {
-                this.timer = setTimeout(() => {
-                    this.show(this.msg);
-                }, 500);
-            },
-            gtouchend() {
-                clearTimeout(this.timer);
-            },
-            show() {
-                alert(this.msg);
-            }
-        };
-        el.addEventListener('mousedown', methods.gtouchstart.bind(methods));
-        el.addEventListener('mouseup', methods.gtouchend.bind(methods));
-    }
-});
-*/
-new Vue({
+﻿new Vue({
     el: '#app',
     data: {
         connection: null,

@@ -33,10 +33,6 @@ namespace Emprise.Infra.Bus
 
         public async Task<bool> Publish<T>(string uniqueId, T t, int delayMin, int delayMax = 0)
         {
-            if (delayMin <= 0)
-            {
-                return await Task.FromResult(false);
-            }
             var channel = t.GetType().Name.ToLower();
             var key = $"{queueName}_{channel}";
             Random rnd = new Random();
