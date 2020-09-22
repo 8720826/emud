@@ -55,7 +55,7 @@ namespace Emprise.Application.Player.Services
 
         public async Task<PlayerEntity> GetUserPlayer(int userId)
         {
-            return await _playerDomainService.GetUserPlayer(userId);
+            return await _playerDomainService.Get(x => x.UserId == userId);
         }
 
         public async Task<PlayerEntity> Get(int id)

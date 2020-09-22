@@ -10,15 +10,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.User.Services
 {
-    public interface IUserDomainService : IBaseService
+    public interface IUserDomainService : IBaseDomainService<UserEntity>
     {
-        Task<IQueryable<UserEntity>> GetAll();
-        Task<UserEntity> Get(Expression<Func<UserEntity, bool>> where);
 
-        Task<UserEntity> Get(int id);
-
-        Task Add(UserEntity user);
-
-        Task Update(UserEntity user);
     }
 }

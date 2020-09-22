@@ -40,6 +40,10 @@ namespace Emprise.Domain.Npc.Entity
         /// </summary>
         public int RoomId { set; get; }
 
+        /// <summary>
+        /// 是否可以聊天
+        /// </summary>
+        public bool CanChat { set; get; }
 
         /// <summary>
         /// 是否可以攻击
@@ -67,6 +71,11 @@ namespace Emprise.Domain.Npc.Entity
         /// 容貌
         /// </summary>
         public int Per { set; get; }
+
+        /// <summary>
+        /// 福源
+        /// </summary>
+        public int Kar { set; get; }
 
         /// <summary>
         /// 实战经验

@@ -59,7 +59,7 @@ namespace Emprise.MudServer.JobHandlers
                 player.Level += 1;
                 player.Point += 1;
 
-                player =  await _playerDomainService.Computed(player);
+                player.Computed();
 
                 await _playerDomainService.Update(player);
 

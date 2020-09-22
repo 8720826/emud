@@ -257,6 +257,16 @@ namespace Emprise.Domain.Player.Entity
         public int Speed { set; get; }
 
 
+
+        public void Computed()
+        {
+            MaxHp = (Str * 3 + StrAdd) * 10 + Level * 5 + 100;
+            LimitMp = ((Con * 4 + ConAdd) * 10 + Level * 5 + 100) * 10;
+            if (MaxMp * 10 < LimitMp)
+            {
+                MaxMp = LimitMp / 10;
+            }
+        }
     }
 }
 

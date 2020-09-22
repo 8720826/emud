@@ -9,23 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Player.Services
 {
-    public interface IPlayerDomainService : IBaseService
+    public interface IPlayerDomainService : IBaseDomainService<PlayerEntity>
     {
-        Task<IQueryable<PlayerEntity>> GetAll();
 
-
-        Task<PlayerEntity> Get(Expression<Func<PlayerEntity, bool>> where);
-
-        Task<PlayerEntity> Get(int id);
-
-        Task Add(PlayerEntity player);
-
-        Task Update(PlayerEntity player);
-
-        Task Delete(PlayerEntity player);
-
-        Task<PlayerEntity> Computed(PlayerEntity player);
-
-        Task<PlayerEntity> GetUserPlayer(int userId);
     }
 }

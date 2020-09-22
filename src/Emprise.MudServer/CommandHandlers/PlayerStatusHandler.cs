@@ -50,7 +50,6 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IHttpContextAccessor _httpAccessor;
         private readonly IMapper _mapper;
         private readonly IPlayerDomainService _playerDomainService;
-        private readonly IRoomDomainService _roomDomainService;
         private readonly IAccountContext _account;
         private readonly IDelayedQueue _delayedQueue;
         private readonly IRecurringQueue _recurringQueue;
@@ -70,7 +69,6 @@ namespace Emprise.MudServer.CommandHandlers
             IMapper mapper,
             IPlayerDomainService playerDomainService,
             INpcDomainService npcDomainService,
-            IRoomDomainService roomDomainService,
             IAccountContext account,
             IDelayedQueue delayedQueue,
             IRecurringQueue recurringQueue,
@@ -90,7 +88,6 @@ namespace Emprise.MudServer.CommandHandlers
             _httpAccessor = httpAccessor;
             _mapper = mapper;
             _playerDomainService = playerDomainService;
-            _roomDomainService = roomDomainService;
             _account = account;
             _delayedQueue = delayedQueue;
             _recurringQueue = recurringQueue;

@@ -80,7 +80,7 @@ namespace Emprise.MudServer.EventHandlers
             await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpc, playerId, npcId), 1, DateTime.Now.AddDays(30));
 
 
-
+            await _redisDb.StringSet<int>(string.Format(RedisKey.ChatWithNpcLike, playerId, npcId), 1, DateTime.Now.AddHours(1));
 
         }
     }

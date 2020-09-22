@@ -33,16 +33,20 @@ using Emprise.Domain.Ware.Services;
 using Emprise.Domain.Quest.Entity;
 using Emprise.Domain.Quest.Services;
 using System.Reflection;
+using Emprise.MudServer.Commands.NpcCommands;
+using Emprise.Domain.NpcRelation.Services;
+using Emprise.Domain.NpcRelation.Entity;
 
 namespace Emprise.MudServer.CommandHandlers
 {
     
     public class NpcCommandHandler : CommandHandler,
         IRequestHandler<ShowNpcCommand, Unit>,
-        
         IRequestHandler<KillNpcCommand, Unit>,
         IRequestHandler<GiveToNpcCommand, Unit>,
-        IRequestHandler<NpcScriptCommand, Unit>
+        IRequestHandler<NpcScriptCommand, Unit>,
+        IRequestHandler<ChatWithNpcCommand, Unit>
+        
 
     {
         private readonly IMediatorHandler _bus;
@@ -56,6 +60,8 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IPlayerWareDomainService _playerWareDomainService;
         private readonly IQuestDomainService _questDomainService;
         private readonly IPlayerQuestDomainService _playerQuestDomainService;
+        private readonly INpcRelationDomainService _npcRelationDomainService;
+
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
         private readonly IRedisDb _redisDb;
@@ -74,6 +80,7 @@ namespace Emprise.MudServer.CommandHandlers
             IPlayerWareDomainService playerWareDomainService,
             IQuestDomainService questDomainService,
             IPlayerQuestDomainService playerQuestDomainService,
+            INpcRelationDomainService npcRelationDomainService,
             IMapper mapper,
             IMemoryCache cache, 
             IRedisDb redisDb,
@@ -95,6 +102,7 @@ namespace Emprise.MudServer.CommandHandlers
             _playerWareDomainService = playerWareDomainService;
             _questDomainService = questDomainService;
             _playerQuestDomainService = playerQuestDomainService;
+            _npcRelationDomainService = npcRelationDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
         }
@@ -118,6 +126,11 @@ namespace Emprise.MudServer.CommandHandlers
 
             npcInfo.Name = npc.Name;
             string genderStr = npc.Gender.ToGender();
+
+            if (npc.CanChat)
+            {
+                npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.闲聊.ToString() });
+            }
 
             if (npc.Type == NpcTypeEnum.人物)
             {
@@ -158,7 +171,7 @@ namespace Emprise.MudServer.CommandHandlers
             await _mudProvider.ShowNpc(playerId, npcInfo);
 
 
-            await _bus.RaiseEvent(new ChatWithNpcEvent(playerId, npc.Id)).ConfigureAwait(false);
+         
 
 
 
@@ -247,129 +260,74 @@ namespace Emprise.MudServer.CommandHandlers
             await DoScript(player, npc, scriptId, commandId, input);
 
 
-            /*
-
-            var npcScripts = (await _npcScriptDomainService.GetAll()).Where(x => x.NpcId == npc.Id);
-            var scriptIds = npcScripts.Select(x => x.ScriptId).ToList();
-            if (!scriptIds.Contains(scriptId))
-            {
-                //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                return Unit.Value;
-            }
-
-            var script = await _scriptDomainService.Get(scriptId);
-            if (script == null)
-            {
-                //await _bus.RaiseEvent(new DomainNotification($"脚本不存在！"));
-                return Unit.Value;
-            }
-            ScriptCommandEntity scriptCommand;
-            var scriptCommands = await _scriptCommandDomainService.Query(x => x.ScriptId == scriptId);
-            if (commandId == 0)
-            {
-                scriptCommand = scriptCommands.FirstOrDefault(x => x.IsEntry);
-            }
-            else
-            {
-                scriptCommand = scriptCommands.FirstOrDefault(x => x.Id == commandId);
-            }
-
-            if (scriptCommand == null)
-            {
-                return Unit.Value;
-            }
-
-            if (!scriptCommand.IsEntry)
-            {
-                var key = string.Format(RedisKey.CommandIds, player.Id, npc.Id, scriptId);
-                var commandIds = await _redisDb.StringGet<List<int>>(key);
-                if (commandIds == null || !commandIds.Contains(scriptCommand.Id))
-                {
-                    return Unit.Value;
-                }
-            }
-
-            var checkIf = true;//判断if条件是否为true
-
-            var caseIfStr = scriptCommand.CaseIf;
-
-
-            if (!string.IsNullOrEmpty(caseIfStr))
-            {
-                List<CaseIf> caseIfs = new List<CaseIf>();
-                try
-                {
-                    caseIfs = JsonConvert.DeserializeObject<List<CaseIf>>(caseIfStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Convert CaseIf:{ex}");
-                }
-
-                foreach (var caseIf in caseIfs)
-                {
-                    checkIf = await CheckIf(player, caseIf.Condition, caseIf.Attrs, input);
-                    if (!checkIf)
-                    {
-                        break;
-                    }
-                }
-            }
-
-
-            if (checkIf)
-            {
-                //执行then分支
-                var caseThenStr = scriptCommand.CaseThen;
-
-
-                if (!string.IsNullOrEmpty(caseThenStr))
-                {
-                    List<CaseThen> caseThens = new List<CaseThen>();
-                    try
-                    {
-                        caseThens = JsonConvert.DeserializeObject<List<CaseThen>>(caseThenStr);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Convert CaseThen:{ex}");
-                    }
-
-
-                    foreach (var caseThen in caseThens)
-                    {
-                        await DoCommand(player, npc, scriptId, caseThen.Command, caseThen.Attrs, input);
-                    }
-                }
-            }
-            else
-            {
-                //执行else分支
-                var caseElseStr = scriptCommand.CaseElse;
-                if (!string.IsNullOrEmpty(caseElseStr))
-                {
-                    List<CaseElse> caseElses = new List<CaseElse>();
-                    try
-                    {
-                        caseElses = JsonConvert.DeserializeObject<List<CaseElse>>(caseElseStr);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"Convert CaseElse:{ex}");
-                    }
-
-                    foreach (var caseElse in caseElses)
-                    {
-                        await DoCommand(player, npc, scriptId, caseElse.Command, caseElse.Attrs, input);
-                    }
-                }
-            }
-
-            */
             return Unit.Value;
         }
 
+        public async Task<Unit> Handle(ChatWithNpcCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
 
+            var npcId = command.NpcId;
+            var npc = await _npcDomainService.Get(npcId);
+            if (npc == null)
+            {
+                return Unit.Value;
+            }
+
+            if (npc.Type != NpcTypeEnum.人物)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"指令 错误！"));
+                return Unit.Value;
+            }
+
+
+            await _mudProvider.ShowMessage(player.Id, $"与 [{npc.Name}] 闲聊中...");
+
+            var chatWithNpcLike = await _redisDb.StringGet<int>(string.Format(RedisKey.ChatWithNpcLike, playerId, npcId));
+            if (chatWithNpcLike > 0)
+            {
+                return Unit.Value;
+            }
+
+            Random random = new Random();
+
+            int kar = Math.Abs(npc.Kar - player.Kar);
+
+            if (random.Next(1, 100) > kar)
+            {
+                var npcRelation = await _npcRelationDomainService.Get(x => x.PlayerId == player.Id && x.NpcId == npcId);
+                if (npcRelation == null)
+                {
+                    npcRelation = new NpcRelationEntity
+                    {
+                        CreatedTime = DateTime.Now,
+                        NpcId = npcId,
+                        Liking = 1,
+                        PlayerId = player.Id
+                    };
+                    await _npcRelationDomainService.Add(npcRelation);
+                }
+                else
+                {
+                    if (npcRelation.Liking < 20)
+                    {
+                        npcRelation.Liking++;
+                        await _npcRelationDomainService.Update(npcRelation);
+                    }
+                }
+
+                await _mudProvider.ShowMessage(player.Id, $"交谈甚欢，与[{npc.Name}]的好感度上升");
+            }
+
+            await _bus.RaiseEvent(new ChatWithNpcEvent(playerId, npc.Id)).ConfigureAwait(false);
+
+            return Unit.Value;
+        }
         #region NpcScript
 
 

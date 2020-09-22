@@ -1,4 +1,5 @@
 ﻿using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Services;
 using Emprise.Domain.User.Entity;
 using System;
 using System.Collections.Generic;
@@ -10,40 +11,14 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.User.Services
 {
-    public class UserDomainService : IUserDomainService
+    public class UserDomainService : BaseDomainService<UserEntity>, IUserDomainService
     {
         private readonly IRepository<UserEntity> _userRepository;
 
-        public UserDomainService(IRepository<UserEntity> userRepository)
+        public UserDomainService(IRepository<UserEntity> userRepository):base(userRepository)
         {
             _userRepository = userRepository;
         }
-
-        public async Task<IQueryable<UserEntity>> GetAll()
-        {
-            return await _userRepository.GetAll();
-        }
-
-        public async Task<UserEntity> Get(Expression<Func<UserEntity, bool>> where)
-        {
-            return await _userRepository.Get(where);
-        }
-
-        public async Task<UserEntity> Get(int id)
-        {
-            return await _userRepository.Get(id);
-        }
-
-        public async Task Add(UserEntity user)
-        {
-            await _userRepository.Add(user);
-        }
-
-        public async Task Update(UserEntity user)
-        {
-             await _userRepository.Update(user);
-        }
-
 
         public void Dispose()
         {

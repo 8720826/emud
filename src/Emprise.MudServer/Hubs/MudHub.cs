@@ -24,6 +24,7 @@ using Emprise.MudServer.Commands.SkillCommands;
 using Emprise.MudServer.Commands.RelationCommonds;
 using Emprise.Domain.Core.Enums;
 using Emprise.MudServer.Commands.NpcActionCommands;
+using Emprise.MudServer.Commands.NpcCommands;
 
 namespace Emprise.MudServer.Hubs
 {
@@ -327,6 +328,12 @@ namespace Emprise.MudServer.Hubs
                     {
                         switch (actionEnum)
                         {
+                            case NpcActionEnum.闲聊:
+
+                                await _bus.SendCommand(new ChatWithNpcCommand(playerId, commandAction.NpcId));
+
+                                break;
+
                             case NpcActionEnum.切磋:
 
                                 await _bus.SendCommand(new FightWithNpcCommand(playerId, commandAction.NpcId));

@@ -12,6 +12,12 @@ namespace Emprise.Domain.Core.Models
         public const string ChatWithNpc = "chatWithNpc_{0}_{1}";
 
         /// <summary>
+        /// ChatWithNpcLike_{playerId}_{npcId}
+        /// </summary>
+        public const string ChatWithNpcLike = "chatWithNpcLike_{0}_{1}";
+        
+
+        /// <summary>
         /// completeQuest_{playerId}_{questId}
         /// </summary>
         public const string CompleteQuest = "completeQuest_{0}_{1}";

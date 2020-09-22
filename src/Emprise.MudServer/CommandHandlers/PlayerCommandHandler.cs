@@ -131,7 +131,7 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            player = await _playerDomainService.GetUserPlayer(userId);
+            player = await _playerDomainService.Get(x => x.UserId == userId);
             if (player != null)
             {
                 await _bus.RaiseEvent(new DomainNotification("已经超过最大可创建角色数！"));
@@ -204,7 +204,7 @@ namespace Emprise.MudServer.CommandHandlers
                 Nrg = 0
             };
 
-            player = await _playerDomainService.Computed(player);
+            player.Computed();
 
             await _playerDomainService.Add(player);
 
@@ -306,7 +306,7 @@ namespace Emprise.MudServer.CommandHandlers
                 return await Task.FromResult(true);
             });
 
-            player = await _playerDomainService.Computed(player);
+            player.Computed();
 
 
             await _playerDomainService.Update(player);

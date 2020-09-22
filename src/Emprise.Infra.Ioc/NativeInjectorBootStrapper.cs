@@ -14,6 +14,8 @@ using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using Emprise.Infra.Mapper;
 using Microsoft.Extensions.Configuration;
+using Emprise.Domain.Core.Interfaces;
+using Emprise.Domain.Core.Services;
 
 namespace Emprise.Infra.IoC
 {
@@ -41,6 +43,8 @@ namespace Emprise.Infra.IoC
             services.AddAutoMapper();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+            services.AddScoped(typeof(IBaseDomainService<>), typeof(BaseDomainService<>));
 
             services.AddRouting(options => options.LowercaseUrls = true);
 

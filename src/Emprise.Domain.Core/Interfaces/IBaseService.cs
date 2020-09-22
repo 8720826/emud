@@ -7,5 +7,6 @@ namespace Emprise.Domain.Core.Interfaces
 {
     public interface IBaseService : IScoped
     {
+
     }
 }
