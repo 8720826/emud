@@ -48,7 +48,9 @@ namespace Emprise.Domain.Core.Enums
         闲聊 = 1,
         给予 = 2,
         切磋 = 3,
-        杀死 = 4
+        杀死 = 4,
+        拜师 = 5,
+        出师 = 6
 
     }
 }

@@ -351,6 +351,18 @@ namespace Emprise.MudServer.Hubs
                                 await _bus.SendCommand(new GiveToNpcCommand(playerId, commandAction.NpcId));
 
                                 break;
+
+                            case NpcActionEnum.拜师:
+
+                                await _bus.SendCommand(new ApprenticeToNpcCommand(playerId, commandAction.NpcId));
+
+                                break;
+
+                            case NpcActionEnum.出师:
+
+                                await _bus.SendCommand(new FinishApprenticeToNpcCommand(playerId, commandAction.NpcId));
+
+                                break;
                         }
                     }
                 }

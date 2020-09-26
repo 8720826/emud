@@ -36,6 +36,8 @@ using System.Reflection;
 using Emprise.MudServer.Commands.NpcCommands;
 using Emprise.Domain.NpcRelation.Services;
 using Emprise.Domain.NpcRelation.Entity;
+using Emprise.Domain.PlayerRelation.Services;
+using Emprise.Domain.PlayerRelation.Entity;
 
 namespace Emprise.MudServer.CommandHandlers
 {
@@ -45,7 +47,10 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<KillNpcCommand, Unit>,
         IRequestHandler<GiveToNpcCommand, Unit>,
         IRequestHandler<NpcScriptCommand, Unit>,
-        IRequestHandler<ChatWithNpcCommand, Unit>
+        IRequestHandler<ChatWithNpcCommand, Unit>,
+        IRequestHandler<ApprenticeToNpcCommand, Unit>,
+        IRequestHandler<FinishApprenticeToNpcCommand, Unit>
+
         
 
     {
@@ -61,7 +66,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IQuestDomainService _questDomainService;
         private readonly IPlayerQuestDomainService _playerQuestDomainService;
         private readonly INpcRelationDomainService _npcRelationDomainService;
-
+        private readonly IPlayerRelationDomainService _playerRelationDomainService;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
         private readonly IRedisDb _redisDb;
@@ -81,6 +86,7 @@ namespace Emprise.MudServer.CommandHandlers
             IQuestDomainService questDomainService,
             IPlayerQuestDomainService playerQuestDomainService,
             INpcRelationDomainService npcRelationDomainService,
+            IPlayerRelationDomainService playerRelationDomainService,
             IMapper mapper,
             IMemoryCache cache, 
             IRedisDb redisDb,
@@ -103,6 +109,7 @@ namespace Emprise.MudServer.CommandHandlers
             _questDomainService = questDomainService;
             _playerQuestDomainService = playerQuestDomainService;
             _npcRelationDomainService = npcRelationDomainService;
+            _playerRelationDomainService = playerRelationDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
         }
@@ -145,6 +152,20 @@ namespace Emprise.MudServer.CommandHandlers
             if (npc.CanKill)
             {
                 npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.杀死.ToString() });
+            }
+
+            var npcRelation = await _npcRelationDomainService.Get(x => x.PlayerId == playerId && x.NpcId == npcId);
+            if (npcRelation != null && npcRelation.Liking>20)
+            {
+                var playerRelation = await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.师父 && x.PlayerId == playerId && x.RelationId == npcId);
+                if (playerRelation == null)
+                {
+                    npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.拜师.ToString() });
+                }
+                else
+                {
+                    npcInfo.Actions.Add(new NpcAction { Name = NpcActionEnum.出师.ToString() });
+                }
             }
 
             var player = await _playerDomainService.Get(playerId);
@@ -328,6 +349,107 @@ namespace Emprise.MudServer.CommandHandlers
 
             return Unit.Value;
         }
+
+        public async Task<Unit> Handle(ApprenticeToNpcCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var npcId = command.NpcId;
+            var npc = await _npcDomainService.Get(npcId);
+            if (npc == null)
+            {
+                return Unit.Value;
+            }
+
+            if (npc.Type != NpcTypeEnum.人物)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"指令 错误！"));
+                return Unit.Value;
+            }
+
+            var npcRelation = await _npcRelationDomainService.Get(x => x.PlayerId == player.Id && x.NpcId == npcId);
+            if (npcRelation == null || npcRelation.Liking < 20)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"[{npc.Name}]并不想收你为徒。");
+                return Unit.Value;
+            }
+
+            await _mudProvider.ShowMessage(player.Id, $"你恭恭敬敬地向[{npc.Name}]磕头请安，叫道：「师父！」");
+
+            var playerRelation =  await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.师父 && x.PlayerId == playerId && x.RelationId == npcId);
+
+            if (playerRelation != null)
+            {
+                return Unit.Value;
+            }
+
+            playerRelation = new PlayerRelationEntity
+            {
+                Type = PlayerRelationTypeEnum.师父,
+                RelationId = npcId,
+                PlayerId = playerId,
+                CreatedTime = DateTime.Now
+            };
+            await _playerRelationDomainService.Add(playerRelation);
+
+
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(FinishApprenticeToNpcCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var npcId = command.NpcId;
+            var npc = await _npcDomainService.Get(npcId);
+            if (npc == null)
+            {
+                return Unit.Value;
+            }
+
+            if (npc.Type != NpcTypeEnum.人物)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"指令 错误！"));
+                return Unit.Value;
+            }
+
+            
+
+            var playerRelation = await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.师父 && x.PlayerId == playerId && x.RelationId == npcId);
+
+            if (playerRelation == null)
+            {
+                return Unit.Value;
+            }
+
+            await _mudProvider.ShowMessage(player.Id, $"你与[{npc.Name}]断绝了师徒关系。");
+
+            await _playerRelationDomainService.Delete(playerRelation);
+
+            var npcRelation = await _npcRelationDomainService.Get(x => x.PlayerId == player.Id && x.NpcId == npcId);
+            if (npcRelation != null)
+            {
+                npcRelation.Liking = -20;
+                await _npcRelationDomainService.Update(npcRelation);
+            }
+
+            return Unit.Value;
+        }
+
+
+
+        
         #region NpcScript
 
 
