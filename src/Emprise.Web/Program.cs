@@ -28,7 +28,7 @@ namespace Emprise.Web
                 .Enrich.FromLogContext()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
-                .WriteTo.RollingFile(Path.Combine("logs", @"log.txt"), restrictedToMinimumLevel: LogEventLevel.Error)
+                .WriteTo.File(Path.Combine("logs", @"log.txt"), restrictedToMinimumLevel: LogEventLevel.Error)
                 .WriteTo.Console()
             );
     }
