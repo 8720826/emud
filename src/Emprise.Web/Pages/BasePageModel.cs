@@ -19,20 +19,12 @@ namespace Emprise.Web.Pages
     {
         public SiteConfig SiteConfig { get; set; }
 
-        public readonly AppConfig _appConfig;
         public BasePageModel(IOptionsMonitor<AppConfig> appConfig)
         {
-            _appConfig = appConfig.CurrentValue;
-
-            SiteConfig =  _appConfig.Site;
-
-            if (SiteConfig == null)
+            SiteConfig = appConfig.CurrentValue.Site?? new SiteConfig
             {
-                SiteConfig = new SiteConfig
-                {
-                    Name = "Emprise Mud"
-                };
-            }
+                Name = "Emprise Mud"
+            };
         }
     }
 }

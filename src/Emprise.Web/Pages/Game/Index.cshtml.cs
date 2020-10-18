@@ -28,7 +28,7 @@ namespace Emprise.Web.Pages.Game
                 return Content("请重新进入游戏");
             }
 
-            Title = _appConfig.Site.Name;
+            Title = SiteConfig?.Name;
 
             return Page();
         }

@@ -39,7 +39,7 @@ namespace Emprise.Web.Pages.User
 
         public void OnGet()
         {
-            SiteConfig = _appConfig.Site;
+           
 
             if (_accountContext != null)
             {
