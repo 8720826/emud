@@ -8,17 +8,9 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Map.Services
 {
-    public interface IMapDomainService : IBaseService
+    public interface IMapDomainService : IBaseDomainService<MapEntity>
     {
-        Task<IQueryable<MapEntity>> GetAll();
 
-        Task<MapEntity> Get(int id);
-
-        Task Add(MapEntity entity);
-
-        Task Update(MapEntity entity);
-
-        Task Delete(MapEntity entity);
 
         Task<int> GetRoomCount(int id);
     }

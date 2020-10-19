@@ -9,18 +9,9 @@ using System.Threading.Tasks;
 namespace Emprise.Domain.Ware.Services
 {
 
-    public interface IPlayerWareDomainService : IBaseService
+    public interface IPlayerWareDomainService : IBaseDomainService<PlayerWareEntity>
     {
-        Task<PlayerWareEntity> Get(Expression<Func<PlayerWareEntity, bool>> where);
-
         Task<List<PlayerWareEntity>> GetAll(int playerId);
 
-        Task<PlayerWareEntity> Get(int id);
-
-        Task Add(PlayerWareEntity entity);
-
-        Task Update(PlayerWareEntity entity);
-
-        Task Delete(int id);
     }
 }

@@ -472,7 +472,7 @@ namespace Emprise.MudServer.CommandHandlers
                 return;
             }
             ScriptCommandEntity scriptCommand;
-            var scriptCommands = await _scriptCommandDomainService.Query(x => x.ScriptId == scriptId);
+            var scriptCommands = (await _scriptCommandDomainService.GetAll()).Where(x => x.ScriptId == scriptId);
             if (commandId == 0)
             {
                 scriptCommand = scriptCommands.FirstOrDefault(x => x.IsEntry);

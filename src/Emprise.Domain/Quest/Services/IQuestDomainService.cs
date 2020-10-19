@@ -9,18 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Quest.Services
 {
-    public interface IQuestDomainService : IBaseService
+    public interface IQuestDomainService :IBaseDomainService<QuestEntity>
     {
-        Task<QuestEntity> Get(Expression<Func<QuestEntity, bool>> where);
 
-        Task<IQueryable<QuestEntity>> GetAll();
-
-        Task<QuestEntity> Get(int id);
-
-        Task Add(QuestEntity user);
-
-        Task Update(QuestEntity user);
-
-        Task Delete(QuestEntity quest);
     }
 }

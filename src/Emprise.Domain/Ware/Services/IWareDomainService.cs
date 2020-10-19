@@ -10,20 +10,8 @@ using System.Threading.Tasks;
 namespace Emprise.Domain.Ware.Services
 {
 
-    public interface IWareDomainService : IBaseService
+    public interface IWareDomainService : IBaseDomainService<WareEntity>
     {
-        Task<WareEntity> Get(Expression<Func<WareEntity, bool>> where);
 
-
-
-        Task<IQueryable<WareEntity>> GetAll();
-
-        Task<WareEntity> Get(int id);
-
-        Task Add(WareEntity entity);
-
-        Task Update(WareEntity entity);
-
-        Task Delete(WareEntity entity);
     }
 }

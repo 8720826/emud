@@ -9,20 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.ItemDrop.Services
 {
-    public interface IItemDropDomainService : IBaseService
+    public interface IItemDropDomainService :IBaseDomainService<ItemDropEntity>
     {
-        Task<ItemDropEntity> Get(Expression<Func<ItemDropEntity, bool>> where);
 
-
-
-        Task<IQueryable<ItemDropEntity>> GetAll();
-
-        Task<ItemDropEntity> Get(int id);
-
-        Task Add(ItemDropEntity entity);
-
-        Task Update(ItemDropEntity entity);
-
-        Task Delete(ItemDropEntity entity);
     }
 }

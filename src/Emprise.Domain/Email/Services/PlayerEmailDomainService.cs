@@ -1,6 +1,9 @@
-﻿using Emprise.Domain.Core.Data;
+﻿using Emprise.Domain.Core.Bus;
+using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Enums;
+using Emprise.Domain.Core.Services;
 using Emprise.Domain.Email.Entity;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +12,15 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Email.Services
 {
-    public class PlayerEmailDomainService : IPlayerEmailDomainService
+    public class PlayerEmailDomainService : BaseDomainService<PlayerEmailEntity>, IPlayerEmailDomainService
     {
         private readonly IRepository<PlayerEmailEntity> _playerEmailRepository;
 
-        public PlayerEmailDomainService(IRepository<PlayerEmailEntity> playerEmailRepository)
+        public PlayerEmailDomainService(IRepository<PlayerEmailEntity> playerEmailRepository, IMemoryCache cache, IMediatorHandler bus) : base(playerEmailRepository, cache, bus)
         {
             _playerEmailRepository = playerEmailRepository;
         }
 
-        public async Task<IQueryable<PlayerEmailEntity>> Query()
-        {
-            return await _playerEmailRepository.GetAll();
-        }
 
         public async Task<List<PlayerEmailEntity>> GetMyReceivedEmails(int playerId)
         {
@@ -30,11 +29,6 @@ namespace Emprise.Domain.Email.Services
         }
 
 
-        public async Task Add(PlayerEmailEntity item)
-        {
-            await _playerEmailRepository.Add(item);
-        }
-
 
         public async Task<int> GetUnreadCount(int playerId)
         {
@@ -42,19 +36,5 @@ namespace Emprise.Domain.Email.Services
             return query.Count();
         }
 
-        public async Task<PlayerEmailEntity> Get(int id)
-        {
-            return await _playerEmailRepository.Get(id);
-        }
-
-        public async Task Update(PlayerEmailEntity item)
-        {
-            await _playerEmailRepository.Update(item);
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
     }
 }

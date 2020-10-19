@@ -9,21 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Email.Services
 {
-    public interface IEmailDomainService : IBaseService
+    public interface IEmailDomainService : IBaseDomainService<EmailEntity>
     {
-        Task<EmailEntity> Get(Expression<Func<EmailEntity, bool>> where);
-
-
-
-        Task<IQueryable<EmailEntity>> GetAll();
-
-        Task<EmailEntity> Get(int id);
-
-        Task Add(EmailEntity entity);
-
-        Task Update(EmailEntity entity);
-
-        Task Delete(EmailEntity entity);
 
         Task<List<EmailEntity>> GetMyEmails(int playerId, int factionId=0);
 

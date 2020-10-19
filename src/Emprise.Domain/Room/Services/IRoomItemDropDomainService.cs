@@ -9,16 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Room.Services
 {
-    public interface IRoomItemDropDomainService : IBaseService
+    public interface IRoomItemDropDomainService :IBaseDomainService<RoomItemDropEntity>
     {
-        Task<RoomItemDropEntity> Get(Expression<Func<RoomItemDropEntity, bool>> where);
 
-        Task<IQueryable<RoomItemDropEntity>> GetAll();
-
-        Task<RoomItemDropEntity> Get(int id);
-
-        Task Add(RoomItemDropEntity entity);
-
-        Task Update(RoomItemDropEntity entity);
     }
 }

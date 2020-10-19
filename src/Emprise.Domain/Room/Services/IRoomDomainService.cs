@@ -9,18 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Room.Services
 {
-    public interface IRoomDomainService : IBaseService
+    public interface IRoomDomainService :IBaseDomainService<RoomEntity>
     {
-        Task<RoomEntity> Get(Expression<Func<RoomEntity, bool>> where);
 
-        Task<IQueryable<RoomEntity>> GetAll();
-
-        Task<RoomEntity> Get(int id);
-
-        Task Add(RoomEntity user);
-
-        Task Update(RoomEntity user);
-
-        Task Delete(RoomEntity entity);
     }
 }

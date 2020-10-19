@@ -9,18 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Npc.Services
 {
-    public interface INpcDomainService : IBaseService
+    public interface INpcDomainService : IBaseDomainService<NpcEntity>
     {
-        Task<IQueryable<NpcEntity>> GetAll();
 
-        Task<NpcEntity> Get(Expression<Func<NpcEntity, bool>> where);
-
-        Task<NpcEntity> Get(int id);
-
-        Task Add(NpcEntity npc);
-
-        Task Update(NpcEntity npc);
-
-        Task Delete(NpcEntity npc);
     }
 }

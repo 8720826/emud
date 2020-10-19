@@ -9,18 +9,10 @@ using System.Threading.Tasks;
 namespace Emprise.Domain.Quest.Services
 {
 
-    public interface IPlayerQuestDomainService : IBaseService
+    public interface IPlayerQuestDomainService :IBaseDomainService<PlayerQuestEntity>
     {
         Task<List<PlayerQuestEntity>> GetPlayerQuests(int playerId);
 
-        Task<PlayerQuestEntity> Get(Expression<Func<PlayerQuestEntity, bool>> where);
-
-
-        Task<PlayerQuestEntity> Get(int id);
-
-        Task Add(PlayerQuestEntity user);
-
-        Task Update(PlayerQuestEntity user);
 
     }
 }

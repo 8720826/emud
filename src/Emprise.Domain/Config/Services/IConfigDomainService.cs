@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Config.Services
 {
-    public interface IConfigDomainService : IBaseService
+    public interface IConfigDomainService :IBaseService
     {
         Task<Dictionary<string, string>> GetConfigsFromDb();
 

@@ -434,7 +434,7 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            await _playerWareDomainService.Delete(playerWare.Id);
+            await _playerWareDomainService.Delete(playerWare);
 
 
             var wareModel = _mapper.Map<WareModel>(ware);

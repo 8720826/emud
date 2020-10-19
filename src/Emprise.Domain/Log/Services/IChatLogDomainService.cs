@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Log.Services
 {
-    public interface IChatLogDomainService : IBaseService
+    public interface IChatLogDomainService :IBaseDomainService<ChatLogEntity>
     {
 
-        Task Add(ChatLogEntity user);
+  
 
     }
 }

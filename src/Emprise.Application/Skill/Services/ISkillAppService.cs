@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Emprise.Application.Skill.Services
 {
-    public interface ISkillAppService : IBaseService
+    public interface ISkillAppService :IBaseService
     {
         Task<SkillEntity> Get(int id);
 

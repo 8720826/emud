@@ -10,21 +10,8 @@ using System.Threading.Tasks;
 namespace Emprise.Domain.Skill.Services
 {
 
-    public interface ISkillDomainService : IBaseService
+    public interface ISkillDomainService : IBaseDomainService<SkillEntity>
     {
-        Task<SkillEntity> Get(Expression<Func<SkillEntity, bool>> where);
-
-
-
-        Task<IQueryable<SkillEntity>> GetAll();
-
-        Task<SkillEntity> Get(int id);
-
-        Task Add(SkillEntity entity);
-
-        Task Update(SkillEntity entity);
-
-        Task Delete(SkillEntity entity);
 
         Task<List<SkillEntity>> GetAllBaseSkills();
     }

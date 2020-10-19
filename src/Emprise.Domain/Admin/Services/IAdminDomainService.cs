@@ -9,16 +9,8 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Admin.Services
 {
-    public interface IAdminDomainService : IBaseService
+    public interface IAdminDomainService : IBaseDomainService<AdminEntity>
     {
-        Task<IQueryable<AdminEntity>> GetAll();
 
-        Task<AdminEntity> Get(Expression<Func<AdminEntity, bool>> where);
-
-        Task Add(AdminEntity entity);
-
-        Task Update(AdminEntity entity);
-
-        Task Delete(AdminEntity entity);
     }
 }

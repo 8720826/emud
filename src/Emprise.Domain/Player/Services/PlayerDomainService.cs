@@ -1,6 +1,8 @@
-﻿using Emprise.Domain.Core.Data;
+﻿using Emprise.Domain.Core.Bus;
+using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Services;
 using Emprise.Domain.Player.Entity;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +17,10 @@ namespace Emprise.Domain.Player.Services
     {
         private readonly IRepository<PlayerEntity> _playerRepository;
 
-        public PlayerDomainService(IRepository<PlayerEntity> playerRepository) : base(playerRepository)
+        public PlayerDomainService(IRepository<PlayerEntity> playerRepository, IMemoryCache cache, IMediatorHandler bus) : base(playerRepository, cache, bus)
         {
             _playerRepository = playerRepository;
         }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
     }
 }

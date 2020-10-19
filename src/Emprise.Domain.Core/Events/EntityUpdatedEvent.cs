@@ -6,7 +6,7 @@ namespace Emprise.Domain.Core.Events
     /// A container for entities that are updated.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class EntityUpdatedEvent<T> : Event where T : BaseEntity
+    public class EntityUpdatedEvent<T> : Event where T : class
     {
         /// <summary>
         /// Ctor

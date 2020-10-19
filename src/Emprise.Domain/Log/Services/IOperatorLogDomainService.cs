@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Log.Services
 {
-    public interface IOperatorLogDomainService : IBaseService
+    public interface IOperatorLogDomainService :IBaseDomainService<OperatorLogEntity>
     {
-        Task<IQueryable<OperatorLogEntity>> GetAll();
+
 
         Task ClearLog(DateTime dt);
 

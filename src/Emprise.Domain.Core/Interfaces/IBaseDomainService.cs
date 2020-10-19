@@ -12,10 +12,13 @@ namespace Emprise.Domain.Core.Interfaces
     {
         Task<IQueryable<TEntity>> GetAll();
 
+        Task<IQueryable<TEntity>> GetAllFromCache();
 
         Task<TEntity> Get(Expression<Func<TEntity, bool>> where);
 
         Task<TEntity> Get(int id);
+
+        Task<TEntity> GetFromCache(int id);
 
         Task Add(TEntity t);
 

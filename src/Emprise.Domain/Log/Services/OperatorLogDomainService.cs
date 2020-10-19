@@ -1,8 +1,11 @@
-﻿using Emprise.Domain.Core.Data;
+﻿using Emprise.Domain.Core.Bus;
+using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Services;
 using Emprise.Domain.Log.Entity;
 using Emprise.Infra.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +14,14 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Log.Services
 {
-    public class OperatorLogDomainService: IOperatorLogDomainService
+    public class OperatorLogDomainService: BaseDomainService<OperatorLogEntity>, IOperatorLogDomainService
     {
         private readonly IRepository<OperatorLogEntity> _logRepository;
         protected readonly IHttpContextAccessor _httpAccessor;
-        public OperatorLogDomainService(IRepository<OperatorLogEntity> logRepository, IHttpContextAccessor httpAccessor)
+        public OperatorLogDomainService(IRepository<OperatorLogEntity> logRepository, IHttpContextAccessor httpAccessor, IMemoryCache cache, IMediatorHandler bus) : base(logRepository, cache, bus)
         {
             _logRepository = logRepository;
             _httpAccessor = httpAccessor;
-        }
-
-        public async Task<IQueryable<OperatorLogEntity>> GetAll()
-        {
-            return await _logRepository.GetAll();
         }
 
 
@@ -57,9 +55,5 @@ namespace Emprise.Domain.Log.Services
             await _logRepository.Add(item);
         }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
     }
 }

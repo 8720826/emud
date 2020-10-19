@@ -2,6 +2,7 @@
 using Emprise.Domain.Core.Data;
 using Emprise.Domain.Core.Events;
 using Emprise.Domain.Core.Models;
+using Emprise.Domain.Core.Services;
 using Emprise.Domain.Room.Entity;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -14,59 +15,17 @@ using System.Threading.Tasks;
 
 namespace Emprise.Domain.Room.Services
 {
-    public class RoomDomainService : IRoomDomainService
+    public class RoomDomainService : BaseDomainService<RoomEntity>, IRoomDomainService
     {
         private readonly IRepository<RoomEntity> _roomRepository;
         private readonly IMemoryCache _cache;
         private readonly IMediatorHandler _bus;
 
-        public RoomDomainService(IRepository<RoomEntity> roomRepository, IMemoryCache cache, IMediatorHandler bus)
+        public RoomDomainService(IRepository<RoomEntity> roomRepository, IMemoryCache cache, IMediatorHandler bus) : base(roomRepository, cache, bus)
         {
             _roomRepository = roomRepository;
             _cache = cache;
             _bus = bus;
-        }
-
-
-        public async Task<RoomEntity> Get(Expression<Func<RoomEntity, bool>> where)
-        {
-            return await _roomRepository.Get(where);
-        }
-
-        public async Task<IQueryable<RoomEntity>> GetAll()
-        {
-            return await _roomRepository.GetAll();
-        }
-
-        public async Task<RoomEntity> Get(int id)
-        {
-            var key = string.Format(CacheKey.Room, id);
-            return await _cache.GetOrCreateAsync(key, async p => {
-                p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
-                return await _roomRepository.Get(id);
-            });
-        }
-
-        public async Task Add(RoomEntity room)
-        {
-            await _roomRepository.Add(room);
-        }
-
-        public async Task Update(RoomEntity room)
-        {
-            await _roomRepository.Update(room);
-            await _bus.RaiseEvent(new EntityUpdatedEvent<RoomEntity>(room)).ConfigureAwait(false);
-        }
-
-        public async Task Delete(RoomEntity entity)
-        {
-            await _roomRepository.Remove(entity);
-            await _bus.RaiseEvent(new EntityDeletedEvent<RoomEntity>(entity)).ConfigureAwait(false);
-        }
-
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
         }
     }
 }
