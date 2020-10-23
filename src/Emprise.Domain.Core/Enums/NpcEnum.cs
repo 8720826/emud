@@ -50,7 +50,8 @@ namespace Emprise.Domain.Core.Enums
         切磋 = 3,
         杀死 = 4,
         拜师 = 5,
-        出师 = 6
+        出师 = 6,
+        查看武功 = 7
 
     }
 }

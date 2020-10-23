@@ -64,6 +64,8 @@ namespace Emprise.Infra.Mapper
             CreateMap<NpcEntity, NpcInput>();
             CreateMap<NpcInput, NpcEntity>();
 
+            CreateMap<NpcEntity, NpcBaseInfo>();
+
             CreateMap<ItemDropRateEntity, ItemDropRateInput>();
             CreateMap<ItemDropRateInput, ItemDropRateEntity>();
 

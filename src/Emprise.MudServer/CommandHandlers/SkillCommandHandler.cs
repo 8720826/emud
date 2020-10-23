@@ -2,16 +2,20 @@
 using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.CommandHandlers;
 using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Notifications;
+using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.PlayerRelation.Services;
 using Emprise.Domain.Quest.Services;
 using Emprise.Domain.Skill.Entity;
 using Emprise.Domain.Skill.Models;
 using Emprise.Domain.Skill.Services;
 using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Commands;
+using Emprise.MudServer.Commands.NpcCommands;
 using Emprise.MudServer.Commands.SkillCommands;
 using Emprise.MudServer.Models;
 using MediatR;
@@ -29,8 +33,9 @@ namespace Emprise.MudServer.CommandHandlers
     public class SkillCommandHandler : CommandHandler,
         IRequestHandler<ShowMySkillCommand, Unit>,
         IRequestHandler<ShowSkillDetailCommand, Unit>,
-        IRequestHandler<ShowFriendSkillCommand, Unit>
-        
+        IRequestHandler<ShowFriendSkillCommand, Unit>,
+        IRequestHandler<ShowNpcSkillCommand, Unit>
+
     {
         private readonly IMediatorHandler _bus;
         private readonly ILogger<SkillCommandHandler> _logger;
@@ -41,6 +46,9 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IMail _mail;
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IPlayerSkillDomainService _playerSkillDomainService;
+        private readonly INpcDomainService _npcDomainService;
+        private readonly IPlayerRelationDomainService _playerRelationDomainService;
+        private readonly INpcSkillDomainService _npcSkillDomainService;
         private readonly IRedisDb _redisDb;
         private readonly IMudProvider _mudProvider;
        public SkillCommandHandler(
@@ -53,6 +61,9 @@ namespace Emprise.MudServer.CommandHandlers
             IMail mail,
             IPlayerDomainService playerDomainService,
             IPlayerSkillDomainService playerSkillDomainService,
+            INpcDomainService npcDomainService,
+            IPlayerRelationDomainService playerRelationDomainService,
+            INpcSkillDomainService npcSkillDomainService,
             IRedisDb redisDb,
             IMudProvider mudProvider,
             INotificationHandler<DomainNotification> notifications,
@@ -68,6 +79,9 @@ namespace Emprise.MudServer.CommandHandlers
             _mail = mail;
             _playerDomainService = playerDomainService;
             _playerSkillDomainService = playerSkillDomainService;
+            _npcDomainService = npcDomainService;
+            _playerRelationDomainService = playerRelationDomainService;
+            _npcSkillDomainService = npcSkillDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
         }
@@ -213,6 +227,79 @@ namespace Emprise.MudServer.CommandHandlers
 
             return Unit.Value;
         }
-        
+
+
+        public async Task<Unit> Handle(ShowNpcSkillCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var npcId = command.NpcId;
+            var npc = await _npcDomainService.Get(npcId);
+            if (npc == null)
+            {
+                return Unit.Value;
+            }
+
+            if (npc.Type != NpcTypeEnum.人物)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"指令 错误！"));
+                return Unit.Value;
+            }
+
+
+
+            var playerRelation = await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.师父 && x.PlayerId == playerId && x.RelationId == npcId);
+
+            if (playerRelation == null)
+            {
+                return Unit.Value;
+            }
+
+            var npcSkillInfoModel = new NpcSkillInfoModel
+            {
+                Npc = _mapper.Map<NpcBaseInfo>(npc)
+            };
+
+            var skillModels = new List<FriendSkillModel>();
+
+            var npcSkills = await _npcSkillDomainService.GetAll(npcId);
+            var npcSkillIds = npcSkills?.Select(x => x.SkillId);
+
+            var mySkills = await _playerSkillDomainService.GetAll(playerId);
+
+            var skills = (await _skillDomainService.GetAll()).Where(x => npcSkillIds.Contains(x.Id));
+
+            foreach (var npcSkill in npcSkills)
+            {
+                var mySkill = mySkills.FirstOrDefault(x => x.SkillId == npcSkill.SkillId);
+
+                var skill = skills.FirstOrDefault(x => x.Id == npcSkill.SkillId);
+                if (skill != null)
+                {
+                    var skillModel = _mapper.Map<FriendSkillModel>(skill);
+                    skillModel.PlayerSkillId = npcSkill.Id;
+                    skillModel.Level = npcSkill.Level;
+                    skillModel.Exp = npcSkill.Exp;
+
+                    skillModel.MyExp = mySkill?.Exp ?? 0;
+                    skillModel.MyLevel = mySkill?.Exp ?? 0;
+
+                    skillModels.Add(skillModel);
+                }
+
+            }
+
+            npcSkillInfoModel.Skills = skillModels;
+
+            await _mudProvider.ShowNpcSkill(playerId, npcSkillInfoModel);
+
+
+            return Unit.Value;
+        }
     }
 }

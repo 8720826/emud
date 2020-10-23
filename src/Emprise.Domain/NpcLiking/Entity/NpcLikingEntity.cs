@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace Emprise.Domain.NpcRelation.Entity
+namespace Emprise.Domain.NpcLiking.Entity
 {
-    [Table("NpcRelation")]
-    public class NpcRelationEntity : BaseEntity
+    [Table("NpcLiking")]
+    public class NpcLikingEntity : BaseEntity
     {
         public int PlayerId { set; get; }
 

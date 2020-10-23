@@ -35,5 +35,7 @@ namespace Emprise.MudServer.Models
 
         public string Message { set; get; }
 
+        public bool IsConfirm { set; get; }
+
     }
 }

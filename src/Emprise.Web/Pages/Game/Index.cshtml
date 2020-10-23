@@ -238,9 +238,19 @@
                 </div>
 
                 <div class="mypack" v-if="myBox=='friendSkill'">
-                    <p>以下是{{friendSkills.player.name}}学到的武功：</p>
+                    <p>以下是{{friendSkills.player.name}}的武功：</p>
                     <div class="mt15">
                         <button v-for="skill,index in friendSkills.skills" @@click="showSkillDetail(skill.playerSkillId)">
+                            <span> {{skill.name}} </span>
+                            <em>(Lv{{skill.level}})</em>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mypack" v-if="myBox=='npcSkill'">
+                    <p>以下是{{npcSkills.npc.name}}的武功：</p>
+                    <div class="mt15">
+                        <button v-for="skill,index in npcSkills.skills" @@click="showSkillDetail(skill.playerSkillId)">
                             <span> {{skill.name}} </span>
                             <em>(Lv{{skill.level}})</em>
                         </button>

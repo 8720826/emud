@@ -363,6 +363,13 @@ namespace Emprise.MudServer.Hubs
                                 await _bus.SendCommand(new FinishApprenticeToNpcCommand(playerId, commandAction.NpcId));
 
                                 break;
+
+                            case NpcActionEnum.查看武功:
+
+                                await _bus.SendCommand(new ShowNpcSkillCommand(playerId, commandAction.NpcId));
+
+                                break;
+                                
                         }
                     }
                 }

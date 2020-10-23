@@ -241,7 +241,11 @@
                 that.friendSkills = result;
             });
             
-            
+            connection.on("ShowNpcSkill", result => {
+                console.log("ShowNpcSkill:" + JSON.stringify(result));
+                that.myBox = "npcSkill";
+                that.npcSkills = result;
+            });
 
             connection.on("UpdatePlayerStatus", result => {
                 console.log("UpdatePlayerStatus:" + result);
@@ -550,8 +554,17 @@
             console.log(direction);
         },
         npcAction: function (npcId, action) {
-            console.log("npcId=" + npcId + ",action=" + action);
-            connection.invoke("NpcAction",  {  npcId,  action});
+            console.log("npcId=" + npcId + ",action=" + JSON.stringify(action));
+          
+            var that = this;
+            if (action.isConfirm) {
+                that.confirm(action.message, function () {
+                    connection.invoke("NpcAction", { npcId, action });
+                });
+            } else {
+                connection.invoke("NpcAction", { npcId, action });
+            }
+
         },
         playerAction: function (targetId, command) {
             var that = this;
