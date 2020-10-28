@@ -24,6 +24,7 @@ using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Ware.Entity;
 using Newtonsoft.Json;
 using Emprise.MudServer.Commands.WareCommands;
+using Emprise.Domain.Skill.Services;
 
 namespace Emprise.MudServer.CommandHandlers
 {
@@ -35,8 +36,8 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<UnLoadWareCommand, Unit>,
         IRequestHandler<ShowWareCommand, Unit>,
         IRequestHandler<DropWareCommand, Unit>
-
         
+
 
     {
         private readonly IMediatorHandler _bus;
@@ -45,6 +46,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IWareDomainService _wareDomainService;
         private readonly IPlayerWareDomainService _playerWareDomainService;
+        private readonly ISkillDomainService _skillDomainService;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
         private readonly IRedisDb _redisDb;
@@ -58,6 +60,7 @@ namespace Emprise.MudServer.CommandHandlers
             IPlayerDomainService playerDomainService,
             IWareDomainService wareDomainService,
             IPlayerWareDomainService playerWareDomainService,
+            ISkillDomainService skillDomainService,
             IMapper mapper,
             IMemoryCache cache, 
             IRedisDb redisDb,
@@ -74,6 +77,7 @@ namespace Emprise.MudServer.CommandHandlers
             _playerDomainService = playerDomainService;
             _wareDomainService = wareDomainService;
             _playerWareDomainService = playerWareDomainService;
+            _skillDomainService = skillDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
         }
@@ -446,6 +450,9 @@ namespace Emprise.MudServer.CommandHandlers
 
             return Unit.Value;
         }
+
+
+
         
 
         private async Task<WareEffectAttr> Computed(int playerId)

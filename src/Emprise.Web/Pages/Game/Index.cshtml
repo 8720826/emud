@@ -230,7 +230,7 @@
                 <div class="mypack" v-if="myBox=='skill'">
                     <p>你学到的武功：</p>
                     <div class="mt15">
-                        <button v-for="skill,index in skills" @@click="showSkillDetail(skill.playerSkillId)">
+                        <button v-for="skill,index in skills" @@click="showSkillDetail(skill.objectSkillId,1)">
                             <span> {{skill.name}} </span>
                             <em>(Lv{{skill.level}})</em>
                         </button>
@@ -240,7 +240,8 @@
                 <div class="mypack" v-if="myBox=='friendSkill'">
                     <p>以下是{{friendSkills.player.name}}的武功：</p>
                     <div class="mt15">
-                        <button v-for="skill,index in friendSkills.skills" @@click="showSkillDetail(skill.playerSkillId)">
+                        <p v-if="friendSkills.skills.length==0">还没学会任何武功</p>
+                        <button v-for="skill,index in friendSkills.skills" @@click="showSkillDetail(skill.objectSkillId,1)">
                             <span> {{skill.name}} </span>
                             <em>(Lv{{skill.level}})</em>
                         </button>
@@ -250,7 +251,8 @@
                 <div class="mypack" v-if="myBox=='npcSkill'">
                     <p>以下是{{npcSkills.npc.name}}的武功：</p>
                     <div class="mt15">
-                        <button v-for="skill,index in npcSkills.skills" @@click="showSkillDetail(skill.playerSkillId)">
+                        <p v-if="npcSkills.skills.length==0">还没学会任何武功</p>
+                        <button v-for="skill,index in npcSkills.skills" @@click="showSkillDetail(skill.objectSkillId,2)">
                             <span> {{skill.name}} </span>
                             <em>(Lv{{skill.level}})</em>
                         </button>
@@ -510,6 +512,7 @@
                     <hr v-if="myWare.wareEffect.length>0" />
                     <button v-if="myWare.category===102&&myWare.status===0" @@click="load(myWare.playerWareId)">装备</button>
                     <button v-if="myWare.category===102&&myWare.status===1" @@click="unload(myWare.playerWareId)">卸下</button>
+                    <button v-if="myWare.category===109" @@click="learn(myWare.playerWareId)">学习</button>
                     <button v-if="myWare.status===0" @@click="drop(myWare.name,myWare.playerWareId)">丢弃</button>
                 </div>
             </div>
@@ -562,9 +565,9 @@
                     <hr />
 
 
-                    <button @@click="learnSkill(mySkill.playerSkillId)" v-show="myinfo.status=='空闲'">修练</button>
+                    <button @@click="learnSkill(mySkill.objectSkillId,mySkill.objectType)">修练</button>
 
-                    <button @@click="stopAction" v-show="myinfo.status!='空闲'">停止{{myinfo.status}}</button>
+
                 </div>
             </div>
         </div>

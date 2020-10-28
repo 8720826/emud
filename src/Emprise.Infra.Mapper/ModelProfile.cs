@@ -86,8 +86,12 @@ namespace Emprise.Infra.Mapper
             CreateMap<SkillInput, SkillEntity>();
             CreateMap<SkillEntity, SkillModel>();
             CreateMap<SkillEntity, FriendSkillModel>();
+            CreateMap<SkillEntity, NpcSkillModel>();
 
             
+
+
+
         }
     }
 }

@@ -11,10 +11,13 @@ namespace Emprise.MudServer.Commands.SkillCommands
         public int PlayerId { get; set; }
 
         public int MySkillId { get; set; }
-        public ShowSkillDetailCommand(int playerId, int mySkillId)
+
+        public int Type { get; set; }
+        public ShowSkillDetailCommand(int playerId, int mySkillId, int type)
         {
             PlayerId = playerId;
             MySkillId = mySkillId;
+            Type = type;
         }
     }
 }

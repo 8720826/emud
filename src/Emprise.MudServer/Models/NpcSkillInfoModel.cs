@@ -10,6 +10,6 @@ namespace Emprise.MudServer.Models
     {
         public NpcBaseInfo Npc { get; set; }
 
-        public List<FriendSkillModel> Skills { get; set; }
+        public List<NpcSkillModel> Skills { get; set; }
     }
 }

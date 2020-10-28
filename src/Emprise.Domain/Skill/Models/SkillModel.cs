@@ -9,7 +9,9 @@ namespace Emprise.Domain.Skill.Models
     {
         public int Id { set; get; }
 
-        public int PlayerSkillId { set; get; }
+        public int ObjectSkillId { set; get; }
+
+        public int ObjectType { set; get; }
 
         /// <summary>
         /// 名称

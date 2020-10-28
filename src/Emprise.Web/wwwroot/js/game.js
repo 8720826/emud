@@ -468,11 +468,12 @@
         showQuestDetail: function (id) {
             connection.invoke("ShowQuestDetail", { questId: id });
         },
-        showSkillDetail: function (id) {
-            connection.invoke("ShowSkillDetail", { playerSkillId: id });
+        showSkillDetail: function (id,type) {
+            connection.invoke("ShowSkillDetail", { objectSkillId: id, type });
         },
-        learnSkill: function (id) {
-            connection.invoke("LearnSkill", { playerSkillId: id });
+        learnSkill: function (id, type) {
+            console.log("id=" + id + ",type=" + type);
+            connection.invoke("LearnSkill", { objectSkillId: id, type });
         },
 
         search: function () {
@@ -628,6 +629,10 @@
         unload: function (id) {
             console.log("UnLoad=" + id);
             connection.invoke("UnLoad", { myWareId: id });
+        },
+        learn: function (id) {
+            console.log("learn=" + id);
+            connection.invoke("Learn", { myWareId: id });
         },
         drop: function (name, id) {
             console.log("drop=" + id);

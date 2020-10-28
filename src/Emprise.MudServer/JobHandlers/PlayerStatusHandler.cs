@@ -146,10 +146,8 @@ namespace Emprise.MudServer.Handles
                     await Killing(player, model.TargetId);
                     break;
 
-                case PlayerStatusEnum.修练:
 
-                    await LearnSkill(player, model.TargetId);
-                    break;
+
             }
 
           
@@ -493,107 +491,6 @@ namespace Emprise.MudServer.Handles
             await _mudProvider.ShowMessage(player.Id, $"你正在{player.Status}，{targetId}。。。");
 
         }
-
-        private async Task LearnSkill(PlayerEntity player, int playerSkillId)
-        {
-            var playerSkill = await _playerSkillDomainService.Get(playerSkillId);
-            if (playerSkill == null)
-            {
-                await _mudProvider.ShowMessage(player.Id, $"你结束了修练！");
-
-                await StopAction(player);
-                return;
-            }
-
-            var skill = await _skillDomainService.Get(playerSkill.SkillId);
-            if (skill == null)
-            {
-                await _mudProvider.ShowMessage(player.Id, $"你结束了修练！！");
-
-                await StopAction(player);
-                return;
-            }
-
-            if (player.Pot <= 0)
-            {
-                await _mudProvider.ShowMessage(player.Id, $"潜能耗尽，你结束了修练！");
-
-                await StopAction(player);
-                return;
-            }
-
-            if (player.Level * 10 < playerSkill.Level)
-            {
-                await _mudProvider.ShowMessage(player.Id, $"武功最高等级不能超过自身等级的10倍！");
-
-                await StopAction(player);
-                return;
-            }
-
-            var @int = player.Int * 3 + player.IntAdd;
-            var nextLevelExp = (playerSkill.Level + 1) * (playerSkill.Level + 1) * 50;
-            var levelUpExp = nextLevelExp - playerSkill.Level * playerSkill.Level * 50;
-
-            Random random = new Random();
-            int exp = random.Next(1, levelUpExp / 10);
-
-            var needPot = exp * 100 / @int;
-
-            if (player.Pot < needPot)
-            {
-                await _mudProvider.ShowMessage(player.Id, $"潜能即将耗尽，你结束了修练！");
-
-                await StopAction(player);
-                return ;
-            }
-
-            var effect = exp * 1000 / levelUpExp;
-
-            string effectWords;
-            if (effect > 80)
-            {
-                effectWords = "恍然大悟";
-            }
-            else if (effect > 50)
-            {
-                effectWords = "有所顿悟";
-            }
-            else if (effect > 20)
-            {
-                effectWords = "略有所获";
-            }
-            else if (effect > 10)
-            {
-                effectWords = "略有所获";
-            }
-            else
-            {
-                effectWords = "似乎没有什么进展";
-            }
-
-            player.Pot -= needPot;
-            await _playerDomainService.Update(player);
-            playerSkill.SkillName = skill.Name;
-            playerSkill.Exp += exp;
-            await _mudProvider.ShowMessage(player.Id, $"你消耗潜能{needPot}，{effectWords}，[{skill.Name}]经验增加{exp}！");
-
-            if (playerSkill.Exp > nextLevelExp)
-            {
-                playerSkill.Level++;
-                await _mudProvider.ShowMessage(player.Id, $"[{skill.Name}]等级上升为 Lv.{playerSkill.Level}！");
-            }
-
-           
-
-            await _playerSkillDomainService.Update(playerSkill);
-
-          
-
-            await _bus.RaiseEvent(new PlayerAttributeChangedEvent(player)).ConfigureAwait(false);
-        }
-
-
-
 
         private async Task StopAction(PlayerEntity player)
         {

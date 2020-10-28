@@ -419,6 +419,16 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
+        public async Task Learn(WareAction wareAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new LearnWareCommand(playerId, wareAction.MyWareId);
+                await _bus.SendCommand(command);
+            });
+        }
+
         public async Task ShowWare(WareAction wareAction)
         {
             var result = await DoCommand(async () => {
@@ -475,7 +485,7 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
 
-                var command = new ShowSkillDetailCommand(playerId, questAction.PlayerSkillId);
+                var command = new ShowSkillDetailCommand(playerId, questAction.ObjectSkillId, questAction.Type);
                 await _bus.SendCommand(command);
             });
         }
@@ -487,7 +497,7 @@ namespace Emprise.MudServer.Hubs
             var result = await DoCommand(async () => {
                 var playerId = _account.PlayerId;
 
-                var command = new LearnSkillCommand(playerId, questAction.PlayerSkillId);
+                var command = new LearnSkillCommand(playerId, questAction.ObjectSkillId, questAction.Type);
                 await _bus.SendCommand(command);
             });
         }

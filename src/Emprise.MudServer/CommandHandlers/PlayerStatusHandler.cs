@@ -10,8 +10,6 @@ using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Core.Queue.Models;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
-using Emprise.Domain.PlayerRelation.Services;
-using Emprise.Domain.Room.Services;
 using Emprise.MudServer.Commands;
 using Emprise.MudServer.Commands.NpcActionCommands;
 using Emprise.MudServer.Commands.SkillCommands;
@@ -40,7 +38,6 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<CutCommand, Unit>,
         IRequestHandler<HuntCommand, Unit>,
         IRequestHandler<WorkCommand, Unit>,
-        IRequestHandler<LearnSkillCommand, Unit>,
         IRequestHandler<FightWithNpcCommand, Unit>
 
 
@@ -175,17 +172,6 @@ namespace Emprise.MudServer.CommandHandlers
             {
                 PlayerId = command.PlayerId,
                 Status = PlayerStatusEnum.打猎
-            });
-            return Unit.Value;
-        }
-
-        public async Task<Unit> Handle(LearnSkillCommand command, CancellationToken cancellationToken)
-        {
-            await BeginChangeStatus(new PlayerStatusModel
-            {
-                PlayerId = command.PlayerId,
-                Status = PlayerStatusEnum.修练,
-                TargetId = command.MySkillId
             });
             return Unit.Value;
         }
@@ -441,25 +427,6 @@ namespace Emprise.MudServer.CommandHandlers
                     {
                         await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次打坐));
                     }
-                    break;
-
-                case PlayerStatusEnum.修练:
-                    if (player.Pot <= 0)
-                    {
-                        await _mudProvider.ShowMessage(playerId, "你的潜能不够，无法修练。");
-                        return false;
-                    }
-                    if (targetId <= 0)
-                    {
-                        return false;
-                    }
-
-                    await _mudProvider.ShowMessage(playerId, "你开始修练。。。");
-                    if (workTimes <= 0)
-                    {
-                        await _queueHandler.SendQueueMessage(new CompleteQuestNewbieQuestQueue(playerId, NewbieQuestEnum.第一次修练));
-                    }
-
                     break;
 
 
