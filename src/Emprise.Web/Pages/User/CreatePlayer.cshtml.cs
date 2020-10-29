@@ -15,7 +15,6 @@ using Emprise.MudServer.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Options;
 
 namespace Emprise.Web.Pages.User
@@ -64,6 +63,15 @@ namespace Emprise.Web.Pages.User
 
         public async Task<IActionResult> OnPostAsync([FromBody]PlayerCreateDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult(new JsonResult(new
+                {
+                    Status = false,
+                    ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First()
+                }));
+            }
+
             var userId = _accountContext.UserId;
 
             var command = new CreateCommand(dto.Name, dto.Gender, userId, dto.Str, dto.Con, dto.Dex, dto.Int);
