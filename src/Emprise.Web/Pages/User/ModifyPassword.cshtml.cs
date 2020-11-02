@@ -38,6 +38,15 @@ namespace Emprise.Web.Pages.User
 
         public async Task<IActionResult> OnPostAsync([FromBody]ModifyPasswordDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult(new JsonResult(new
+                {
+                    Status = false,
+                    ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First()
+                }));
+            }
+
             var userId = _accountContext.UserId;
 
             var command = new ModifyPasswordCommand(userId, dto.Password, dto.NewPassword);

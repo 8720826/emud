@@ -102,26 +102,7 @@
                 logout: function () {
                     var that = this;
                     that.confirm("要退出吗？", function () {
-                        axios.post("", null, {
-                            headers: {
-                                RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
-                            }
-                        })
-                        .then(function (response) {
-                            var result = response.data;
-                            if (result.status) {
-                                location.href = "@(Url.Page("/User/Login"))";
-                            } else {
-                                var error = result.errorMessage || "退出失败";
-                                if (result.data) {
-                                    error += "<br>" + result.data;
-                                }
-                                that.tips = error;
-                            }
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
+                        location.href = "@(Url.Page("/User/Logout"))";
                     });
                 },
                 confirm: function (content, callback) {

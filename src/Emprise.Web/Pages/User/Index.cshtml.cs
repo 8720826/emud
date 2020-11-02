@@ -56,28 +56,5 @@ namespace Emprise.Web.Pages.User
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            var userId = _accountContext.UserId;
-
-            var command = new LogoutCommand(userId);
-            await _bus.SendCommand(command);
-
-            if (_notifications.HasNotifications())
-            {
-                var errorMessage = string.Join("；", _notifications.GetNotifications().Select(x => x.Content));
-                return await Task.FromResult(new JsonResult(new
-                {
-                    status = false,
-                    errorMessage
-                }));
-            }
-
-            return await Task.FromResult(new JsonResult(new
-            {
-                status = true
-            }));
-
-        }
     }
 }

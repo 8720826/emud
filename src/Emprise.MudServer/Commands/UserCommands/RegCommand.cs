@@ -13,12 +13,10 @@ namespace Emprise.MudServer.Commands
 
         public string Password { get; set; }
 
-        public string Code { get; set; }
-        public RegCommand(string email, string password, string code)
+        public RegCommand(string email, string password)
         {
             Email = email;
             Password = password;
-            Code = code;
         }
     }
 }

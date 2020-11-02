@@ -88,15 +88,16 @@ namespace Emprise.MudServer.CommandHandlers
         {
             var email = command.Email.Trim().ToLower();
             var password = command.Password;
-            var code = command.Code;
+     
 
-            var user = await _userDomainService.Get(p => p.Email == email && p.HasVerifiedEmail);
+            var user = await _userDomainService.Get(p => p.Email == email);
             if (user != null)
             {
                 await _bus.RaiseEvent(new DomainNotification("邮箱已被注册，请更改！"));
                 return Unit.Value;
             }
 
+            /*
             string key = string.Format(RedisKey.RegEmail, email);// $"regemail_{email}";
             long ttl = await _redisDb.KeyTimeToLive(key);
             if (ttl < 0)
@@ -112,7 +113,7 @@ namespace Emprise.MudServer.CommandHandlers
                 await _bus.RaiseEvent(new DomainNotification($"注册验证码已失效，请重试"));
                 return Unit.Value;
             }
-
+            */
 
 
             string ip = _httpAccessor.HttpContext.GetUserIp();
@@ -127,7 +128,7 @@ namespace Emprise.MudServer.CommandHandlers
                 UserName = "",
                 RegIp = ip,
                 LastIp = ip, 
-                HasVerifiedEmail = true
+                HasVerifiedEmail = false
             };
 
             await _userDomainService.Add(user);
@@ -140,7 +141,7 @@ namespace Emprise.MudServer.CommandHandlers
 
             await _httpAccessor.HttpContext.SignIn("user", jwtAccount);
 
-            await _redisDb.KeyDelete(key);
+            //await _redisDb.KeyDelete(key);
 
             if (await Commit())
             {
@@ -155,7 +156,7 @@ namespace Emprise.MudServer.CommandHandlers
             var email = command.Email;
             var password = command.Password;
 
-            var user = await _userDomainService.Get(p => p.Email == email && p.HasVerifiedEmail);
+            var user = await _userDomainService.Get(p => p.Email == email);
             if (user == null)
             {
                 await _bus.RaiseEvent(new DomainNotification("用户不存在"));
@@ -254,7 +255,7 @@ namespace Emprise.MudServer.CommandHandlers
             var code = command.Code;
             var password = command.Password;
 
-            var user = await _userDomainService.Get(p => p.Email == email && p.HasVerifiedEmail);
+            var user = await _userDomainService.Get(p => p.Email == email);
             if (user == null)
             {
                 await _bus.RaiseEvent(new DomainNotification("输入信息有误，请确认邮箱是否无误"));
@@ -295,7 +296,7 @@ namespace Emprise.MudServer.CommandHandlers
         {
             var email = command.Email;
 
-            var user = await _userDomainService.Get(x=> x.Email== email && x.HasVerifiedEmail);
+            var user = await _userDomainService.Get(x=> x.Email== email);
             if (user != null)
             {
                 await _bus.RaiseEvent(new DomainNotification("该邮箱已注册，请使用其他邮箱注册"));
@@ -349,7 +350,7 @@ namespace Emprise.MudServer.CommandHandlers
         {
             var email = command.Email;
 
-            var user = await _userDomainService.Get(p => p.Email == email && p.HasVerifiedEmail);
+            var user = await _userDomainService.Get(p => p.Email == email);
             if (user == null)
             {
                 await _bus.RaiseEvent(new DomainNotification("输入信息有误，请确认邮箱是否无误"));

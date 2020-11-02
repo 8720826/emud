@@ -51,6 +51,7 @@ namespace Emprise.Web.Pages.User
                 return RedirectToPage("/User/Index");
             }
 
+            /*
             if (string.IsNullOrEmpty(email))
             {
                 return RedirectToPage("/User/VerifyEmail");
@@ -59,6 +60,7 @@ namespace Emprise.Web.Pages.User
             {
                 return RedirectToPage("/User/VerifyEmail");
             }
+            */
             
             return Page();
         }
@@ -66,9 +68,19 @@ namespace Emprise.Web.Pages.User
 
         public async Task<IActionResult> OnPostAsync([FromBody]UserRegDto dto)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return await Task.FromResult(new JsonResult(new
+                {
+                    Status = false,
+                    ErrorMessage = ModelState.Where(e => e.Value.Errors.Count > 0).Select(e => e.Value.Errors.First().ErrorMessage).First()
+                }));
+            }
+
             var userId = _accountContext.UserId;
 
-            var command = new RegCommand(dto.Email, dto.Password, dto.Code);
+            var command = new RegCommand(dto.Email, dto.Password);
             await _bus.SendCommand(command);
 
             if (_notifications.HasNotifications())

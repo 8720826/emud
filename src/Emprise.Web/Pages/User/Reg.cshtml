@@ -18,7 +18,7 @@
             <div class="login-nonreg">
                 <div class="fn-mt-login fn-mlr">
                     <div>
-                        <p>验证码已发送到下面的邮箱，请登录查看并继续注册。</p>
+                        <p>注册邮箱无法修改，忘记密码时可通过邮件找回。</p>
                     </div>
                 </div>
 
@@ -26,26 +26,27 @@
 
                     <div class="form-text-login">
                         <label>邮箱：</label>
-                        <input type="text" class="form-text" v-model="email" readonly="readonly" />
-                        <a href="javascript:;" class="form-text-clear"><i class="icon icon-clear"></i></a>
+                        <input type="text" class="form-text" v-model="email" autocomplete="new-password" />
+                        <a href="javascript:;" class="form-text-clear" v-show="email" v-on:click="email=''"><i class="icon icon-clear"></i></a>
                     </div>
 
-
+                    @*
                     <div class="form-text-login">
                         <label>验证码：</label>
                         <input type="text" class="form-text" v-model="code" />
                         <a href="javascript:;" class="form-text-clear"><i class="icon icon-clear"></i></a>
                     </div>
+                    *@
 
                     <div class="form-text-login">
                         <label>密码：</label>
-                        <input type="password" class="form-text" v-model="password" />
+                        <input type="password" class="form-text" v-model="password" autocomplete="new-password" />
                         <a href="javascript:;" class="form-text-clear" v-show="password" v-on:click="password=''"><i class="icon icon-clear"></i></a>
                     </div>
 
                     <div class="form-text-login">
                         <label>重复：</label>
-                        <input type="password" class="form-text" v-model="password2" />
+                        <input type="password" class="form-text" v-model="password2" autocomplete="new-password" />
                         <a href="javascript:;" class="form-text-clear" v-show="password2" v-on:click="password2=''"><i class="icon icon-clear"></i></a>
                     </div>
                 </form>

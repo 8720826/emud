@@ -18,13 +18,13 @@
                 <form>
                     <div class="form-text-login">
                         <label>邮箱：</label>
-                        <input type="text" class="form-text" v-model="email" value="" tabindex="1" />
+                        <input type="text" class="form-text" v-model="email" tabindex="1" autocomplete="new-password" />
                         <a href="javascript:;" class="form-text-clear" v-show="email" v-on:click="email=''"><i class="icon icon-clear"></i></a>
                     </div>
 
                     <div class="form-text-login">
                         <label>密码：</label>
-                        <input type="password" class="form-text" v-model="password" v-on:keyup.13="login" tabindex="2" />
+                        <input type="password" class="form-text" v-model="password" v-on:keyup.13="login" tabindex="2" autocomplete="new-password" />
                         <a href="javascript:;" class="form-text-clear" v-show="password" v-on:click="password=''"><i class="icon icon-clear"></i></a>
                     </div>
                     <div class="fn-mt-login fn-mlr" style="text-align:right;">
