@@ -2,7 +2,6 @@
 using Emprise.Domain.Core.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Net;
