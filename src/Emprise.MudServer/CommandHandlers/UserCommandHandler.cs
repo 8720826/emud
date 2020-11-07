@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Emprise.MudServer.Events.UserEvents;
+using Emprise.MudServer.Commands.UserCommands;
 
 namespace Emprise.MudServer.CommandHandlers
 {
@@ -37,7 +38,11 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<ModifyPasswordCommand, Unit>,
         IRequestHandler<ResetPasswordCommand, Unit>,
         IRequestHandler<SendRegEmailCommand, Unit>,
-        IRequestHandler<SendResetEmailCommand, Unit>
+        IRequestHandler<SendResetEmailCommand, Unit>,
+        IRequestHandler<SendVerifyEmailCommand, Unit>,
+        IRequestHandler<VerifyEmailCommand, Unit>
+
+
         
     {
         private readonly IMediatorHandler _bus;
@@ -398,7 +403,116 @@ namespace Emprise.MudServer.CommandHandlers
         }
 
 
+        public async Task<Unit> Handle(SendVerifyEmailCommand command, CancellationToken cancellationToken)
+        {
+            var email = command.Email;
+
+            var user = await _userDomainService.Get(p => p.Email == email);
+            if (user == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification("输入信息有误，请确认邮箱是否无误"));
+                return Unit.Value;
+            }
+
+            if (user.HasVerifiedEmail)
+            {
+                await _bus.RaiseEvent(new DomainNotification("邮箱已经验证通过，无需再次验证"));
+                return Unit.Value;
+            }
+
+            int expiryMin = 30;
+
+            string key = string.Format(RedisKey.VerifyEmail, user.Email);// $"resetpassword_{user.Id}";
+            if (await _redisDb.KeyTimeToLive(key) > 0)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"验证邮箱操作需要间隔30分钟"));
+                return Unit.Value;
+            }
+
+
+            string code = GenerateRandom(4);
+
+            try
+            {
+                string url = $"{_appConfig.Site.Url}/user/verifyemail?email={email}&code={code}";
+                await _mail.Send(new MailModel
+                {
+                    Content = $"<p>您好，您正在使用验证邮箱功能，请在验证码输入框中输入此次验证码： {code}，验证码有效期{expiryMin}分钟。</p><p>您也可以<a href='{url}'>点击这里</a>或复制以下链接到浏览器打开</p><p>{url}</p>",
+                    Address = email,
+                    Subject = $"【{_appConfig.Site.Name}】找回密码"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"邮件发送失败  {ex}");
+                await _bus.RaiseEvent(new DomainNotification($"邮件发送失败，请稍后重试"));
+                return Unit.Value;
+            }
+
+            await _redisDb.StringSet(key, code, DateTime.Now.AddMinutes(expiryMin));
+
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new ResetPasswordEvent(user)).ConfigureAwait(false);
+            }
+
+
+            return Unit.Value;
+        }
+
+
+
         
+        public async Task<Unit> Handle(VerifyEmailCommand command, CancellationToken cancellationToken)
+        {
+            var email = command.Email;
+            var code = command.Code;
+            var user = await _userDomainService.Get(p => p.Email == email);
+            if (user == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification("输入信息有误，请确认邮箱是否无误"));
+                return Unit.Value;
+            }
+
+            if (user.HasVerifiedEmail)
+            {
+                await _bus.RaiseEvent(new DomainNotification("邮箱已经验证通过，无需再次验证"));
+                return Unit.Value;
+            }
+
+            string key = string.Format(RedisKey.VerifyEmail, user.Email);
+
+            var verifyEmailCode = await _redisDb.StringGet<string>(key);
+            if (string.IsNullOrEmpty(verifyEmailCode))
+            {
+                await _bus.RaiseEvent(new DomainNotification("验证码错误，验证失败"));
+                return Unit.Value;
+            }
+
+            if (code != verifyEmailCode)
+            {
+                await _bus.RaiseEvent(new DomainNotification("验证码错误，验证失败"));
+                return Unit.Value;
+            }
+
+            await _redisDb.KeyDelete(key);
+
+            user.HasVerifiedEmail = true;
+            await _userDomainService.Update(user);
+
+
+            if (await Commit())
+            {
+                await _bus.RaiseEvent(new VerifyEmailEvent(user)).ConfigureAwait(false);
+            }
+
+
+            return Unit.Value;
+        }
+
+
+
+
         #region 生成随机密码
         private string GenerateRandom(int Length)
         {

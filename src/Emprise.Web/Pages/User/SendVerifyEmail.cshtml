@@ -1,5 +1,5 @@
 ﻿@page
-@model Emprise.Web.Pages.User.VerifyEmailModel
+@model Emprise.Web.Pages.User.SendVerifyEmailModel
 @{
     ViewData["Title"] = "验证邮箱";
 }
@@ -15,28 +15,20 @@
     <div class="main">
         <div>
             <div class="login-nonreg">
-                <div class="fn-mt-login fn-mlr">
-                    <div>
-                        <p>已发送邮件到 <span>{{emailToLower}}</span>，请登录邮箱查看。</p>
-                    </div>
-                </div>
-
                 <form>
-
                     <div class="form-text-login">
-                        <label>验证码：</label>
-                        <input type="text" class="form-text" v-model="code" autocomplete="new-password" />
-                        <a href="javascript:;" class="form-text-clear" v-show="code" v-on:click="code=''"><i class="icon icon-clear"></i></a>
+                        <label>邮箱：</label>
+                        <input type="text" readonly class="form-text" v-model="email" />
+                        <a href="javascript:;" class="form-text-clear fn-hide"><i class="icon icon-clear"></i></a>
                     </div>
-
 
                 </form>
-
-
             </div>
-
             <div class="fn-mt-login fn-mlr">
-                <a class="btn btn-bar-tawny" href="javascript:;" v-on:click="verify"> 确 定 </a>
+                <a class="btn btn-bar-tawny" href="javascript:;" v-on:click="send"> 发送邮件 </a>
+            </div>
+            <div class="fn-mt-login fn-mlr">
+                <a class="btn btn-bar-tawny" href="@(Url.Page("/User/VerifyEmail"))"> 我已发送邮件，直接进入验证界面 </a>
             </div>
 
             <div class="fn-mt fn-mlr mt15"><span class="tips">{{tips}}</span></div>
@@ -62,8 +54,6 @@
             data: {
                 email: "@(Model.Email)",
                 tips: "",
-                hasSend:@(Model.HasSend?1:0),
-                code:"@(Model.Code)",
                 loading: 0,
             },
             computed: {
@@ -78,7 +68,7 @@
                 }
             },
             methods: {
-                verify: function () {
+                send: function () {
                     var that = this;
                     that.tips = "";
 
@@ -87,16 +77,10 @@
                         return false;
                     }
 
-                    if (!that.code) {
-                        that.tips = "请输入验证码";
-                        return false;
-                    }
-
                     that.loading = 1;
 
                     axios.post("", {
-                        email: that.email,
-                        code: that.code
+                        email: that.email
                     }, {
                         headers: {
                             RequestVerificationToken: document.getElementsByName("__RequestVerificationToken")[0].value
@@ -105,9 +89,9 @@
                     .then(function (response) {
                         var result = response.data;
                         if (result.status) {
-                            location.href = "@(Url.Page("/User/Index"))";
+                             location.href = "@(Url.Page("/User/VerifyEmail"))";
                         } else {
-                            var error = result.errorMessage || "验证邮件失败";
+                            var error = result.errorMessage || "发送邮件失败";
                             if (result.data) {
                                 error += "<br>" + result.data;
                             }

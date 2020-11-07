@@ -11,7 +11,7 @@
 <div class="big_bg" id="app">
     <div class="nav">
         <h2 class="nav-title">个人中心</h2>
-        <div style="position: absolute; top: 10px; right: 10px;"><a style="font-size:12px;padding:0 5px;" href="javascript:;" class="btn btn-small-tawny" v-on:click="logout">退出</a></div>
+        <div style="position: absolute; top: 10px; right: 10px;"><a style="font-size:12px;padding:0 5px;" href="@(Url.Page("/User/Logout"))" class="btn btn-small-tawny">退出</a></div>
     </div>
 
     <div class="main">
@@ -23,7 +23,7 @@
                         <span class="bname"><b class="gy">邮箱</b>：@(Model.UserModel.Email)</span>
                         @if (!Model.UserModel.HasVerifiedEmail)
                         {
-                            <span class="binfo">[<a href="@(Url.Page("/User/VerifyEmail"))" class="a2">验证</a>]</span>
+                            <span>[<a href="@(Url.Page("/User/SendVerifyEmail"))" class="a2">验证</a>]</span>
                         }
                         <span class="binfo">[<a href="@(Url.Page("/User/ModifyPassword"))" class="a2">修改密码</a>]</span>
                     </li>

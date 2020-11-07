@@ -38,6 +38,11 @@ namespace Emprise.Domain.Core.Models
         public const string ResetPassword = "resetPassword_{0}";
 
         /// <summary>
+        /// resetPassword_{email}
+        /// </summary>
+        public const string VerifyEmail = "verifyEmail_{0}";
+
+        /// <summary>
         /// UnreadEmailCount_{playerId}
         /// </summary>
         public const string UnreadEmailCount = "unreadEmailCount_{0}";

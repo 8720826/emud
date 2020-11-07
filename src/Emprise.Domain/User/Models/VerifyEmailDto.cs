@@ -5,10 +5,13 @@ using System.Text;
 
 namespace Emprise.Domain.User.Models
 {
-    public class SendVerifyEmailDto
+    public class VerifyEmailDto
     {
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
+        public string Code { get; set; }
     }
 }
