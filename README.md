@@ -1,4 +1,6 @@
 # emud
+* https://github.com/8720826/emud
+
 ## 介绍
 * 全称EmpriseMud，基于netcore3.1开发的mud游戏框架。  
 * 仅供学习交流技术使用，未经本人同意，不可用于任何商业用途。  
@@ -50,16 +52,16 @@
 
 ##  相关下载
 * Mysql   
-https://www.mysql.com/downloads/
+https://www.mysql.com/downloads/   
 
 * SqlServer
-https://www.microsoft.com/zh-cn/sql-server/sql-server-2019
+https://www.microsoft.com/zh-cn/sql-server/sql-server-2019   
 
 * PostgreSql
-https://www.postgresql.org/
+https://www.postgresql.org/   
 
 * Redis  
-https://redis.io/download
+https://redis.io/download   
 
 * Visual Studio    
 https://visualstudio.microsoft.com/
