@@ -13,7 +13,7 @@
         version = $"{version}.0";
     }
 
-    var lastUpdateTime = System.IO.File.GetLastWriteTime(this.GetType().Assembly.Location).ToString();
+    var lastUpdateTime = System.IO.File.GetLastWriteTime(this.GetType().Assembly.Location).ToString("yyyy-MM-dd HH:mm");
 
 }
 <div class="footer">

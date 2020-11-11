@@ -1,12 +1,9 @@
-﻿using Emprise.Application.Player.Services;
-using Emprise.Domain.Core.Bus;
+﻿using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Enums;
-using Emprise.Domain.Core.Extensions;
 using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Interfaces.Ioc;
 using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Queue.Models;
-using Emprise.Domain.ItemDrop.Models;
 using Emprise.Domain.ItemDrop.Services;
 using Emprise.Domain.Npc.Entity;
 using Emprise.Domain.Npc.Services;
@@ -14,9 +11,7 @@ using Emprise.Domain.Player.Entity;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.Room.Services;
 using Emprise.Domain.Skill.Services;
-using Emprise.Domain.Ware.Entity;
 using Emprise.Domain.Ware.Services;
-using Emprise.MudServer.Events;
 using Emprise.MudServer.Models;
 using Microsoft.Extensions.Logging;
 using System;
@@ -86,12 +81,12 @@ namespace Emprise.MudServer.Handles
         {
             int playerId = model.TargetId;
             int npcId = model.NpcId;
-            var player = await _playerDomainService.Get(playerId);
-            if (player == null)
-            {
-                await StopAction(npcId);
-                return;
-            }
+
+
+            //_logger.LogInformation($"npcId={npcId}");
+
+          
+
             var npc = await _npcDomainService.Get(npcId);
             if (npc == null)
             {
@@ -99,11 +94,41 @@ namespace Emprise.MudServer.Handles
                 return;
             }
 
-            var npcFightingPlayerId = await _redisDb.StringGet<int>(string.Format(RedisKey.NpcFighting, npc.Id));
-            if (npcFightingPlayerId != playerId)
+            switch (model.Status)
             {
-                await _mudProvider.ShowMessage(player.Id, $"【切磋】{npcFightingPlayerId},{playerId},{npcId}");
-                await StopAction(npcId);
+                case NpcStatusEnum.切磋:
+                    var player = await _playerDomainService.Get(playerId);
+                    if (player == null)
+                    {
+                        await StopAction(npcId);
+                        return;
+                    }
+
+                    await Fighting( npc, player);
+                    break;
+
+                case NpcStatusEnum.移动:
+
+                    break;
+
+                case NpcStatusEnum.空闲:
+                   
+                    break;
+            }
+
+
+
+        }
+
+
+
+        private async Task Fighting(NpcEntity npc, PlayerEntity player)
+        {
+            var npcFightingPlayerId = await _redisDb.StringGet<int>(string.Format(RedisKey.NpcFighting, npc.Id));
+            if (npcFightingPlayerId != player.Id)
+            {
+                await _mudProvider.ShowMessage(player.Id, $"【切磋】{npcFightingPlayerId},{player.Id},{npc.Id}");
+                await StopAction(npc.Id);
                 return;
             }
 
@@ -112,7 +137,7 @@ namespace Emprise.MudServer.Handles
 
             await _mudProvider.AddFightingTarget(player.Id, new FightingTargetModel
             {
-                TargetId = npcId,
+                TargetId = npc.Id,
                 TargetName = npc.Name,
                 Hp = npc.Hp,
                 Mp = npc.Mp,
@@ -120,8 +145,9 @@ namespace Emprise.MudServer.Handles
                 MaxMp = npc.MaxMp,
                 TargetType = TargetTypeEnum.Npc
             });
-
         }
+
+
 
 
         private async Task StopAction(int npcId)

@@ -1,5 +1,6 @@
 ﻿
 using Emprise.Domain.Core.Bus;
+using Emprise.Domain.Core.Interfaces;
 using Emprise.Domain.Core.Queue.Models;
 using Emprise.MudServer.Queues;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +19,11 @@ namespace Emprise.MudServer.Jobs
     public class NpcStatusJobService : BackgroundService
     {
         private IServiceProvider _services;
+    
         public NpcStatusJobService(IServiceProvider services)
         {
             _services = services;
+          
         }
 
 

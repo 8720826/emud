@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Emprise.Application\Emprise.Application.csproj" />
     <ProjectReference Include="..\Emprise.Domain.Core\Emprise.Domain.Core.csproj" />
     <ProjectReference Include="..\Emprise.Domain\Emprise.Domain.csproj" />
   </ItemGroup>

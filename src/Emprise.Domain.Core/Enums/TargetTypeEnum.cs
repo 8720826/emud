@@ -6,6 +6,7 @@ namespace Emprise.Domain.Core.Enums
 {
     public enum TargetTypeEnum
     {
+        无=0,
         玩家 = 1,
         Npc = 2
     }

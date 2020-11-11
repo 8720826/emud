@@ -27,17 +27,18 @@ namespace Emprise.Domain.Core.Services
             _bus = bus;
         }
 
+
         public async Task<IQueryable<TEntity>> GetAll()
         {
             return await _repository.GetAll();
         }
 
-        public async Task<IQueryable<TEntity>> GetAllFromCache()
+        public async Task<List<TEntity>> GetAllFromCache()
         {
             var key = $"{typeof(TEntity).Name}_List";
             return await _cache.GetOrCreateAsync(key, async p => {
                 p.SetAbsoluteExpiration(TimeSpan.FromMinutes(CacheKey.ExpireMinutes));
-                return await _repository.GetAll();
+                return (await _repository.GetAll()).ToList();
             });
         }
 

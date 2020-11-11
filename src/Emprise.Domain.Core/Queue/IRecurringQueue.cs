@@ -11,6 +11,8 @@ namespace Emprise.Domain.Core.Bus
     /// </summary>
     public interface IRecurringQueue : IScoped
     {
+        Task<bool> Exists<T>();
+
         Task<bool> Publish<T>(string uniqueId, T t, int delayMin, int delayMax = 0);
 
         Task<int> GetRemainingTime<T>(string uniqueId);

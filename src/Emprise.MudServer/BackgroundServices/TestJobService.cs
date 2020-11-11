@@ -35,7 +35,6 @@ namespace Emprise.MudServer.Jobs
             {
                 var queue = scope.ServiceProvider.GetRequiredService<IDelayedQueue>();
                 var _jobProvider = scope.ServiceProvider.GetRequiredService<IMudProvider>();
-                var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
 
                 var msgs = await queue.Subscribe<MessageModel>();
                 if (msgs == null || msgs.Count == 0)

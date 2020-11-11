@@ -31,6 +31,13 @@ namespace Emprise.Infra.Bus
             _logger = logger;
         }
 
+        public async Task<bool> Exists<T>()
+        {
+            var channel = typeof(T).Name.ToLower();
+            var key = $"{queueName}_{channel}";
+            return await _redisDb.KeyTimeToLive(key) > 0;
+        }
+
         public async Task<bool> Publish<T>(string uniqueId, T t, int delayMin, int delayMax = 0)
         {
             var channel = t.GetType().Name.ToLower();
