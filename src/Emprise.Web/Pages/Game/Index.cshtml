@@ -306,8 +306,14 @@
                 </div>
 
                 <div class="status" v-if="myBox=='shop'">
-                    <p>商店正在紧张装修中...</p>
+                    <p v-if="storeWares.length==0">商店正在紧张装修中...</p>
 
+                    <div class="mt15">
+                        <button v-for="storeWare,index in storeWares">
+                            <span> {{storeWare.name}} </span>
+                            <em>({{storeWare.priceDesc}})</em>
+                        </button>
+                    </div>
                 </div>
 
 

@@ -50,7 +50,8 @@
         fightTargets: [],
         maxRemainingTime:0,
         remainingTime: 0,
-        actionPoint: 0
+        actionPoint: 0,
+        storeWares:[]
     },
     computed: {
         getMenus() {
@@ -416,6 +417,13 @@
                     that.actionPoint = result;
                 }
             });
+
+            connection.on("ShowShop", result => {
+                console.log("ShowShop:" + JSON.stringify(result));
+                that.myBox = "shop";
+                that.storeWares = result;
+            });
+            
             
         },
         move: function (roomId) {
@@ -667,8 +675,8 @@
         },
         showShop: function () {
             var that = this;
-
-            that.myBox = "shop";
+            connection.invoke("ShowShop");
+            //that.myBox = "shop";
         },
         showFriend: function () {
             var that = this;

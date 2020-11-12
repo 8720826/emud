@@ -35,9 +35,11 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<LoadWareCommand, Unit>,
         IRequestHandler<UnLoadWareCommand, Unit>,
         IRequestHandler<ShowWareCommand, Unit>,
-        IRequestHandler<DropWareCommand, Unit>
-        
+        IRequestHandler<DropWareCommand, Unit>,
+        IRequestHandler<ShowShopCommand, Unit>
 
+
+        
 
     {
         private readonly IMediatorHandler _bus;
@@ -46,6 +48,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IPlayerDomainService _playerDomainService;
         private readonly IWareDomainService _wareDomainService;
         private readonly IPlayerWareDomainService _playerWareDomainService;
+        private readonly IStoreWareDomainService _storeWareDomainService;
         private readonly ISkillDomainService _skillDomainService;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
@@ -60,6 +63,7 @@ namespace Emprise.MudServer.CommandHandlers
             IPlayerDomainService playerDomainService,
             IWareDomainService wareDomainService,
             IPlayerWareDomainService playerWareDomainService,
+            IStoreWareDomainService storeWareDomainService,
             ISkillDomainService skillDomainService,
             IMapper mapper,
             IMemoryCache cache, 
@@ -77,6 +81,7 @@ namespace Emprise.MudServer.CommandHandlers
             _playerDomainService = playerDomainService;
             _wareDomainService = wareDomainService;
             _playerWareDomainService = playerWareDomainService;
+            _storeWareDomainService = storeWareDomainService;
             _skillDomainService = skillDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
@@ -453,7 +458,50 @@ namespace Emprise.MudServer.CommandHandlers
 
 
 
-        
+        public async Task<Unit> Handle(ShowShopCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            List<StoreWareModel> storeWareModels = new List<StoreWareModel>();
+
+            var storeWares = (await _storeWareDomainService.GetAll()).ToList();
+            if (storeWares == null)
+            {
+                return Unit.Value;
+            }
+
+            var ids = storeWares.Select(x => x.WareId).ToList();
+
+            var wares = (await _wareDomainService.GetAll()).Where(x => ids.Contains(x.Id));
+            foreach (var storeWare in storeWares)
+            {
+                var ware = wares.FirstOrDefault(x => x.Id == storeWare.WareId);
+                if (ware != null)
+                {
+                    var wareModel = _mapper.Map<StoreWareModel>(ware);
+                    wareModel.StoreWareId = storeWare.Id;
+                    wareModel.Number = storeWare.Number;
+                    wareModel.Price = storeWare.Price;
+                    wareModel.OriginalPrice = storeWare.OriginalPrice;
+                    wareModel.PriceType = storeWare.PriceType;
+                    wareModel.IsBind = storeWare.IsBind;
+                    wareModel.PriceDesc = storeWare.Price.ToMoney();
+                    storeWareModels.Add(wareModel);
+                }
+
+            }
+
+
+            await _mudProvider.ShowShop(playerId, storeWareModels);
+            return Unit.Value;
+        }
 
         private async Task<WareEffectAttr> Computed(int playerId)
         {

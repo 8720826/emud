@@ -563,5 +563,17 @@ namespace Emprise.MudServer.Hubs
                 await _bus.SendCommand(command);
             });
         }
+
+
+        public async Task ShowShop()
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new ShowShopCommand(playerId);
+                await _bus.SendCommand(command);
+            });
+        }
+        
     }
 }

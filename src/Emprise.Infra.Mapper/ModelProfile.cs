@@ -55,6 +55,8 @@ namespace Emprise.Infra.Mapper
             CreateMap<WareEntity, Weapon>();
             CreateMap<WareEntity, WareInput>();
             CreateMap<WareInput, WareEntity>();
+            CreateMap<WareEntity, StoreWareModel>();
+            
 
 
             CreateMap<EmailEntity, EmailInput>();
