@@ -51,7 +51,8 @@
         maxRemainingTime:0,
         remainingTime: 0,
         actionPoint: 0,
-        storeWares:[]
+        storeWares: [],
+        storeWare: null
     },
     computed: {
         getMenus() {
@@ -424,7 +425,11 @@
                 that.storeWares = result;
             });
             
-            
+            connection.on("ShowStoreWare", result => {
+                console.log("ShowStoreWare:" + JSON.stringify(result));
+                that.myDetail = "storeWare";
+                that.storeWare = result;
+            });    
         },
         move: function (roomId) {
             if (roomId > 0) {
@@ -699,7 +704,17 @@
         },
         showMyKilling: function () {
 
+        },
+        showStoreWare: function (id) {
+            console.log("showStoreWare=" + id);
+            connection.invoke("ShowStoreWare", { id: id });
         }
+        ,
+        buyStoreWare: function (id) {
+            console.log("buyStoreWare=" + id);
+            connection.invoke("BuyStoreWare", { id: id });
+        }
+
     },
     watch: {
         myBox(val) {

@@ -36,10 +36,12 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<UnLoadWareCommand, Unit>,
         IRequestHandler<ShowWareCommand, Unit>,
         IRequestHandler<DropWareCommand, Unit>,
-        IRequestHandler<ShowShopCommand, Unit>
-
+        IRequestHandler<ShowShopCommand, Unit>,
+        IRequestHandler<ShowStoreWareCommand, Unit>,
+        IRequestHandler<BuyStoreWareCommand, Unit>
 
         
+
 
     {
         private readonly IMediatorHandler _bus;
@@ -500,6 +502,89 @@ namespace Emprise.MudServer.CommandHandlers
 
 
             await _mudProvider.ShowShop(playerId, storeWareModels);
+            return Unit.Value;
+        }
+
+
+        
+        public async Task<Unit> Handle(ShowStoreWareCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var storeWareId = command.StoreWareId;
+
+
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            var storeWare = await _storeWareDomainService.Get(storeWareId);
+            if (storeWare == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"物品不存在！"));
+                return Unit.Value;
+            }
+
+
+            var ware = await _wareDomainService.Get(storeWare.WareId);
+            if (ware == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"物品不存在！"));
+                return Unit.Value;
+            }
+
+            var wareModel = _mapper.Map<StoreWareModel>(ware);
+            wareModel.StoreWareId = storeWare.Id;
+            wareModel.Number = storeWare.Number;
+            wareModel.Price = storeWare.Price;
+            wareModel.OriginalPrice = storeWare.OriginalPrice;
+            wareModel.PriceType = storeWare.PriceType;
+            wareModel.IsBind = storeWare.IsBind;
+            wareModel.PriceDesc = storeWare.Price.ToMoney();
+ 
+            await _mudProvider.ShowStoreWare(playerId, wareModel);
+            return Unit.Value;
+        }
+
+        
+        public async Task<Unit> Handle(BuyStoreWareCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var storeWareId = command.StoreWareId;
+
+
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+
+            var storeWare = await _storeWareDomainService.Get(storeWareId);
+            if (storeWare == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"物品不存在！"));
+                return Unit.Value;
+            }
+
+
+            var ware = await _wareDomainService.Get(storeWare.WareId);
+            if (ware == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"物品不存在！"));
+                return Unit.Value;
+            }
+
+            if(player.Money< storeWare.Price)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"先去赚点钱吧！"));
+                return Unit.Value;
+            }
+
+            await _bus.RaiseEvent(new DomainNotification($"购买失败！"));
+
             return Unit.Value;
         }
 

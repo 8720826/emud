@@ -309,7 +309,7 @@
                     <p v-if="storeWares.length==0">商店正在紧张装修中...</p>
 
                     <div class="mt15">
-                        <button v-for="storeWare,index in storeWares">
+                        <button v-for="storeWare,index in storeWares"  @@click="showStoreWare(storeWare.storeWareId)">
                             <span> {{storeWare.name}} </span>
                             <em>({{storeWare.priceDesc}})</em>
                         </button>
@@ -574,6 +574,18 @@
                     <button @@click="learnSkill(mySkill.objectSkillId,mySkill.objectType)">修练</button>
 
 
+                </div>
+            </div>
+
+            <div v-if="myDetail=='storeWare'">
+
+                <div class="myDetailTitle" ref="myDetailTitle">
+                    <span class="title">[{{storeWare.name}}]({{storeWare.priceDesc}})</span>
+                    <span class="back" @@click="myDetail=''">返回</span>
+                </div>
+                <div class="detail" ref="detail">
+                  
+                    <button @@click="buyStoreWare(storeWare.storeWareId)">购买</button>
                 </div>
             </div>
         </div>

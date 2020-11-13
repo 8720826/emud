@@ -106,5 +106,7 @@ namespace Emprise.Domain.Core.Interfaces
         Task ShowActionPoint(int playerId, object obj);
 
         Task ShowShop(int playerId, object obj);
+
+        Task ShowStoreWare(int playerId, object obj);
     }
 }
