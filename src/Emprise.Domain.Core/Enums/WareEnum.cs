@@ -51,8 +51,7 @@ namespace Emprise.Domain.Core.Enums
     public enum WareStatusEnum
     {
         装备 = 1,
-        卸下 = 0,
-        寄售 = 2
+        卸下 = 0
     }
 
     public enum WareEffectEnum

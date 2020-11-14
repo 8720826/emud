@@ -229,13 +229,6 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            if (playerWare.Status == WareStatusEnum.寄售)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"武器正在寄售！"));
-                return Unit.Value;
-            }
-
-
             var ware = await _wareDomainService.Get(playerWare.WareId);
             if (ware == null)
             {
@@ -332,12 +325,6 @@ namespace Emprise.MudServer.CommandHandlers
             if (playerWare.Status == WareStatusEnum.卸下)
             {
                 await _bus.RaiseEvent(new DomainNotification($"武器已卸下！"));
-                return Unit.Value;
-            }
-
-            if (playerWare.Status == WareStatusEnum.寄售)
-            {
-                await _bus.RaiseEvent(new DomainNotification($"武器正在寄售！"));
                 return Unit.Value;
             }
 
@@ -553,7 +540,7 @@ namespace Emprise.MudServer.CommandHandlers
         {
             var playerId = command.PlayerId;
             var storeWareId = command.StoreWareId;
-
+            var number = command.Number;
 
             var player = await _playerDomainService.Get(playerId);
             if (player == null)
@@ -577,13 +564,74 @@ namespace Emprise.MudServer.CommandHandlers
                 return Unit.Value;
             }
 
-            if(player.Money< storeWare.Price)
+         
+
+            int money = storeWare.Price * number;
+
+            switch (storeWare.PriceType)
             {
-                await _bus.RaiseEvent(new DomainNotification($"先去赚点钱吧！"));
-                return Unit.Value;
+                case PriceTypeEnum.点券:
+                    await _bus.RaiseEvent(new DomainNotification($"该物品无法购买！"));
+                    break;
+
+                case PriceTypeEnum.元宝:
+                    await _bus.RaiseEvent(new DomainNotification($"该物品无法购买！"));
+                    break;
+
+                case PriceTypeEnum.银两:
+                    if (player.Money < money)
+                    {
+                        await _bus.RaiseEvent(new DomainNotification($"先去赚点钱吧！"));
+                        return Unit.Value;
+                    }
+
+                    player.Money -= money;
+
+                    break;
             }
 
-            await _bus.RaiseEvent(new DomainNotification($"购买失败！"));
+            await _playerDomainService.Update(player);
+
+            var isStack = true;
+            if (ware.Category == WareCategoryEnum.服装|| ware.Category == WareCategoryEnum.武器)
+            {
+                isStack = false;
+            }
+
+            var newPlayerWare = new PlayerWareEntity
+            {
+                PlayerId = playerId,
+                Damage = 0,
+                IsBind = false,
+                IsTemp = false,
+                Level = 0,
+                Number = number,
+                Status = WareStatusEnum.卸下,
+                WareId = ware.Id,
+                WareName = ware.Name
+            };
+
+            if (isStack)
+            {
+                var playerWare = await _playerWareDomainService.Get(x => x.PlayerId == playerId && x.WareId == ware.Id);
+                if (playerWare == null)
+                {
+                    await _playerWareDomainService.Add(newPlayerWare);
+                }
+                else
+                {
+                    playerWare.Number += number;
+                    playerWare.WareName += ware.Name;
+                    await _playerWareDomainService.Update(playerWare);
+                }
+            }
+            else
+            {
+                await _playerWareDomainService.Add(newPlayerWare);
+            }
+
+
+            await _mudProvider.ShowMessage(playerId, $"你购买了 {number}个 [{ware.Name}]！");
 
             return Unit.Value;
         }
