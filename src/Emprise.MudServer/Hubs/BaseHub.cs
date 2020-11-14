@@ -68,7 +68,9 @@ namespace Emprise.MudServer.Hubs
             var connectionId = await _mudOnlineProvider.GetConnectionId(_account.PlayerId);
             if (!string.IsNullOrEmpty(connectionId) && connectionId != Context.ConnectionId)
             {
+                //踢出其他登录者
                 await KickOut(connectionId);
+                await ShowSystemMessage(connectionId, "您的帐号在其他地方登录，您已被迫下线！");
             }
 
             await _mudOnlineProvider.SetConnectionId(_account.PlayerId, Context.ConnectionId);
@@ -89,17 +91,21 @@ namespace Emprise.MudServer.Hubs
 
         protected async Task<bool> DoCommand(Func<Task> func)
         {
+            //踢出自己
             var connectionId = await _mudOnlineProvider.GetConnectionId(_account.PlayerId);
             if (string.IsNullOrEmpty(connectionId))
             {
+                await KickOut(Context.ConnectionId);
                 await ShowSystemMessage(Context.ConnectionId, "你已经断线，请刷新或重新登录");
+                Context.Abort();
                 return await Task.FromResult(false);
             }
 
             if (connectionId != Context.ConnectionId)
             {
-                //await KickOut(connectionId);
+                await KickOut(Context.ConnectionId);
                 await ShowSystemMessage(Context.ConnectionId, "你已经断线，请刷新或重新登录");
+                Context.Abort();
                 return await Task.FromResult(false);
             }
 
@@ -130,9 +136,7 @@ namespace Emprise.MudServer.Hubs
 
         protected async Task KickOut(string connectionId)
         {
-            await ShowSystemMessage(connectionId, "您的帐号在其他地方登录，您已被迫下线！");
             await Clients.Client(connectionId).Offline();
- 
         }
 
     }
