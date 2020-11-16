@@ -556,6 +556,23 @@
                 case "historyQuest":
                     this.showMyHistoryQuest();
                     break;
+
+                case "friend":
+                    this.showFriend();
+                    break;
+
+                case "enemy":
+                    this.myBox = "enemy";
+                    break;
+
+                case "master":
+                    this.myBox = "master";
+                    break;
+
+
+                case "couple":
+                    this.myBox = "couple";
+                    break;
             }
         },
         showWare: function (id) {

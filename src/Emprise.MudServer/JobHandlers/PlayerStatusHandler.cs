@@ -271,7 +271,7 @@ namespace Emprise.MudServer.Handles
                             continue;
                         }
 
-                        dropContents.Add($"{ware.Name} X{number}");
+                        dropContents.Add($"{number}{ware.Unit}{ware.Name}");
 
                         var canStack = ware.Category != WareCategoryEnum.武器;
 

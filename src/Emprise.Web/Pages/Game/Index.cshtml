@@ -305,11 +305,25 @@
                     </template>
                 </div>
 
+                <div class="friend" v-if="myBox=='enemy'">
+                    <p>我的敌人</p>
+                </div>
+
+                <div class="friend" v-if="myBox=='master'">
+                    <p>我的师父</p>
+                </div>
+
+                <div class="friend" v-if="myBox=='couple'">
+                    <p>我的伴侣</p>
+                </div>
+
+
+
                 <div class="status" v-if="myBox=='shop'">
                     <p v-if="storeWares.length==0">商店正在紧张装修中...</p>
 
                     <div class="mt15">
-                        <button v-for="storeWare,index in storeWares"  @@click="showStoreWare(storeWare.storeWareId)">
+                        <button v-for="storeWare,index in storeWares" @@click="showStoreWare(storeWare.storeWareId)">
                             <span> {{storeWare.name}} </span>
                             <em>({{storeWare.priceDesc}})</em>
                         </button>
@@ -365,7 +379,7 @@
                     <div class="mt15">
                         <button v-for="myWare,index in myPack.wares" @@click="showWare(myWare.playerWareId)">
                             <span> {{myWare.name}} </span>
-                            <em>({{myWare.number}}个)</em>
+                            <em v-if="myWare.number>1">({{myWare.number}})</em>
                             <span v-if="myWare.status===1"> √</span>
                         </button>
                     </div>

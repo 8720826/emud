@@ -51,5 +51,7 @@ namespace Emprise.Domain.Ware.Entity
         [StringLength(500)]
         public string Img { set; get; }
 
+        public string Unit { set; get; }
+
     }
 }

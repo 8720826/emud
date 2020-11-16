@@ -327,7 +327,7 @@ namespace Emprise.MudServer.CommandHandlers
                 await _bus.RaiseEvent(new DomainNotification($"武器已卸下！"));
                 return Unit.Value;
             }
-
+ 
 
             var ware = await _wareDomainService.Get(playerWare.WareId);
             if (ware == null)
@@ -631,7 +631,7 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
 
-            await _mudProvider.ShowMessage(playerId, $"你购买了 {number}个 [{ware.Name}]！");
+            await _mudProvider.ShowMessage(playerId, $"你购买了 {number}{ware.Unit}[{ware.Name}]！");
 
             return Unit.Value;
         }

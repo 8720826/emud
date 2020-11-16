@@ -369,7 +369,7 @@ namespace Emprise.MudServer.Consumers
                             var ware = await _wareDomainService.Get(wareId);
                             if (ware != null)
                             {
-                                await _mudProvider.ShowMessage(player.Id, $"获得 [{ware.Name}] X{number}");
+                                await _mudProvider.ShowMessage(player.Id, $"获得 {number}{ware.Unit}[{ware.Name}]");
                             }
                             // 添加物品
 
