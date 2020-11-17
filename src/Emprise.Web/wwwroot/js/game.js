@@ -52,7 +52,8 @@
         remainingTime: 0,
         actionPoint: 0,
         storeWares: [],
-        storeWare: null
+        storeWare: null,
+        myMaster:null
     },
     computed: {
         getMenus() {
@@ -384,6 +385,13 @@
                 that.myFriends = result;
             });
 
+            connection.on("ShowMaster", result => {
+                console.log("ShowMaster:" + JSON.stringify(result));
+                that.myBox = "master";
+                that.myMaster = result;
+            });
+            
+
             connection.on("ShowBox", result => {
                 console.log("ShowBox:" + JSON.stringify(result));
                 that.myBox = result.boxName;
@@ -566,7 +574,7 @@
                     break;
 
                 case "master":
-                    this.myBox = "master";
+                    this.showMaster();
                     break;
 
 
@@ -698,13 +706,16 @@
         showShop: function () {
             var that = this;
             connection.invoke("ShowShop");
-            //that.myBox = "shop";
         },
         showFriend: function () {
             var that = this;
             connection.invoke("ShowFriend");
-           // that.myBox = "friend";
         },
+        showMaster: function () {
+            var that = this;
+            connection.invoke("ShowMaster");
+        },
+
         agreeFriend: function (id, name) {
             var that = this;
             that.confirm("要同意添加[" + name + "]为好友吗？", function () {

@@ -311,6 +311,13 @@
 
                 <div class="friend" v-if="myBox=='master'">
                     <p>我的师父</p>
+                    <div class="mt15 mb15">
+                        <p v-if="myMaster==null||myMaster.master==null">你还没有拜师</p>
+                        <button v-else @@click="showPlayer(myMaster.master.id)">
+                            <span> {{myMaster.master.name}} </span>
+                        </button>
+                    </div>
+                    
                 </div>
 
                 <div class="friend" v-if="myBox=='couple'">

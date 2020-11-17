@@ -8,6 +8,7 @@ using Emprise.Domain.Core.Models;
 using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Email.Entity;
 using Emprise.Domain.Email.Services;
+using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Models;
 using Emprise.Domain.Player.Services;
 using Emprise.Domain.PlayerRelation.Entity;
@@ -33,7 +34,8 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<AgreeFriendCommand, Unit>,
         IRequestHandler<RefuseFriendCommand, Unit>,
         IRequestHandler<FriendToCommand, Unit>,
-        IRequestHandler<UnFriendToCommand, Unit>
+        IRequestHandler<UnFriendToCommand, Unit>,
+        IRequestHandler<ShowMasterCommand, Unit>
 
         
 
@@ -42,6 +44,7 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly ILogger<RelationCommandHandler> _logger;
         private readonly IPlayerRelationDomainService _playerRelationDomainService;
         private readonly IPlayerDomainService _playerDomainService;
+        private readonly INpcDomainService _npcDomainService;
         private readonly IEmailDomainService _emailDomainService;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
@@ -53,6 +56,7 @@ namespace Emprise.MudServer.CommandHandlers
             IMediatorHandler bus,
             ILogger<RelationCommandHandler> logger,
             IPlayerRelationDomainService playerRelationDomainService,
+            INpcDomainService npcDomainService,
             IPlayerDomainService playerDomainService,
             IMapper mapper,
             IMemoryCache cache,
@@ -70,6 +74,7 @@ namespace Emprise.MudServer.CommandHandlers
             _mapper = mapper;
             _cache = cache;
             _playerDomainService = playerDomainService;
+            _npcDomainService = npcDomainService;
             _emailDomainService = emailDomainService;
             _redisDb = redisDb;
             _mudProvider = mudProvider;
@@ -416,5 +421,35 @@ namespace Emprise.MudServer.CommandHandlers
 
             return Unit.Value;
         }
+
+        public async Task<Unit> Handle(ShowMasterCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                await _bus.RaiseEvent(new DomainNotification($"角色不存在！"));
+                return Unit.Value;
+            }
+            var myMasterModel = new MyMasterModel
+            {
+
+            };
+
+            var playerRelation = await _playerRelationDomainService.Get(x => x.Type == PlayerRelationTypeEnum.师父 && x.PlayerId == playerId);
+            if (playerRelation != null)
+            {
+                var master = await _npcDomainService.Get(playerRelation.RelationId);
+                if (master != null)
+                {
+                    myMasterModel.Master = _mapper.Map<PlayerBaseInfo>(master);
+                }
+            }
+
+            await _mudProvider.ShowMaster(playerId, myMasterModel);
+
+            return Unit.Value;
+        }
+      
     }
 }
