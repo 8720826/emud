@@ -41,6 +41,7 @@
         myEmails: null,
         myEmail: null,
         skills: [],
+        fightingSkills:[],
         mySkill:null,
         weapons: [],
         myWare: null,
@@ -236,6 +237,11 @@
                 }
                 that.mySkill = result;
                 that.myDetail = "skill";
+            });
+
+            connection.on("ShowFightingSkill", result => {
+                console.log("ShowFightingSkill:" + JSON.stringify(result));
+                that.fightingSkills = result;
             });
 
             connection.on("ShowFriendSkill", result => {
@@ -470,6 +476,9 @@
         },
         showSkill: function () {
             connection.invoke("ShowMySkill");
+        },
+        showFightingSkill: function () {
+            connection.invoke("ShowFightingSkill");
         },
         showWeapon: function () {
             connection.invoke("ShowMyWeapon");
@@ -729,6 +738,7 @@
         showMyFighting: function () {
             var that = this;
             that.myBox = "fighting";
+            that.showFightingSkill();
         },
         showMyKilling: function () {
 

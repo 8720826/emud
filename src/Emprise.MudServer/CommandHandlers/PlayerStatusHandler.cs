@@ -301,9 +301,9 @@ namespace Emprise.MudServer.CommandHandlers
 
             if (hasChangedStatus)
             {
-                await _mudProvider.ShowMessage(playerId, $"【切磋】你对着[{npc.Name}]说道：在下[{player.Name}]，领教壮士的高招！");
+                await _mudProvider.ShowMessage(playerId, $"【切磋】你对着[{npc.Name}]说道：在下[{player.Name}]，领教阁下的高招！");
 
-                await _mudProvider.ShowMessage(playerId, $"【切磋】[{npc.Name}]说道：「既然小兄弟赐教，在下只好奉陪，我们点到为止。」");
+                await _mudProvider.ShowMessage(playerId, $"【切磋】[{npc.Name}]说道：「既然阁下赐教，在下只好奉陪，我们点到为止。」");
 
                 await _redisDb.StringSet(string.Format(RedisKey.NpcFighting, npc.Id), playerId, DateTime.Now.AddSeconds(20));
 
@@ -320,6 +320,7 @@ namespace Emprise.MudServer.CommandHandlers
                     TargetId = playerId,
                     TargetType = TargetTypeEnum.玩家
                 }, minDelay, maxDelay);
+
 
                 await _mudProvider.ShowBox(playerId, new { boxName = "fighting" });
             }

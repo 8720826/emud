@@ -38,8 +38,9 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<ShowFriendSkillCommand, Unit>,
         IRequestHandler<ShowNpcSkillCommand, Unit>,
         IRequestHandler<LearnSkillCommand, Unit>,
-        IRequestHandler<LearnWareCommand, Unit>
-
+        IRequestHandler<LearnWareCommand, Unit>,
+        IRequestHandler<ShowFightingSkillCommand, Unit>
+        
     {
         private readonly IMediatorHandler _bus;
         private readonly ILogger<SkillCommandHandler> _logger;
@@ -144,6 +145,73 @@ namespace Emprise.MudServer.CommandHandlers
             }
 
             await _mudProvider.ShowMySkill(playerId, skillModels);
+            return Unit.Value;
+        }
+
+        
+        public async Task<Unit> Handle(ShowFightingSkillCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var myWeapons = await _playerWareDomainService.GetAllWeapon(playerId);
+            var myWeaponIds = myWeapons.Select(x => x.WareId);
+
+            var weapons = (await _wareDomainService.GetAll()).Where(x => x.Category == WareCategoryEnum.武器 && myWeaponIds.Contains(x.Id)).ToList();
+
+
+
+            var skillModels = new List<SkillModel>();
+
+            var playerSkills = await _playerSkillDomainService.GetAll(player.Id);
+
+            var ids = playerSkills?.Select(x => x.SkillId);
+
+            var skills = (await _skillDomainService.GetAll()).Where(x => x.Category == SkillCategoryEnum.外功 && ids.Contains(x.Id));
+            foreach (var playerSkill in playerSkills)
+            {
+                var skill = skills.FirstOrDefault(x => x.Id == playerSkill.SkillId);
+                if (skill != null)
+                {
+                    switch (skill.Type)
+                    {
+                        case SkillTypeEnum.刀法:
+                            if (weapons.Count(x => x.Type == WareTypeEnum.刀) == 0)
+                            {
+                                continue;
+                            }
+                            break;
+                        case SkillTypeEnum.剑法:
+                            if (weapons.Count(x => x.Type == WareTypeEnum.剑) == 0)
+                            {
+                                continue;
+                            }
+                            break;
+                        case SkillTypeEnum.枪棍:
+                            if (weapons.Count(x => x.Type == WareTypeEnum.枪) == 0)
+                            {
+                                continue;
+                            }
+                            break;
+
+                    }
+           
+
+
+                    var skillModel = _mapper.Map<SkillModel>(skill);
+                    skillModel.ObjectSkillId = playerSkill.Id;
+                    skillModel.Level = playerSkill.Level;
+                    skillModel.Exp = playerSkill.Exp;
+                    skillModels.Add(skillModel);
+                }
+
+            }
+
+            await _mudProvider.ShowFightingSkill(playerId, skillModels);
             return Unit.Value;
         }
 

@@ -1,5 +1,6 @@
 ﻿using Emprise.Domain.Core.Bus;
 using Emprise.Domain.Core.Data;
+using Emprise.Domain.Core.Enums;
 using Emprise.Domain.Core.Services;
 using Emprise.Domain.Ware.Entity;
 using Microsoft.Extensions.Caching.Memory;
@@ -29,6 +30,11 @@ namespace Emprise.Domain.Ware.Services
             return query.ToList();
         }
 
+        public async Task<List<PlayerWareEntity>> GetAllWeapon(int playerId)
+        {
+            var query = await _scriptRepository.GetAll(x => x.PlayerId == playerId && x.Status== WareStatusEnum.装备);
 
+            return query.ToList();
+        }
     }
 }

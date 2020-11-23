@@ -13,5 +13,7 @@ namespace Emprise.Domain.Ware.Services
     {
         Task<List<PlayerWareEntity>> GetAll(int playerId);
 
+        Task<List<PlayerWareEntity>> GetAllWeapon(int playerId);
+
     }
 }

@@ -62,6 +62,7 @@ namespace Emprise.Domain.Core.Interfaces
 
         Task ShowMySkill(int playerId, object obj);
 
+        Task ShowFightingSkill(int playerId, object obj);
         Task ShowFriendSkill(int playerId, object obj);
 
         Task ShowNpcSkill(int playerId, object obj);

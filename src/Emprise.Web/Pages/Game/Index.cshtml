@@ -497,11 +497,7 @@
                         </div>
 
                         <div class="fighting_command_wg">
-                            <button>刀法lv.1(1)</button>
-                            <button>刀法lv.11(2)</button>
-                            <button>刀法lv.1111(4)</button>
-                            <button>刀法lv.121(5)</button>
-                            <button>刀法lv.113(1)</button>
+                            <button v-for="skill,index in fightingSkills">{{skill.name}}lv.1(1)</button>
                         </div>
                         <div class="fighting_command_qg">
                             <button>切换轻功</button>
