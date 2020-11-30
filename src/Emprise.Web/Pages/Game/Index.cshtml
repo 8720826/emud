@@ -497,13 +497,13 @@
                         </div>
 
                         <div class="fighting_command_wg">
-                            <button v-for="skill,index in fightingSkills">{{skill.name}}lv.1(1)</button>
+                            <button v-for="skill,index in fightingSkills">{{skill.name}}lv.{{skill.level}}({{skill.useForce}})</button>
                         </div>
                         <div class="fighting_command_qg">
                             <button>切换轻功</button>
                             <button>切换内功</button>
 
-                            <button>停止切磋</button>
+                            <button @@click="stopAction" class="stopAction">停止切磋</button>
                         </div>
 
                     </div>

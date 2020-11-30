@@ -48,7 +48,7 @@ namespace Emprise.MudServer.Consumers
 
             if (await Commit())
             {
-                //await _bus.RaiseEvent(new ReceivedEmailEvent(playerId)).ConfigureAwait(false);
+                
             }
 
             return true;

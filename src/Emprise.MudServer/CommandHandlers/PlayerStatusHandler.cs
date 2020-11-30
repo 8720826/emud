@@ -239,6 +239,8 @@ namespace Emprise.MudServer.CommandHandlers
 
             await _recurringQueue.Remove<PlayerStatusModel>($"player_{playerId}");
 
+            await _mudProvider.ShowBox(playerId, new { boxName = "" });
+
             if (await Commit())
             {
                 await _bus.RaiseEvent(new PlayerStatusChangedEvent(player)).ConfigureAwait(false);
@@ -320,6 +322,8 @@ namespace Emprise.MudServer.CommandHandlers
                     TargetId = playerId,
                     TargetType = TargetTypeEnum.玩家
                 }, minDelay, maxDelay);
+
+
 
 
                 await _mudProvider.ShowBox(playerId, new { boxName = "fighting" });

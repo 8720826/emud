@@ -1094,6 +1094,7 @@ footer a span {
 .fighting .fighting_status {
     position: absolute;
     bottom: 0px;
+    width: 100%;
 }
 
 .fighting_command_wg {
@@ -1122,7 +1123,14 @@ footer a span {
 .fighting button {
     margin: 2px 5px;
 }
+.fighting .stopAction {
+    background-color: #333300;
+    float: right;
+}
 
+.fighting .cur {
+    border: 1px dashed #FF0000;
+}
 
 .fighting_bar {
     margin: 5px 10px;

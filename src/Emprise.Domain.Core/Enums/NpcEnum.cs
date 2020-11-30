@@ -12,7 +12,7 @@ namespace Emprise.Domain.Core.Enums
         空闲 = 0,
 
         /// <summary>
-        /// 死亡
+        /// 切磋
         /// </summary>
         切磋 = 1,
 

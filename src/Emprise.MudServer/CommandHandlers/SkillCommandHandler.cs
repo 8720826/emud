@@ -200,8 +200,6 @@ namespace Emprise.MudServer.CommandHandlers
 
                     }
            
-
-
                     var skillModel = _mapper.Map<SkillModel>(skill);
                     skillModel.ObjectSkillId = playerSkill.Id;
                     skillModel.Level = playerSkill.Level;

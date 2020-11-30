@@ -5,6 +5,7 @@ using Emprise.Domain.Core.Queue.Models;
 using Emprise.MudServer.Queues;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,6 +48,8 @@ namespace Emprise.MudServer.Jobs
                 {
                     return;
                 }
+
+                
 
                 //发布到队列
                 foreach (var msg in msgs)

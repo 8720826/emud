@@ -56,6 +56,7 @@ namespace Emprise.Infra.Bus
                 DelayTime = DateTime.Now.AddMilliseconds(delay)
             };
 
+
             var isSuccess = await _redisDb.HashSet(key, uniqueId, message);
             if (isSuccess)
             {
@@ -73,7 +74,6 @@ namespace Emprise.Infra.Bus
             var dic = await _redisDb.HashGetAll<QueueData<T>>(key);
             if (dic == null || dic.Count == 0)
             {
-              
                 return default;
             }
 
@@ -89,6 +89,7 @@ namespace Emprise.Infra.Bus
                     continue;
                 }
 
+
                 var delay = itemValue.DelayMax > itemValue.DelayMin ? rnd.Next(itemValue.DelayMin, itemValue.DelayMax) : itemValue.DelayMin;
                 if (delay < 2000)
                 {
@@ -101,7 +102,7 @@ namespace Emprise.Infra.Bus
                 {
                     list.Add(uniqueId, itemValue.Data);
                 }
-                await _redisDb.HashSet($"{queueName}_{channel}", uniqueId, itemValue);
+                await _redisDb.HashSet(key, uniqueId, itemValue);
                 hasChange = true;
             }
 

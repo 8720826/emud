@@ -83,9 +83,6 @@ namespace Emprise.MudServer.Handles
             int npcId = model.NpcId;
 
 
-            //_logger.LogInformation($"npcId={npcId}");
-
-          
 
             var npc = await _npcDomainService.Get(npcId);
             if (npc == null)
