@@ -53,5 +53,7 @@ namespace Emprise.Domain.Skill.Models
 
         public int Exp { get; set; }
 
+
+        public bool IsDefault { get; set; }
     }
 }

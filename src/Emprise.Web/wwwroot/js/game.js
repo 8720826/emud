@@ -244,6 +244,18 @@
                 that.fightingSkills = result;
             });
 
+            connection.on("SetDefaultSkill", result => {
+                console.log("SetDefaultSkill:" + result);
+                for (var i = 0; i < that.fightingSkills.length; i++) {
+                    if (that.fightingSkills[i].objectSkillId == result) {
+                        that.fightingSkills[i].isDefault = true;
+                    } else {
+                        that.fightingSkills[i].isDefault = false;
+                    }
+                }
+            });
+            
+
             connection.on("ShowFriendSkill", result => {
                 console.log("ShowFriendSkill:" + JSON.stringify(result));
                 that.myBox = "friendSkill";
@@ -624,9 +636,6 @@
             }else{
                 connection.invoke("PlayerAction", { targetId, commandName:command.commandName });
             }
-
-
-            
         },
         clickCommand: function (e) {
             var that = this;
@@ -739,6 +748,10 @@
             var that = this;
             that.myBox = "fighting";
             that.showFightingSkill();
+        },
+        setDefaultSkill: function (id) {
+            console.log("setDefaultSkill=" + id);
+            connection.invoke("SetDefaultSkill", { objectSkillId: id });
         },
         showMyKilling: function () {
 

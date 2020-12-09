@@ -10,6 +10,9 @@ using Emprise.Domain.Core.Notifications;
 using Emprise.Domain.Core.Queue.Models;
 using Emprise.Domain.Npc.Services;
 using Emprise.Domain.Player.Services;
+using Emprise.Domain.Skill.Models;
+using Emprise.Domain.Skill.Services;
+using Emprise.Domain.Ware.Services;
 using Emprise.MudServer.Commands;
 using Emprise.MudServer.Commands.NpcActionCommands;
 using Emprise.MudServer.Commands.SkillCommands;
@@ -22,6 +25,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,7 +61,10 @@ namespace Emprise.MudServer.CommandHandlers
         private readonly IMudOnlineProvider _mudOnlineProvider;
         private readonly IQueueHandler _queueHandler;
         private readonly INpcDomainService _npcDomainService;
-
+        private readonly IPlayerWareDomainService _playerWareDomainService;
+        private readonly IWareDomainService _wareDomainService;
+        private readonly IPlayerSkillDomainService _playerSkillDomainService;
+        private readonly ISkillDomainService _skillDomainService;
 
         public PlayerStatusHandler(
             IMediatorHandler bus,
@@ -66,6 +73,10 @@ namespace Emprise.MudServer.CommandHandlers
             IMapper mapper,
             IPlayerDomainService playerDomainService,
             INpcDomainService npcDomainService,
+            IPlayerWareDomainService playerWareDomainService,
+            IWareDomainService wareDomainService,
+            IPlayerSkillDomainService playerSkillDomainService,
+            ISkillDomainService skillDomainService,
             IAccountContext account,
             IDelayedQueue delayedQueue,
             IRecurringQueue recurringQueue,
@@ -94,6 +105,11 @@ namespace Emprise.MudServer.CommandHandlers
             _mudOnlineProvider = mudOnlineProvider;
             _queueHandler = queueHandler;
             _npcDomainService = npcDomainService;
+            _playerWareDomainService = playerWareDomainService;
+            _wareDomainService = wareDomainService;
+            _playerSkillDomainService = playerSkillDomainService;
+            _skillDomainService = skillDomainService;
+
         }
 
         public async Task<Unit> Handle(WorkCommand command, CancellationToken cancellationToken)
@@ -323,10 +339,67 @@ namespace Emprise.MudServer.CommandHandlers
                     TargetType = TargetTypeEnum.玩家
                 }, minDelay, maxDelay);
 
-
-
-
                 await _mudProvider.ShowBox(playerId, new { boxName = "fighting" });
+
+
+                var myWeapons = await _playerWareDomainService.GetAllWeapon(playerId);
+                var myWeaponIds = myWeapons.Select(x => x.WareId);
+
+                var weapons = (await _wareDomainService.GetAll()).Where(x => x.Category == WareCategoryEnum.武器 && myWeaponIds.Contains(x.Id)).ToList();
+
+
+
+                var skillModels = new List<SkillModel>();
+
+                var playerSkills = await _playerSkillDomainService.GetAll(player.Id);
+
+                var ids = playerSkills?.Select(x => x.SkillId);
+
+                var skills = (await _skillDomainService.GetAll()).Where(x => x.Category == SkillCategoryEnum.外功 && ids.Contains(x.Id));
+                foreach (var playerSkill in playerSkills)
+                {
+                    var skill = skills.FirstOrDefault(x => x.Id == playerSkill.SkillId);
+                    if (skill != null)
+                    {
+                        switch (skill.Type)
+                        {
+                            case SkillTypeEnum.刀法:
+                                if (weapons.Count(x => x.Type == WareTypeEnum.刀) == 0)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case SkillTypeEnum.剑法:
+                                if (weapons.Count(x => x.Type == WareTypeEnum.剑) == 0)
+                                {
+                                    continue;
+                                }
+                                break;
+                            case SkillTypeEnum.枪棍:
+                                if (weapons.Count(x => x.Type == WareTypeEnum.枪) == 0)
+                                {
+                                    continue;
+                                }
+                                break;
+
+                        }
+
+                        var skillModel = _mapper.Map<SkillModel>(skill);
+                        skillModel.ObjectSkillId = playerSkill.Id;
+                        skillModel.Level = playerSkill.Level;
+                        skillModel.Exp = playerSkill.Exp;
+                        skillModel.IsDefault = playerSkill.IsDefault;
+                        skillModels.Add(skillModel);
+                    }
+
+                }
+
+                if (skillModels.Count(x => (x.Type == SkillTypeEnum.刀法 || x.Type == SkillTypeEnum.剑法 || x.Type == SkillTypeEnum.枪棍) && x.IsDefault) == 0)
+                {
+                    skillModels.FirstOrDefault(x => x.Type == SkillTypeEnum.拳脚).IsDefault = true;
+                }
+
+                await _mudProvider.ShowFightingSkill(playerId, skillModels);
             }
 
 

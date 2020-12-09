@@ -512,6 +512,17 @@ namespace Emprise.MudServer.Hubs
             });
         }
 
+        public async Task SetDefaultSkill(SkillDetailAction questAction)
+        {
+            var result = await DoCommand(async () => {
+                var playerId = _account.PlayerId;
+
+                var command = new SetDefaultSkillCommand(playerId, questAction.ObjectSkillId);
+                await _bus.SendCommand(command);
+            });
+        }
+
+
         public async Task PlayerAction(PlayerCommandAction commandAction)
         {
             var result = await DoCommand(async () => {
@@ -615,5 +626,7 @@ namespace Emprise.MudServer.Hubs
                 await _bus.SendCommand(command);
             });
         }
+
+
     }
 }

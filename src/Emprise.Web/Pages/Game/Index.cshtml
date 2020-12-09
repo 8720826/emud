@@ -497,7 +497,7 @@
                         </div>
 
                         <div class="fighting_command_wg">
-                            <button v-for="skill,index in fightingSkills">{{skill.name}}lv.{{skill.level}}({{skill.useForce}})</button>
+                            <button v-for="skill,index in fightingSkills" :class="[skill.isDefault?'cur':'']" @@click="setDefaultSkill(skill.objectSkillId)">{{skill.name}}lv.{{skill.level}}({{skill.useForce}})</button>
                         </div>
                         <div class="fighting_command_qg">
                             <button>切换轻功</button>

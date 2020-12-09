@@ -9,6 +9,6 @@ namespace Emprise.MudServer.Hubs.Actions
     {
         public int ObjectSkillId { get; set; }
 
-        public int Type { get; set; }
+        public int Type { get; set; } = 1;
     }
 }

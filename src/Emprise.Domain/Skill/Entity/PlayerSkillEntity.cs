@@ -18,5 +18,7 @@ namespace Emprise.Domain.Skill.Entity
         public int Level { get; set; }
 
         public int Exp { get; set; }
+
+        public bool IsDefault { get; set; }
     }
 }

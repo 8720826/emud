@@ -39,7 +39,8 @@ namespace Emprise.MudServer.CommandHandlers
         IRequestHandler<ShowNpcSkillCommand, Unit>,
         IRequestHandler<LearnSkillCommand, Unit>,
         IRequestHandler<LearnWareCommand, Unit>,
-        IRequestHandler<ShowFightingSkillCommand, Unit>
+        IRequestHandler<ShowFightingSkillCommand, Unit>,
+        IRequestHandler<SetDefaultSkillCommand, Unit>
         
     {
         private readonly IMediatorHandler _bus;
@@ -204,9 +205,15 @@ namespace Emprise.MudServer.CommandHandlers
                     skillModel.ObjectSkillId = playerSkill.Id;
                     skillModel.Level = playerSkill.Level;
                     skillModel.Exp = playerSkill.Exp;
+                    skillModel.IsDefault = playerSkill.IsDefault;
                     skillModels.Add(skillModel);
                 }
 
+            }
+
+            if (skillModels.Count(x => (x.Type == SkillTypeEnum.刀法 || x.Type == SkillTypeEnum.剑法 || x.Type == SkillTypeEnum.枪棍) && x.IsDefault) == 0)
+            {
+                skillModels.FirstOrDefault(x => x.Type == SkillTypeEnum.拳脚).IsDefault = true;
             }
 
             await _mudProvider.ShowFightingSkill(playerId, skillModels);
@@ -696,5 +703,47 @@ namespace Emprise.MudServer.CommandHandlers
 
             return Unit.Value;
         }
+
+
+        
+        public async Task<Unit> Handle(SetDefaultSkillCommand command, CancellationToken cancellationToken)
+        {
+            var playerId = command.PlayerId;
+            var mySkillId = command.MySkillId;
+            var player = await _playerDomainService.Get(playerId);
+            if (player == null)
+            {
+                return Unit.Value;
+            }
+
+            var playerSkills = await _playerSkillDomainService.GetAll(player.Id);
+            if(playerSkills.Count(x=>x.Id== mySkillId && !x.IsDefault) == 0)
+            {
+                return Unit.Value;
+            }
+
+            int defaultSkillId = 0;
+            foreach (var playerSkill in playerSkills)
+            {
+                if (playerSkill.IsDefault)
+                {
+                    defaultSkillId = playerSkill.Id;
+                    playerSkill.IsDefault = false;
+                    await _playerSkillDomainService.Update(playerSkill);
+                }
+
+                if (playerSkill.Id == mySkillId)
+                {
+                    playerSkill.IsDefault = true;
+                    await _playerSkillDomainService.Update(playerSkill);
+                }
+            }
+
+            await _mudProvider.SetDefaultSkill(playerId, mySkillId);
+
+
+            return Unit.Value;
+        }
+
     }
 }

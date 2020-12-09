@@ -112,5 +112,7 @@ namespace Emprise.Domain.Core.Interfaces
         Task ShowShop(int playerId, object obj);
 
         Task ShowStoreWare(int playerId, object obj);
+
+        Task SetDefaultSkill(int playerId, object obj);
     }
 }
