@@ -26,7 +26,7 @@
   <ItemGroup>
     <PackageReference Include="Aliyun.Acs.Core" Version="1.0.1" />
     <PackageReference Include="Aliyun.Acs.Dm" Version="1.0.1" />
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="DotNetCore.CAP" Version="3.0.4" />
     <PackageReference Include="MediatR" Version="9.0.0" />
